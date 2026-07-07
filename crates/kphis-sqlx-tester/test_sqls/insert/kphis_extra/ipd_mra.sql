@@ -1,0 +1,31 @@
+INSERT INTO `kphis_extra`.`ipd_mra` (
+	`mra_id`,`an`,`hn`,`adm_date`,`dch_date`,`audit_type`,`is_psychiatry`,`is_not_sorted`,`is_unknown`,`overall`,`overall_text`,`auditor`,`audit_date`,
+	`sd_m`,`sd_n`,`sd_1`,`sd_2`,`sd_3`,`sd_4`,`sd_5`,`sd_6`,`sd_7`,`sd_8`,`sd_9`,`sd_text`,
+	`so_m`,`so_n`,`so_1`,`so_2`,`so_3`,`so_4`,`so_5`,`so_6`,`so_7`,`so_text`,
+	`ic_m`,`ic_n`,`ic_1`,`ic_2`,`ic_3`,`ic_4`,`ic_5`,`ic_6`,`ic_7`,`ic_8`,`ic_9`,`ic_text`,
+	`hx_m`,`hx_n`,`hx_1`,`hx_2`,`hx_3`,`hx_4`,`hx_5`,`hx_6`,`hx_7`,`hx_8`,`hx_9`,`hx_text`,
+	`pe_m`,`pe_n`,`pe_1`,`pe_2`,`pe_3`,`pe_4`,`pe_5`,`pe_6`,`pe_7`,`pe_8`,`pe_9`,`pe_text`,
+	`pn_m`,`pn_n`,`pn_1`,`pn_2`,`pn_3`,`pn_4`,`pn_5`,`pn_6`,`pn_7`,`pn_8`,`pn_9`,`pn_text`,
+	`cr_na`,`cr_m`,`cr_n`,`cr_1`,`cr_2`,`cr_3`,`cr_4`,`cr_5`,`cr_6`,`cr_7`,`cr_8`,`cr_9`,`cr_text`,
+	`ar_na`,`ar_m`,`ar_n`,`ar_1`,`ar_2`,`ar_3`,`ar_4`,`ar_5`,`ar_6`,`ar_7`,`ar_8`,`ar_9`,`ar_text`,
+	`on_na`,`on_m`,`on_n`,`on_1`,`on_2`,`on_3`,`on_4`,`on_5`,`on_6`,`on_7`,`on_8`,`on_9`,`on_text`,
+	`lr_na`,`lr_m`,`lr_n`,`lr_1`,`lr_2`,`lr_3`,`lr_4`,`lr_5`,`lr_6`,`lr_7`,`lr_8`,`lr_9`,`lr_text`,
+	`rr_na`,`rr_m`,`rr_n`,`rr_1`,`rr_2`,`rr_3`,`rr_4`,`rr_5`,`rr_6`,`rr_7`,`rr_8`,`rr_9`,`rr_text`,
+	`nn_m`,`nn_n`,`nn_1`,`nn_2`,`nn_3`,`nn_4`,`nn_5`,`nn_6`,`nn_7`,`nn_8`,`nn_9`,`nn_sub`,`nn_text`,
+	`create_user`,`create_datetime`,`update_user`,`update_datetime`,`version`
+) VALUES (
+	1,'660001234','0001234','2023-12-31','2023-12-31','I',0,0,0,'N','no issue','Mr.Auditor','2023-12-31',
+    0,0,1,1,1,1,1,1,1,1,1,NULL,
+    0,0,1,1,1,1,1,1,1,NULL,
+    0,0,1,1,1,1,1,1,1,1,1,NULL,
+    0,0,1,1,1,1,1,1,1,1,1,NULL,
+    0,0,1,1,1,1,1,1,1,1,1,NULL,
+    0,0,1,1,1,1,1,1,1,1,1,NULL,
+    1,0,0,1,1,1,1,1,1,1,1,1,NULL,
+    1,0,0,1,1,1,1,1,1,1,1,1,NULL,
+    1,0,0,1,1,1,1,1,1,1,1,1,NULL,
+    1,0,0,1,1,1,1,1,1,1,1,1,NULL,
+    1,0,0,1,1,1,1,1,1,1,1,1,NULL,
+    0,0,1,1,1,1,1,1,1,1,1,0,NULL,
+    'user','2023-12-31 23:59:59','user','2023-12-31 23:59:59',1
+);

@@ -1,0 +1,5 @@
+CREATE TABLE `kphis`.`ipd_vs_dipstick` (
+  `dipstick_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `dipstick_name` VARCHAR(50) DEFAULT NULL,
+  PRIMARY KEY (`dipstick_id`) USING BTREE
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;

@@ -1,0 +1,20 @@
+CREATE TABLE `hos`.`ward` (
+	`ward` VARCHAR(4) NOT NULL DEFAULT '',
+	`name` VARCHAR(250) NULL DEFAULT NULL,
+	`old_code` VARCHAR(15) NULL DEFAULT NULL,
+	`spclty` CHAR(2) NULL DEFAULT NULL,
+	`bedcount` INT(11) NULL DEFAULT NULL,
+	`shortname` VARCHAR(20) NULL DEFAULT NULL,
+	`sss_code` VARCHAR(10) NULL DEFAULT NULL,
+	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
+	`ward_export_code` VARCHAR(50) NULL DEFAULT NULL,
+	`ward_active` CHAR(1) NULL DEFAULT NULL,
+	`ipd_rx_shift_type_id` INT(11) NULL DEFAULT NULL,
+	`select_bedno_from_layout` CHAR(1) NULL DEFAULT NULL,
+	`ip_key` VARCHAR(50) NULL DEFAULT NULL,
+	`strict_access` CHAR(1) NULL DEFAULT NULL,
+	PRIMARY KEY (`ward`),
+	INDEX `name` (`name`),
+	INDEX `ix_hos_guid` (`hos_guid`),
+	INDEX `ix_old_code` (`old_code`)
+) COLLATE='tis620_thai_ci' ENGINE=InnoDB;

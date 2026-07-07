@@ -1,0 +1,36 @@
+[package]
+name = "kphis-api-query"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-model = { workspace = true }
+kphis-sql = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+base64 = { workspace = true }
+bitcode = { workspace = true }
+futures-util = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+strum = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+totp-rs = { workspace = true }
+tracing = { workspace = true }
+ulid = { workspace = true }
+urlencoding = { workspace = true }
+
+[dev-dependencies]
+kphis-sqlx-tester = { workspace = true }

@@ -1,0 +1,4 @@
+INSERT INTO `hos`.`ovstdiag` (`ovst_diag_id`, `vn`, `icd10`, `hn`, `vstdate`, `vsttime`, `diagtype`, `icd103`, `hcode`, `doctor`, `episode`, `ext_code`, `hos_guid`, `dep_flag`, `ovst_oper_type`, `staff`, `dx_guid`, `lock_dx`, `dx_code_note`, `ovstdiag_severe_type_id`, `diag_no`, `update_datetime`, `confirm`, `confirm_staff`, `opi_guid`, `sct_id`) VALUES
+	(1, '661231235959', 'I10', '0001234', '2006-09-01', '08:48:26', '1', 'I10', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(2, '661231235959', '9999', '0001234', '2006-09-01', '08:48:26', '2', '999', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(3, '670111111111', 'I10', '0001234', CURDATE(), CURTIME(), '1', 'I10', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

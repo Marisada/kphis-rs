@@ -1,0 +1,9 @@
+INSERT INTO `hos`.`lab_order` (`lab_order_number`, `lab_items_code`, `lab_order_result`, `lab_order_remark`, `staff`, `confirm`, `lab_items_name_ref`, `lab_items_normal_value_ref`, `specimen_code`, `lab_items_sub_group_code`, `order_type`, `item_cost`, `hos_guid`, `staff_lock_result`, `laborder_date`, `abnormal_result`, `hos_guid_ext`, `check_key`, `lab_result_status`, `update_datetime`, `lab_hist_compare_type_id`, `printed`, `printed_datetime`, `critical_result`, `check_key_a`, `send_notify`) VALUES
+	(1, 364, '55.55', NULL, '', 'Y', 'eGFR', '', 2, 9, 'A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(1, 78, '1.5', NULL, NULL, 'Y', 'Creatinine', '0.7-1.8', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+    (2, 364, '44.44', NULL, '', 'Y', 'eGFR', '', 2, 9, 'A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(2, 78, '1.4', NULL, NULL, 'Y', 'Creatinine', '0.7-1.8', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(3, 364, '33.33', NULL, '', 'Y', 'eGFR', '', 2, 9, 'A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(3, 78, '1.3', NULL, NULL, 'Y', 'Creatinine', '0.7-1.8', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+    (4, 364, '22.22', NULL, '', 'Y', 'eGFR', '', 2, 9, 'A', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(4, 78, '1.2', NULL, NULL, 'Y', 'Creatinine', '0.7-1.8', 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

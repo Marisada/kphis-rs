@@ -1,0 +1,3 @@
+INSERT INTO `kphis`.`ipd_tmp_subgroup` (`smp_id`, `subgroup`, `subgroup_name`, `subgroup_order`, `subgroup_status`, `version`, `create_user`, `create_datetime`, `update_user`, `update_datetime`) VALUES
+	(1, 1, 'Hypoglycemia', 1, 'Y', 3, 'cha582', '2022-03-19 11:02:05', 'cha582', '2022-03-19 11:02:05'),
+	(99, 1, 'Hypoglycemia', 1, 'Y', 3, 'cha582', '2022-03-19 11:02:05', 'cha582', '2022-03-19 11:02:05');

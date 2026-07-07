@@ -1,0 +1,21 @@
+CREATE TABLE `hos`.`drug_interaction` (
+	`drug_interaction_id` INT(11) NOT NULL DEFAULT 0,
+	`drugname1` VARCHAR(250) NULL DEFAULT NULL,
+	`drugname2` VARCHAR(250) NULL DEFAULT NULL,
+	`drug_interaction_type` INT(11) NULL DEFAULT NULL,
+	`note` TEXT NULL DEFAULT NULL,
+	`severity` INT(11) NULL DEFAULT NULL,
+	`show_doctor` CHAR(1) NULL DEFAULT NULL,
+	`print_sticker` CHAR(1) NULL DEFAULT NULL,
+	`not_allow` CHAR(1) NULL DEFAULT NULL,
+	`check_old_prescription` CHAR(1) NULL DEFAULT NULL,
+	`hos_guid` CHAR(38) NULL DEFAULT NULL,
+	`check_old_interval` INT(11) NULL DEFAULT NULL,
+	`tmt_substance_code1` VARCHAR(6) NULL DEFAULT NULL,
+	`tmt_substance_code2` VARCHAR(6) NULL DEFAULT NULL,
+	PRIMARY KEY (`drug_interaction_id`),
+	INDEX `drugname2` (`drugname2`),
+	INDEX `drugname1` (`drugname1`),
+	INDEX `drugname12` (`drugname1`, `drugname2`),
+	INDEX `ix_hos_guid` (`hos_guid`)
+) COLLATE='tis620_thai_ci' ENGINE=InnoDB;

@@ -1,0 +1,4 @@
+INSERT INTO `kphis`.`opd_er_focus_note` (`fcnote_id`, `general_symptoms`, `fclist_id`, `assessment`, `intvt_id`, `intvt_text`, `evalution`, `dlc_id`, `dlc_text`, `other`, `opd_er_order_master_id`, `fcnote_date`, `fcnote_time`, `fcnote_patient_type`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 'Symptoms', 1, 'T: 42.0 °C', NULL, 'Intervention', 'Evaluation', NULL, 'Daily care', 'Remark', 1, '2024-01-01', '11:11:11', '2', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1),
+	(2, 'Symptoms', 1, 'T: 42.0 °C', NULL, 'Intervention', 'Evaluation', NULL, 'Daily care', 'Remark', 1, '2024-01-11', '11:11:11', '2', 'user', '2024-01-11 11:11:11', 'user', '2024-01-11 11:11:11', 1),
+	(3, 'Symptoms', NULL, 'T: 42.0 °C', NULL, 'Intervention', 'Evaluation', NULL, 'Daily care', 'Remark', 1, '2024-11-11', '11:11:11', '2', 'user', '2024-01-11 11:11:11', 'user', '2024-01-11 11:11:11', 1);

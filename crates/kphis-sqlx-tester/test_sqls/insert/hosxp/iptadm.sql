@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`iptadm` (`an`, `admday`, `bedno`, `bedtype`, `indate`, `intime`, `outdate`, `outtime`, `rate`, `roomno`, `move_in_ward_datetime`, `move_in_bed_datetime`, `trx_order_checksum`, `hos_guid`, `hos_guid_ext`, `no_rx_machine`, `active_med_profile_count`, `rx_transaction_id`) VALUES
+	('660001234', 9, 'C01', '00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

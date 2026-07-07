@@ -1,0 +1,197 @@
+How to docker (Windows)
+
+======================================================================
+Create a tar ball
+======================================================================
+    docker-build-bundle
+
+======================================================================
+Docker Build in detail
+======================================================================
+1.0. install and run docker desktop
+
+1.1. docker build
+    docker build -t kphis .
+
+1.2. docker save -> ready to transfer
+    docker save kphis > docker/kphis.tar
+
+1.3. copy /volume to ./docker
+1.4. create /logs at ./docker/volume
+1.5. create tar ball (at parent of ./docker)
+    tar -czf kphis.tar.gz docker
+1.6. send kphis.tar.gz via psftp
+
+======================================================================
+Deploy phase by root
+======================================================================
+2.0 setup docker
+2.0 remove # and change SYS_UID_MAX and SYS_GID_MAX in /etc/login.defs to > 10001
+    nano /etc/login.defs
+2.1 add user and group
+    sudo groupadd -g 10001 -r dockergrp
+    sudo useradd -m -r -g dockergrp -u 10001 dockeruser
+    sudo passwd dockeruser
+    sudo usermod -aG sudo dockeruser
+    sudo usermod -aG dockergrp dockeruser
+    sudo usermod -aG docker dockeruser
+    sudo reboot
+
+3. extract kphis.tar.gz
+    cd /home/dockeruser
+    tar -xzf kphis.tar.gz -C .
+
+4. update assets
+    sudo chown -R dockeruser:dockergrp docker
+    sudo rm -R /home/dockeruser/kphis
+    sudo mv docker /home/dockeruser/kphis
+    sudo mv /home/dockeruser/kphis/volume-pwa-local /home/dockeruser/kphis/volume/pwa/local
+
+5. change file and folder privilege
+    su dockeruser
+    cd /home/dockeruser/kphis
+    ( optional remove \r in Widnows file with
+        sudo sed -e "s/\r//g" docker-run.sh > run.sh
+    )
+    sudo chmod +x *.sh
+
+6. docker load
+    sudo docker load -i docker/kphis.tar
+
+7. test
+    docker run -t -i --name kphis -p 80:80 -p 443:443 -v /home/dockeruser/kphis/volume:/volume --init kphis debug
+
+8. detach run
+    docker run -d --name kphis -p 80:80 -p 443:443 --restart=always -v /home/dockeruser/kphis/volume:/volume --init kphis public
+
+======================================================================
+Update phase
+======================================================================
+A. Update All
+    1. run docker-builder
+    2. psftp /docker/kphis.tar.gz to server
+    3. ssh (at /home/dockeruser)
+      - backup
+            cp -r kphis/volume/pwa/local kphis-volume-pwa-local >/dev/null
+      - change files
+            tar -xzf kphis.tar.gz -C .
+            chown -R dockeruser:dockergrp docker
+            rm -f kphis/kphis.tar
+            mv docker/kphis.tar kphis/
+            rm -f kphis/kphis-db-util
+            mv docker/kphis-db-util kphis/
+            chmod +x kphis/kphis-db-util
+            rm -R kphis/volume/pwa
+            mv docker/volume/pwa kphis/volume/
+            mv kphis-volume-pwa-local kphis/volume/pwa/local
+      - optional remove old app_assets
+            rm -f kphis/volume/app_assets.bin
+      - stop/remove/load/run docker
+            docker stop kphis
+            docker rm kphis
+            docker image rm kphis
+            cd /home/dockeruser/kphis
+            docker load -i kphis.tar
+            ./run.sh
+      - check logs
+            docker logs kphis
+
+B. Update Only Docker image
+    1. cmd
+        docker build -t kphis .
+        docker save kphis > docker/kphis.tar
+    2. psftp kphis.tar to server
+    3. ssh as dockeruser
+        mv /root/kphis.tar /home/dockeruser/kphis/
+        docker stop kphis
+        docker rm kphis
+        docker image rm kphis
+        cd /home/dockeruser/kphis
+        docker load -i kphis.tar
+        ./run.sh
+
+C. Update Only Volume assets Ex. /volume/pwa, /volume/config, /volume/cert
+    1. cmd
+        tar -czf docker/pwa.tar.gz volume/pwa
+        tar -czf docker/config.tar.gz volume/config
+        tar -czf docker/cert.tar.gz volume/cert
+    2. psftp pwa.tar.gz, config.tar.gz, cert.tar.gz to server
+    3. ssh as dockeruser
+        tar -xzf /root/pwa.tar.gz -C /root/
+        tar -xzf /root/config.tar.gz -C /root/
+        tar -xzf /root/cert.tar.gz -C /root/
+        chown -R dockeruser:dockergrp /root/volume/pwa
+        chown -R dockeruser:dockergrp /root/volume/config
+        chown -R dockeruser:dockergrp /root/volume/cert
+        rm -R /home/dockeruser/kphis/volume/pwa
+        rm -R /home/dockeruser/kphis/volume/config
+        rm -R /home/dockeruser/kphis/volume/cert
+        mv /root/volume/pwa /home/dockeruser/kphis/volume/pwa
+        mv /root/volume/config /home/dockeruser/kphis/volume/config
+        mv /root/volume/cert /home/dockeruser/kphis/volume/cert
+
+D. Update Only client
+    1. psftp
+        put client_bg.wasm
+        put client_bg.wasm.br
+        put client_bg.wasm.gz
+        put client.js
+        put client.js.br
+        put client.js.gz
+        put sw.js
+        put sw.js.br
+        put sw.js.gz
+    2. ssh as dockeruser
+        chown dockeruser:dockergrp client_bg.wasm
+        chown dockeruser:dockergrp client_bg.wasm.br
+        chown dockeruser:dockergrp client_bg.wasm.gz
+        chown dockeruser:dockergrp client.js
+        chown dockeruser:dockergrp client.js.br
+        chown dockeruser:dockergrp client.js.gz
+        chown dockeruser:dockergrp sw.js
+        chown dockeruser:dockergrp sw.js.br
+        chown dockeruser:dockergrp sw.js.gz
+        rm kphis/volume/pwa/client_bg.wasm
+        rm kphis/volume/pwa/client_bg.wasm.br
+        rm kphis/volume/pwa/client_bg.wasm.gz
+        rm kphis/volume/pwa/client.js
+        rm kphis/volume/pwa/client.js.br
+        rm kphis/volume/pwa/client.js.gz
+        rm kphis/volume/pwa/sw.js
+        rm kphis/volume/pwa/sw.js.br
+        rm kphis/volume/pwa/sw.js.gz
+        mv client_bg.wasm kphis/volume/pwa/
+        mv client_bg.wasm.br kphis/volume/pwa/
+        mv client_bg.wasm.gz kphis/volume/pwa/
+        mv client.js kphis/volume/pwa/
+        mv client.js.br kphis/volume/pwa/
+        mv client.js.gz kphis/volume/pwa/
+        mv sw.js kphis/volume/pwa/
+        mv sw.js.br kphis/volume/pwa/
+        mv sw.js.gz kphis/volume/pwa/
+
+======================================================================
+Update SSL certificate by admin
+======================================================================
+0. cert files may be `/etc/certs/fullchain.pem` and `/etc/certs/privkey.pem`
+1. psftp fullchain.pem, privkey.pem to server
+2. move files
+    mv /root/*.pem /home/dockeruser/kphis/volume/cert/
+3. restert service
+    cd /home/dockeruser/kphis
+    docker stop kphis
+    docker rm kphis
+    ./run.sh
+4. or wait for cron schedule to restart HTTPS for you
+
+======================================================================
+USAGE:
+    backend [MODE]
+
+ARGS:
+    <MODE>    Set config environment by config file name Ex. /volume/config/debug.toml -> debug
+              [default: debug]
+
+OPTIONS:
+    -h, --help       Print help information
+    -V, --version    Print version information

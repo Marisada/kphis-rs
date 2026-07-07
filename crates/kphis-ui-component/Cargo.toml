@@ -1,0 +1,63 @@
+[package]
+name = "kphis-ui-component"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+
+# workspace crate
+kphis-drg-worker = { workspace = true }
+kphis-model = { workspace = true }
+kphis-ui-app = { workspace = true }
+kphis-ui-core = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+bitcode = { workspace = true }
+chart-js-rs = { workspace = true }
+dominator = { workspace = true }
+futures-signals = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde-wasm-bindgen = { workspace = true }
+strum = { workspace = true }
+time = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = [
+    "Blob",
+    "CanvasRenderingContext2d",
+    "ConstrainDomStringParameters",
+    "DomRect",
+    "File",
+    "FilePropertyBag",
+    "HtmlButtonElement",
+    "HtmlCanvasElement",
+    "HtmlDivElement",
+    "HtmlInputElement",
+    "HtmlOptionElement",
+    "HtmlOptionsCollection",
+    "HtmlSelectElement",
+    "HtmlTextAreaElement",
+    "HtmlVideoElement",
+    "MediaDevices",
+    "MediaDeviceInfo",
+    "MediaDeviceKind",
+    "MediaStream",
+    "MediaStreamConstraints",
+    "MediaStreamTrack",
+    "MediaTrackConstraints",
+    "Navigator",
+]}

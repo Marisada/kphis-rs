@@ -1,0 +1,3 @@
+INSERT INTO `kphis`.`ipd_doctor_in_charge` (`doctor_in_charge_id`, `an`, `hn`, `doctor`, `spclty`, `status`, `activated`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, '660001234', '0001234', '007', '01', 'Y', 'on', 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 1),
+	(2, '670001234', '0001234', '007', '01', 'Y', 'on', 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 1);

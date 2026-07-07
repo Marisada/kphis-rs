@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`thaiaddress` (`addressid`, `name`, `engname`, `chwpart`, `amppart`, `tmbpart`, `codetype`, `pocode`, `full_name`, `hos_guid`, `hos_guid_ext`) VALUES
+	('000000', 'ต่างประเทศ', NULL, '00', '00', '00', '1', NULL, NULL, NULL, NULL);

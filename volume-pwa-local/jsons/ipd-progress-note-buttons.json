@@ -1,0 +1,272 @@
+[
+    {
+        "word_type":"note",
+        "buttons": [
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Advice",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ผู้ป่วย",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ญาติ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": "",
+                "word": "ต้องการ",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"subjective",
+        "buttons": [
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Fever",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Cough",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Dyspnea",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Dizziness",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"objective",
+        "buttons": [
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Tender",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Swelling",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Redness",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Open wound",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "at",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Head",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Thorax",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Lt-",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Rt-",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Both-",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": "",
+                "word": "Arm",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": "",
+                "word": "Hand",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": "",
+                "word": "Leg",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": "",
+                "word": "Foot",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"assessment",
+        "buttons": [
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "HypoK",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "HyperK",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "HypoNa",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Metabolic acidosis",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Anemia due to blood loss",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Anemia due to chronic disease",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Anemia due to neoplasm",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"plan",
+        "buttons": [
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Control DM",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Control BP",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Repeat ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Discharge ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Follow-Up ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Tomorrow",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    }
+]

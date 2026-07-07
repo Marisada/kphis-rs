@@ -1,0 +1,35 @@
+[package]
+name = "wasm-tests"
+version = { workspace = true }
+rust-version = { workspace = true }
+authors = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+publish = false
+
+[[test]]
+name = "wasm_datetime"
+path = "src/datetime.rs"
+
+[[test]]
+name = "wasm_route"
+path = "src/route.rs"
+
+[[test]]
+name = "wasm_token"
+path = "src/token.rs"
+
+[dev-dependencies]
+
+# workspace crate
+kphis-model = { workspace = true }
+kphis-ui-core = { workspace = true }
+kphis-util = { workspace = true }
+
+futures-signals = { workspace = true }
+time = { workspace = true }
+wasm-bindgen-test = { workspace = true }
+
+# This js feature should only be enabled for binary, test, or benchmark crates.
+# This feature has no effect on targets other than wasm32-unknown-unknown.
+getrandom = { version = "0.2", features = ["js"] }

@@ -1,0 +1,6 @@
+INSERT INTO `kphis`.`ipd_progress_note` (`progress_note_id`, `an`, `progress_note_date`, `progress_note_time`, `progress_note_owner_type`, `progress_note_doctor`, `progress_note_enter_datetime`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`, `pre_order_progress_note_id`, `pre_order_progress_note_date`, `pre_order_progress_note_time`) VALUES
+	(1, '660001234', '2024-01-01', '11:11:11', 'doctor', '007', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 1, 1, '2024-01-01', '11:11:11'),
+	(2, '660001234', '2024-01-01', '11:11:11', 'nurse', '008', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 1, NULL, NULL, NULL),
+	(3, '660001234', '2024-01-01', '11:11:11', 'pharmacist', '009', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 1, NULL, NULL, NULL),
+	(4, '660001234', '2024-01-01', '11:11:11', 'other', '010', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 1, NULL, NULL, NULL),
+	(5, '670001234', '2024-11-11', '11:11:11', 'doctor', '007', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 1, NULL, NULL, NULL);

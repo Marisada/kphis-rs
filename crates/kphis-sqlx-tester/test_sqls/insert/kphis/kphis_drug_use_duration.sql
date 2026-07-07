@@ -1,0 +1,4 @@
+INSERT INTO `kphis`.`kphis_drug_use_duration` (`icode`, `usage`, `duration1`, `exceed_duration1_color`, `duration2`, `exceed_duration2_color`, `duration3`, `exceed_duration3_color`, `status`, `monitor`, `monitor_count`, `monitor_duration`, `monitor_status`, `info`, `info_status`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	('1000111', '2g OD when CrCl 10-30', 9, '#ebb615', 14, 'red', NULL, NULL, 'Y', 'Record BP q 1 hr', 5, 120, 'Y', 'ALERT', 'Y', 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 0),
+	('1000222', '2g OD when CrCl 10-30', 9, '#ebb615', 14, 'red', NULL, NULL, 'N', 'Record BP q 1 hr', 5, 120, 'N', NULL, NULL, 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 0),
+	('1000333', '2g OD when CrCl 10-30', 9, '#ebb615', 14, 'red', NULL, NULL, NULL, 'Record BP q 1 hr', 5, NULL, NULL, NULL, NULL, 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 0);

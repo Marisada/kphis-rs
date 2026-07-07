@@ -1,0 +1,210 @@
+.xray-viewer {
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    color: white;
+
+    .xray-viewer-head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        min-height: 50px;
+
+        .mono-switch {
+            display: inline-block;
+            margin: 5px 2px;
+            position: relative;
+
+            & > label.mono-switch-inner {
+                background: grey;
+                color: #ddd;
+                display: block;
+                position: relative;
+                margin: 0px;
+                width: 124px;
+                height: 40px;
+                border-radius: 26px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+            & > label.mono-switch-inner:before {
+                content: attr(data-on);
+                right: 14px;
+                position: absolute;
+                top: 8px;
+            }
+
+            & > label.mono-switch-inner:after {
+                content: attr(data-off);
+                background: #ddd;
+                color: #000;
+                left: 5px;
+                top: 5px;
+                width: 62px;
+                line-height: 20px;
+                border-radius: 26px;
+                position: absolute;
+                text-align: center;
+                transition: all 0.3s ease;
+                box-shadow: 0px 0px 6px -2px #222;
+                padding: 5px 0px;
+            }
+
+            input[type="checkbox"] {
+                cursor: pointer;
+                width: 124px;
+                height: 40px;
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                z-index: 1;
+                margin: 0px;
+            }
+
+            input[type="checkbox"]:checked + label.mono-switch-inner {
+                background: #ddd;
+                color: #000;
+            }
+
+            input[type="checkbox"]:checked + label.mono-switch-inner:after{
+                content: attr(data-on);
+                background: #777;
+                color: #ddd;
+                left: 56px;
+            }
+
+            input[type="checkbox"]:checked + label.mono-switch-inner:before{
+                content: attr(data-off);
+                right: auto;
+                left: 14px;
+            }
+        }
+
+        .v-range {
+            position: relative;
+            width: 124px;
+            margin: 5px 2px;
+
+            label {
+                width: inherit;
+            }
+        }
+
+        .v-range-label {
+            position: absolute;
+            width: inherit;
+            z-index: 5;
+            text-shadow: -1px 1px 1px #000, 1px 1px 1px #000, 1px -1px 1px #000, -1px -1px 1px #000;
+            pointer-events: none;
+        }
+
+        .v-triangle {
+            // position: absolute;
+            display: block;
+            margin-top: 5px;
+            border-top: 32px solid transparent;
+            border-right: 124px solid grey;
+            z-index: 1;
+        }
+
+        input[type=range] {
+            position: absolute;
+            width: inherit;
+            height: 0px;
+            margin: 0;
+            bottom: 22px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: none;
+            z-index: 3;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]:focus .v-range-label {
+            color: #000;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 0px;
+            cursor: pointer;
+        }
+
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 0px;
+            cursor: pointer;
+        }
+
+        input[type=range]::-ms-track {
+            width: 100%;
+            height: 0px;
+            cursor: pointer;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            border: 3px solid #ddd;
+            height: 40px;
+            width: 24px;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -18px;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            border: 3px solid #ddd;
+            height: 40px;
+            width: 24px;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input[type=range]::-ms-thumb {
+            border: 3px solid #ddd;
+            height: 40px;
+            width: 24px;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #777;
+        }
+
+        input[type=range]:focus ~ span {
+            border-right: 124px solid #777;
+        }
+
+        input[type=range]::-ms-fill-lower {
+            background: #ddd;
+            border: 0.2px solid #000;
+            border-radius: 2.6px;
+        }
+
+        input[type=range]::-ms-fill-upper {
+            background: #ddd;
+            border: 0.2px solid #000;
+            border-radius: 2.6px;
+        }
+
+        input[type=range]:focus::-ms-fill-lower {
+            background: #777;
+        }
+
+        input[type=range]:focus::-ms-fill-upper {
+            background: #777;
+        }
+    }
+}

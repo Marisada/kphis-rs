@@ -1,0 +1,17 @@
+[book]
+authors = ["Marisada Pitaktham"]
+language = "th"
+src = "src"
+title = "KPHIS Tutorial Book"
+description = "How to use KPHIS."
+
+[build]
+build-dir = "../volume/pwa/book"
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
+additional-js = ["custom.js"]
+git-repository-url = "https://github.com/Marisada/kphis-book"
+git-repository-icon = "fab-github"
+edit-url-template = "https://github.com/Marisada/kphis-book/tree/main/{path}"

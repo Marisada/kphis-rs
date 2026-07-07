@@ -1,0 +1,49 @@
+[package]
+name = "kphis-util"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# from workspace
+base64 = { workspace = true }
+encoding_rs = { workspace = true }
+futures = { workspace = true }
+futures-signals = { workspace = true }
+hex = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+num = { workspace = true }
+regex = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true }
+serde_derive = { workspace = true }
+serde_json = { workspace = true }
+time = { workspace = true }
+unicode-width = { workspace = true }
+urlencoding = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = [
+    "AbortController",
+    "AbortSignal",
+]}
+
+# Typst
+typst-library = { workspace = true }
+typst-syntax = { workspace = true }
+
+# OpenApi
+utoipa = { workspace = true }
+
+# this crate only
+axum = { version = "0.8", default-features = false, features = [ "json" ] }
+
+[target.'cfg(not(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none"))))'.dependencies]
+ulid = { workspace = true }

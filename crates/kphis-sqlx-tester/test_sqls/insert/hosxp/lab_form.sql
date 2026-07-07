@@ -1,0 +1,3 @@
+INSERT INTO `hos`.`lab_form` (`form_name`, `lab_items_code`, `form_position_left`, `form_position_top`, `tab_order`, `form_position_width`, `component_name`, `parent_name`, `component_type`, `component_caption`, `checked`, `form_position_height`, `font_name`, `font_size`, `font_color`, `specimen_code`, `hos_guid`) VALUES
+	('CLINICAL CHEMISTRY', 78, 149, 61, NULL, 98, 'Lab78', NULL, 'checkbox', 'Creatinine', 'N', NULL, NULL, NULL, NULL, 0, NULL),
+	('CLINICAL CHEMISTRY', 364, 149, 85, NULL, 98, 'Lab364', NULL, 'checkbox', 'eGFR', 'N', NULL, NULL, NULL, NULL, 0, NULL);

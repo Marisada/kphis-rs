@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_xray_read` (`xn`, `xray_read_user`, `xray_read_datetime`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 'user', '2023-01-01 11:11:11', 'user', '2023-01-01 11:11:11', 'user', '2023-01-01 11:11:11', 1);

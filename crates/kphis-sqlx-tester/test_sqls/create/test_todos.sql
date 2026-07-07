@@ -1,0 +1,5 @@
+CREATE TABLE `kphis_log`.`todos` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci;

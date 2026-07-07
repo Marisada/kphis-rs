@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`hospcode` (`amppart`, `chwpart`, `hospcode`, `hosptype`, `name`, `tmbpart`, `moopart`, `sss_code`, `sss_code_sub`, `hospcode506`, `hospital_type_id`, `bed_count`, `po_code`, `hospital_level_id`, `hospital_phone`, `hospital_fax`, `hos_guid`, `province_name`, `hos_guid_ext`, `export`, `bed_real`, `addrpart`, `area_code`, `zone`) VALUES
+	('00', '00', '99999', 'โรงพยาบาล', 'ไม่ทราบชื่อ', '00', '00', NULL, NULL, NULL, 1, 0, NULL, NULL, NULL, NULL, NULL, 'จังหวัด', NULL, NULL, NULL, '00', NULL, NULL);

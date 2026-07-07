@@ -1,0 +1,11 @@
+[net]
+git-fetch-with-cli = true
+
+[target.wasm32-unknown-unknown]
+rustflags = ['-Ctarget-feature=+simd128']
+runner = 'wasm-bindgen-test-runner'
+
+[env]
+AXUM_HTTP_REQUESTS_TOTAL = "kphis_requests_total"
+AXUM_HTTP_REQUESTS_DURATION_SECONDS = "kphis_requests_duration_seconds"
+AXUM_HTTP_REQUESTS_PENDING = "kphis_requests_pending"

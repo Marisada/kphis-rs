@@ -1,0 +1,2 @@
+INSERT INTO `kphis_extra`.`opd_er_document` (`document_id`, `opd_er_order_master_id`, `document_type_id`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 1, 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

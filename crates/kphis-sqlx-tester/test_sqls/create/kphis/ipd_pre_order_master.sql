@@ -1,0 +1,22 @@
+CREATE TABLE `kphis`.`ipd_pre_order_master` (
+  `pre_order_master_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pre_order_type` VARCHAR(20) NOT NULL COMMENT 'appointment, opd, er',
+  `order_date` DATE DEFAULT NULL,
+  `order_time` TIME DEFAULT NULL,
+  `order_for_date` DATE DEFAULT NULL,
+  `order_for_time` TIME DEFAULT NULL,
+  `order_doctor` VARCHAR(7) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `hn` VARCHAR(9) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' DEFAULT NULL,
+  `template_name` VARCHAR(255) DEFAULT NULL,
+  `shared_template` VARCHAR(1) DEFAULT NULL,
+  `used` VARCHAR(1) DEFAULT NULL,
+  `create_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `create_datetime` DATETIME NOT NULL,
+  `update_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `update_datetime` DATETIME NOT NULL,
+  `version` INT(11) NOT NULL,
+  PRIMARY KEY (`pre_order_master_id`) USING BTREE,
+  INDEX `order_date` (`order_date`) USING BTREE,
+  INDEX `hn` (`hn`) USING BTREE,
+  INDEX `hn_order_date` (`hn`,`order_date`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT;

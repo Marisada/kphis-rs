@@ -1,0 +1,2 @@
+INSERT INTO `kphis_extra`.`ipd_document` (`document_id`, `an`, `document_type_id`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, '660001234', 1, 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

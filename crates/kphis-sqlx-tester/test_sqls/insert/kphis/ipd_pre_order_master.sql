@@ -1,0 +1,6 @@
+INSERT INTO `kphis`.`ipd_pre_order_master` (`pre_order_master_id`, `pre_order_type`, `order_date`, `order_time`, `order_for_date`, `order_for_time`, `order_doctor`, `hn`, `template_name`, `shared_template`, `used`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 'template', '2024-01-01', '11:11:11', NULL, NULL, '001', NULL, 'Template1', 'Y', 'Y', 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1),
+	(2, 'template', '2024-01-01', '11:11:11', NULL, NULL, '007', NULL, 'Template2', 'Y', 'N', 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1),
+	(3, 'template', '2024-01-01', '11:11:11', NULL, NULL, '007', NULL, 'Template3', 'N', 'Y', 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1),
+	(4, 'opd', '2024-01-11', '11:11:11', '2024-01-11', NULL, '007', '0001234', NULL, NULL, 'N', 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1),
+	(5, 'appointment', '2024-01-11', '11:11:11', '2024-11-11', NULL, '007', '0001234', NULL, NULL, 'N', 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1);

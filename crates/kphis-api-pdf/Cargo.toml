@@ -1,0 +1,44 @@
+[package]
+name = "kphis-api-pdf"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-api-core = { workspace = true }
+kphis-api-handler = { workspace = true }
+kphis-api-query = { workspace = true }
+kphis-model = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+axum = { workspace = true }
+http-body-util = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+strum = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+
+# test_app mod
+config = { workspace = true }
+sqlx = { workspace = true }
+
+# Typst
+typst-layout = { workspace = true }
+typst-library = { workspace = true }
+typst-pdf = { workspace = true }
+
+# OpenApi
+utoipa = { workspace = true }
+
+[dev-dependencies]
+kphis-sqlx-tester = { workspace = true }

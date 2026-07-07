@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`medication_reconciliation_detail` (`medication_reconciliation_detail_id`, `medication_reconciliation_id`, `medication_name`, `receive_location`, `last_receive_date`, `doctor_reconciliation_command_id`, `medication_reconciliation_manage_id`, `medication_change_cause`, `usage_name`, `hos_guid`, `qty`, `first_entry_date`) VALUES
+	(1, 1, 'METFORMIN 500 mg. เม็ด', 'รับยาจาก รพ.', '2023-12-31', 3, 2, NULL, 'รับประทาน ครั้งละ 1 เม็ด วันละ 2 ครั้ง หลังอาหาร เช้า-เย็น', NULL, 60, '2023-12-31 23:59:59');

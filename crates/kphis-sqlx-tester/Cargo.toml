@@ -1,0 +1,15 @@
+[package]
+name = "kphis-sqlx-tester"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+include_dir = { workspace = true }
+tokio = { workspace = true }
+sqlx = { workspace = true }

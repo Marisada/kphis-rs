@@ -1,0 +1,23 @@
+CREATE TABLE `kphis`.`opd_er_med_reconciliation_item` (
+  `med_reconciliation_item_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `med_reconciliation_id` INT(11) UNSIGNED DEFAULT NULL,
+  `opd_er_order_master_id` INT(11) UNSIGNED NOT NULL,
+  `icode` VARCHAR(7) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' DEFAULT NULL,
+  `med_name` VARCHAR(255) DEFAULT NULL,
+  `custom_med_name` VARCHAR(255) DEFAULT NULL,
+  `receive_from` VARCHAR(255) DEFAULT NULL,
+  `receive_date` DATE DEFAULT NULL,
+  `old_drugusage` TEXT DEFAULT NULL,
+  `changed_drugusage` TEXT DEFAULT NULL,
+  `receive_qty` INT(11) DEFAULT NULL,
+  `last_dose_taken_time` DATETIME DEFAULT NULL,
+  `last_dose_taken_remark` VARCHAR(255) DEFAULT NULL,
+  `use` VARCHAR(1) DEFAULT NULL,
+  `create_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `create_datetime` DATETIME NOT NULL,
+  `update_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `update_datetime` DATETIME NOT NULL,
+  `version` INT(11) NOT NULL,
+  PRIMARY KEY (`med_reconciliation_item_id`) USING BTREE,
+  INDEX `med_reconciliation_id` (`med_reconciliation_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT;

@@ -1,0 +1,59 @@
+[package]
+name = "kphis-typst-worker"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[features]
+api = []
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+
+# workspace crate
+kphis-model = { workspace = true }
+kphis-worker = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+bitcode = { workspace = true }
+gloo-events = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+serde_json = { workspace = true }
+time = { workspace = true }
+web-sys = { workspace = true, features = [
+    "DedicatedWorkerGlobalScope",
+    "XmlHttpRequest",
+    "XmlHttpRequestResponseType",
+]}
+
+# Typst
+codespan-reporting = { workspace = true }
+ecow = { workspace = true }
+pdf-writer = { workspace = true }
+typst = { workspace = true }
+typst-layout = { workspace = true }
+typst-library = { workspace = true }
+typst-pdf = { workspace = true }
+typst-svg = { workspace = true }
+typst-syntax = { workspace = true }
+typst-timing = { workspace = true }
+typst-utils = { workspace = true }
+xmp-writer = { workspace = true }
+
+# for kphis-worker
+console_error_panic_hook = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+
+# This js feature should only be enabled for binary, test, or benchmark crates.
+# This feature has no effect on targets other than wasm32-unknown-unknown.
+getrandom = { version = "0.2", features = ["js"] }

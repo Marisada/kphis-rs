@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`ward` (`ward`, `name`, `old_code`, `spclty`, `bedcount`, `shortname`, `sss_code`, `hos_guid`, `ward_export_code`, `ward_active`, `ipd_rx_shift_type_id`, `select_bedno_from_layout`, `ip_key`, `strict_access`) VALUES
+	('01', 'ตึกชาย', '01', NULL, NULL, NULL, NULL, NULL, NULL, 'Y', NULL, NULL, NULL, NULL);

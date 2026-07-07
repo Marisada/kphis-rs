@@ -1,0 +1,11 @@
+ทำตาม docker.txt ในหัวข้อ Deploy phase by root โดยหลังจากสร้าง dockeruser และ chown ทุกไฟล์ แล้วให้
+1. สร้าง folder ชื่อ  kphis ไว้ที่ /home/dockeruser/ เป็น /home/dockeruser/kphis
+2. copy ทั้งหมด (ไฟล์ run.sh, kphis.tar, ..) ไปไว้ใน folder ./kphis
+3. copy patch.sh มาไว้ที่ /home/dockeruser/ เพื่อเอาไว้ update ต่อไปในอนาคต (อย่าลืม chmod +x *.sh ไว้ด้วย) 
+4. สำเนาไฟล์ ./kphis/volume/config/debug.toml เป็นชื่อ public.toml แล้วแก้ไขการตั้งค่าต่างๆ (debug.toml เอาไว้ทดสอบ, public.toml เอาไว้ production)
+5. แก้ไขรายงาน (ชื่อ รพ) ที่ ./kphis/volume/pwa/templates/* (รายงานใช้ Typst, backend จะ serve ไฟล์ .gz หรือ .br ก่อนไฟล์ .typ เสมอ, ดังนั้น แก้ไฟล์ .typ แล้ว ให้สร้างไฟล์ .gz/.br ใหม่ หรือลบ .gz/.br ก็ได้)
+6. docker load
+  cd /home/dockeruser/kphis
+  sudo docker load -i kphis.tar
+7. ทดสอบด้วย test.sh หรือ production ด้วย run.sh
+8. การ update ให้นำไฟล์ kphis.tar.gz ใหม่มาไว้ที่ home/dockeruser/ แล้วเรียกไฟล์ patch.sh เป็นเรียบร้อย

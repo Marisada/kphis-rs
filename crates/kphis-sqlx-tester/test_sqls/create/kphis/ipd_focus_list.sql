@@ -1,0 +1,22 @@
+CREATE TABLE `kphis`.`ipd_focus_list` (
+  `fclist_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `smp_id` INT(11) UNSIGNED NOT NULL,
+  `focus_id` INT(11) UNSIGNED NOT NULL,
+  `focus_text` TEXT DEFAULT NULL,
+  `goal_id` TEXT DEFAULT NULL,
+  `goal_text` TEXT DEFAULT NULL,
+  `fclist_stdate` DATE DEFAULT NULL,
+  `fclist_sttime` TIME NOT NULL,
+  `fclist_enddate` DATE DEFAULT NULL,
+  `fclist_endtime` TIME DEFAULT NULL,
+  `fclist_status` VARCHAR(1) NOT NULL,
+  `hn` VARCHAR(9) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' DEFAULT NULL,
+  `an` VARCHAR(13) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `create_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `create_datetime` DATETIME NOT NULL,
+  `update_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' DEFAULT NULL,
+  `update_datetime` DATETIME DEFAULT NULL,
+  `version` INT(11) NOT NULL,
+  PRIMARY KEY (`fclist_id`) USING BTREE,
+  INDEX `an` (`an`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT;

@@ -1,0 +1,42 @@
+[package]
+name = "kphis-frontend"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+
+# workspace crate
+kphis-model = { workspace = true }
+kphis-ui-app = { workspace = true }
+kphis-ui-core = { workspace = true }
+kphis-ui-component = { workspace = true }
+kphis-ui-page = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+console_error_panic_hook = { workspace = true }
+console_log = { workspace = true }
+dominator = { workspace = true }
+futures-signals = { workspace = true }
+log = { workspace = true }
+wasm-bindgen = { workspace = true }
+web-sys = { workspace = true, features = [
+    "CssStyleDeclaration",
+    "DomTokenList",
+    "Event",
+    "HtmlButtonElement",
+    "HtmlDivElement",
+]}
+
+# This js feature should only be enabled for binary, test, or benchmark crates.
+# This feature has no effect on targets other than wasm32-unknown-unknown.
+getrandom = { version = "0.2", features = ["js"] }

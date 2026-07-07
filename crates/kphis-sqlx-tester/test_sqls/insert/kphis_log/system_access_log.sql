@@ -1,0 +1,2 @@
+INSERT INTO `kphis_log`.`system_access_log` (`access_log_id`, `access_datetime`, `access_user`, `access_host`, `access_detail`) VALUES
+	(1, '2024-01-01 11:11:11', 'user', '127.0.0.1:11111', '{"method":"GET","path":"/sse-message","status":"accepted"}');

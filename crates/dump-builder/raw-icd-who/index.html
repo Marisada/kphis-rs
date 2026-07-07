@@ -1,0 +1,62 @@
+<!-- To run in VS-Code Live Server, please add files exception to prevent accidental reload
+        "**/*.md",
+        "**/*.xml",
+        "**/*.txt",
+        "**/*.rs",
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ICD10TM pages</title>
+</head>
+<body>
+    <div>
+        <div style="position:fixed;top:10px;left:calc(50vw - 80px);">
+            <button type="button" id="go-left-btn">PREV</button>
+            <input type="number" id="go-page" style="text-align:center;width:50px;">
+            <button type="button" id="go-right-btn">NEXT</button>
+        </div>
+        <div style="text-align:center;">
+            <img id="img-elm" width="100%">
+        </div>
+    </div>
+    <script>
+        // fourth-character subcategories
+        let page = 71
+        set_image(page)
+        
+        const go_page_elm = document.getElementById("go-page")
+        go_page_elm.addEventListener('input', function (e) {
+            page = parseInt(e.target.value,10)
+            if (page > 1 && page < 803) {
+                set_image(page)
+            }
+        })
+        go_page_elm.value = page
+        const go_left_elm = document.getElementById("go-left-btn")
+        go_left_elm.addEventListener('click', function () {
+            if (page > 1) {
+                page -= 1
+                go_page_elm.value = page
+                set_image(page)
+            }
+        })
+        const go_right_elm = document.getElementById("go-right-btn")
+        go_right_elm.addEventListener('click', function () {
+            if (page < 803) {
+                page += 1
+                go_page_elm.value = page
+                set_image(page)
+            }
+        })
+
+        function set_image(p) {
+            const img_elm = document.getElementById("img-elm")
+            img_elm.src = 'http://www.thcc.or.th/ebook1/2016/files/mobile/' + p + '.jpg'
+            img_elm.alt = 'ICD10TM page ' + p;
+            window.scrollTo(0, 0)
+        }
+    </script>
+</body>
+</html>

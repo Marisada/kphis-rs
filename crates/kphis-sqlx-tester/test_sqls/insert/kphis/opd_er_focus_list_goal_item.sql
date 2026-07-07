@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_focus_list_goal_item` (`fclist_item_id`, `fclist_id`, `goal_id`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 1, 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 1);

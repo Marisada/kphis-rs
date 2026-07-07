@@ -1,0 +1,24 @@
+[package]
+name = "dump-builder"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-drg-worker = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+bitcode = { workspace = true }
+csv = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+syntect = { workspace = true }
+xml = { workspace = true }

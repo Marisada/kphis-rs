@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_bed_type` (`bed_type`, `bed_type_name`, `bed_type_color`, `display_order`, `active`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	('R', 'แดง', '#e47e7e', 1, 'Y', 'jommarn', '2021-06-08 20:46:14', 'jommarn', '2021-06-08 20:46:14', 1);

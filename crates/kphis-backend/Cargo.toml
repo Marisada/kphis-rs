@@ -1,0 +1,38 @@
+[package]
+name = "kphis-backend"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-api-core = { workspace = true }
+kphis-api-pdf = { workspace = true }
+kphis-api-query = { workspace = true }
+kphis-api-router = { workspace = true }
+
+# from workspace
+axum = { workspace = true }
+axum-server = { workspace = true }
+clap = { workspace = true }
+config = { workspace = true }
+rustls = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+tokio-cron-scheduler = { workspace = true }
+tower-cookies = { workspace = true }
+tracing = { workspace = true }
+tracing-appender = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[target.'cfg(all(target_arch = "x86_64", target_env = "musl"))'.dependencies]
+tikv-jemallocator = "0.7"
+
+[target.'cfg(all(target_arch = "aarch64", target_env = "musl"))'.dependencies]
+mimalloc = "0.1"

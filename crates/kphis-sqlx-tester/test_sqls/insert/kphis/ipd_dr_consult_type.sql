@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_dr_consult_type` (`consult_type_id`, `consult_type_name`, `consult_type_order`, `version`, `create_user`, `create_datetime`, `update_user`, `update_datetime`) VALUES
+	(1, 'ใบ Consult ทั่วไป', 1, 1, 'cha582', '2020-10-28 09:23:29', 'cha582', '2020-10-28 09:23:29');

@@ -1,0 +1,3 @@
+https://github.com/PgBiel/typst-oxifmt
+
+- Find and update all "@preview/oxifmt:" to current version

@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`spclty` (`spclty`, `name`, `depcode`, `ovstostlink`, `spname`, `shortname`, `ill_visit`, `spclty_guid`, `no_service_charge`, `no_service_charge_doctor`, `oldcode`, `nhso_code`, `operation`, `provis_code`, `hos_guid`, `no_export_43`, `display_order`, `allow_online_appointment`, `active_status`) VALUES
+	('01', 'อายุรกรรม', '001', '01', 'OPD', 'MED', NULL, NULL, NULL, NULL, NULL, '01', NULL, '00100', NULL, NULL, NULL, NULL, 'Y');

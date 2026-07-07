@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_focus_note_intvt_item` (`fcnote_intvt_item_id`, `fcnote_id`, `intvt_id`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 1, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1);

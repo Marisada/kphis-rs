@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_document_scan` (`opd_er_document_scan_id`, `opd_er_order_master_id`, `opd_er_document_scan`, `opd_er_document_scan_doctorcode`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 'Y', '007', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

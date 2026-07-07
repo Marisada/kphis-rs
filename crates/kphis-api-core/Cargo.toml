@@ -1,0 +1,62 @@
+[package]
+name = "kphis-api-core"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-api-query = { workspace = true }
+kphis-model = { workspace = true }
+kphis-sql = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+axum = { workspace = true }
+axum-extra = { workspace = true }
+axum-server = { workspace = true }
+base64 = { workspace = true }
+config = { workspace = true }
+hex = { workspace = true }
+pasetors = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+time = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+ulid = { workspace = true }
+
+# Typst
+codespan-reporting = { workspace = true }
+ecow = { workspace = true }
+typst = { workspace = true }
+typst-layout = { workspace = true }
+typst-library = { workspace = true }
+typst-pdf = { workspace = true }
+typst-syntax = { workspace = true }
+typst-timing = { workspace = true }
+typst-utils = { workspace = true }
+
+# PDF Signer
+cryptographic-message-syntax = { workspace = true }
+x509-certificate = { workspace = true }
+
+# OpenApi
+utoipa = { workspace = true }
+
+# this crate only
+# minimal for Synapse PACs, MUSL has DNS limitation (doesn’t support DNS over TCP, not allow UDP packets larger than 512 bytes)
+[target.'cfg(target_env = "musl")'.dependencies]
+reqwest = { version = "0.13", default-features = false, features = [ "cookies", "hickory-dns" ] }
+[target.'cfg(not(target_env = "musl"))'.dependencies]
+reqwest = { version = "0.13", default-features = false, features = [ "cookies" ] }
+
+[dev-dependencies]
+kphis-sqlx-tester = { workspace = true }

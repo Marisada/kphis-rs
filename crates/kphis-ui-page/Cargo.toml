@@ -1,0 +1,56 @@
+[package]
+name = "kphis-ui-page"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+
+# workspace crate
+kphis-drg-worker = { workspace = true }
+kphis-model = { workspace = true }
+kphis-ui-app = { workspace = true }
+kphis-ui-core = { workspace = true }
+kphis-ui-component = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+bitcode = { workspace = true }
+dominator = { workspace = true }
+futures-signals = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde-wasm-bindgen = { workspace = true }
+strum = { workspace = true }
+time = { workspace = true }
+typst-syntax = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = [
+    "DataTransfer",
+    "Document",
+    "DomParser",
+    "Element",
+    "HtmlAudioElement",
+    "HtmlButtonElement",
+    "HtmlInputElement",
+    "HtmlOptionElement",
+    "HtmlSelectElement",
+    "HtmlTableCellElement",
+    "HtmlTextAreaElement",
+    "Node",
+    "NodeList",
+    "Range",
+    "SupportedType",
+]}

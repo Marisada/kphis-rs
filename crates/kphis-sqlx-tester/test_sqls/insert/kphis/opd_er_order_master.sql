@@ -1,0 +1,6 @@
+INSERT INTO `kphis`.`opd_er_order_master` (`opd_er_order_master_id`, `order_date`, `order_time`, `order_doctor`, `note`, `vn`, `bedno`, `er_patient_status_id`, `er_dch_type_id`, `discharge_date`, `discharge_time`, `delete_flag`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, '2023-12-31', '23:59:59', '007', 'Note', '661231235959', 109, 7, 1, '2024-01-01', '11:11:11', NULL, 'admin', '2023-12-31 23:59:59', 'admin', '2024-01-01 11:11:11', 1),
+	(2, '2024-01-01', '11:11:11', '007', 'Note', '670101111111', 109, 7, 2, '2024-01-05', '11:11:11', NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
+	(3, '2024-01-11', '11:11:11', '007', 'Note', '670111111111', 109, 1, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
+	(4, '2024-01-11', '11:11:11', '007', 'Note', '670111111111', 109, 7, 1, CURDATE(), CURTIME(), 'Y', 'admin', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 1),
+	(5, CURDATE(), CURTIME(), '007', 'Note', '671111111111', 109, 1, NULL, NULL, NULL, NULL, 'admin', '2024-11-11 11:11:11', 'admin', '2024-11-11 11:11:11', 1);

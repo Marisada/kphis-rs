@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_nurse_index_note` (`nurse_index_note_id`, `an`, `nurse_index_note`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, '660001234', 'Note', 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1);

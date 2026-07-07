@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_ward_passcode_user` (`ward`, `loginname`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	('01', 'user', 'admin', '2023-11-11 11:11:11', 'admin', '2023-11-11 11:11:11', 1);

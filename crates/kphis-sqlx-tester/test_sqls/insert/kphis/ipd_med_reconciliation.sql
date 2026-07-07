@@ -1,0 +1,4 @@
+INSERT INTO `kphis`.`ipd_med_reconciliation` (`med_reconciliation_id`, `an`, `pharmacist`, `note`, `doctor`, `med_reconciliation_datetime`, `phamacist_confirm_datetime`, `doctor_confirm_datetime`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, '660001234', '009', 'Note', '007', '2024-11-11 11:11:11', '2024-11-11 11:11:11', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1),
+	(2, '660001234', '007', 'Note', '007', '2024-11-11 11:11:11', '2024-11-11 11:11:11', NULL, 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1),
+	(3, '660001234', '009', 'Note', '007', '2024-11-11 11:11:11', NULL, NULL, 'user', '2024-11-11 11:11:11', 'user', '2024-11-11 11:11:11', 1);

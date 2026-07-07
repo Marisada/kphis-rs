@@ -1,0 +1,282 @@
+@use "nice-select2/scss/nice-select2.scss";
+@use "date-picker.scss";
+@use "xray-viewer.scss";
+
+.app-is-loading, .app-is-loading * {
+    cursor: wait;
+}
+
+.app-alert-box {
+    position: fixed;
+    top: -80vh;
+    left: 50%;
+    max-width: 80vw;
+    max-height: 80vh;
+    border-radius: 5px;
+    border: 3px solid steelblue;
+    background-color: var(--bs-body-bg);
+    padding: 9px;
+    z-index: 1099;
+    transform: translateX(-50%);
+    overflow: auto;
+    &.show {
+        top: 50px;
+    }
+    &.danger {
+        border: 3px solid red;
+        color: rgba(var(--bs-danger-rgb), 1);
+    }
+    .app-alert-title {
+        font-size: large;
+        font-weight: 700;
+    }
+    .app-alert-message {
+        font-family: Consolas, monospace, serif;
+        white-space: pre;
+    }
+}
+
+@media only screen and (max-width: 888px) {
+    .app-alert-box {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+#checkUpdate {
+    position: fixed;
+    padding: 0;
+    border: 0;
+    bottom: 0;
+    right: 0;
+}
+
+#errormessage {
+    position: absolute;
+    padding-bottom: 9px;
+    bottom: 0;
+    left: 15pt;
+    color: red;
+    user-select: none;
+    z-index: 1088
+}
+
+#splash {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%,-50%)
+}
+
+// bottom tooltip's container area
+.app-tooltip-hoverable {
+    position: relative;
+    white-space: nowrap;
+
+    // bottom tooltip's message text
+    // design to point message to the icon at the end of container
+    // MUST use inside .app-tooltop-area to be hoverable
+    .app-tooltip-message {
+        display: none;
+        position: absolute;
+        top: 150%;
+        right: 15px;
+        width: max-content;
+        max-width: 555px;
+        white-space: normal;
+        padding: 7px;
+        color: #fff;
+        background-color: #555;
+        text-align: left;
+        border-radius: 5px 0 5px 5px;
+        z-index: 3;
+    }
+
+    &:hover {
+        .app-tooltip-message {
+            display: block
+        }
+    }
+}
+
+.app-tooltip-message::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #555 #555 transparent
+}
+
+.icon-sway {
+    animation-name: icon-swaying;
+    animation-duration: 1s;
+    animation-iteration-count: infinite
+}
+@keyframes icon-swaying {
+    0%   {rotate:-15deg}
+    8%   {rotate:-10deg}
+    16%  {rotate:-5deg}
+    25%  {rotate: 0deg}
+    34%  {rotate: 5deg}
+    42%  {rotate: 10deg}
+    50%  {rotate: 15deg}
+    58%  {rotate: 10deg}
+    66%  {rotate: 5deg}
+    75%  {rotate: 0deg}
+    84%  {rotate:-5deg}
+    92%  {rotate:-10deg}
+    100% {rotate:-15deg}
+}
+
+.typst-doc {
+    background-color: #eee;
+    padding: 8px
+}
+
+.img-bg-loader-container {
+    position: relative;
+    width: 96px;
+    height: 96px;
+
+    &:before {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 55px;
+        height: 55px;
+        border: 5px solid grey;
+        border-color: transparent grey transparent grey;
+        border-radius: 50%;
+        animation: img-bg-loader 1s linear infinite;
+    }
+
+    & > img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
+@keyframes img-bg-loader {
+    0% {
+        transform: translate(-50%,-50%) rotate(0deg);
+    }
+    100% {
+        transform: translate(-50%,-50%) rotate(360deg);
+    }
+}
+
+// ===== ===== //
+// CODE EDITOR //
+// ===== ===== //
+.editor-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative
+}
+.editor-label {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    color: #999;
+    font-size: 24px;
+    user-select: none;
+    -webkit-user-select: none
+}
+.editor-loc-container {
+    position: relative;
+    height: 100%;
+    width: 50px;
+    overflow: hidden
+}
+.editor-loc {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    color: #888;
+    padding-right: 8px;
+    padding-top: 15px;
+    padding-bottom: 30px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none
+    }
+}
+.editor-pre {
+    color: white;
+    width: 100%;
+    height: 100%;
+    border-left: 1px solid #555;
+    outline: none;
+    padding: 15px;
+    margin-bottom: 0;
+    white-space: pre;
+    code {
+        font-size: 12px;
+        font-family: Consolas, monospace, serif
+    }
+}
+.editor-loc, .editor-pre {
+    background-color: #0d0d0d;
+    font-size: 12px;
+    font-family: Consolas, monospace, serif
+}
+
+// ===== ===== //
+//   RESIZER   //
+// ===== ===== //
+.resizer-container {
+    display: flex;
+    height: 100%;
+    width: 100%
+}
+.resizer-container-vertical {
+    flex-direction: column;
+    overflow-y: hidden
+}
+.resizer-horizontal {
+    width: 8px;
+    cursor: ew-resize;
+    border-left: 3px solid #ccc;
+    border-right: 3px solid #ccc
+}
+.resizer-vertical {
+    width: 100%;
+    height: 8px;
+    cursor: ns-resize;
+    border-top: 3px solid #ccc;
+    border-bottom: 3px solid #ccc
+}
+.resizer-horizontal, .resizer-vertical {
+    background-color: #eee;
+    &:hover {
+        background-color: #333
+    }
+}
+.resizer-container-left {
+    overflow-x: auto
+}
+.resizer-container-top {
+    overflow-y: auto
+}
+.resizer-container-right, .resizer-container-bottom {
+    flex: 1
+}

@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`drug_interaction` (`drug_interaction_id`, `drugname1`, `drugname2`, `drug_interaction_type`, `note`, `severity`, `show_doctor`, `print_sticker`, `not_allow`, `check_old_prescription`, `hos_guid`, `check_old_interval`, `tmt_substance_code1`, `tmt_substance_code2`) VALUES
+    (1, 'WARFARIN', 'PARACETAMOL', 1, 'เพิ่มค่า INR ด้วยเหรอ', 2, 'Y', 'Y', NULL, 'Y', NULL, NULL, NULL, NULL);

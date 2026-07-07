@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`lab_specimen_items` (`specimen_code`, `specimen_name`, `specimen_note`, `ecode`, `hos_guid`, `colab_specimen_name`, `colab_specimen_id`) VALUES
+	(6, 'CLOTTED BLOOD', NULL, NULL, NULL, NULL, NULL);

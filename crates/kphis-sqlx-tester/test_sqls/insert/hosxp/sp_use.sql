@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`sp_use` (`sp_use`, `sp_name`, `name1`, `name2`, `name3`, `user`, `sp_use_guid`, `oldcode`, `hos_guid`, `hos_guid_ext`) VALUES
+	('0000001', '1 OD OR1 P1', 'รับประทาน 1 เม็ด', 'วันละ 1 ครั้ง', 'หลังอาหารเช้า', NULL, NULL, NULL, NULL, NULL);

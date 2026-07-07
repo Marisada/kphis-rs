@@ -1,0 +1,5 @@
+INSERT INTO `kphis_extra`.`ipd_summary_audit_item` (`summary_audit_item_id`,`summary_audit_id`,`summary_id`,`ty`,`sum_dx`,`sum_icd`,`com_icd`,`rev_dx`,`rev_icd`,`sa`,`ca`,`remark`,`create_user`,`create_datetime`,`update_user`,`update_datetime`,`version`) VALUES
+	(1,1,1,'PDx','Diarrhea','A099','A099','Diarrhea','A099','0','0','No remark','user','2023-12-31 23:59:59','user','2023-12-31 23:59:59',1),
+	(2,1,1,'SDx',NULL,NULL,NULL,'Hyponatremia','E871','2a','2a','May add','user','2023-12-31 23:59:59','user','2023-12-31 23:59:59',1),
+	(3,1,1,'ODx','Dyslipidemia','E785','E785','Dyslipidemia','E789','0','2b','Changed','user','2023-12-31 23:59:59','user','2023-12-31 23:59:59',1),
+	(4,1,1,'Op','Transfusion of PRCs','9904','9904','Packed cell transfusion','9904','0','0',NULL,'user','2023-12-31 23:59:59','user','2023-12-31 23:59:59',1);

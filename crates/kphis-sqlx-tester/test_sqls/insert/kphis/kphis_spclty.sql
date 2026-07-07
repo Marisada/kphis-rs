@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`kphis_spclty` (`spclty_id`, `spclty_name`, `spclty_order`, `version`, `create_user`, `create_datetime`, `update_user`, `update_datetime`) VALUES
+	(1, 'อายุรกรรมชายวันคู่', 1, 1, 'cha582', '2021-01-31 15:42:19', 'cha582', '2021-01-31 15:42:19');

@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`pe_image` (`vn`, `image1`, `image_count`, `image2`, `image3`, `image4`, `image5`, `image1_note`, `image2_note`, `image3_note`, `image4_note`, `image5_note`, `image6`, `image7`, `image8`, `image9`, `image10`, `image6_note`, `image7_note`, `image8_note`, `image9_note`, `image10_note`, `hos_guid`) VALUES
+	('651231235959', '����\0C\0\0\0?\0�� ��', NULL, NULL, NULL, NULL, NULL, 'note', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

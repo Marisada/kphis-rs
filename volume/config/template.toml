@@ -1,0 +1,256 @@
+#===============#
+# DB connection #
+#===============#
+db-url = "mysql://sa:1234@127.0.0.1:3306"
+# db-url = "mysql://sa:1234@192.168.0.1:3306"
+# db-url = "mysql://sa:1234@host.docker.internal:3306"
+db-max-connections = 5
+db-acquire-timeout-sec = 10
+db-after-connect-sqls = [
+    "SET time_zone='+07:00';",
+    "SET SESSION group_concat_max_len=65536;"
+]
+
+kphis-dbname = "kphis"
+kphis-log-dbname = "kphis_log"
+kphis-extra-dbname = "kphis_extra"
+hosxp-dbname = "hos"
+hosxp-hn-length = 7
+hosxp-vn-length = 12
+hosxp-an-length = 9
+
+#============#
+# Web Server #
+#============#
+http-port = 80
+# https-port = 443
+
+http-to-https = false
+https-cert-path = "./volume/cert/fullchain.pem"
+https-key-path = "./volume/cert/privkey.pem"
+
+# if HTTP request body over this limit(in MB) will return with status 413:Content Too Large
+# default is 2, max is 255
+request-body-limited-mb = 10
+
+# max request qouta that each ip can do, default is 100, max is u32::MAX
+rate-limit-burst-size = 100
+# increase request qouta by 1 every xx millisecond, not more than max qouta above, default is 100, max is u64::MAX
+rate-limit-replenish-every-millisecond = 100
+
+allow-insert-his = true
+can-sign-pdf = false
+pdf-cert-path = "./volume/cert/pdfcert.pem"
+pdf-key-path = "./volume/cert/pkcs8.pem"
+pdf-time-stamp-authority-url = "https://freetsa.org/tsr"
+
+# Please comment 'pacs-host' if disabled PACs integration
+# pacs-host = "172.18.0.3"
+pacs-host-is-kphis-broker = true
+pacs-user = "ward"
+pacs-password = "1234"
+pacs-data-source = "SYNAPSE"
+
+# Cron Job Scheduler for Clearing expired Log and Message / check HTTPS cert file and restart if needed
+# UTC time (not your local timezone). Note that the year may be omitted.
+# sec   min   hour   day of month   month   day of week   year
+# *     *     *      *              *       *             *
+app-cron-reload-cert = "0 0 20 * * *"
+app-cron-trigger = "0 1 * * * *"
+app-cron-cleaner = "0 0 1 * * *"
+app-keep-log-day = 90
+
+#===============#
+# Compatibility #
+#===============#
+
+# php version use space(' ') delimiter to break column and row concatenated string ex. "Foo_Bar Symptom1 Bas Symptom2"
+# if it has space(' ') contained words, it will break collection alignment ex. "Foo Bar Symptom 1 Bas Symptom 2"
+# so we use cap "^" to break column and use pipe "|" to break row ex. "Foo Bar^Symptom 1|Bas^Symptom 2"
+# set concat_with_space = true, system will save to database with space concatenation for old PHP version compatibility
+concat-with-space = false
+
+#=========#
+# Logging #
+#=========#
+# level = off | trace | debug | info | warn | error
+# crate name that contains hyphens(-) need to replace with underscores(_) ex: "sqlx-mysql" to "sqlx_mysql"
+# ex: "debug,hyper=warn,sqlx=info" means
+#  'hyper' crate will show 'warn' and 'error',
+#  'sqlx' or 'sqlx-xxx' crate will show 'info', 'warn' and 'error',
+#  others crate will show 'debug', 'info', 'warn' and 'error'
+# read more at https://docs.rs/tracing-subscriber/latest/tracing_subscriber/filter/struct.EnvFilter.html#directives
+log-console = "debug,hyper=warn,sqlx=info"
+log-file = "debug,hyper=warn,sqlx=info"
+
+#=====#
+# App #
+#=====#
+access-token-expire-minutes = 10
+refresh-token-expire-minutes = 600
+reauthen-before-refresh-token-expire-minutes = 60
+handshake-2fa-timeout-second = 60
+app-asset-cache-minutes = 1440
+
+is-production = false
+is-read-only-mode = false
+is-access-log-only-authorized = false
+
+is-checked-pharmacist-can-done = true
+
+hospcode = "XXXXX"
+code-name = "XXX"
+hospital-name = "โรงพยาบาล XXX"
+hospital-short-name = "รพ.XXX"
+hospital-info = "อำเภอ XXX จังหวัด XXX โทร XXX"
+drug-notify-use = "N"
+drug-notify-start-end-marker-use = "N"
+drug-notify-start-marker = "***"
+drug-notify-end-marker = "***"
+
+# supported score
+# - adult: MEWS, S-NEWS, qSOFA, SIRS
+# - child: POPS, PEWS, LqSOFA, pSIRS
+# - neonate: NEWS
+# find matching age from left to right
+score-ews = ["POPS","MEWS"]
+score-qsofa = ["LqSOFA","qSOFA"]
+score-sirs = ["pSIRS","SIRS"]
+
+# nurse assignment (limit 20 chars for each item)
+nurse-assign-groups = ["Incharge","Leader","Member"]
+
+shift-day-start = "08:00:00"
+shift-evening-start = "16:00:00"
+shift-night-start = "00:00:00"
+
+# IV-fluid and IV-drug from hos.drugitems.dosageform
+hosxp-ivfluid-dosageform = "IVFLUIDS"
+hosxp-injection-dosageforms = ["INJECTIONS","NEBULIZERS"]
+
+# HAD and LASA from hos.drugitems.displaycolor, base10 number of BGR(hex) ex: BGR(0000FF) is 255
+hosxp-had-displaycolor = 255
+hosxp-lasa-displaycolor = 16711935
+
+# med-reconcilation icode of "MedRec" from hos.drugitems.icode
+hosxp-med-reconcilation-icode = "1640002"
+
+# ID of wbc and band (of CBC) in table hos.lab_items.lab_item_code
+hosxp-lab-wbc-code = 5
+hosxp-lab-band-code = 20
+
+# list of operation successful id from hos.operation_status.staus_id
+hosxp-operation-success = [3]
+
+# roles of Intern in table kphis.system_ac_role_user.role
+doctor-intern-roles = ["DOCTOR_INTERN"]
+
+# xray pacs HN's page url ("[HN]" will be replaced with HN)
+pacs-hn-url = "http://xxxxxxx/portal/?user_name=xxxxxxx&password=xxxxxxx&close_on_exit=true&patient_id=[HN]"
+ekg-hn-url = "http://xxxxxxx/?active=[HN]"
+scan-hn-url = "http://xxxxxxx/hosxp.aspx?hn=[HN]&no_ax=true"
+scan-an-url = "http://xxxxxxx/?an=[AN]"
+cart-vnan-url = "https://xxxxxxx/public/cradle/request?vnan=[VNAN]"
+food-url = "http://xxxxxxx/kph_nutrition/"
+
+#========#
+# Report #
+#========#
+# Use another report instead of system report, use default report if target report not defined
+report-coercions = [
+    { system = 'lab-v0', custom = 'lab-v1' }
+]
+
+#====================#
+# Nurse Patient Type #
+#====================#
+fcnote-patient-types = [
+    { key = '4a', value = '4a อาการหนักมาก ติดตามตลอดเวลา', color = '#DC143C' },
+    { key = '3a', value = '3a อาการหนัก ติดตามตลอดเวลา',    color = '#FF69B4' },
+    { key = '3b', value = '3b อาการหนัก ติดตามมาก',         color = '#FFC0CB' },
+    { key = '2a', value = '2a ปานกลาง ติดตามตลอดเวลา',     color = '#FFD700' },
+    { key = '2b', value = '2b ปานกลาง ติดตามมาก',          color = '#FFFF00' },
+    { key = '2c', value = '2c ปานกลาง ติดตามปานกลาง',      color = '#FFFFBB' },
+    { key = '1a', value = '1a พักฟื้น ติดตามตลอดเวลา',       color = '#008000' },
+    { key = '1b', value = '1b พักฟื้น ติดตามมาก',            color = '#32CD32' },
+    { key = '1c', value = '1c พักฟื้น ติดตามปานกลาง',        color = '#7CFC00' },
+    { key = '1d', value = '1d พักฟื้น ติดตามน้อย',            color = '#E3FFE3' },
+]
+
+#===========#
+# Lab Alert #
+#===========#
+# codes =  hos.lab_items.lab_items_code, '@' will be replace with hos.lab_items.lab_order_result
+lab-alerts = [
+    { description = 'HCT < 30%',                        codes = [4,355],    where = '@ < 30' },
+    { description = 'Plt count < 100,000 cell/mm3',     codes = [11],       where = '''REPLACE(@,',','') < 100000''' },
+    { description = 'INR > 1.2',                        codes = [241],      where = '@ > 1.2' },
+    { description = 'PT > 13 sec',                      codes = [236],      where = '@ > 13' },
+    { description = 'Cr > 1.1 mg/dL',                   codes = [78],       where = '@ > 1.1' },
+    { description = 'Na < 135 or > 150 mmol/L',         codes = [80],       where = '(@ < 135 OR @ > 150)' },
+    { description = 'K < 3.5 or > 5 mmol/L',            codes = [81],       where = '(@ < 3.5 OR @ > 5)' },
+    { description = 'HCO3 < 15 mmol/L',                 codes = [82],       where = '@ < 15' },
+    { description = 'Albumin < 3.5 g%',                 codes = [95],       where = '@ < 3.5' },
+    { description = 'Total Bilirubin > 1.2 mg/dL',      codes = [97],       where = '@ > 1.2' },
+    { description = 'AST > 40 U/L',                     codes = [99],       where = '''REPLACE(@,',','') > 40''' },
+    { description = 'ALT > 40 U/L',                     codes = [100],      where = '''REPLACE(@,',','') > 40''' },
+    { description = 'ALP > 90 U/L',                     codes = [101],      where = '@ > 90' },
+    { description = 'Uric acid > 8 mg/dL',              codes = [79],       where = '@ > 8' },
+    { description = 'Magnesium < 1.9 mg/dL',            codes = [462],      where = '@ < 1.9' },
+    { description = 'Calcium < 8.8 or < 10.6 mg/dL',    codes = [84],       where = '(@ < 8.8 OR @ > 10.6)' },
+    { description = 'Phosphorus < 2.5 or > 4.5 mg/dL',  codes = [85],       where = '(@ < 2.5 OR @ > 4.5)' },
+    { description = 'Urine WBC > 3 cells/HPF',          codes = [53],       where = '''@ IS NOT NULL AND @ NOT IN ('','-','0-1','1-2','2-3')''' },
+    { description = 'Urine RBC > 3 cells/HPF',          codes = [52],       where = '''@ IS NOT NULL AND @ NOT IN ('','-','0-1','1-2','2-3')''' },
+]
+
+#=====================#
+# Prescription Screen #
+#=====================#
+# code = lab_items_code from hos.lab_items
+scr-codes = [78]
+egfr-codes = [364]
+lab-codes = [
+    { name = 'BUN',         codes = [77] },
+    { name = 'SCr',         codes = [78] },
+    { name = 'FBS',         codes = [76,310,312] },
+    { name = 'Dtx',         codes = [314] },
+    { name = 'HbA1C',       codes = [198] },
+    { name = 'MicroALB',    codes = [262] },
+    { name = 'TG',          codes = [103] },
+    { name = 'Chol',        codes = [102] },
+    { name = 'LDL',         codes = [92,482] },
+    { name = 'HDL',         codes = [91] },
+    { name = 'K',           codes = [81] },
+    { name = 'INR',         codes = [241] },
+    { name = 'AST',         codes = [99] },
+    { name = 'ALT',         codes = [100] },
+    { name = 'TB',          codes = [97] },
+    { name = 'DB',          codes = [98] },
+    { name = 'Uric',        codes = [79] },
+    { name = 'EO',          codes = [21] },
+    { name = 'HB',          codes = [3] },
+    { name = 'HCT',         codes = [4,355] },
+]
+# icode from hos.drugitems
+message-icodes = [
+    #{ message = 'มีการสั่งยา Methotrexate tab ต้องมี folic acid ร่วมด้วย', icodes = ['1483830'] },
+    { message = 'มีการสั่งใช้ยากลุ่ม NSAIDs ซ้ำซ้อน',                       icodes = ['1000152','1490940','1491000','1000110','1000155','1610019'] },
+    { message = 'มีการสั่งใช้ยากลุ่ม CCBs ซ้ำซ้อน',                         icodes = ['1000204','1490921','1600010'] },
+    { message = 'มีการสั่งใช้ยากลุ่ม ACEIs ร่วมกับ ARBs',                    icodes = ['1000122','1460151','1560006'] },
+    { message = 'มีการสั่งใช้ยากลุ่ม Statin ซ้ำซ้อน',                       icodes = ['1491011','1500202'] }
+]
+# from hos.drugitems
+message-egfr-icodes = [
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Metformin (eGFR<30) : eGFR:',                    egfr = 30,  icodes = ['1000184'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Allopurinol (eGFR<20) : eGFR:',                  egfr = 20,  icodes = ['1000016'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Colohicine (eGFR<30) : eGFR:',                   egfr = 30,  icodes = ['1490977'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา NSAIDs (eGFR<45) : eGFR:',                       egfr = 45,  icodes = ['1000152','1490940','1491000','1000110','1000155','1610019'] },
+    #{ message = 'ควรหลีกเลี่ยงการใช้ Dapagliflozin / Empagliflozia (eGFR<45) : eGFR:', egfr = 45,  icodes = ['1610071','1600038','1620116'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ Atenolol (eGFR<35) : eGFR:',                       egfr = 35,  icodes = ['1440601'] },
+    #{ message = 'ควรหลีกเลี่ยงการใช้ Sitagliptin/Vidagliptin (eGFR<50) : eGFR:',       egfr = 50,  icodes = ['1540004','1600046'] },
+    #{ message = 'ควรหลีกเลี่ยงการใช้ยากลุ่ม Augmentin (eGFR<30) : eGFR:',                egfr = 30,  icodes = ['1483854'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Oseltamirir (eGFR<60) : eGFR:',                  egfr = 60,  icodes = ['1490945','1560003','1560004'] }
+]
+message-crcl-icodes = [
+    { message = 'ควรหลีกเลี่ยงการใช้ยากลุ่ม Quinolone (CrCl<30) : CrCl:',                 crcl = 30,  icodes = ['1000211','1000213','1000221','1440312','1481244','1570005','1620007'] },
+]

@@ -1,0 +1,549 @@
+[
+    {
+        "word_type":"note",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "เฝ้าระวัง",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ผู้ป่วยมีอาการ",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"food",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "NPO",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "NPO เว้นยา",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Regular",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Soft",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Liquid",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "DM",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "HT",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "CKD",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "diet",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "งดอาหารสีดำแดง",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BD",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "1:1",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "1.5:1",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "2:1",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "100x4",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "150x4",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "200x4",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "300x4",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "400x4",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"activity",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Dressing wound",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Absolute bedrest",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Ambulate ข้างเตียง",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "OD",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BID",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"record",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Record",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "V/S",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "I/O",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "CVP",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BW",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 1 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 2 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 4 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 6 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 8 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 12 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "keep",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "MAP > 65 mmHg",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BP > 90/60 mmHg",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "PR < 140 /min",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "RR < 25 /min",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "8-12 mmHg",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Urine > 50 ml/hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Urine > 100 ml/hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Urine > 200 ml/hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "until stable then",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "if  notify",
+                "minus_from_end": 7,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"serial",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "HCT",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "MB",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "DTX",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "OD",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BID",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ac",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "hs",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ac & hs",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เช้า",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เที่ยง",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เย็น",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "RI scale",
+                "minus_from_end": 0,
+                "id": null
+            },            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 1 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 2 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 4 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 6 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 8 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 12 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "keep",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "80-200 mg/dl",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "until stable then",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "if  notify",
+                "minus_from_end": 7,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"other",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Universal",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Bleeding",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "preacution",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Restrain if needed",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    }
+]

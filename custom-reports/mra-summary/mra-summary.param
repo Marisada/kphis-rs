@@ -1,0 +1,1 @@
+ward^Ward^[(ward)]|audit_type^Audit Type^[(str,E,External,I,Internal)]|is_psychiatry^Is Psychiatry^[(i8,0,ไม่ใช่จิตเวช,1,จิตเวช)]|start^Start Date^date|end^End Date^date

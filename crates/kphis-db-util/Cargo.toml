@@ -1,0 +1,21 @@
+[package]
+name = "kphis-db-util"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-api-core = { workspace = true }
+kphis-api-query = { workspace = true }
+
+# from workspace
+clap = { workspace = true }
+sqlx = { workspace = true }
+tokio = { workspace = true }

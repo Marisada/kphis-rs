@@ -1,0 +1,1066 @@
+[
+    {
+        "word_type":"note",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Admit",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "ย้ายไป",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "สามัญ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ห้องแยก",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ห้องพิเศษ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "home ward",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "รายงานแพทย์",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ผู้ป่วยมีอาการ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ไม่มี order เพิ่ม",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "สังเกตอาการต่อ",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"lab",
+        "buttons": [
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "CBC",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "BUN",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Cr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Na, K, Cl, CO2, Anion gap",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "PT(INR)",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "PTT",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "SGOT, SGPT, ALP",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "TB, DB, IdB",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "TP, Alb, Glob",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "H/C x2",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Lactate if >2 repeat 3 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "UA",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "UC",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Trop-T",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Covid ATK",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Swab combo",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"xray",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "EKG",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Film ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "CXR",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "include abdomen",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Acute abdomen",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Abdomen",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "KUB",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Pelvis",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Skull",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "C-Spine",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "TL-Spine",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "LS-Spine",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Rt",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": ", ",
+                "word": "Lt",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Shoulder",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Humerous",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Elbow",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Forearm",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Wrist",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Hand",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Femur",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Knee",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Ankle",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Foot",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "PA",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "AP",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "lateral",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "oblique",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "supine",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "upright",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "decubitus",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"ivfluid",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "On lock",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "0.9% NSS 1,000 ml.",
+                "minus_from_end": 0,
+                "id": "1000215"
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "5% DNSS 1,000 ml.",
+                "minus_from_end": 0,
+                "id": "1000100"
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "5% DN/2 1,000 ml.",
+                "minus_from_end": 0,
+                "id": "1000099"
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "iv drip  cc/hr",
+                "minus_from_end": 6,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "iv load ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "200 cc",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "500 cc",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "1,000 cc",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "1,500 cc",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "2,000 cc",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "in ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "hours",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "minutes",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"record",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Record",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "V/S",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "I/O",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "CVP",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BW",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 1 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 2 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 4 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 6 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 8 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 12 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "keep",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "MAP > 65 mmHg",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BP > 90/60 mmHg",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "PR < 140 /min",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "RR < 25 /min",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "8-12 mmHg",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Urine > 50 ml/hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Urine > 100 ml/hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "Urine > 200 ml/hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "until stable then",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "if  notify",
+                "minus_from_end": 7,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"retain",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Retain Foley cath",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Retain NG tube",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Retain OG tube",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"serial",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "HCT",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "MB",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "DTX",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "OD",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "BID",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ac",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "hs",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ac & hs",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เช้า",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เที่ยง",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เย็น",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "RI scale",
+                "minus_from_end": 0,
+                "id": null
+            },            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 1 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 2 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 4 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 6 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 8 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "q 12 hr",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "keep",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "80-200 mg/dl",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "until stable then",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "if  notify",
+                "minus_from_end": 7,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"other",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "NPO ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เว้นยา",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "On O2",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "canular",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "mask c bag",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "high flow",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "FiO2 0.4",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "rate  LPM",
+                "minus_from_end": 4,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "On ETT NO.  mark ",
+                "minus_from_end": 6,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"pharm",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "รายงานเภสัช",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "ผู้ป่วยมีอาการ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "นัดติดตาม",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "OPD",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "DM",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "HT",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "CKD",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "clinic",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "สัปดาห์",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "เดือน",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    },
+    {
+        "word_type":"discharge",
+        "buttons": [
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Discharge ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Follow Up ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": true,
+                "separator": "",
+                "word": "Refer ",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "weeks",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "months",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "at  clinic",
+                "minus_from_end": 7,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "รพ.มหาสารคาม",
+                "minus_from_end": 0,
+                "id": null
+            },
+            {
+                "is_new": false,
+                "separator": " ",
+                "word": "รพ.พยัคฆภูมิพิสัย",
+                "minus_from_end": 0,
+                "id": null
+            }
+        ]
+    }
+]

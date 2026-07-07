@@ -1,0 +1,12 @@
+CREATE TABLE `kphis`.`ipd_summary_dx` (
+  `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `sort_index` INT(11) UNSIGNED NOT NULL DEFAULT 0,
+  `dx_text` VARCHAR(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
+  `keyword` VARCHAR(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
+  `nickname` VARCHAR(1000) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
+  `icd10` VARCHAR(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT '',
+  `icd10_hosxp` VARCHAR(10) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `sort_index` (`sort_index`) USING BTREE,
+  INDEX `icd10` (`icd10`,`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT;

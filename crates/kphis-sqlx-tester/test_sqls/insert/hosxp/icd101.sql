@@ -1,0 +1,4 @@
+INSERT INTO `hos`.`icd101` (`code`, `name`, `spclty`, `tname`, `code3`, `code4`, `code5`, `sex`, `ipd_valid`, `icd10compat`, `icd10tmcompat`, `active_status`, `hos_guid`, `hos_guid_ext`, `codeset`) VALUES
+	('I10', 'Essential (primary) hypertension', '01', 'โรคความดันโลหิตสูง', 'I10', NULL, '', NULL, NULL, 'Y', 'Y', 'Y', NULL, NULL, NULL),
+	('E876', 'Hypokalaemia', '01', 'มีโปแตสเซียมในเลือดน้อยเกินไป', 'E87', '6', '', NULL, NULL, 'Y', 'Y', 'Y', NULL, NULL, NULL),
+	('Y909', 'Presence of alcohol in blood, level not specified', '01', 'โรคพิษสุรา', 'Y90', '9', '', NULL, NULL, 'Y', 'Y', 'Y', NULL, NULL, NULL);

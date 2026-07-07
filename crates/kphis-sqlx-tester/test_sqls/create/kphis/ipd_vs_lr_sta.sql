@@ -1,0 +1,5 @@
+CREATE TABLE `kphis`.`ipd_vs_lr_sta` (
+  `lr_sta_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `lr_sta_name` VARCHAR(50) DEFAULT NULL,
+  PRIMARY KEY (`lr_sta_id`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;

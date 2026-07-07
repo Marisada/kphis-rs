@@ -1,0 +1,1 @@
+cargo tree -d > cargo-tree.txt

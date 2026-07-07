@@ -1,0 +1,3 @@
+INSERT INTO `kphis`.`ipd_pre_order_item` (`order_item_id`, `pre_order_master_id`, `order_id`, `order_item_type`, `order_item_detail`, `stat`, `off_order_item_id`, `icode`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+ (1, 1, 1, 'med', 'รับประทานครั้งละ1 เม็ด ทุก 6 ชั่วโมง', 'N', NULL, '1000222', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1),
+ (2, 1, 1, 'med', 'รับประทานครั้งละ1 เม็ด ทุก 6 ชั่วโมง', 'Y', NULL, '1000222', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

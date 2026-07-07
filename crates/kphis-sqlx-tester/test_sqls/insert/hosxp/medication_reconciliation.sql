@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`medication_reconciliation` (`medication_reconciliation_id`, `an`, `medication_survey`, `last_receive_medication_date`, `last_recieve_medication_duration_day`, `staff`, `doctor`, `note`, `hos_guid`, `last_receive_date`, `last_receive_duration_day`) VALUES
+	(1, '660001234', NULL, NULL, NULL, 'user', '009', NULL, NULL, NULL, NULL);

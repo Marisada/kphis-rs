@@ -1,0 +1,23 @@
+CREATE TABLE `hos`.`iptdiag` (
+	`ipt_diag_id` INT(11) NOT NULL DEFAULT 0,
+	`an` VARCHAR(9) NULL DEFAULT NULL,
+	`diagtype` CHAR(2) NULL DEFAULT NULL,
+	`doctor` VARCHAR(7) NULL DEFAULT NULL,
+	`icd10` VARCHAR(9) NULL DEFAULT NULL,
+	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
+	`staff` VARCHAR(25) NULL DEFAULT NULL,
+	`hn` VARCHAR(9) NULL DEFAULT NULL,
+	`entry_datetime` DATETIME NULL DEFAULT NULL,
+	`modify_datetime` DATETIME NULL DEFAULT NULL,
+	`diagnosis_note` VARCHAR(250) NULL DEFAULT NULL,
+	`dx_guid` VARCHAR(38) NULL DEFAULT NULL,
+	`diag_no` INT(11) NULL DEFAULT NULL,
+	PRIMARY KEY (`ipt_diag_id`),
+	UNIQUE INDEX `ix_unique` (`an`, `icd10`),
+	UNIQUE INDEX `ix_unique_index` (`an`, `icd10`),
+	INDEX `ix_an` (`an`),
+	INDEX `ix_doctor` (`doctor`),
+	INDEX `ix_hos_guid` (`hos_guid`),
+	INDEX `ix_dx_guid` (`dx_guid`),
+	INDEX `ix_an_dxtype` (`an`, `diagtype`)
+) COLLATE='tis620_thai_ci' ENGINE=InnoDB;

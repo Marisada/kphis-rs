@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_order_master` (`opd_er_order_master_id`, `order_date`, `order_time`, `order_doctor`, `note`, `vn`, `bedno`, `er_patient_status_id`, `er_dch_type_id`, `discharge_date`, `discharge_time`, `delete_flag`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, '2024-01-01', '01:01:01', '009', NULL, '661231235959', 1, 7, NULL, NULL, NULL, NULL, 'tester', '2024-01-01 11:11:11', 'tester', '2024-01-01 11:11:11', 1);

@@ -1,0 +1,21 @@
+CREATE TABLE `hos`.`sp_use` (
+	`sp_use` VARCHAR(7) NOT NULL DEFAULT '',
+	`sp_name` VARCHAR(150) NULL DEFAULT NULL,
+	`name1` VARCHAR(150) NULL DEFAULT NULL,
+	`name2` VARCHAR(150) NULL DEFAULT NULL,
+	`name3` VARCHAR(150) NULL DEFAULT NULL,
+	`user` VARCHAR(15) NULL DEFAULT NULL,
+	`sp_use_guid` VARCHAR(38) NULL DEFAULT NULL,
+	`oldcode` VARCHAR(20) NULL DEFAULT NULL,
+	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
+	`hos_guid_ext` VARCHAR(64) NULL DEFAULT NULL,
+	PRIMARY KEY (`sp_use`),
+	INDEX `name1_name3_name2` (`name1`, `name3`, `name2`),
+	INDEX `sp_name` (`sp_name`),
+	INDEX `user` (`user`),
+	INDEX `ix_ix_oldcode` (`oldcode`),
+	INDEX `ix_sp_use_guid` (`sp_use_guid`),
+	INDEX `ix_hos_guid_ext` (`hos_guid_ext`),
+	INDEX `ix_name1_name3_name2` (`name1`, `name2`, `name3`),
+	INDEX `ix_name1_name3_name2_index` (`name1`, `name2`, `name3`)
+) COLLATE='tis620_thai_ci' ENGINE=InnoDB;

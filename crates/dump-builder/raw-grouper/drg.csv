@@ -1,0 +1,1547 @@
+"MDC,C,2","DC,C,4","DRG,C,5","RW0D,N,7,4","RW,N,7,4","WTLOS,N,6,2","OT,N,4,0","MDF,N,4,2","DRGNAME,C,84"
+00,0001,00019,24.5333,55.315,28.51,86,1,Liver transplant
+00,0002,00029,35.2437,79.4635,49.14,147,1,Heart and/or lung transplant
+00,0004,00049,21.7442,49.0264,36.28,109,1,Bone marrow transplant
+00,0006,00060,3.2898,4.3287,9.96,30,0.58,Trach w other proc for upper airway conditions wo sig CCC
+00,0006,00061,5.373,7.9014,12.65,38,0.18,Trach w other proc for upper airway conditions w min CCC
+00,0007,00070,2.182,2.5975,7.14,21,0.79,Trach for upper airway conditions wo sig CCC
+00,0007,00071,4.0423,5.3188,10.96,33,0.45,Trach for upper airway conditions w min CCC
+00,0009,00099,4.4198,8.4995,19.57,59,1,Laryngectomy
+00,0010,00100,0,22.4104,46.25,139,0.62,Tracheostomy w mech vent 96+ hr wo sig CCC
+00,0010,00101,0,25.6231,57.23,172,1,Tracheostomy w mech vent 96+ hr w min CCC
+00,0010,00102,0,31.5235,63.96,192,1,Tracheostomy w mech vent 96+ hr w mod CCC
+00,0010,00103,0,36.6793,69.9,210,1,Tracheostomy w mech vent 96+ hr w maj CCC
+00,0011,00110,0,16.1588,41.17,124,0.77,Tracheostomy wo sig CCC
+00,0011,00111,0,19.6146,51.74,155,0.91,Tracheostomy w min CCC
+00,0011,00112,0,23.3369,60.36,181,1,Tracheostomy w mod CCC
+00,0012,00120,0,36.2746,53.26,160,1,Tracheostomy or trach status w major procedure wo sig CCC
+00,0012,00121,0,47.6127,67.78,203,1,Tracheostomy or trach status w major procedure w min CCC
+00,0013,00130,0,21.6115,54.2,163,0.54,Tracheostomy status w mech vent 96+ hr wo sig CCC
+00,0013,00131,0,25.3646,68.18,205,0.61,Tracheostomy status w mech vent 96+ hr w min CCC
+00,0013,00132,0,29.4345,82.28,247,0.95,Tracheostomy status w mech vent 96+ hr w mod CCC
+01,0101,01010,3.4956,4.1615,7.23,22,1,Craniotomy  for trauma wo sig CCC
+01,0101,01011,4.8159,5.7331,8.73,26,1,Craniotomy  for trauma w min CCC
+01,0101,01012,5.6882,8.365,14.15,42,1,Craniotomy  for trauma w mod CCC
+01,0102,01020,3.9989,4.7605,8.21,25,1,Craniotomy  except for trauma wo sig CCC
+01,0102,01021,5.2771,6.9435,10.81,32,1,Craniotomy  except for trauma w min CCC
+01,0102,01022,6.2279,9.1586,14.15,42,1,Craniotomy  except for trauma w mod CCC
+01,0102,01023,6.8069,13.0901,20.61,62,1,Craniotomy  except for trauma w maj CCC
+01,0103,01030,3.8994,5.1308,10.27,31,0.81,Spinal procedures wo sig CCC
+01,0103,01031,4.3825,7.3042,15.96,48,0.77,Spinal procedures w min CCC
+01,0103,01032,5.343,12.1431,29.26,88,1,Spinal procedures w mod CCC
+01,0104,01040,2.1506,2.5603,6.49,19,0.88,Ventricular shunt revision wo sig CCC
+01,0104,01041,3.6304,4.7767,11.7,35,1,Ventricular shunt revision w min CCC
+01,0105,01050,3.4009,3.7372,4.82,14,1,Extracranial vascular procedures wo sig CCC
+01,0105,01051,6.0485,7.2006,8.29,25,1,Extracranial vascular procedures w min CCC
+01,0106,01060,1.6792,1.8453,3.78,11,1,Peripheral & cranial nerve & other NS proc wo sig CCC
+01,0106,01061,2.7162,3.2336,6.76,20,1,Peripheral & cranial nerve & other NS proc w min CCC
+01,0106,01062,4.7924,7.0477,12.89,39,1,Peripheral & cranial nerve & other NS proc w mod CCC
+01,0107,01079,0.5065,0.5065,1.53,5,1,Carpal tunnel release
+01,0108,01089,8.6333,14.3888,15.63,47,1,Intracranial vasc proc for PDx intracranial h'ge
+01,0109,01090,6.9631,8.2894,6.48,19,0.88,Intracranial vascular procedures wo sig CCC
+01,0109,01091,7.4348,10.9335,12.8,38,1,Intracranial vascular procedures w min CCC
+01,0112,01129,7.0436,11.7393,15.14,45,1,Craniotomy (multiple) for trauma
+01,0113,01139,7.3334,16.6668,26.28,79,1,Craniotomy (multiple)
+01,0114,01149,12.5963,14.9956,7.25,22,1,Endovascular procedures for neurologic diseases
+01,0117,01179,8.5645,19.4648,23.42,70,1,Plasmapheresis for neurologic diseases
+01,0150,01500,1.0148,1.3353,9.15,27,0.5,Spinal disorders (non-traumatic) wo sig CCC
+01,0150,01501,1.5759,3.5816,23.46,70,1,Spinal disorders (non-traumatic) w min CCC
+01,0150,01502,2.3881,5.4276,27.95,84,1,Spinal disorders (non-traumatic) w mod CCC
+01,0151,01510,0.9028,1.0748,6.46,19,0.61,Cerebral palsy wo sig CCC
+01,0151,01511,1.6659,2.192,11.37,34,1,Cerebral palsy w min CCC
+01,0152,01520,0.779,0.856,4.32,13,0.87,Nervous system neoplasms wo sig CCC
+01,0152,01521,1.805,2.1489,8.4,25,0.85,Nervous system neoplasms w min CCC
+01,0152,01522,2.7747,4.6245,16.22,49,1,Nervous system neoplasms w mod CCC
+01,0153,01530,0.73,0.8022,4.5,14,0.61,Degenerative  nervous system disorders wo sig CCC
+01,0153,01531,1.5959,2.0999,11.45,34,0.83,Degenerative  nervous system disorders w min CCC
+01,0153,01532,2.5557,4.2595,17.8,53,0.54,Degenerative  nervous system disorders w mod CCC
+01,0153,01533,2.5557,5.7069,24.95,75,1,Degenerative  nervous system disorders w maj CCC
+01,0154,01540,2.1546,2.565,6.62,20,1,Multiple sclerosis and cerebellar ataxia wo sig CCC
+01,0154,01541,3.6822,5.415,13.7,41,1,Multiple sclerosis and cerebellar ataxia w min CCC
+01,0155,01550,1.0532,1.1574,3.43,10,1,Specific cerebrovascular disorders exc TIA wo sig CCC
+01,0155,01551,1.9928,2.1899,5.99,18,1,Specific cerebrovascular disorders exc TIA w min CCC
+01,0155,01552,2.8481,3.7476,9.88,30,1,Specific cerebrovascular disorders exc TIA w mod CCC
+01,0155,01553,3.4579,5.0851,13,39,1,Specific cerebrovascular disorders exc TIA w maj CCC
+01,0155,01554,4.2943,8.2584,19.58,59,1,Specific cerebrovascular disorders exc TIA w ext CCC
+01,0156,01560,0.7337,0.7337,2.25,7,1,TIA and precerebral occlusions wo sig CCC
+01,0156,01561,1.8086,1.9875,5.52,17,1,TIA and precerebral occlusions w min CCC
+01,0156,01562,3.4621,5.0912,13.07,39,1,TIA and precerebral occlusions w mod CCC
+01,0157,01570,0.6054,0.6054,2.78,8,1,Nonspecific cerebrovascular disorders wo sig CCC
+01,0157,01571,1.2565,1.3808,5.7,17,1,Nonspecific cerebrovascular disorders w min CCC
+01,0157,01572,2.3229,3.0565,9.35,28,1,Nonspecific cerebrovascular disorders w mod CCC
+01,0157,01573,3.8402,5.6473,13.64,41,1,Nonspecific cerebrovascular disorders w maj CCC
+01,0158,01580,0.6628,0.7283,3.11,9,0.83,Cranial and peripheral nerve disorders wo sig CCC
+01,0158,01581,1.3055,1.4346,5.46,16,1,Cranial and peripheral nerve disorders w min CCC
+01,0158,01582,3.7997,4.5235,8.87,27,1,Cranial and peripheral nerve disorders w mod CCC
+01,0159,01590,1.1813,1.4063,7.15,21,0.97,"Nerv syst infection exc viral meningitis, not transfer wo sig CCC"
+01,0159,01591,1.9605,2.5797,10.24,31,1,"Nerv syst infection exc viral meningitis, not transfer w min CCC"
+01,0159,01592,3.213,4.725,13.57,41,1,"Nerv syst infection exc viral meningitis, not transfer w mod CCC"
+01,0159,01593,3.7659,7.242,18.92,57,1,"Nerv syst infection exc viral meningitis, not transfer w maj CCC"
+01,0160,01600,1.383,1.6463,6.11,18,1,Viral meningitis wo sig CCC
+01,0160,01601,3.2666,4.2981,11.22,34,1,Viral meningitis w min CCC
+01,0161,01610,0.478,0.478,1.93,6,1,Nontraumatic stupor and coma wo sig CCC
+01,0161,01611,0.9338,1.0261,3.64,11,1,Nontraumatic stupor and coma w min CCC
+01,0161,01612,2.4526,2.9198,7.2,22,1,Nontraumatic stupor and coma w mod CCC
+01,0162,01620,0.3235,0.3235,2.62,8,0.89,Febrile convulsions wo sig CCC
+01,0162,01621,0.5444,0.5982,4,12,1,Febrile convulsions w min CCC
+01,0163,01630,0.5166,0.5166,2.09,6,1,Seizure disorders wo sig CCC
+01,0163,01631,1.1526,1.2666,4.03,12,0.96,Seizure disorders w min CCC
+01,0163,01632,2.4137,2.8734,8.91,27,1,Seizure disorders w mod CCC
+01,0163,01633,2.9842,3.9265,9.05,27,1,Seizure disorders w maj CCC
+01,0163,01634,5.0264,7.3918,14.19,43,1,Seizure disorders w ext CCC
+01,0164,01640,0.3081,0.3081,1.9,6,1,Headache wo sig CCC
+01,0164,01641,0.5351,0.5351,2.62,8,1,Headache w min CCC
+01,0164,01642,0.7781,0.8551,3.41,10,0.64,Headache w mod CCC
+01,0164,01643,1.2709,1.3966,5.7,17,1,Headache w maj CCC
+01,0165,01650,1.0651,1.1704,3.75,11,1,Intracranial injury wo sig CCC
+01,0165,01651,1.9033,2.0915,5.67,17,1,Intracranial injury w min CCC
+01,0165,01652,2.9755,3.5423,8.61,26,1,Intracranial injury w mod CCC
+01,0165,01653,4.0913,6.8189,15.25,46,1,Intracranial injury w maj CCC
+01,0166,01660,0.8089,0.8089,2.97,9,1,Skull fractures wo sig CCC
+01,0166,01661,1.7894,1.9664,5.95,18,1,Skull fractures w min CCC
+01,0166,01662,3.1932,4.2015,9.06,27,1,Skull fractures w mod CCC
+01,0167,01670,0.3468,0.3468,1.59,5,1,Other head injury wo sig CCC
+01,0167,01671,0.7509,0.7509,2.8,8,1,Other head injury w min CCC
+01,0167,01672,1.4956,1.6435,5,15,1,Other head injury w mod CCC
+01,0167,01673,2.7209,3.5801,9.21,28,1,Other head injury w maj CCC
+01,0168,01680,0.4587,0.4587,2.19,7,1,Other disorders of nervous system wo sig CCC
+01,0168,01681,1.3011,1.4298,5.83,17,1,Other disorders of nervous system w min CCC
+01,0168,01682,2.4361,3.2054,9.04,27,1,Other disorders of nervous system w mod CCC
+01,0168,01683,4.1603,6.118,13.81,41,1,Other disorders of nervous system w maj CCC
+01,0169,01690,5.5085,6.5578,6.17,19,1,Guillain-Barre syndrome wo sig CCC
+01,0169,01691,7.8557,10.3365,11.98,36,1,Guillain-Barre syndrome w min CCC
+01,0170,01709,5.5279,12.5634,29.77,89,1,Nervous system neoplasms with chemo- and radiotherapy
+01,0171,01710,1.9152,1.9152,2.88,9,0.92,Nervous system neoplasms with chemotherapy wo sig CCC
+01,0171,01711,2.6879,2.9216,5.92,18,1,Nervous system neoplasms with chemotherapy w min CCC
+01,0172,01720,1.9484,2.8652,12.13,36,1,Nervous system neoplasms with radiotherapy wo sig CCC
+01,0172,01721,3.0762,5.9158,19.83,59,1,Nervous system neoplasms with radiotherapy w min CCC
+01,0172,01722,3.9582,8.996,26.98,81,1,Nervous system neoplasms with radiotherapy w mod CCC
+01,0173,01730,1.6203,1.7806,4.75,14,0.98,Nervous system neoplasms with diag proc wo sig CCC
+01,0173,01731,2.5951,3.0893,8.43,25,1,Nervous system neoplasms with diag proc w min CCC
+01,0173,01732,3.7736,6.2893,15.37,46,1,Nervous system neoplasms with diag proc w mod CCC
+01,0174,01749,0.8985,1.0696,8.4,25,1,NS neoplasms with blood transfusion
+01,0176,01760,0.7804,0.8576,3.3,10,0.43,"Nerv syst infection exc viral meningitis, transferred wo sig CCC"
+01,0176,01761,1.6749,1.9939,6.71,20,1,"Nerv syst infection exc viral meningitis, transferred w min CCC"
+01,0176,01762,4.3153,5.678,11.87,36,0.61,"Nerv syst infection exc viral meningitis, transferred w mod CCC"
+01,0177,01770,1.7548,2.0891,7.36,22,0.88,Spinal injuries wo sig CCC
+01,0177,01771,2.9385,4.3214,14.31,43,1,Spinal injuries w min CCC
+01,0177,01772,3.4881,7.9277,21.96,66,1,Spinal injuries w mod CCC
+02,0201,02010,1.9209,2.1109,3.09,9,0.71,Retinal procedures wo sig CCC
+02,0201,02011,2.9213,3.4778,7.44,22,0.55,Retinal procedures w min CCC
+02,0201,02012,3.1761,4.1792,10,30,0.82,Retinal procedures w mod CCC
+02,0201,02013,4.3689,7.2816,17.87,54,1,Retinal procedures w maj CCC
+02,0202,02020,1.7588,1.9328,5.65,17,1,Enucleation and orbital procedures wo sig CCC
+02,0202,02021,2.5734,3.7844,13.08,39,1,Enucleation and orbital procedures w min CCC
+02,0203,02039,1.7762,1.9519,5.5,17,1,Proc for major eye injury
+02,0205,02050,1.0276,1.0276,2.83,8,1,Intraocular proc except lens & retina wo sig CCC
+02,0205,02051,1.6029,1.7614,5.47,16,0.99,Intraocular proc except lens & retina w min CCC
+02,0205,02052,2.4733,3.2543,11.11,33,1,Intraocular proc except lens & retina w mod CCC
+02,0206,02060,1.2952,1.2952,1.95,6,1,Major lens procedures wo sig CCC
+02,0206,02061,1.645,1.645,2.55,8,1,Major lens procedures w min CCC
+02,0207,02070,1.2175,1.2175,2.11,6,1,Other lens procedures wo sig CCC
+02,0207,02071,1.5868,1.5868,2.37,7,0.64,Other lens procedures w min CCC
+02,0207,02072,1.8665,2.0511,3.54,11,0.48,Other lens procedures w mod CCC
+02,0207,02073,2.2099,2.4285,5.37,16,1,Other lens procedures w maj CCC
+02,0208,02080,0.6501,0.6501,1.76,5,0.58,Other eye  procedures wo sig CCC
+02,0208,02081,0.9116,1.0851,6.35,19,0.55,Other eye  procedures w min CCC
+02,0208,02082,1.185,1.5592,9.85,30,0.24,Other eye  procedures w mod CCC
+02,0208,02083,1.7081,2.2475,11.99,36,0.46,Other eye  procedures w maj CCC
+02,0209,02090,2.5761,3.0668,7.42,22,0.52,Keratoplasty wo sig CCC
+02,0209,02091,2.7779,6.3134,21.94,66,1,Keratoplasty w min CCC
+02,0210,02109,2.6802,3.1908,6.84,21,1,Enucleation and orbital proc for eye malignancy
+02,0211,02110,1.7105,1.7105,2.94,9,1,Multiple major lens procedures wo sig CCC
+02,0211,02111,2.0311,2.232,4.31,13,1,Multiple major lens procedures w min CCC
+02,0212,02129,1.6588,1.8229,3.42,10,1,Multiple other lens procedures
+02,0213,02130,1.3146,1.3146,2.18,7,1,Major proc for lacrimal system wo sig CCC
+02,0213,02131,1.6018,1.6018,2.38,7,1,Major proc for lacrimal system w min CCC
+02,0250,02500,0.3597,0.3597,2.77,8,0.8,Hyphema and medically managed trauma wo sig CCC
+02,0250,02501,0.5509,0.6054,3.98,12,1,Hyphema and medically managed trauma w min CCC
+02,0250,02502,1.2422,1.4788,7.71,23,0.67,Hyphema and medically managed trauma w mod CCC
+02,0251,02510,0.7301,0.8691,6.47,19,0.39,Acute and major eye infections age > 54 wo sig CCC
+02,0251,02511,0.9445,1.2428,9.01,27,1,Acute and major eye infections age > 54 w min CCC
+02,0251,02512,2.245,3.3015,12.06,36,1,Acute and major eye infections age > 54 w mod CCC
+02,0252,02520,0.4969,0.546,3.54,11,0.37,Acute and major eye infections age < 55 wo sig CCC
+02,0252,02521,0.673,0.8011,6.77,20,0.83,Acute and major eye infections age < 55 w min CCC
+02,0252,02522,1.1816,1.4067,8.68,26,1,Acute and major eye infections age < 55 w mod CCC
+02,0253,02530,1.1281,1.2397,3.2,10,1,Neurological and vasc disor of the eye wo sig CCC
+02,0253,02531,1.9996,2.1974,4.46,13,1,Neurological and vasc disor of the eye w min CCC
+02,0254,02540,0.3798,0.3798,2.38,7,1,Other disorders of the eye wo sig CCC
+02,0254,02541,0.7528,0.8273,3.97,12,1,Other disorders of the eye w min CCC
+02,0254,02542,1.7398,2.0712,7.28,22,1,Other disorders of the eye w mod CCC
+02,0255,02550,1.611,1.7703,3.33,10,0.85,Malignant neoplasm of the eye wo sig CCC
+02,0255,02551,2.357,2.8059,6.8,20,1,Malignant neoplasm of the eye w min CCC
+03,0301,03010,3.3244,3.9576,8.1,24,1,Major head and neck proc wo sig CCC
+03,0301,03011,4.4304,7.384,15.1,45,1,Major head and neck proc w min CCC
+03,0310,03100,1.2689,1.3944,3.18,10,1,"Ear and other nose, mouth & throat procedures wo sig CCC"
+03,0310,03101,2.5759,3.3893,9.14,27,0.51,"Ear and other nose, mouth & throat procedures w min CCC"
+03,0310,03102,2.7564,6.2644,21.73,65,0.83,"Ear and other nose, mouth & throat procedures w mod CCC"
+03,0312,03120,0.7376,0.8106,3.34,10,1,Dental extractions and restorations wo sig CCC
+03,0312,03121,1.5273,1.6783,4.31,13,1,Dental extractions and restorations w min CCC
+03,0314,03140,1.7071,1.8759,4.28,13,1,Minor head and neck procedures wo sig CCC
+03,0314,03141,2.5972,3.0919,7.24,22,1,Minor head and neck procedures w min CCC
+03,0314,03142,3.5629,4.6881,10.61,32,1,Minor head and neck procedures w mod CCC
+03,0314,03143,4.609,7.6817,16.43,49,1,Minor head and neck procedures w maj CCC
+03,0321,03219,5.3485,8.9142,15.94,48,1,Major head and neck proc w reconstruction
+03,0350,03500,0.7124,0.7829,4.18,13,0.65,"Ear, nose, mouth and throat malignancy wo sig CCC"
+03,0350,03501,1.2365,1.472,7.02,21,1,"Ear, nose, mouth and throat malignancy w min CCC"
+03,0350,03502,2.2522,2.9634,11,33,1,"Ear, nose, mouth and throat malignancy w mod CCC"
+03,0351,03510,0.2413,0.2413,1.77,5,0.73,Ear diseses and balance wo sig CCC
+03,0351,03511,0.4109,0.4109,2.5,8,1,Ear diseses and balance w min CCC
+03,0351,03512,0.6002,0.6596,3.72,11,1,Ear diseses and balance w mod CCC
+03,0351,03513,0.9198,1.0108,5.04,15,1,Ear diseses and balance w maj CCC
+03,0351,03514,1.4702,1.7502,6.73,20,1,Ear diseses and balance w ext CCC
+03,0352,03520,0.3228,0.3228,2.48,7,1,"Nose, mouth, throat and larynx diseases wo sig CCC"
+03,0352,03521,0.5375,0.5907,3.22,10,1,"Nose, mouth, throat and larynx diseases w min CCC"
+03,0352,03522,1.1168,1.2273,4.7,14,1,"Nose, mouth, throat and larynx diseases w mod CCC"
+03,0352,03523,2.5479,3.0332,8.01,24,1,"Nose, mouth, throat and larynx diseases w maj CCC"
+03,0352,03524,4.7903,6.303,11.83,35,1,"Nose, mouth, throat and larynx diseases w ext CCC"
+03,0357,03570,0.5324,0.5324,3,9,1,"Dental, oral and jaw disorders wo sig CCC"
+03,0357,03571,0.9519,1.046,3.66,11,1,"Dental, oral and jaw disorders w min CCC"
+03,0357,03572,1.7888,2.1295,6.36,19,1,"Dental, oral and jaw disorders w mod CCC"
+03,0359,03590,0.9428,1.0248,4.6,14,1,ENT & mouth malignancy with chemotherapy wo sig CCC
+03,0359,03591,1.1373,1.2362,4.98,15,1,ENT & mouth malignancy with chemotherapy w min CCC
+03,0359,03592,1.6855,2.0066,7.01,21,1,ENT & mouth malignancy with chemotherapy w mod CCC
+03,0360,03600,2.2144,2.9138,10.67,32,0.77,ENT & mouth malignancy with radiotherapy wo sig CCC
+03,0360,03601,2.9013,6.5937,25.24,76,1,ENT & mouth malignancy with radiotherapy w min CCC
+03,0360,03602,4.3385,9.8602,32.57,98,1,ENT & mouth malignancy with radiotherapy w mod CCC
+03,0361,03610,1.2084,1.3279,3.43,10,0.94,ENT & mouth malignancy with diagnostic proc wo sig CCC
+03,0361,03611,2.4073,3.1675,10.79,32,1,ENT & mouth malignancy with diagnostic proc w min CCC
+03,0361,03612,3.9797,6.6329,17.93,54,1,ENT & mouth malignancy with diagnostic proc w mod CCC
+03,0362,03620,0.7163,0.7871,3.47,10,0.66,ENT & mouth malignancy with blood transfusion wo sig CCC
+03,0362,03621,1.4188,1.6891,7.31,22,1,ENT & mouth malignancy with blood transfusion w min CCC
+03,0362,03622,3.0261,5.0436,15.1,45,1,ENT & mouth malignancy with blood transfusion w mod CCC
+04,0401,04010,4.4875,5.9046,10.5,32,0.53,Major chest procedures wo sig CCC
+04,0401,04011,4.4875,7.0748,15.39,46,0.67,Major chest procedures w min CCC
+04,0401,04012,4.4875,9.3869,22.68,68,1,Major chest procedures w mod CCC
+04,0402,04020,2.0198,2.4045,6.47,19,0.71,Other resp system procedures wo sig CCC
+04,0402,04021,3.2006,4.2113,11.82,35,0.71,Other resp system procedures w min CCC
+04,0402,04022,3.4885,7.9285,22.5,68,1,Other resp system procedures w mod CCC
+04,0403,04030,2.2919,2.5186,5.76,17,1,Ventilator support wo sig CCC
+04,0403,04031,3.3351,3.9704,8.46,25,0.92,Ventilator support w min CCC
+04,0403,04032,4.7049,6.919,13.81,41,0.64,Ventilator support w mod CCC
+04,0403,04033,4.7049,9.3453,21.79,65,1,Ventilator support w maj CCC
+04,0403,04034,5.4173,12.3122,27.75,83,1,Ventilator support w ext CCC
+04,0407,04070,1.6154,1.7752,5.81,17,1,Noninvasive ventilation wo sig CCC
+04,0407,04071,3.0326,3.9902,10.95,33,0.61,Noninvasive ventilation w min CCC
+04,0407,04072,3.3838,6.5073,19.83,59,1,Noninvasive ventilation w mod CCC
+04,0408,04080,1.2701,1.2701,2.8,8,0.65,Other minor resp system procedures wo sig CCC
+04,0408,04081,1.8353,2.0168,4.89,15,1,Other minor resp system procedures w min CCC
+04,0409,04099,5.7079,7.5104,11.68,35,1,Major thoracoscopic procedures
+04,0410,04109,3.8407,5.648,13.07,39,1,Diagnostic thoracoscopic procedures
+04,0451,04510,2.2758,2.7092,7.4,22,1,Pulmonary embolism wo sig CCC
+04,0451,04511,3.0068,3.9563,10.2,31,1,Pulmonary embolism w min CCC
+04,0451,04512,3.8085,7.3241,18.31,55,1,Pulmonary embolism w mod CCC
+04,0452,04520,0.5152,0.5661,3.71,11,1,Respiratory infection/inflammation wo sig CCC
+04,0452,04521,0.8988,0.9877,5.2,16,0.83,Respiratory infection/inflammation w min CCC
+04,0452,04522,1.5938,1.8974,8.31,25,1,Respiratory infection/inflammation w mod CCC
+04,0452,04523,2.3737,3.1233,11.8,35,1,Respiratory infection/inflammation w maj CCC
+04,0452,04524,3.0719,5.1197,16.61,50,1,Respiratory infection/inflammation w ext CCC
+04,0453,04530,0.6456,0.6456,1.33,4,1,Sleep apnea wo sig CCC
+04,0453,04531,1.3966,1.5347,5.48,16,1,Sleep apnea w min CCC
+04,0454,04540,0.8892,0.9771,4.18,13,0.82,"Pulmonary edema and resp failure, not transferred wo sig CCC"
+04,0454,04541,2.0543,2.7031,10.88,33,1,"Pulmonary edema and resp failure, not transferred w min CCC"
+04,0455,04550,0.5465,0.6005,3.15,9,0.91,Chronic obstructive pulmonary disease wo sig CCC
+04,0455,04551,0.864,0.9495,4.67,14,0.76,Chronic obstructive pulmonary disease w min CCC
+04,0455,04552,1.2633,1.5039,6.56,20,0.93,Chronic obstructive pulmonary disease w mod CCC
+04,0455,04553,1.9172,2.5226,9.54,29,0.88,Chronic obstructive pulmonary disease w maj CCC
+04,0455,04554,2.7333,4.0196,14.33,43,1,Chronic obstructive pulmonary disease w ext CCC
+04,0456,04560,0.5453,0.5453,2.99,9,1,Major chest trauma wo sig CCC
+04,0456,04561,1.4685,1.7482,7.9,24,1,Major chest trauma w min CCC
+04,0457,04570,0.5173,0.5173,2.41,7,1,Respiratory signs and symptoms wo sig CCC
+04,0457,04571,0.8216,0.9029,3.76,11,0.91,Respiratory signs and symptoms w min CCC
+04,0457,04572,1.5025,1.7888,6.27,19,1,Respiratory signs and symptoms w mod CCC
+04,0458,04580,1.0281,1.224,6.64,20,0.85,Pneumothorax wo sig CCC
+04,0458,04581,1.4623,1.7408,8.48,25,0.9,Pneumothorax w min CCC
+04,0458,04582,2.1485,2.827,11.5,35,1,Pneumothorax w mod CCC
+04,0459,04590,0.4004,0.4004,2.75,8,1,Bronchitis and asthma and whooping cough wo sig CCC
+04,0459,04591,0.5476,0.6018,3.41,10,1,Bronchitis and asthma and whooping cough w min CCC
+04,0459,04592,0.986,1.0835,5.12,15,0.85,Bronchitis and asthma and whooping cough w mod CCC
+04,0459,04593,1.5164,1.8052,7.21,22,1,Bronchitis and asthma and whooping cough w maj CCC
+04,0459,04594,2.9956,4.4052,13.65,41,1,Bronchitis and asthma and whooping cough w ext CCC
+04,0461,04610,0.7038,0.7734,3.98,12,0.66,Respiratory neoplasms wo sig CCC
+04,0461,04611,1.044,1.1472,5.59,17,0.94,Respiratory neoplasms w min CCC
+04,0461,04612,1.8237,2.1711,8.75,26,0.78,Respiratory neoplasms w mod CCC
+04,0461,04613,2.3752,3.4929,13.36,40,0.98,Respiratory neoplasms w maj CCC
+04,0462,04620,0.8856,0.9732,4.28,13,0.81,"Pleural effusion, not transferred wo sig CCC"
+04,0462,04621,1.4697,1.7496,7.34,22,1,"Pleural effusion, not transferred w min CCC"
+04,0462,04622,2.7275,4.0111,13.24,40,0.92,"Pleural effusion, not transferred w mod CCC"
+04,0463,04630,0.7421,0.8155,3.99,12,1,Interstitial lung disease wo sig CCC
+04,0463,04631,1.7498,2.0831,7.23,22,1,Interstitial lung disease w min CCC
+04,0464,04640,0.5056,0.5056,2.46,7,1,Other respiratory system diagnoses wo sig CCC
+04,0464,04641,1.0055,1.1049,4.6,14,0.78,Other respiratory system diagnoses w min CCC
+04,0464,04642,1.8056,2.1496,8.32,25,1,Other respiratory system diagnoses w mod CCC
+04,0465,04659,3.0616,4.5024,12.84,39,1,Respiratory neoplasms with chemo- and radiother
+04,0466,04660,2.2571,2.2571,2.55,8,0.4,Respiratory neoplasms with chemotherapy wo sig CCC
+04,0466,04661,2.32,2.5494,4.8,14,1,Respiratory neoplasms with chemotherapy w min CCC
+04,0466,04662,3.2337,3.8496,6.88,21,0.65,Respiratory neoplasms with chemotherapy w mod CCC
+04,0466,04663,3.5286,5.881,16.54,50,1,Respiratory neoplasms with chemotherapy w maj CCC
+04,0467,04670,2.2588,2.9721,11.84,36,1,Respiratory neoplasms with radiotherapy wo sig CCC
+04,0467,04671,2.9128,4.8545,16.7,50,1,Respiratory neoplasms with radiotherapy w min CCC
+04,0467,04672,3.6749,7.0671,20.79,62,1,Respiratory neoplasms with radiotherapy w mod CCC
+04,0468,04680,1.6708,1.836,5.82,17,0.93,Respiratory neoplasms with diag proc wo sig CCC
+04,0468,04681,2.7463,4.0386,12.69,38,1,Respiratory neoplasms with diag proc w min CCC
+04,0468,04682,3.5172,6.7639,19.57,59,1,Respiratory neoplasms with diag proc w mod CCC
+04,0469,04690,0.9256,1.0171,4.2,13,0.77,Respiratory neoplasms with blood transfusion wo sig CCC
+04,0469,04691,1.9276,2.2947,8.97,27,0.83,Respiratory neoplasms with blood transfusion w min CCC
+04,0469,04692,2.5253,4.2088,15.26,46,1,Respiratory neoplasms with blood transfusion w mod CCC
+04,0470,04700,2.1213,2.7913,11.72,35,1,Pyothorax wo sig CCC
+04,0470,04701,3.0677,5.8993,19.07,57,1,Pyothorax w min CCC
+04,0471,04710,0.5137,0.5137,1.84,6,0.91,"Pulmonary edema and respiratory failure, transferred wo sig CCC"
+04,0471,04711,0.9999,1.0988,3.73,11,0.75,"Pulmonary edema and respiratory failure, transferred w min CCC"
+04,0472,04720,0.8738,0.9602,4.22,13,0.82,"Pleural effusion, transferred wo sig CCC"
+04,0472,04721,2.4359,3.2051,10.93,33,0.95,"Pleural effusion, transferred w min CCC"
+05,0501,05019,8.071,18.3432,24.17,73,1,Valve replacement and open valvuloplasty w cath
+05,0502,05020,8.9956,13.2288,12.87,39,0.95,Valve replacement and open valvuloplasty wo sig CCC
+05,0502,05021,8.9956,15.9402,19.07,57,1,Valve replacement and open valvuloplasty w min CCC
+05,0502,05022,8.9956,19.3869,24.4,73,1,Valve replacement and open valvuloplasty w mod CCC
+05,0503,05039,12.8973,29.312,21.98,66,1,Coronary bypass with PTCA
+05,0504,05049,10.185,23.1477,24.44,73,1,Coronary bypass with cath
+05,0505,05059,12.3655,18.1845,13.75,41,0.98,Coronary bypass
+05,0506,05060,8.9069,9.7878,5.53,17,0.68,Other cardiothoracic proc wo sig CCC
+05,0506,05061,9.0047,12.2013,13.69,41,1,Other cardiothoracic proc w min CCC
+05,0507,05079,13.4588,22.4312,17.7,53,1,Thoracoabdominal proc combination
+05,0508,05080,7.1013,8.4539,7.1,21,0.95,Major cardiovascular proc wo sig CCC
+05,0508,05081,7.2436,12.0728,15.46,46,1,Major cardiovascular proc w min CCC
+05,0509,05090,3.1022,4.5621,14.57,44,0.82,Major amputation for CVS disorders wo sig CCC
+05,0509,05091,3.5557,8.0812,23.82,71,1,Major amputation for CVS disorders w min CCC
+05,0510,05109,6.4809,9.5307,12.57,38,1,"Perm pacemaker proc comb for AMI, HF, Shock"
+05,0511,05110,2.9836,3.2787,4.5,14,1,Perm pacemaker proc comb wo sig CCC
+05,0511,05111,4.0895,4.8684,6.98,21,0.88,Perm pacemaker proc comb w min CCC
+05,0511,05112,5.2035,7.6522,13.53,41,1,Perm pacemaker proc comb w mod CCC
+05,0512,05120,4.5413,4.9904,3.94,12,1,Automat cardioverter proc wo sig CCC
+05,0512,05121,6.2008,7.382,7.09,21,0.64,Automat cardioverter proc w min CCC
+05,0512,05122,6.2008,9.9119,15.57,47,1,Automat cardioverter proc w mod CCC
+05,0513,05130,7.3461,8.7454,9,27,0.56,Simple cardiothoracic proc wo sig CCC
+05,0513,05131,8.0722,11.8708,12.03,36,0.42,Simple cardiothoracic proc w min CCC
+05,0514,05149,5.214,5.7297,3.22,10,1,Cardiac electrophysiologic proc
+05,0515,05150,3.0157,3.314,3.56,11,0.85,Other vascular proc wo sig CCC
+05,0515,05151,5.099,6.0702,8.57,26,0.63,Other vascular proc w min CCC
+05,0515,05152,5.099,8.9979,18.51,56,1,Other vascular proc w mod CCC
+05,0516,05160,1.4141,1.6835,6.64,20,1,Minor amputation wo sig CCC
+05,0516,05161,2.7659,4.0676,12.92,39,0.79,Minor amputation w min CCC
+05,0517,05170,2.4358,2.6767,4.25,13,1,Pacemaker revision and replacement wo sig CCC
+05,0517,05171,4.2371,5.5751,10.53,32,1,Pacemaker revision and replacement w min CCC
+05,0519,05190,1.6662,1.6662,2.91,9,1,Vein ligation and stripping wo sig CCC
+05,0519,05191,3.3156,3.9471,8.04,24,1,Vein ligation and stripping w min CCC
+05,0520,05200,1.8229,2.1702,8.66,26,0.6,Other circ system OR proc wo sig CCC
+05,0520,05201,2.5003,4.1672,15.65,47,0.63,Other circ system OR proc w min CCC
+05,0520,05202,3.0966,7.0379,25.33,76,1,Other circ system OR proc w mod CCC
+05,0521,05210,2.5119,2.7603,3.87,12,1,Cardiac cath/angiography for complex Dx wo sig CCC
+05,0521,05211,4.6399,5.5237,8.85,27,1,Cardiac cath/angiography for complex Dx w min CCC
+05,0521,05212,6.2491,9.1898,13.12,39,1,Cardiac cath/angiography for complex Dx w mod CCC
+05,0522,05220,2.136,2.136,2.16,6,0.66,Cardiac cath/angiography wo sig CCC
+05,0522,05221,2.786,3.0615,3.73,11,0.77,Cardiac cath/angiography w min CCC
+05,0522,05222,4.0937,5.3864,10.58,32,1,Cardiac cath/angiography w mod CCC
+05,0523,05230,6.8786,6.8786,2.14,6,1,Percut cardiovas proc w stent insertion wo sig CCC
+05,0523,05231,8.0392,8.0392,2.56,8,1,Percut cardiovas proc w stent insertion w min CCC
+05,0523,05232,8.9324,9.8158,5.19,16,1,Percut cardiovas proc w stent insertion w mod CCC
+05,0524,05240,6.5804,6.5804,2.18,7,1,Percut cardiovas proc wo sig CCC
+05,0524,05241,7.7565,7.7565,2.76,8,1,Percut cardiovas proc w min CCC
+05,0524,05242,8.4494,9.2851,5.75,17,1,Percut cardiovas proc w mod CCC
+05,0525,05259,14.3182,32.5414,22.89,69,1,Acute MI w CAB or VSD repair w PTCA
+05,0526,05269,9.7959,22.2634,21.59,65,1,Acute MI w CAB or VSD repair wo PTCA
+05,0527,05270,9.1175,10.0192,4.31,13,0.98,Acute MI w multiple vessel PTCA wo sig CCC
+05,0527,05271,10.2141,12.1597,8.9,27,1,Acute MI w multiple vessel PTCA w min CCC
+05,0529,05290,7.8755,8.6544,3.57,11,1,Acute MI w single vessel PTCA wo sig CCC
+05,0529,05291,9.6449,11.482,6.54,20,0.61,Acute MI w single vessel PTCA w min CCC
+05,0531,05310,3.991,3.991,2.42,7,1,Peripheral stent insertion wo sig CCC
+05,0531,05311,5.7003,7.5004,10.1,30,1,Peripheral stent insertion w min CCC
+05,0532,05329,9.2046,20.9194,27.58,83,1,Multiple cardiac valve proc with cardiac cath
+05,0533,05330,10.0753,14.8167,14.47,43,0.79,Multiple cardiac valve procedures wo sig CCC
+05,0533,05331,11.0267,18.3779,17.6,53,0.54,Multiple cardiac valve procedures w min CCC
+05,0536,05360,2.3232,4.4676,20.59,62,0.69,Multiple wound debridement for CVS disorders wo sig CCC
+05,0536,05361,2.635,5.9886,25.23,76,0.48,Multiple wound debridement for CVS disorders w min CCC
+05,0536,05362,4.0029,9.0974,39,117,1,Multiple wound debridement for CVS disorders w mod CCC
+05,0537,05379,11.617,19.3616,15.97,48,1,Complex cardiothoracic procedures
+05,0550,05500,2.2042,2.4222,3.56,11,1,Acute MI w major comp w thrombol inj wo sig CCC
+05,0550,05501,4.5767,6.022,10.06,30,1,Acute MI w major comp w thrombol inj w min CCC
+05,0551,05510,1.9428,2.1349,3.59,11,0.91,Acute MI w thrombol inj wo sig CCC
+05,0551,05511,2.4457,2.6876,5.2,16,1,Acute MI w thrombol inj w min CCC
+05,0552,05520,1.4424,1.5851,4.86,15,1,"Acute MI w major comp, not transferred wo sig CCC"
+05,0552,05521,2.4723,2.9432,7.45,22,1,"Acute MI w major comp, not transferred w min CCC"
+05,0552,05522,3.1009,4.0802,9.4,28,1,"Acute MI w major comp, not transferred w mod CCC"
+05,0552,05523,4.599,6.7633,13.91,42,1,"Acute MI w major comp, not transferred w maj CCC"
+05,0553,05530,0.946,1.0396,4,12,0.89,"Acute MI, not transferred wo sig CCC"
+05,0553,05531,1.241,1.3637,4.94,15,0.97,"Acute MI, not transferred w min CCC"
+05,0553,05532,1.7363,2.0671,6.88,21,1,"Acute MI, not transferred w mod CCC"
+05,0553,05533,2.4853,3.2701,9.33,28,1,"Acute MI, not transferred w maj CCC"
+05,0554,05540,1.7708,2.604,13.1,39,1,Infective endocarditis wo sig CCC
+05,0554,05541,3.1765,6.1088,20.7,62,1,Infective endocarditis w min CCC
+05,0554,05542,3.8873,8.8347,23.49,70,1,Infective endocarditis w mod CCC
+05,0555,05550,0.6216,0.6831,3.36,10,1,Heart failure and shock wo sig CCC
+05,0555,05551,1.2098,1.3294,5.24,16,1,Heart failure and shock w min CCC
+05,0555,05552,2.4776,2.9495,8.57,26,1,Heart failure and shock w mod CCC
+05,0555,05553,3.7681,5.5413,12.72,38,0.82,Heart failure and shock w maj CCC
+05,0555,05554,3.8143,7.3352,18.81,56,1,Heart failure and shock w ext CCC
+05,0556,05560,0.7449,0.8186,4.66,14,0.79,Venous thrombosis wo sig CCC
+05,0556,05561,1.2513,1.4896,6.92,21,1,Venous thrombosis w min CCC
+05,0556,05562,2.5266,3.7156,12.59,38,1,Venous thrombosis w mod CCC
+05,0557,05579,0.8503,1.0123,6.06,18,1,Skin ulcers for circulatory disorders
+05,0558,05580,1.2307,1.3524,5.44,16,0.68,"Peripheral vascular disorders, not transferred wo sig CCC"
+05,0558,05581,2.1952,2.6132,7.29,22,1,"Peripheral vascular disorders, not transferred w min CCC"
+05,0558,05582,3.4258,5.038,12.07,36,0.58,"Peripheral vascular disorders, not transferred w mod CCC"
+05,0559,05590,0.5561,0.5561,2.31,7,1,Coronary atherosclerosis and unstable angina wo sig CCC
+05,0559,05591,0.8113,0.8915,3.55,11,1,Coronary atherosclerosis and unstable angina w min CCC
+05,0559,05592,1.5398,1.6921,5.75,17,1,Coronary atherosclerosis and unstable angina w mod CCC
+05,0559,05593,2.4907,2.9651,8.2,25,1,Coronary atherosclerosis and unstable angina w maj CCC
+05,0559,05594,4.3062,6.3327,12.71,38,1,Coronary atherosclerosis and unstable angina w ext CCC
+05,0560,05600,0.3341,0.3341,1.91,6,1,Hypertension wo sig CCC
+05,0560,05601,0.7663,0.8421,3.45,10,1,Hypertension w min CCC
+05,0560,05602,1.7019,2.0261,6.29,19,1,Hypertension w mod CCC
+05,0560,05603,2.8409,3.7381,9.1,27,1,Hypertension w maj CCC
+05,0560,05604,3.9555,5.2047,11.24,34,1,Hypertension w ext CCC
+05,0561,05610,0.9613,0.9613,2.84,9,0.61,Congenital heart disease wo sig CCC
+05,0561,05611,1.3694,1.6303,6.1,18,1,Congenital heart disease w min CCC
+05,0561,05612,2.9814,4.9689,16.24,49,1,Congenital heart disease w mod CCC
+05,0562,05620,0.8146,0.8952,3.89,12,1,Valvular disorders wo sig CCC
+05,0562,05621,2.1259,2.7973,9.66,29,1,Valvular disorders w min CCC
+05,0562,05622,4.1014,6.0314,14.05,42,1,Valvular disorders w mod CCC
+05,0563,05630,0.8116,0.8116,2.13,6,1,Major arrhythmia and cardiac arrest wo sig CCC
+05,0563,05631,1.7366,1.9084,3.87,12,1,Major arrhythmia and cardiac arrest w min CCC
+05,0563,05632,3.0438,3.6236,6.68,20,1,Major arrhythmia and cardiac arrest w mod CCC
+05,0563,05633,5.082,7.4736,12.38,37,1,Major arrhythmia and cardiac arrest w maj CCC
+05,0564,05640,0.4894,0.4894,1.93,6,1,Non-major arrhythmia and conduction dis wo sig CCC
+05,0564,05641,0.8498,0.9339,3.35,10,1,Non-major arrhythmia and conduction dis w min CCC
+05,0564,05642,1.6891,2.0108,6.1,18,1,Non-major arrhythmia and conduction dis w mod CCC
+05,0564,05643,2.5228,3.0034,7.79,23,1,Non-major arrhythmia and conduction dis w maj CCC
+05,0564,05644,4.014,5.2816,10.93,33,1,Non-major arrhythmia and conduction dis w ext CCC
+05,0566,05660,0.3602,0.3602,1.63,5,1,"Chest pain, syncope and collapse wo sig CCC"
+05,0566,05661,0.6192,0.6192,2.48,7,1,"Chest pain, syncope and collapse w min CCC"
+05,0566,05662,1.1309,1.2428,4.29,13,1,"Chest pain, syncope and collapse w mod CCC"
+05,0566,05663,1.7689,1.9439,5.93,18,1,"Chest pain, syncope and collapse w maj CCC"
+05,0568,05680,0.7196,0.7908,3.38,10,1,Other circulatory system diagnoses wo sig CCC
+05,0568,05681,1.9434,2.3135,7.15,21,1,Other circulatory system diagnoses w min CCC
+05,0568,05682,3.5009,4.6065,10.65,32,1,Other circulatory system diagnoses w mod CCC
+05,0568,05683,5.3762,7.9062,14.6,44,1,Other circulatory system diagnoses w maj CCC
+05,0569,05690,0.6719,0.6719,1.81,5,1,"Acute MI, transferred wo sig CCC"
+05,0569,05691,1.5119,1.6614,3.9,12,1,"Acute MI, transferred w min CCC"
+05,0569,05692,2.5606,3.0483,6.32,19,1,"Acute MI, transferred w mod CCC"
+05,0569,05693,4.0401,5.3159,10.78,32,1,"Acute MI, transferred w maj CCC"
+05,0570,05700,0.9253,1.0168,3.69,11,0.55,"Peripheral vascular disorders, transferred wo sig CCC"
+05,0570,05701,2.6244,2.884,5.07,15,0.95,"Peripheral vascular disorders, transferred w min CCC"
+06,0601,06010,2.1667,2.8509,9.18,28,0.94,"Stomach, esophagus & duodenal proc for malig wo sig CCC"
+06,0601,06011,3.5585,6.8433,18.49,55,1,"Stomach, esophagus & duodenal proc for malig w min CCC"
+06,0602,06020,2.2874,2.7231,7.04,21,0.12,"Stomach, esophagus & duodenal procedure wo sig CCC"
+06,0602,06021,3.5217,5.8696,16.27,49,1,"Stomach, esophagus & duodenal procedure w min CCC"
+06,0603,06030,3.7313,4.9097,10.8,32,0.98,Major small & large bowel procedure wo sig CCC
+06,0603,06031,5.1968,8.6613,17.78,53,0.76,Major small & large bowel procedure w min CCC
+06,0603,06032,5.278,11.9954,25.1,75,0.56,Major small & large bowel procedure w mod CCC
+06,0603,06033,6.5735,14.9398,36.09,108,1,Major small & large bowel procedure w maj CCC
+06,0604,06040,3.758,4.9447,11.42,34,1,Rectal resection wo sig CCC
+06,0604,06041,4.7568,6.9953,15,45,1,Rectal resection w min CCC
+06,0605,06050,2.3529,2.801,7.76,23,1,Peritoneal adhesiolysis wo sig CCC
+06,0605,06051,3.634,5.344,12.35,37,1,Peritoneal adhesiolysis w min CCC
+06,0605,06052,4.7304,9.0968,19.28,58,1,Peritoneal adhesiolysis w mod CCC
+06,0607,06070,1.1036,1.2127,3.05,9,0.8,Appendectomy wo sig CCC
+06,0607,06071,1.4106,1.5501,4.09,12,1,Appendectomy w min CCC
+06,0607,06072,2.0872,2.4848,6.28,19,0.67,Appendectomy w mod CCC
+06,0607,06073,3.1955,4.2046,9.08,27,1,Appendectomy w maj CCC
+06,0607,06074,5.4295,7.9845,13.45,40,1,Appendectomy w ext CCC
+06,0608,06080,2.2853,2.7207,8.05,24,0.86,Minor small & large bowel procedure wo sig CCC
+06,0608,06081,3.6644,6.1074,16.21,49,0.98,Minor small & large bowel procedure w min CCC
+06,0609,06090,0.941,0.941,2.89,9,1,Anal & stomal procedure wo sig CCC
+06,0609,06091,1.6241,1.7847,5.57,17,1,Anal & stomal procedure w min CCC
+06,0609,06092,2.8155,4.6925,17.53,53,1,Anal & stomal procedure w mod CCC
+06,0610,06100,1.2345,1.2345,2.85,9,1,Inguinal & femoral hernia procedure age > 14 wo sig CCC
+06,0610,06101,1.8458,2.0283,4.91,15,1,Inguinal & femoral hernia procedure age > 14 w min CCC
+06,0610,06102,3.5772,4.7069,9.67,29,1,Inguinal & femoral hernia procedure age > 14 w mod CCC
+06,0611,06110,1.5705,1.7258,4.44,13,1,"Hernia proc, exc ing & femoral age > 14 wo sig CCC"
+06,0611,06111,2.34,2.7857,6.78,20,1,"Hernia proc, exc ing & femoral age > 14 w min CCC"
+06,0612,06120,0.9232,0.9232,1.94,6,0.68,Hernia procedure age < 15 wo sig CCC
+06,0612,06121,1.046,1.046,2.54,8,1,Hernia procedure age < 15 w min CCC
+06,0612,06122,2.0188,2.4033,6.81,20,1,Hernia procedure age < 15 w mod CCC
+06,0613,06130,2.9718,3.5379,8.49,25,0.68,Other digestive system OR proc for malig wo sig CCC
+06,0613,06131,3.5863,6.8967,19.47,58,1,Other digestive system OR proc for malig w min CCC
+06,0614,06140,2.1831,2.5988,7.04,21,0.79,Other digestive system OR procedure wo sig CCC
+06,0614,06141,3.5487,5.2186,12.56,38,0.8,Other digestive system OR procedure w min CCC
+06,0614,06142,4.1671,8.0137,20.15,60,1,Other digestive system OR procedure w mod CCC
+06,0615,06159,2.1092,2.5109,7.31,22,1,Pyloromyotomy procedure
+06,0616,06160,1.4748,1.603,4.18,13,1,Complex therapeutic gastroscopy wo sig CCC
+06,0616,06161,3.1919,3.7999,7.51,23,1,Complex therapeutic gastroscopy w min CCC
+06,0616,06162,5.5787,8.204,14.9,45,1,Complex therapeutic gastroscopy w mod CCC
+06,0619,06190,1.1233,1.221,3.56,11,0.64,Other gastroscopy for major digestive diseases wo sig CCC
+06,0619,06191,2.1296,2.5352,6.46,19,0.74,Other gastroscopy for major digestive diseases w min CCC
+06,0619,06192,3.435,5.0514,13.64,41,1,Other gastroscopy for major digestive diseases w mod CCC
+06,0621,06210,0.8801,0.8801,2.52,8,0.91,Other gastroscopy for non-major digestive diseases wo sig CCC
+06,0621,06211,1.7648,2.1009,6.71,20,0.69,Other gastroscopy for non-major digestive diseases w min CCC
+06,0621,06212,2.9169,4.2896,13.19,40,1,Other gastroscopy for non-major digestive diseases w mod CCC
+06,0623,06230,1.013,1.013,2.01,6,1,Complex therapeutic colonoscopy wo sig CCC
+06,0623,06231,1.9325,2.3006,6.82,20,0.65,Complex therapeutic colonoscopy w min CCC
+06,0623,06232,2.9521,4.9201,15.57,47,1,Complex therapeutic colonoscopy w mod CCC
+06,0624,06240,0.891,0.891,2.26,7,0.97,Other colonoscopy wo sig CCC
+06,0624,06241,1.7749,2.113,8.74,26,0.79,Other colonoscopy w min CCC
+06,0624,06242,3.5257,4.3475,14.74,44,1,Other colonoscopy w mod CCC
+06,0626,06269,4.1137,5.4127,11.83,35,1,GI stent insertion
+06,0627,06279,5.4335,9.0558,15.82,47,1,"Lap stomach, duodenal & diaphragm proc"
+06,0628,06289,3.4676,4.128,8.8,26,0.96,Lap peritoneal adhesiolysis
+06,0629,06290,2.4222,2.6618,3.52,11,0.73,Laparoscopic appendectomy wo sig CCC
+06,0629,06291,3.1421,3.4529,5.77,17,0.55,Laparoscopic appendectomy w min CCC
+06,0630,06300,4.875,7.1691,14.54,44,1,Stomach & duodenal resection wo sig CCC
+06,0630,06301,4.875,10.8333,21.16,63,1,Stomach & duodenal resection w min CCC
+06,0630,06302,6.3645,14.4649,28.45,85,1,Stomach & duodenal resection w mod CCC
+06,0632,06320,1.5633,1.7179,5.25,16,1,Appendectomy for complicate PDx wo sig CCC
+06,0632,06321,2.8278,3.3664,8.84,27,1,Appendectomy for complicate PDx w min CCC
+06,0632,06322,3.4882,4.5898,10.61,32,1,Appendectomy for complicate PDx w mod CCC
+06,0632,06323,5.0853,7.4784,13.85,42,1,Appendectomy for complicate PDx w maj CCC
+06,0635,06359,6.0214,8.855,13.92,42,1,Lap rectal resection
+06,0636,06360,5.0264,6.6137,10.58,32,1,Lap major small & large bowel procedures wo sig CCC
+06,0636,06361,6.1364,10.2273,17.12,51,1,Lap major small & large bowel procedures w min CCC
+06,0637,06379,4.1213,4.5289,5.47,16,1,Lap abdiminal hernia procedures
+06,0638,06389,3.0055,3.3028,3.71,11,1,Lap inguinal hernia procedures
+06,0640,06409,7.6374,17.3579,28.17,85,1,Esophageal resection
+06,0643,06430,2.984,3.2791,5.44,16,0.82,Other esophageal procedures wo sig CCC
+06,0643,06431,4.2131,7.0218,17.56,53,1,Other esophageal procedures w min CCC
+06,0644,06440,1.267,1.267,2.45,7,0.62,Multiple GI endoscopy wo sig CCC
+06,0644,06441,2.3371,2.7823,6.94,21,0.94,Multiple GI endoscopy w min CCC
+06,0644,06442,3.9795,6.6325,15.94,48,1,Multiple GI endoscopy w mod CCC
+06,0650,06500,0.8104,0.8905,4.34,13,0.76,"Digestive malignancy, not transferred wo sig CCC"
+06,0650,06501,1.7363,2.067,7.14,21,0.98,"Digestive malignancy, not transferred w min CCC"
+06,0650,06502,3.1909,4.6925,12.56,38,0.47,"Digestive malignancy, not transferred w mod CCC"
+06,0651,06510,0.6643,0.6643,2.84,9,1,Complicated peptic ulce and GI hemorrhage wo sig CCC
+06,0651,06511,1.2195,1.3401,3.94,12,1,Complicated peptic ulce and GI hemorrhage w min CCC
+06,0651,06512,2.422,2.6615,5.38,16,1,Complicated peptic ulce and GI hemorrhage w mod CCC
+06,0651,06513,3.4163,4.067,6.93,21,1,Complicated peptic ulce and GI hemorrhage w maj CCC
+06,0651,06514,5.0659,6.6657,9.91,30,1,Complicated peptic ulce and GI hemorrhage w ext CCC
+06,0654,06540,0.2815,0.2815,2.02,6,1,Uncomplicated peptic ulcer wo sig CCC
+06,0654,06541,0.5141,0.5141,2.77,8,0.78,Uncomplicated peptic ulcer w min CCC
+06,0654,06542,0.9937,1.1829,6.98,21,1,Uncomplicated peptic ulcer w mod CCC
+06,0655,06559,1.9115,2.1005,4.68,14,1,Inflammatory bowel disease
+06,0656,06560,0.6932,0.7618,3.83,11,1,"GI obstruction, not transferred wo sig CCC"
+06,0656,06561,1.8364,2.1862,7.41,22,1,"GI obstruction, not transferred w min CCC"
+06,0656,06562,3.8634,5.6815,14.05,42,1,"GI obstruction, not transferred w mod CCC"
+06,0657,06570,0.3229,0.3229,2.08,6,0.93,Infectious gastroenteritis age > 9 wo sig CCC
+06,0657,06571,0.6201,0.6814,3.55,11,1,Infectious gastroenteritis age > 9 w min CCC
+06,0657,06572,1.2966,1.4248,5.3,16,1,Infectious gastroenteritis age > 9 w mod CCC
+06,0657,06573,2.5112,2.9895,8.05,24,1,Infectious gastroenteritis age > 9 w maj CCC
+06,0657,06574,4.5801,6.7354,13.55,41,1,Infectious gastroenteritis age > 9 w ext CCC
+06,0658,06580,0.266,0.266,2.29,7,0.83,Gastroenteritis age < 10 wo sig CCC
+06,0658,06581,0.3596,0.3596,2.82,8,0.75,Gastroenteritis age < 10 w min CCC
+06,0658,06582,0.5911,0.6496,4.36,13,1,Gastroenteritis age < 10 w mod CCC
+06,0658,06583,1.4926,1.777,8.03,24,1,Gastroenteritis age < 10 w maj CCC
+06,0658,06584,3.2839,5.4732,15.37,46,1,Gastroenteritis age < 10 w ext CCC
+06,0660,06600,0.8276,0.9094,3.95,12,1,"Other digestive system diagnoses, not transferred wo sig CCC"
+06,0660,06601,2.4155,2.8756,7.82,23,1,"Other digestive system diagnoses, not transferred w min CCC"
+06,0660,06602,3.2356,4.2573,10.04,30,0.86,"Other digestive system diagnoses, not transferred w mod CCC"
+06,0660,06603,3.8013,6.3356,16.64,50,1,"Other digestive system diagnoses, not transferred w maj CCC"
+06,0661,06610,0.2888,0.2888,1.73,5,0.97,Abdominal pain or mesenteric adenitis wo sig CCC
+06,0661,06611,0.4379,0.4379,2.28,7,1,Abdominal pain or mesenteric adenitis w min CCC
+06,0661,06612,0.5636,0.5636,2.73,8,1,Abdominal pain or mesenteric adenitis w mod CCC
+06,0661,06613,1.1266,1.238,4.71,14,1,Abdominal pain or mesenteric adenitis w maj CCC
+06,0662,06620,0.5244,0.5763,3.39,10,1,Intestinal helminthiases age > 9 wo sig CCC
+06,0662,06621,1.3557,1.614,6.99,21,1,Intestinal helminthiases age > 9 w min CCC
+06,0663,06630,0.262,0.262,2.02,6,0.86,Intestinal helminth and misc digestive dis age < 10 wo sig CCC
+06,0663,06631,0.5403,0.5937,3.63,11,1,Intestinal helminth and misc digestive dis age < 10 w min CCC
+06,0663,06632,1.3908,2.318,17.48,52,1,Intestinal helminth and misc digestive dis age < 10 w mod CCC
+06,0664,06640,0.2686,0.2686,1.82,5,0.17,"Oesophagitis, gastritis and dyspepsia age > 9 wo sig CCC"
+06,0664,06641,0.3892,0.3892,2.31,7,1,"Oesophagitis, gastritis and dyspepsia age > 9 w min CCC"
+06,0664,06642,0.5371,0.5902,3.13,9,1,"Oesophagitis, gastritis and dyspepsia age > 9 w mod CCC"
+06,0664,06643,1.3287,1.5818,6.26,19,1,"Oesophagitis, gastritis and dyspepsia age > 9 w maj CCC"
+06,0665,06650,0.2085,0.2085,1.8,5,0.32,"Oesophagitis, gastritis and dyspepsia age < 10 wo sig CCC"
+06,0665,06651,0.232,0.232,1.95,6,1,"Oesophagitis, gastritis and dyspepsia age < 10 w min CCC"
+06,0665,06652,0.7123,0.7827,4.41,13,0.41,"Oesophagitis, gastritis and dyspepsia age < 10 w mod CCC"
+06,0666,06660,0.5353,0.5353,2.78,8,1,Miscellneous digestive disorders age > 9 wo sig CCC
+06,0666,06661,1.627,1.9369,6.68,20,0.74,Miscellneous digestive disorders age > 9 w min CCC
+06,0666,06662,2.4887,3.2746,11.57,35,1,Miscellneous digestive disorders age > 9 w mod CCC
+06,0666,06663,3.7556,6.2594,15.04,45,1,Miscellneous digestive disorders age > 9 w maj CCC
+06,0668,06680,2.8689,3.4154,8.79,26,0.79,Digest malignancy w chemo- and radiotherapy wo sig CCC
+06,0668,06681,3.2604,7.41,26.55,80,1,Digest malignancy w chemo- and radiotherapy w min CCC
+06,0669,06690,1.7581,1.911,3.96,12,0.94,Digest malignancy w chemotherapy wo sig CCC
+06,0669,06691,3.0326,3.2963,3.03,9,1,Digest malignancy w chemotherapy w min CCC
+06,0669,06692,3.8818,4.2194,3.94,12,1,Digest malignancy w chemotherapy w mod CCC
+06,0669,06693,5.3961,7.1002,11.38,34,0.06,Digest malignancy w chemotherapy w maj CCC
+06,0670,06700,1.7937,2.6378,12.8,38,0.64,Digest malignancy w radiotherapy wo sig CCC
+06,0670,06701,2.4684,5.61,22.05,66,1,Digest malignancy w radiotherapy w min CCC
+06,0671,06710,1.3906,1.5281,4.99,15,0.52,Digest malignancy w diag proc wo sig CCC
+06,0671,06711,2.4143,3.1767,9.35,28,0.62,Digest malignancy w diag proc w min CCC
+06,0671,06712,3.9741,6.6235,16.62,50,0.22,Digest malignancy w diag proc w mod CCC
+06,0672,06720,0.9506,1.0446,4.25,13,0.65,Digest malignancy w blood transfusion wo sig CCC
+06,0672,06721,2.358,3.1027,10.56,32,0.55,Digest malignancy w blood transfusion w min CCC
+06,0672,06722,4.1108,6.8512,16.53,50,0.15,Digest malignancy w blood transfusion w mod CCC
+06,0673,06730,0.5844,0.6422,3.64,11,1,"Digestive malignancy, transferred wo sig CCC"
+06,0673,06731,1.2138,1.445,6.09,18,1,"Digestive malignancy, transferred w min CCC"
+06,0674,06740,0.3937,0.3937,1.65,5,0.85,"G.I. obstruction, transferred wo sig CCC"
+06,0674,06741,0.6962,0.7651,3.13,9,1,"G.I. obstruction, transferred w min CCC"
+06,0674,06742,1.2458,1.369,4.79,14,1,"G.I. obstruction, transferred w mod CCC"
+06,0675,06750,0.2203,0.2203,0.96,3,1,"Other digestive system diagnoses, transferred wo sig CCC"
+06,0675,06751,0.7687,0.7687,2.88,9,1,"Other digestive system diagnoses, transferred w min CCC"
+06,0675,06752,1.3606,1.4952,4.45,13,1,"Other digestive system diagnoses, transferred w mod CCC"
+06,0675,06753,2.402,2.8595,7.03,21,1,"Other digestive system diagnoses, transferred w maj CCC"
+06,0676,06760,0.4144,0.4144,2.47,7,1,Non-infectious gastroenteritis age > 9 wo sig CCC
+06,0676,06761,0.9484,1.0422,5.07,15,1,Non-infectious gastroenteritis age > 9 w min CCC
+06,0676,06762,2.1049,2.5058,8.78,26,1,Non-infectious gastroenteritis age > 9 w mod CCC
+07,0701,07010,6.2806,9.2362,13.82,41,0.57,Pancreas resection wo sig CCC
+07,0701,07011,6.2806,11.9204,23.72,71,1,Pancreas resection w min CCC
+07,0702,07020,4.3982,6.468,13.69,41,0.8,Biliary tract procedures for malignancy wo sig CCC
+07,0702,07021,4.3982,9.6066,22.21,67,1,Biliary tract procedures for malignancy w min CCC
+07,0703,07030,3.3008,4.3432,9.78,29,0.78,Biliary tract procedures wo sig CCC
+07,0703,07031,5.0035,7.3582,14.19,43,1,Biliary tract procedures w min CCC
+07,0703,07032,5.6545,10.8741,19.55,59,0.88,Biliary tract procedures w mod CCC
+07,0704,07049,3.6612,6.1021,15.45,46,1,Open cholecystectomy w closed CDE
+07,0705,07050,1.942,2.1341,5.53,17,1,Open cholecystectomy wo sig CCC
+07,0705,07051,2.8445,3.3864,8.16,24,1,Open cholecystectomy w min CCC
+07,0705,07052,4.1214,6.0609,12.1,36,1,Open cholecystectomy w mod CCC
+07,0705,07053,5.3526,8.9209,17.66,53,1,Open cholecystectomy w maj CCC
+07,0706,07060,3.3594,3.9993,7.67,23,0.9,Hepatobiliary diagnostic proc wo sig CCC
+07,0706,07061,5.2103,7.6621,13.81,41,0.64,Hepatobiliary diagnostic proc w min CCC
+07,0706,07062,5.2103,10.2641,22.14,66,0.26,Hepatobiliary diagnostic proc w mod CCC
+07,0707,07070,3.4386,3.7787,3.11,9,1,Oth hepatobil and pancreas OR procedure wo sig CCC
+07,0707,07071,4.3358,6.3761,12.49,37,0.68,Oth hepatobil and pancreas OR procedure w min CCC
+07,0708,07080,2.9445,3.2357,4.68,14,0.87,ERCP with therapeutic procedure wo sig CCC
+07,0708,07081,3.9148,5.1511,9.43,28,1,ERCP with therapeutic procedure w min CCC
+07,0708,07082,5.1378,8.563,15.17,46,1,ERCP with therapeutic procedure w mod CCC
+07,0709,07090,4.5813,5.4539,8.13,24,1,Laparoscopic cholecystectomy w closed CDE wo sig CCC
+07,0709,07091,5.383,7.9162,12.55,38,1,Laparoscopic cholecystectomy w closed CDE w min CCC
+07,0710,07100,2.2887,2.5151,3.72,11,0.8,Laparoscopic cholecystectomy wo sig CCC
+07,0710,07101,2.8623,3.1454,5.27,16,1,Laparoscopic cholecystectomy w min CCC
+07,0710,07102,4.024,5.2947,9.16,27,1,Laparoscopic cholecystectomy w mod CCC
+07,0711,07110,4.3709,4.7546,8.19,25,0.8,Pancreas and liver procedures except resection wo sig CCC
+07,0711,07111,5.6153,8.2578,14.2,43,0.53,Pancreas and liver procedures except resection w min CCC
+07,0711,07112,5.6153,10.345,22.57,68,0.79,Pancreas and liver procedures except resection w mod CCC
+07,0714,07149,3.4962,3.842,5.31,16,1,Lap hepatic procedures
+07,0715,07150,4.8771,5.3594,5.87,18,1,Liver resection wo sig CCC
+07,0715,07151,6.3822,8.3977,10.38,31,0.87,Liver resection w min CCC
+07,0715,07152,6.6823,11.1372,17.16,51,1,Liver resection w mod CCC
+07,0716,07169,12.1439,20.2398,15.73,47,1,Shunt procedures
+07,0750,07500,0.6179,0.679,3.2,10,1,Cirrhosis & alcoholic hepatitis wo sig CCC
+07,0750,07501,1.3503,1.4838,5.2,16,1,Cirrhosis & alcoholic hepatitis w min CCC
+07,0750,07502,2.2413,2.6682,6.48,19,1,Cirrhosis & alcoholic hepatitis w mod CCC
+07,0750,07503,3.5058,4.1736,6.4,19,1,Cirrhosis & alcoholic hepatitis w maj CCC
+07,0751,07510,0.7559,0.8307,3.91,12,1,"Malig of hepatobil syst/pancreas, not transferred wo sig CCC"
+07,0751,07511,1.5913,1.7487,6,18,1,"Malig of hepatobil syst/pancreas, not transferred w min CCC"
+07,0751,07512,2.702,3.2167,7.54,23,0.68,"Malig of hepatobil syst/pancreas, not transferred w mod CCC"
+07,0751,07513,3.3834,4.4518,9.97,30,0.42,"Malig of hepatobil syst/pancreas, not transferred w maj CCC"
+07,0753,07530,0.6128,0.6734,4.27,13,1,"Disorders of pancreas, except malignancy wo sig CCC"
+07,0753,07531,1.3961,1.662,6.98,21,0.81,"Disorders of pancreas, except malignancy w min CCC"
+07,0753,07532,2.3105,3.0402,11.56,35,0.65,"Disorders of pancreas, except malignancy w mod CCC"
+07,0753,07533,2.5302,4.2171,16.61,50,0.28,"Disorders of pancreas, except malignancy w maj CCC"
+07,0754,07540,0.7464,0.8202,3.73,11,0.87,"Dis of liver, exc malignancy, cirrhosis, alc hepatitis wo sig CCC"
+07,0754,07541,1.5752,1.8753,6.92,21,1,"Dis of liver, exc malignancy, cirrhosis, alc hepatitis w min CCC"
+07,0754,07542,2.6573,3.4964,9.67,29,1,"Dis of liver, exc malignancy, cirrhosis, alc hepatitis w mod CCC"
+07,0754,07543,4.0718,5.9879,12.78,38,1,"Dis of liver, exc malignancy, cirrhosis, alc hepatitis w maj CCC"
+07,0755,07550,0.8364,0.9191,4.21,13,1,Disorder of biliary tract wo sig CCC
+07,0755,07551,1.5907,1.8937,6.49,19,1,Disorder of biliary tract w min CCC
+07,0755,07552,3.0482,4.0108,9.86,30,1,Disorder of biliary tract w mod CCC
+07,0755,07553,4.4212,6.5018,13.01,39,1,Disorder of biliary tract w maj CCC
+07,0756,07569,3.2568,5.4281,15.8,47,1,Hepatobil mal with chemo- and radiotherapy
+07,0757,07570,1.4051,1.4051,2.52,8,1,Hepatobiliary malignancy with chemotherapy wo sig CCC
+07,0757,07571,2.9435,3.1995,3.38,10,0.85,Hepatobiliary malignancy with chemotherapy w min CCC
+07,0757,07572,3.9145,4.2549,5.76,17,0.39,Hepatobiliary malignancy with chemotherapy w mod CCC
+07,0758,07580,2.4906,2.965,8.17,25,0.77,Hepatobiliary malignancy with radiotherapy wo sig CCC
+07,0758,07581,2.6864,6.1056,21.21,64,1,Hepatobiliary malignancy with radiotherapy w min CCC
+07,0759,07590,1.8926,2.0798,5.16,15,0.73,Hepatobiliary malignancy with diagnostic procedure wo sig CCC
+07,0759,07591,2.9602,3.524,8.96,27,1,Hepatobiliary malignancy with diagnostic procedure w min CCC
+07,0759,07592,3.8378,5.6438,12.9,39,1,Hepatobiliary malignancy with diagnostic procedure w mod CCC
+07,0759,07593,4.666,8.973,18.94,57,1,Hepatobiliary malignancy with diagnostic procedure w maj CCC
+07,0760,07600,1.3036,1.4325,4.93,15,0.95,Hepatobiliary malignancy with blood transfusion wo sig CCC
+07,0760,07601,2.8723,3.4194,8.82,26,1,Hepatobiliary malignancy with blood transfusion w min CCC
+07,0760,07602,4.5797,6.7348,13.27,40,1,Hepatobiliary malignancy with blood transfusion w mod CCC
+07,0761,07610,0.6486,0.7127,3.37,10,0.49,"Malig of hepatobil syst/pancreas, transferred wo sig CCC"
+07,0761,07611,1.4484,1.5916,5.82,17,1,"Malig of hepatobil syst/pancreas, transferred w min CCC"
+08,0801,08019,4.5352,5.9674,10.23,31,1,Bilateral or multiple major joint proc of lower ext
+08,0802,08020,3.0732,4.0436,9.23,28,0.63,Total hip replacement wo sig CCC
+08,0802,08021,3.3127,5.5211,15.68,47,0.95,Total hip replacement w min CCC
+08,0802,08022,3.6159,8.2179,21.56,65,1,Total hip replacement w mod CCC
+08,0803,08030,2.8489,3.3916,7.7,23,0.83,Knee replacement wo sig CCC
+08,0803,08031,3.2593,4.2885,9.9,30,0.66,Knee replacement w min CCC
+08,0803,08032,4.0132,6.6886,17.54,53,0.67,Knee replacement w mod CCC
+08,0804,08049,3.5659,4.2452,7.84,24,1,Oth maj joint repl & limb reattach of low/upp extrem
+08,0805,08050,3.8091,5.012,11.16,33,0.73,Spinal fusion wo sig CCC
+08,0805,08051,4.0421,7.7733,19.1,57,0.66,Spinal fusion w min CCC
+08,0805,08052,4.6119,10.4817,27.5,83,1,Spinal fusion w mod CCC
+08,0806,08060,2.9721,3.5382,8.68,26,0.68,Back & neck procedure except spinal fusion wo sig CCC
+08,0806,08061,3.8913,6.4855,17.99,54,0.43,Back & neck procedure except spinal fusion w min CCC
+08,0806,08062,3.9195,8.9079,29.97,90,1,Back & neck procedure except spinal fusion w mod CCC
+08,0807,08070,2.8273,4.1578,14.63,44,0.95,Major amputation for MS & CT disorders wo sig CCC
+08,0807,08071,3.4104,6.5586,19.73,59,0.91,Major amputation for MS & CT disorders w min CCC
+08,0807,08072,4.4663,10.1506,27.92,84,1,Major amputation for MS & CT disorders w mod CCC
+08,0808,08080,1.9283,2.119,5.56,17,0.62,Biopsies for MS & CT disorders wo sig CCC
+08,0808,08081,2.9338,3.8603,11.61,35,0.54,Biopsies for MS & CT disorders w min CCC
+08,0808,08082,3.2466,7.3788,26.1,78,1,Biopsies for MS & CT disorders w mod CCC
+08,0809,08090,1.6426,2.1614,9.4,28,0.41,Skin graft except hand for MS&CT wo sig CCC
+08,0809,08091,2.3128,4.4477,19.12,57,0.54,Skin graft except hand for MS&CT w min CCC
+08,0809,08092,3.5324,8.0282,33.08,99,0.31,Skin graft except hand for MS&CT w mod CCC
+08,0810,08100,2.352,3.0947,11.03,33,0.64,Hip & femur proc exc replacement age >17 wo sig CCC
+08,0810,08101,2.7728,4.0777,14.58,44,0.95,Hip & femur proc exc replacement age >17 w min CCC
+08,0810,08102,2.9895,4.9824,16.71,50,0.89,Hip & femur proc exc replacement age >17 w mod CCC
+08,0810,08103,3.3675,7.6533,23.05,69,0.97,Hip & femur proc exc replacement age >17 w maj CCC
+08,0811,08110,1.9928,2.3723,7.43,22,0.78,Hip & femur proc exc replacement age 0-17 wo sig CCC
+08,0811,08111,2.6426,3.477,10.43,31,1,Hip & femur proc exc replacement age 0-17 w min CCC
+08,0812,08120,2.6059,3.1023,7.14,21,0.36,Knee procedures except replacement wo sig CCC
+08,0812,08121,2.8553,4.7589,17.4,52,0.47,Knee procedures except replacement w min CCC
+08,0812,08122,2.9089,6.6111,25.63,77,1,Knee procedures except replacement w mod CCC
+08,0813,08130,1.5572,1.7112,3.92,12,1,"Shoulder, elbow & forearm proc exc replacement wo sig CCC"
+08,0813,08131,2.3005,2.7387,7.2,22,0.77,"Shoulder, elbow & forearm proc exc replacement w min CCC"
+08,0813,08132,3.291,4.3302,11.63,35,1,"Shoulder, elbow & forearm proc exc replacement w mod CCC"
+08,0813,08133,3.8647,7.432,18.11,54,1,"Shoulder, elbow & forearm proc exc replacement w maj CCC"
+08,0814,08140,1.8865,2.2459,6.83,20,0.41,"Humerus, tibia,fib & ankle proc exc repl age >17 wo sig CCC"
+08,0814,08141,2.23,2.9342,9.41,28,0.52,"Humerus, tibia,fib & ankle proc exc repl age >17 w min CCC"
+08,0814,08142,2.7723,4.0769,13.91,42,0.74,"Humerus, tibia,fib & ankle proc exc repl age >17 w mod CCC"
+08,0814,08143,3.22,6.1923,19.95,60,1,"Humerus, tibia,fib & ankle proc exc repl age >17 w maj CCC"
+08,0815,08150,1.425,1.5659,3.74,11,1,"Humerus, tibia,fib & ankle proc ex repl age 0-17 wo sig CCC"
+08,0815,08151,2.3913,2.8467,8.92,27,0.75,"Humerus, tibia,fib & ankle proc ex repl age 0-17 w min CCC"
+08,0815,08152,3.0533,5.0887,15.19,46,1,"Humerus, tibia,fib & ankle proc ex repl age 0-17 w mod CCC"
+08,0816,08160,0.9118,0.9118,2.23,7,1,Wrist & hand procedure except replacement wo sig CCC
+08,0816,08161,1.1218,1.2328,3.04,9,1,Wrist & hand procedure except replacement w min CCC
+08,0816,08162,1.7137,1.8832,5.08,15,1,Wrist & hand procedure except replacement w mod CCC
+08,0816,08163,2.4046,2.8626,7.82,23,1,Wrist & hand procedure except replacement w maj CCC
+08,0817,08170,1.1139,1.2241,3.74,11,0.94,Ft proc and loc exc & remov int fix dev exc hip & femur wo sig CCC
+08,0817,08171,2.0001,2.381,8.75,26,0.65,Ft proc and loc exc & remov int fix dev exc hip & femur w min CCC
+08,0817,08172,3.0361,5.0602,17.46,52,1,Ft proc and loc exc & remov int fix dev exc hip & femur w mod CCC
+08,0817,08173,3.9112,8.8892,24.52,74,1,Ft proc and loc exc & remov int fix dev exc hip & femur w maj CCC
+08,0818,08180,1.2005,1.3192,4.01,12,1,Loc exc & remov of int fix dev of hip & femur wo sig CCC
+08,0818,08181,2.5147,3.6981,13.19,40,1,Loc exc & remov of int fix dev of hip & femur w min CCC
+08,0820,08200,1.2424,1.3653,3.85,12,1,Soft tissue procedures wo sig CCC
+08,0820,08201,2.5479,3.3525,10.26,31,0.57,Soft tissue procedures w min CCC
+08,0820,08202,3.2465,5.4109,17.99,54,1,Soft tissue procedures w mod CCC
+08,0821,08210,2.7657,3.0392,4.73,14,0.69,Arthroscopy wo sig CCC
+08,0821,08211,3.6619,4.8183,10.28,31,1,Arthroscopy w min CCC
+08,0822,08220,1.7978,1.9756,5.17,16,1,Other MS & CT OR procedures wo sig CCC
+08,0822,08221,3.1302,4.6032,13.3,40,0.87,Other MS & CT OR procedures w min CCC
+08,0822,08222,3.8962,7.4928,20.19,61,1,Other MS & CT OR procedures w mod CCC
+08,0823,08230,2.4353,3.5813,14.01,42,0.75,Partial hip replacement wo sig CCC
+08,0823,08231,2.9745,5.7202,20.13,60,1,Partial hip replacement w min CCC
+08,0823,08232,4.1668,9.4699,26.42,79,1,Partial hip replacement w mod CCC
+08,0824,08240,4.0051,5.8898,14.49,43,0.23,Hip revision wo sig CCC
+08,0824,08241,4.0051,7.4091,28.29,85,1,Hip revision w min CCC
+08,0825,08250,3.6721,4.8318,11.46,34,0.65,Knee revision wo sig CCC
+08,0825,08251,3.692,8.3908,23.13,69,1,Knee revision w min CCC
+08,0828,08289,5.0684,11.519,47.29,142,1,Mult (2-4) wound debrid w skin graft exc hand for MS&CT
+08,0829,08290,2.383,5.416,27.83,83,0.39,Wound debride w skin graft except hand for MS&CT wo sig CCC
+08,0829,08291,4.0302,9.1595,48.07,144,1,Wound debride w skin graft except hand for MS&CT w min CCC
+08,0830,08300,2.3687,4.5552,18.58,56,0.82,Multiple (2-4) wound debridement for MS&CT wo sig CCC
+08,0830,08301,3.2512,7.3893,26.1,78,0.71,Multiple (2-4) wound debridement for MS&CT w min CCC
+08,0830,08302,4.237,9.6295,32.51,98,0.8,Multiple (2-4) wound debridement for MS&CT w mod CCC
+08,0831,08310,1.5684,1.8671,7.42,22,1,Wound debridement for MS&CT wo sig CCC
+08,0831,08311,3.0108,4.4277,14.69,44,1,Wound debridement for MS&CT w min CCC
+08,0831,08312,4.0516,7.7915,20.18,61,0.87,Wound debridement for MS&CT w mod CCC
+08,0831,08313,4.8177,10.9492,27.97,84,1,Wound debridement for MS&CT w maj CCC
+08,0835,08359,16.131,36.6613,27.95,84,1,Plasmapheresis for MS and CT dis
+08,0836,08369,7.2995,16.5896,51.03,153,1,Multiple (>4) wound debridement for MS&CT
+08,0850,08500,0.8336,0.9924,6.07,18,0.76,Fracture of femur wo sig CCC
+08,0850,08501,1.9982,2.9385,13.66,41,1,Fracture of femur w min CCC
+08,0851,08510,0.6876,0.7556,5.19,16,0.6,Fracture of hip and pelvis wo sig CCC
+08,0851,08511,1.5544,2.0451,11.62,35,0.95,Fracture of hip and pelvis w min CCC
+08,0851,08512,2.3149,4.4517,18.59,56,1,Fracture of hip and pelvis w mod CCC
+08,0851,08513,3.071,6.9794,23.6,71,1,Fracture of hip and pelvis w maj CCC
+08,0852,08520,0.6759,0.7428,4.08,12,0.03,"Sprain, stain & dislocation of hip, pelvis & thigh wo sig CCC"
+08,0852,08521,1.7567,2.3115,11.23,34,0.74,"Sprain, stain & dislocation of hip, pelvis & thigh w min CCC"
+08,0853,08530,1.1469,1.3653,8.77,26,0.68,Osteomyelitis wo sig CCC
+08,0853,08531,1.8875,2.7757,14.34,43,1,Osteomyelitis w min CCC
+08,0853,08532,3.1583,6.0738,20.67,62,1,Osteomyelitis w mod CCC
+08,0854,08540,1.0004,1.0993,5.21,16,0.77,Pathological fracture and malignancy wo sig CCC
+08,0854,08541,1.6321,1.9429,8.22,25,1,Pathological fracture and malignancy w min CCC
+08,0854,08542,2.3259,3.0604,11.32,34,0.95,Pathological fracture and malignancy w mod CCC
+08,0855,08550,0.5758,0.6328,3.39,10,1,Connective tissue disorders wo sig CCC
+08,0855,08551,1.3675,1.5028,5.3,16,0.79,Connective tissue disorders w min CCC
+08,0855,08552,2.4323,3.2003,11.5,35,1,Connective tissue disorders w mod CCC
+08,0856,08560,1.0513,1.2514,7.96,24,0.84,Septic arthritis wo sig CCC
+08,0856,08561,2.3026,3.3863,14.96,45,1,Septic arthritis w min CCC
+08,0856,08562,2.7845,6.3285,21.28,64,1,Septic arthritis w mod CCC
+08,0857,08570,0.625,0.6868,4.15,12,0.94,Medical back problems wo sig CCC
+08,0857,08571,1.4202,1.6907,8.89,27,0.86,Medical back problems w min CCC
+08,0857,08572,2.2805,3.3538,14.19,43,0.74,Medical back problems w mod CCC
+08,0857,08573,2.3797,5.4085,22.1,66,1,Medical back problems w maj CCC
+08,0858,08580,0.4661,0.5122,3.52,11,1,Bone disease and arthropathies wo sig CCC
+08,0858,08581,0.8591,0.9441,5.28,16,0.91,Bone disease and arthropathies w min CCC
+08,0858,08582,1.4449,1.7201,7.61,23,1,Bone disease and arthropathies w mod CCC
+08,0858,08583,2.8907,3.4413,7.55,23,1,Bone disease and arthropathies w maj CCC
+08,0860,08600,0.4346,0.4346,2.71,8,0.34,Signs and symptoms of MS system & CT wo sig CCC
+08,0860,08601,0.816,0.8967,4.97,15,0.97,Signs and symptoms of MS system & CT w min CCC
+08,0860,08602,1.9451,2.3156,8.75,26,0.62,Signs and symptoms of MS system & CT w mod CCC
+08,0861,08610,0.44,0.44,2.54,8,0.31,"Tendonitis, myositis and bursitis wo sig CCC"
+08,0861,08611,0.8907,0.9788,5.42,16,0.93,"Tendonitis, myositis and bursitis w min CCC"
+08,0861,08612,1.5519,1.8475,7.24,22,0.73,"Tendonitis, myositis and bursitis w mod CCC"
+08,0861,08613,2.2138,2.913,11.42,34,0.76,"Tendonitis, myositis and bursitis w maj CCC"
+08,0862,08620,0.8397,0.9996,6.56,20,0.53,"Aftercare, MS system & CT wo sig CCC"
+08,0862,08621,1.3914,1.8307,10.89,33,0.77,"Aftercare, MS system & CT w min CCC"
+08,0862,08622,2.2191,4.2675,19.61,59,1,"Aftercare, MS system & CT w mod CCC"
+08,0863,08630,0.5132,0.5132,1.96,6,0.87,"Fx, spr, str & disl of f arm,hand & foot age >17 wo sig CCC"
+08,0863,08631,0.712,0.7824,3.2,10,0.7,"Fx, spr, str & disl of f arm,hand & foot age >17 w min CCC"
+08,0863,08632,1.2523,1.3761,5.72,17,1,"Fx, spr, str & disl of f arm,hand & foot age >17 w mod CCC"
+08,0863,08633,2.4621,3.2396,9.83,29,1,"Fx, spr, str & disl of f arm,hand & foot age >17 w maj CCC"
+08,0864,08640,0.4703,0.4703,1.74,5,0.65,"Fx, spr, str & disl of f arm,hand & foot age 0-17 wo sig CCC"
+08,0864,08641,0.5973,0.5973,1.44,4,0.55,"Fx, spr, str & disl of f arm,hand & foot age 0-17 w min CCC"
+08,0864,08642,0.64,0.64,1.54,5,1,"Fx, spr, str & disl of f arm,hand & foot age 0-17 w mod CCC"
+08,0864,08643,0.8991,0.988,3.06,9,1,"Fx, spr, str & disl of f arm,hand & foot age 0-17 w maj CCC"
+08,0865,08650,0.5596,0.5596,2.43,7,0.91,"Fx, spr, str & disl of up arm& low leg age >17 wo sig CCC"
+08,0865,08651,0.9963,1.0948,5.09,15,0.64,"Fx, spr, str & disl of up arm& low leg age >17 w min CCC"
+08,0865,08652,1.5925,2.0954,9.3,28,1,"Fx, spr, str & disl of up arm& low leg age >17 w mod CCC"
+08,0865,08653,2.7855,4.0964,13.1,39,1,"Fx, spr, str & disl of up arm& low leg age >17 w maj CCC"
+08,0866,08660,0.2616,0.2616,1.3,4,1,"Fx, spr, str & disl of up arm& low leg age 0-17 wo sig CCC"
+08,0866,08661,0.5812,0.5812,1.78,5,0.93,"Fx, spr, str & disl of up arm& low leg age 0-17 w min CCC"
+08,0866,08662,0.9761,1.162,6.98,21,1,"Fx, spr, str & disl of up arm& low leg age 0-17 w mod CCC"
+08,0867,08670,0.6573,0.7223,3.04,9,0.65,other MS system and CT diagnoses wo sig CCC
+08,0867,08671,1.2294,1.351,5.82,17,1,other MS system and CT diagnoses w min CCC
+08,0867,08672,2.7193,3.999,12.38,37,1,other MS system and CT diagnoses w mod CCC
+08,0868,08689,3.5966,6.9165,19.1,57,1,Pathol fracture and malignancy w chemo- and radiother
+08,0869,08690,2.1426,2.3545,4.39,13,1,Pathol fracture and malignancy w chemotherapy wo sig CCC
+08,0869,08691,3.3935,4.0398,8.9,27,1,Pathol fracture and malignancy w chemotherapy w min CCC
+08,0869,08692,4.4937,7.4895,16.16,48,1,Pathol fracture and malignancy w chemotherapy w mod CCC
+08,0870,08700,1.9645,2.585,10.74,32,0.77,Pathol fracture and malignancy w radiotherapy wo sig CCC
+08,0870,08701,2.5652,4.2752,16.76,50,1,Pathol fracture and malignancy w radiotherapy w min CCC
+08,0870,08702,3.1865,7.242,22.4,67,1,Pathol fracture and malignancy w radiotherapy w mod CCC
+08,0871,08710,2.0543,2.4456,7.53,23,0.74,Pathol fracture and malignancy w diagnostic proc wo sig CCC
+08,0871,08711,2.8775,4.2316,14.27,43,1,Pathol fracture and malignancy w diagnostic proc w min CCC
+08,0871,08712,3.0888,7.02,21.53,65,1,Pathol fracture and malignancy w diagnostic proc w mod CCC
+08,0872,08720,1.4779,1.6241,6,18,0.61,Pathol fracture and malignancy w blood transfusion wo sig CCC
+08,0872,08721,2.7121,3.9884,12.48,37,0.82,Pathol fracture and malignancy w blood transfusion w min CCC
+08,0872,08722,3.447,6.6289,18.66,56,0.49,Pathol fracture and malignancy w blood transfusion w mod CCC
+08,0873,08730,0.7612,0.8365,3.3,10,1,Major connective tissue Dx wo sig CCC
+08,0873,08731,1.6316,1.793,5.79,17,1,Major connective tissue Dx w min CCC
+08,0873,08732,2.7149,3.2321,7.17,22,0.85,Major connective tissue Dx w mod CCC
+08,0873,08733,3.6758,5.4056,14.19,43,1,Major connective tissue Dx w maj CCC
+09,0901,09010,2.3427,2.7889,8.34,25,0.72,Total mastectomy for malignancy wo sig CCC
+09,0901,09011,2.728,3.5895,10.69,32,0.75,Total mastectomy for malignancy w min CCC
+09,0901,09012,3.6448,6.0747,17.51,53,1,Total mastectomy for malignancy w mod CCC
+09,0902,09029,1.8173,1.997,3.56,11,1,Subtotal mastectomy for malignancy
+09,0903,09030,1.1956,1.3138,3.02,9,1,Breast proc for non-malig exc biopsy and local excis wo sig CCC
+09,0903,09031,1.7293,1.9003,4.44,13,0.9,Breast proc for non-malig exc biopsy and local excis w min CCC
+09,0904,09049,0.9608,0.9608,2.18,7,1,Breast biopsy and local excision
+09,0905,09050,1.5084,1.9848,9.13,27,1,Skin graft and debrid for ulcer or cellulitis wo sig CCC
+09,0905,09051,2.5233,4.2055,17.05,51,0.44,Skin graft and debrid for ulcer or cellulitis w min CCC
+09,0905,09052,2.8226,6.4149,27.66,83,1,Skin graft and debrid for ulcer or cellulitis w mod CCC
+09,0906,09060,1.3551,1.4891,5.91,18,0.61,Skin graft and debridment wo sig CCC
+09,0906,09061,2.1638,3.1821,12.15,36,0.6,Skin graft and debridment w min CCC
+09,0906,09062,2.9857,5.7417,20.9,63,0.39,Skin graft and debridment w mod CCC
+09,0906,09063,3.2551,7.3979,30.01,90,0.18,Skin graft and debridment w maj CCC
+09,0907,09079,0.8596,0.9446,3.11,9,1,Perianal and pilonidal procedures
+09,0908,09080,1.7522,1.9255,4.8,14,1,"Skin, subcut tissue and breast plastic proc wo sig CCC"
+09,0908,09081,2.8243,3.3622,7.61,23,0.8,"Skin, subcut tissue and breast plastic proc w min CCC"
+09,0909,09090,0.8927,0.981,3.36,10,1,"Other skin, subcut tissue and breast proc wo sig CCC"
+09,0909,09091,1.811,2.156,7.01,21,0.7,"Other skin, subcut tissue and breast proc w min CCC"
+09,0909,09092,2.8068,4.6779,15.13,45,0.81,"Other skin, subcut tissue and breast proc w mod CCC"
+09,0909,09093,3.7001,8.4092,24.79,74,1,"Other skin, subcut tissue and breast proc w maj CCC"
+09,0910,09100,2.1098,4.0572,18.61,56,0.67,Skin graft and mult debride for ulcer or cellulitis wo sig CCC
+09,0910,09101,2.5826,5.8696,24.11,72,0.38,Skin graft and mult debride for ulcer or cellulitis w min CCC
+09,0910,09102,3.777,8.5841,38.87,117,1,Skin graft and mult debride for ulcer or cellulitis w mod CCC
+09,0911,09110,2.3237,3.0575,10.7,32,0.42,Pedicle graft plastic procedures wo sig CCC
+09,0911,09111,3.0368,6.9019,36.97,111,1,Pedicle graft plastic procedures w min CCC
+09,0914,09149,4.0987,5.393,9.64,29,1,Total mastectomy  w reconstruction
+09,0915,09150,2.3304,3.8839,17.51,53,0.37,Skin graft and/or multiple debridment wo sig CCC
+09,0915,09151,2.4286,5.5195,24.71,74,0.37,Skin graft and/or multiple debridment w min CCC
+09,0915,09152,3.6222,8.2321,39.93,120,0.99,Skin graft and/or multiple debridment w mod CCC
+09,0950,09500,1.1898,1.4164,8.45,25,0.65,Skin ulcers wo sig CCC
+09,0950,09501,1.9253,2.8313,14.35,43,0.88,Skin ulcers w min CCC
+09,0950,09502,2.4634,5.5986,23.13,69,1,Skin ulcers w mod CCC
+09,0950,09503,3.9489,8.9748,32.05,96,1,Skin ulcers w maj CCC
+09,0951,09510,0.7963,0.875,4.92,15,0.45,Severe skin disorders wo sig CCC
+09,0951,09511,2.0523,2.7004,11.09,33,0.88,Severe skin disorders w min CCC
+09,0951,09512,2.7089,4.5148,16.67,50,0.8,Severe skin disorders w mod CCC
+09,0952,09520,0.5401,0.5935,3.74,11,0.83,Moderate skin disorders wo sig CCC
+09,0952,09521,1.0733,1.4121,9.22,28,1,Moderate skin disorders w min CCC
+09,0953,09530,0.3289,0.3289,2.11,6,0.69,Minor skin disorders wo sig CCC
+09,0953,09531,0.6769,0.7439,4.08,12,1,Minor skin disorders w min CCC
+09,0953,09532,1.6946,2.0174,7.41,22,1,Minor skin disorders w mod CCC
+09,0953,09533,3.6652,5.3901,12.56,38,1,Minor skin disorders w maj CCC
+09,0954,09540,0.6441,0.7078,3.51,11,0.74,Malignant breast disorders wo sig CCC
+09,0954,09541,1.1319,1.2439,5.55,17,0.72,Malignant breast disorders w min CCC
+09,0954,09542,2.4026,3.1612,9.98,30,1,Malignant breast disorders w mod CCC
+09,0955,09550,0.5993,0.6586,3.35,10,0.64,Non-malignant breast disorders wo sig CCC
+09,0955,09551,1.044,1.1473,4.96,15,1,Non-malignant breast disorders w min CCC
+09,0956,09560,0.6306,0.693,4.48,13,0.78,Cellulitis Age > 17 wo sig CCC
+09,0956,09561,0.9853,1.1729,6.09,18,1,Cellulitis Age > 17 w min CCC
+09,0956,09562,1.917,2.5223,9.36,28,0.98,Cellulitis Age > 17 w mod CCC
+09,0956,09563,2.8859,4.244,12.24,37,0.7,Cellulitis Age > 17 w maj CCC
+09,0956,09564,4.7705,7.9509,17.65,53,0.2,Cellulitis Age > 17 w ext CCC
+09,0957,09570,0.3596,0.3596,2.98,9,1,Cellulitis Age 0-17 wo sig CCC
+09,0957,09571,0.4506,0.4952,3.36,10,1,Cellulitis Age 0-17 w min CCC
+09,0957,09572,0.9321,1.0243,4.93,15,1,Cellulitis Age 0-17 w mod CCC
+09,0958,09580,0.3135,0.3135,1.71,5,0.72,"Trauma to skin, subcut tissue & breast  age >17 wo sig CCC"
+09,0958,09581,0.6807,0.748,3.13,9,0.92,"Trauma to skin, subcut tissue & breast  age >17 w min CCC"
+09,0958,09582,1.7527,2.0866,7.57,23,1,"Trauma to skin, subcut tissue & breast  age >17 w mod CCC"
+09,0958,09583,2.6802,3.5266,9.51,29,0.92,"Trauma to skin, subcut tissue & breast  age >17 w maj CCC"
+09,0959,09590,0.202,0.202,1.34,4,0.44,"Trauma to skin, subcut tissue & breast  age 0-17 wo sig CCC"
+09,0959,09591,0.4161,0.4161,1.87,6,0.9,"Trauma to skin, subcut tissue & breast  age 0-17 w min CCC"
+09,0959,09592,0.827,0.9088,3.32,10,0.19,"Trauma to skin, subcut tissue & breast  age 0-17 w mod CCC"
+09,0960,09609,3.8954,8.8533,27.56,83,1,Malignant breast dis w chemo- and radiotherapy
+09,0961,09610,1.202,1.202,1.2,4,1,Malignant breast dis w chemotherapy wo sig CCC
+09,0961,09611,2.756,3.281,8.41,25,0.84,Malignant breast dis w chemotherapy w min CCC
+09,0961,09612,3.383,6.5057,20.26,61,0.88,Malignant breast dis w chemotherapy w mod CCC
+09,0962,09620,2.1929,3.6548,16.26,49,1,Malignant breast dis w radiotherapy wo sig CCC
+09,0962,09621,3.1955,7.2624,23.26,70,1,Malignant breast dis w radiotherapy w min CCC
+09,0963,09630,1.4501,1.5935,5.09,15,1,Malignant breast dis w diag proc wo sig CCC
+09,0963,09631,2.9213,4.296,12.82,38,1,Malignant breast dis w diag proc w min CCC
+09,0964,09640,0.5718,0.6283,3.4,10,0.96,Malignant breast dis w blood transfusion wo sig CCC
+09,0964,09641,1.3903,1.8293,11.45,34,1,Malignant breast dis w blood transfusion w min CCC
+09,0965,09650,0.6216,0.6831,3.79,11,1,Skin malignancy wo sig CCC
+09,0965,09651,0.9906,1.0886,4.76,14,0.78,Skin malignancy w min CCC
+09,0965,09652,1.8712,2.462,9.79,29,1,Skin malignancy w mod CCC
+09,0966,09660,2.139,3.565,17.24,52,1,Skin malignancy w radiotherapy wo sig CCC
+09,0966,09661,2.7057,5.2034,20.4,61,1,Skin malignancy w radiotherapy w min CCC
+09,0967,09679,1.6213,1.7817,3.6,11,1,Skin malignancy w chemotherapy
+10,1001,10010,6.4327,7.658,8.98,27,1,Pituitary procedures wo sig CCC
+10,1001,10011,7.2394,10.6462,13.33,40,1,Pituitary procedures w min CCC
+10,1002,10020,4.1045,4.5104,5.7,17,1,Adrenal procedures wo sig CCC
+10,1002,10021,5.2682,7.7473,12.04,36,1,Adrenal procedures w min CCC
+10,1003,10039,2.4917,3.6642,12.72,38,1,"Amput of lower limb for endoc, nut & met dis/Elderly"
+10,1004,10049,2.3922,3.5179,12.2,37,1,"Amput of lower limb for endoc, nut & met dis/Adult"
+10,1005,10059,4.9293,6.486,10.67,32,1,OR procedures for obesity
+10,1007,10070,2.7773,3.3064,6.16,18,0.78,Parathyroid procedures wo sig CCC
+10,1007,10071,3.5428,4.6616,9.61,29,1,Parathyroid procedures w min CCC
+10,1008,10080,1.9004,2.0884,4.17,13,1,Thyroid procedures wo sig CCC
+10,1008,10081,3.4621,4.1215,7.25,22,1,Thyroid procedures w min CCC
+10,1008,10082,4.8849,7.1836,12.75,38,1,Thyroid procedures w mod CCC
+10,1009,10090,1.2651,1.3902,3.27,10,1,Thyroglossal procedures wo sig CCC
+10,1009,10091,1.5138,1.6635,4.16,12,1,Thyroglossal procedures w min CCC
+10,1010,10109,3.0104,3.5838,8.16,24,1,"Other endocrine, nut & met OR procedures"
+10,1013,10139,7.4186,8.8316,8.97,27,1,Lap procedures for obesity
+10,1050,10500,0.4723,0.4723,2.9,9,1,Endocrine disorders except diabetes wo complicated PDx wo sig CCC
+10,1050,10501,0.8691,0.9551,4.5,14,1,Endocrine disorders except diabetes wo complicated PDx w min CCC
+10,1050,10502,1.3499,1.6071,6.12,18,1,Endocrine disorders except diabetes wo complicated PDx w mod CCC
+10,1050,10503,2.1362,2.5431,7.85,24,1,Endocrine disorders except diabetes wo complicated PDx w maj CCC
+10,1050,10504,3.8438,5.0576,11.1,33,1,Endocrine disorders except diabetes wo complicated PDx w ext CCC
+10,1051,10519,1.5178,1.8069,7.31,22,1,Severe metabolic disorder in adult
+10,1052,10529,2.4093,3.5431,12.88,39,1,Severe metabolic disorder in child
+10,1053,10530,0.3938,0.3938,2.34,7,0.93,Nutrition and miscelaneous metabolic disorders wo sig CCC
+10,1053,10531,0.6183,0.6795,3.5,11,1,Nutrition and miscelaneous metabolic disorders w min CCC
+10,1053,10532,1.2415,1.4781,6.05,18,1,Nutrition and miscelaneous metabolic disorders w mod CCC
+10,1053,10533,2.3484,2.7957,8.69,26,1,Nutrition and miscelaneous metabolic disorders w maj CCC
+10,1053,10534,3.7809,5.56,13.25,40,1,Nutrition and miscelaneous metabolic disorders w ext CCC
+10,1054,10540,0.4281,0.4281,2.4,7,0.93,Inborn errors of metabolism wo sig CCC
+10,1054,10541,1.0072,1.1991,6.52,20,1,Inborn errors of metabolism w min CCC
+10,1056,10560,0.4104,0.4104,2.73,8,0.8,Diabetes without complicated PDx wo sig CCC
+10,1056,10561,0.5475,0.6017,3.61,11,0.99,Diabetes without complicated PDx w min CCC
+10,1056,10562,0.9646,1.06,5.55,17,1,Diabetes without complicated PDx w mod CCC
+10,1056,10563,1.3006,1.5483,6.88,21,1,Diabetes without complicated PDx w maj CCC
+10,1056,10564,2.8488,3.7485,11.08,33,1,Diabetes without complicated PDx w ext CCC
+10,1059,10590,1.5698,1.725,4,12,1,Endocrine malignancy w chemotherapy wo sig CCC
+10,1059,10591,2.9362,4.318,14.26,43,1,Endocrine malignancy w chemotherapy w min CCC
+10,1060,10600,1.6476,1.6476,2.57,8,1,Endocrine malignancy w radiotherapy wo sig CCC
+10,1060,10601,2.4736,2.9447,6.16,18,1,Endocrine malignancy w radiotherapy w min CCC
+10,1061,10610,1.2503,1.374,4.14,12,0.78,Endocrine malignancy wo sig CCC
+10,1061,10611,2.1728,2.8589,10.2,31,0.59,Endocrine malignancy w min CCC
+11,1101,11019,12.7964,29.0828,21.18,64,1,Kidney transplant
+11,1102,11020,1.5438,1.6965,5.91,18,1,Operative insertion peritoneal cath for dialysis wo sig CCC
+11,1102,11021,2.6925,4.4876,16.63,50,0.73,Operative insertion peritoneal cath for dialysis w min CCC
+11,1102,11022,3.3442,7.6006,25.65,77,1,Operative insertion peritoneal cath for dialysis w mod CCC
+11,1103,11030,4.3894,5.7756,11.54,35,0.86,"Kidney, ureter and maj bladder proc for neop wo sig CCC"
+11,1103,11031,4.9179,8.1965,15.64,47,0.64,"Kidney, ureter and maj bladder proc for neop w min CCC"
+11,1103,11032,4.9179,10.514,23.43,70,1,"Kidney, ureter and maj bladder proc for neop w mod CCC"
+11,1104,11040,2.4196,2.8804,7.29,22,0.79,"Kidney, ureter and maj bladder procedure wo sig CCC"
+11,1104,11041,3.4236,4.5048,11.67,35,0.96,"Kidney, ureter and maj bladder procedure w min CCC"
+11,1104,11042,4.1568,6.928,17.07,51,1,"Kidney, ureter and maj bladder procedure w mod CCC"
+11,1104,11043,4.6695,10.6124,21.61,65,1,"Kidney, ureter and maj bladder procedure w maj CCC"
+11,1105,11050,2.0789,2.2845,5.72,17,0.7,Transurethral prostatectomy wo sig CCC
+11,1105,11051,3.0823,4.0557,10.97,33,1,Transurethral prostatectomy w min CCC
+11,1106,11060,1.3628,1.4976,4.67,14,1,Minor bladder procedure wo sig CCC
+11,1106,11061,2.9353,4.3167,13.33,40,1,Minor bladder procedure w min CCC
+11,1106,11062,4.0913,7.8679,18.87,57,1,Minor bladder procedure w mod CCC
+11,1107,11070,1.7723,1.9476,3.83,11,0.62,"Transurethral proc, exc prostatectomy wo sig CCC"
+11,1107,11071,2.5519,3.038,7.92,24,0.87,"Transurethral proc, exc prostatectomy w min CCC"
+11,1107,11072,3.5639,5.241,13.4,40,0.9,"Transurethral proc, exc prostatectomy w mod CCC"
+11,1107,11073,4.205,8.0867,20.13,60,1,"Transurethral proc, exc prostatectomy w maj CCC"
+11,1108,11080,1.511,1.6604,5.48,16,1,Urethral procedures wo sig CCC
+11,1108,11081,3.0242,4.4473,13.46,40,1,Urethral procedures w min CCC
+11,1109,11090,1.383,1.5033,3.14,9,1,Other kidney & urinary tract OR proc wo sig CCC
+11,1109,11091,3.7344,4.4482,12.77,38,1,Other kidney & urinary tract OR proc w min CCC
+11,1110,11100,1.6489,1.812,3.95,12,1,Ureteroscopy wo sig CCC
+11,1110,11101,2.9828,4.3864,12.05,36,1,Ureteroscopy w min CCC
+11,1111,11110,1.2915,1.4192,4.6,14,1,Cystourethroscopy wo sig CCC
+11,1111,11111,2.6895,3.9551,12.41,37,1,Cystourethroscopy w min CCC
+11,1111,11112,4.0346,7.7588,19.55,59,1,Cystourethroscopy w mod CCC
+11,1112,11120,1.5947,1.5947,1.45,4,0.98,ESWL for urinary stone wo sig CCC
+11,1112,11121,1.771,1.771,1.87,6,1,ESWL for urinary stone w min CCC
+11,1112,11122,2.1918,2.1918,2.18,7,1,ESWL for urinary stone w mod CCC
+11,1112,11123,3.6062,3.6062,2.97,9,1,ESWL for urinary stone w maj CCC
+11,1115,11159,16.6713,27.7855,16.3,49,1,Plasmapheresis for kidney and urinary tract dis
+11,1116,11169,2.7207,2.9898,4.36,13,1,ESWL with uroendoscopy
+11,1117,11179,2.8978,3.4497,6.16,18,1,Lap adhesiolysis & renal tissue ablation
+11,1118,11189,4.1581,4.9501,7.54,23,1,Other major OR procedures for kidney & urinary tract disorders
+11,1150,11500,0.5767,0.5767,2.47,7,1,"Chronic renal failure, age > 17 wo sig CCC"
+11,1150,11501,1.0197,1.1205,4.51,14,1,"Chronic renal failure, age > 17 w min CCC"
+11,1150,11502,1.9802,2.3573,7.53,23,1,"Chronic renal failure, age > 17 w mod CCC"
+11,1150,11503,3.1674,4.1677,10.82,32,1,"Chronic renal failure, age > 17 w maj CCC"
+11,1150,11504,4.6811,7.8018,16.28,49,1,"Chronic renal failure, age > 17 w ext CCC"
+11,1151,11510,1.0515,1.1555,3.87,12,0.53,"Chronic renal failure, age < 18 wo sig CCC"
+11,1151,11511,1.6352,2.4046,13.65,41,1,"Chronic renal failure, age < 18 w min CCC"
+11,1152,11520,0.8173,0.8981,4.42,13,1,Admit for renal dialysis wo sig CCC
+11,1152,11521,2.1086,2.5102,8.15,24,1,Admit for renal dialysis w min CCC
+11,1153,11530,0.8477,0.9315,4.12,12,0.75,Kidney and urinary tract neoplasm wo sig CCC
+11,1153,11531,2.0204,2.6584,9.29,28,0.4,Kidney and urinary tract neoplasm w min CCC
+11,1154,11540,0.5625,0.6181,3.98,12,1,Kidney and urinary tract infection wo sig CCC
+11,1154,11541,1.3506,1.6079,7.1,21,1,Kidney and urinary tract infection w min CCC
+11,1154,11542,2.4186,3.1823,10.44,31,1,Kidney and urinary tract infection w mod CCC
+11,1154,11543,3.0187,4.4392,12.56,38,1,Kidney and urinary tract infection w maj CCC
+11,1154,11544,4.4243,7.3738,17.6,53,1,Kidney and urinary tract infection w ext CCC
+11,1155,11550,0.5425,0.5425,2.77,8,1,Urinary stone wo sig CCC
+11,1155,11551,1.6832,2.0038,7.89,24,1,Urinary stone w min CCC
+11,1155,11552,3.0277,4.4525,12.18,37,1,Urinary stone w mod CCC
+11,1156,11560,0.4629,0.4629,2.98,9,0.67,Kidney and urinary tract signs & symptoms wo sig CCC
+11,1156,11561,1.2794,1.4059,5.36,16,0.82,Kidney and urinary tract signs & symptoms w min CCC
+11,1156,11562,2.3273,3.0622,11.05,33,1,Kidney and urinary tract signs & symptoms w mod CCC
+11,1157,11570,0.5031,0.5031,2.01,6,0.86,Urethral stricture wo sig CCC
+11,1157,11571,0.8549,0.9395,4.36,13,1,Urethral stricture w min CCC
+11,1158,11580,0.6439,0.7076,3.72,11,0.84,Other kidney and urinary tract diagnoses wo sig CCC
+11,1158,11581,1.4685,1.7482,6.54,20,1,Other kidney and urinary tract diagnoses w min CCC
+11,1158,11582,2.3963,3.1531,9.37,28,1,Other kidney and urinary tract diagnoses w mod CCC
+11,1158,11583,3.975,5.8457,14.31,43,1,Other kidney and urinary tract diagnoses w maj CCC
+11,1159,11590,0.7447,0.8183,4.11,12,1,"Acute renal failure age > 17, not transferred wo sig CCC"
+11,1159,11591,1.9472,2.3181,8.05,24,1,"Acute renal failure age > 17, not transferred w min CCC"
+11,1159,11592,3.057,4.0224,11.08,33,1,"Acute renal failure age > 17, not transferred w mod CCC"
+11,1159,11593,4.8369,7.1132,14.86,45,1,"Acute renal failure age > 17, not transferred w maj CCC"
+11,1160,11600,0.7153,0.786,3.49,10,0.65,Acute renal failure age < 18 wo sig CCC
+11,1160,11601,1.4797,1.7616,8.14,24,1,Acute renal failure age < 18 w min CCC
+11,1162,11620,1.8038,1.8038,1.72,5,1,KUB malignancy with chemotherapy wo sig CCC
+11,1162,11621,2.8591,3.4037,7.34,22,1,KUB malignancy with chemotherapy w min CCC
+11,1163,11630,2.3571,3.9286,15.63,47,0.87,KUB malignancy with radiotherapy wo sig CCC
+11,1163,11631,3.0301,6.8866,25.02,75,1,KUB malignancy with radiotherapy w min CCC
+11,1164,11640,1.6198,1.78,4.54,14,0.37,KUB malignancy with diag proc wo sig CCC
+11,1164,11641,2.3171,3.0488,11.94,36,0.66,KUB malignancy with diag proc w min CCC
+11,1165,11650,1.2586,1.3831,5.7,17,0.42,KUB malignancy with blood transfusion wo sig CCC
+11,1165,11651,2.0576,3.4294,16.19,49,1,KUB malignancy with blood transfusion w min CCC
+11,1166,11660,1.6656,1.8303,5.44,16,1,Major kidney diagnoses wo sig CCC
+11,1166,11661,3.4099,4.4868,11.61,35,1,Major kidney diagnoses w min CCC
+11,1167,11670,0.6727,0.6727,2.71,8,0.47,"Acute renal failure age > 17, transferred wo sig CCC"
+11,1167,11671,1.8034,2.1469,6.43,19,0.92,"Acute renal failure age > 17, transferred w min CCC"
+11,1167,11672,2.4835,3.2677,9.81,29,1,"Acute renal failure age > 17, transferred w mod CCC"
+12,1201,12019,8.1017,10.6601,10.85,33,1,Major male pelvic procedures
+12,1202,12020,2.0376,2.2391,5.48,16,0.7,Transurethral prostatectomy wo sig CCC
+12,1202,12021,2.5345,3.0173,7.73,23,0.93,Transurethral prostatectomy w min CCC
+12,1202,12022,4.0491,6.7486,16.21,49,1,Transurethral prostatectomy w mod CCC
+12,1203,12030,1.0854,1.0854,2.85,9,0.85,Testis procedures wo sig CCC
+12,1203,12031,1.6188,1.7789,5.87,18,1,Testis procedures w min CCC
+12,1203,12032,2.6711,3.9281,12.05,36,1,Testis procedures w mod CCC
+12,1204,12040,1.5665,1.865,6.52,20,1,Penis procedures wo sig CCC
+12,1204,12041,2.0723,2.7267,9.62,29,1,Penis procedures w min CCC
+12,1205,12059,0.6928,0.6928,2.15,6,1,Circumcision
+12,1206,12060,2.4412,2.9063,8.94,27,0.66,Other male repro system OR proc for malig wo sig CCC
+12,1206,12061,2.8569,6.493,21.07,63,0.76,Other male repro system OR proc for malig w min CCC
+12,1207,12070,1.5249,1.6757,5.26,16,1,Other male reproductive system OR procedur wo sig CCC
+12,1207,12071,3.0833,4.5343,14.09,42,0.59,Other male reproductive system OR procedur w min CCC
+12,1208,12080,0.8731,0.9595,3.67,11,0.89,Cystourethroscopy wo sig CCC
+12,1208,12081,1.8313,2.4096,10.85,33,1,Cystourethroscopy w min CCC
+12,1250,12500,0.9308,1.0229,4.88,15,0.68,"Malignancy, male reproductive system wo sig CCC"
+12,1250,12501,2.3749,3.1249,10.46,31,0.68,"Malignancy, male reproductive system w min CCC"
+12,1251,12510,0.6855,0.6855,2.92,9,0.8,Benign prostatic hypertrophy wo sig CCC
+12,1251,12511,1.0183,1.119,5.34,16,1,Benign prostatic hypertrophy w min CCC
+12,1251,12512,1.9997,2.3806,7.82,23,1,Benign prostatic hypertrophy w mod CCC
+12,1252,12520,0.4765,0.5236,3.73,11,1,Inflammation of the male reproductive system wo sig CCC
+12,1252,12521,1.0768,1.2819,6.76,20,1,Inflammation of the male reproductive system w min CCC
+12,1252,12522,2.0627,2.4556,8.97,27,1,Inflammation of the male reproductive system w mod CCC
+12,1252,12523,3.4244,5.0359,13.46,40,1,Inflammation of the male reproductive system w maj CCC
+12,1254,12540,0.5182,0.5182,2.5,8,1,Other male reproductive system diagnoses wo sig CCC
+12,1254,12541,1.3536,1.6115,7.76,23,1,Other male reproductive system diagnoses w min CCC
+12,1255,12559,2.9638,3.8997,11.98,36,1,"Malig, male reprod organ w chemo- and radiother"
+12,1256,12560,1.9854,2.158,5.22,16,1,"Malignancy, male reprod organ w chemotherapy wo sig CCC"
+12,1256,12561,2.8697,3.1535,3.85,12,1,"Malignancy, male reprod organ w chemotherapy w min CCC"
+12,1256,12562,4.0472,5.9519,12.51,38,1,"Malignancy, male reprod organ w chemotherapy w mod CCC"
+12,1257,12579,1.8859,3.1432,17.55,53,0.75,"Malignancy, male reprod organ w radiotherapy"
+12,1258,12580,1.2524,1.2524,2.99,9,0.94,"Malignancy, male reprod organ w diag proc wo sig CCC"
+12,1258,12581,2.4943,3.2819,9.2,28,0.82,"Malignancy, male reprod organ w diag proc w min CCC"
+12,1259,12590,0.9693,1.0652,4.23,13,0.8,"Malignancy, male reprod organ w blood transfusion wo sig CCC"
+12,1259,12591,2.0315,2.673,10.76,32,0.87,"Malignancy, male reprod organ w blood transfusion w min CCC"
+12,1259,12592,2.7417,4.5694,16.52,50,0.9,"Malignancy, male reprod organ w blood transfusion w mod CCC"
+13,1301,13010,3.2055,3.816,7.44,22,1,Radical hysterectomy & radical vulvectomy wo sig CCC
+13,1301,13011,4.331,6.369,12.54,38,1,Radical hysterectomy & radical vulvectomy w min CCC
+13,1302,13020,2.7372,3.0079,5.97,18,0.93,Uterine & adnexal proc for malignancy wo sig CCC
+13,1302,13021,3.8437,5.0575,10.62,32,1,Uterine & adnexal proc for malignancy w min CCC
+13,1302,13022,5.2463,8.744,17.55,53,1,Uterine & adnexal proc for malignancy w mod CCC
+13,1303,13039,1.9047,2.0931,4.95,15,1,Uterine & adnexal proc for ca in situ
+13,1305,13050,1.988,2.1846,4.96,15,0.88,Uterine & adnexal proc for non-malignancy wo sig CCC
+13,1305,13051,2.6554,3.1611,7.33,22,1,Uterine & adnexal proc for non-malignancy w min CCC
+13,1305,13052,4.0222,5.915,12.79,38,0.94,Uterine & adnexal proc for non-malignancy w mod CCC
+13,1305,13053,4.4658,8.5882,18.79,56,1,Uterine & adnexal proc for non-malignancy w maj CCC
+13,1306,13060,0.7651,0.7651,2.26,7,1,Incisional tubal interruption wo sig CCC
+13,1306,13061,0.9233,1.0146,3.13,9,1,Incisional tubal interruption w min CCC
+13,1306,13062,1.3398,1.4723,3.97,12,1,Incisional tubal interruption w mod CCC
+13,1307,13070,0.6572,0.6572,2.01,6,1,"Vaginal, cervix & vulva procedures wo sig CCC"
+13,1307,13071,1.3626,1.4974,4.79,14,1,"Vaginal, cervix & vulva procedures w min CCC"
+13,1307,13072,3.0705,4.5154,12.79,38,1,"Vaginal, cervix & vulva procedures w mod CCC"
+13,1308,13089,1.6178,1.7778,4.9,15,1,Female reproductive system reconstructive proc
+13,1309,13090,0.5548,0.5548,1.58,5,0.82,D&C and other minor uterine procedures wo sig CCC
+13,1309,13091,0.6285,0.6285,1.91,6,1,D&C and other minor uterine procedures w min CCC
+13,1309,13092,0.8145,0.8145,2.38,7,0.9,D&C and other minor uterine procedures w mod CCC
+13,1309,13093,1.3351,1.7567,9.98,30,0.5,D&C and other minor uterine procedures w maj CCC
+13,1310,13109,1.7212,1.7212,2.43,7,1,Endoscopic tubal interruption
+13,1311,13110,1.9051,2.268,6.13,18,0.78,Other female reproductive system OR procedures wo sig CCC
+13,1311,13111,3.242,4.7677,12.87,39,0.48,Other female reproductive system OR procedures w min CCC
+13,1311,13112,3.242,6.9836,22.5,68,1,Other female reproductive system OR procedures w mod CCC
+13,1312,13129,5.9009,11.348,19.29,58,1,Pelvic evisceration
+13,1313,13130,2.783,3.0582,4.76,14,1,Lap uterine & adnexal proc for malignancy wo sig CCC
+13,1313,13131,3.8058,4.5307,6.2,19,1,Lap uterine & adnexal proc for malignancy w min CCC
+13,1314,13149,2.9063,3.1937,4.1,12,1,Lap uterine & adnexal proc for ca in situ
+13,1316,13169,2.6098,2.8679,3.9,12,1,Lap uterine and adnexal procedures for non-malignancy
+13,1320,13200,4.1816,4.9781,7.36,22,0.97,Lap radical hysterectomy wo sig CCC
+13,1320,13201,4.4822,5.8976,9.35,28,1,Lap radical hysterectomy w min CCC
+13,1321,13210,2.1926,2.4095,3.23,10,0.7,Lap adhesiolysis for female reproductive system disorders wo sig CCC
+13,1321,13211,2.8611,3.4061,6.32,19,1,Lap adhesiolysis for female reproductive system disorders w min CCC
+13,1350,13500,0.5996,0.6589,3.43,10,0.78,Non-ovarian/adnexal malignancy wo sig CCC
+13,1350,13501,1.3052,1.4343,6,18,1,Non-ovarian/adnexal malignancy w min CCC
+13,1350,13502,2.3935,3.1494,10.13,30,1,Non-ovarian/adnexal malignancy w mod CCC
+13,1351,13510,0.397,0.397,1.83,5,1,Non-ovarian/adnexal ca in situ wo sig CCC
+13,1351,13511,0.957,1.0516,3.75,11,1,Non-ovarian/adnexal ca in situ w min CCC
+13,1352,13520,0.3802,0.4178,3.18,10,0.71,Ovarian/adnexal malignancy wo sig CCC
+13,1352,13521,0.9689,1.1535,7.12,21,1,Ovarian/adnexal malignancy w min CCC
+13,1353,13530,0.4327,0.4327,2.9,9,0.71,Female lower genitourinary tract infection wo sig CCC
+13,1353,13531,0.928,1.1048,7.87,24,1,Female lower genitourinary tract infection w min CCC
+13,1354,13540,0.5291,0.5814,3.6,11,1,Female pelvic infection wo sig CCC
+13,1354,13541,0.9451,1.0386,4.72,14,1,Female pelvic infection w min CCC
+13,1354,13542,2.0638,2.7155,9.02,27,1,Female pelvic infection w mod CCC
+13,1355,13550,0.4399,0.4399,2.02,6,0.37,Menstrual & other female reproductive system disorders wo sig CCC
+13,1355,13551,0.7053,0.7053,2.83,8,0.71,Menstrual & other female reproductive system disorders w min CCC
+13,1355,13552,1.1111,1.221,4.53,14,1,Menstrual & other female reproductive system disorders w mod CCC
+13,1355,13553,1.8137,2.1592,7.07,21,0.77,Menstrual & other female reproductive system disorders w maj CCC
+13,1356,13569,2.3013,2.7396,6.34,19,1,Non ovarian/adnexal malig w chemo- and radiotherapy
+13,1357,13570,1.4084,1.4084,2.95,9,0.84,Non ovarian/adnexal malig w chemotherapy wo sig CCC
+13,1357,13571,1.7208,1.7208,2.01,6,0.86,Non ovarian/adnexal malig w chemotherapy w min CCC
+13,1357,13572,1.9653,2.1362,3.44,10,0.79,Non ovarian/adnexal malig w chemotherapy w mod CCC
+13,1357,13573,2.6576,3.4968,9.03,27,1,Non ovarian/adnexal malig w chemotherapy w maj CCC
+13,1358,13580,1.468,1.6132,5.27,16,0.98,Non ovarian/adnexal malig w radiotherapy wo sig CCC
+13,1358,13581,2.438,4.6886,18.3,55,0.98,Non ovarian/adnexal malig w radiotherapy w min CCC
+13,1358,13582,3.6828,8.3699,28.66,86,1,Non ovarian/adnexal malig w radiotherapy w mod CCC
+13,1359,13590,1.2943,1.4223,3.71,11,1,Non ovarian/adnexal malig w diagnostic procedure wo sig CCC
+13,1359,13591,2.9561,3.8896,11.13,33,1,Non ovarian/adnexal malig w diagnostic procedure w min CCC
+13,1360,13600,0.7875,0.8654,3.54,11,0.4,Non ovarian/adnexal malig w blood transfusion wo sig CCC
+13,1360,13601,1.2255,1.6125,10.44,31,0.68,Non ovarian/adnexal malig w blood transfusion w min CCC
+13,1360,13602,1.8104,3.0174,15.84,48,0.61,Non ovarian/adnexal malig w blood transfusion w mod CCC
+13,1362,13620,2.3739,2.3739,1.81,5,1,Ovarian/adnexal malig w chemotherapy wo sig CCC
+13,1362,13621,3.1373,3.1373,2.85,9,0.51,Ovarian/adnexal malig w chemotherapy w min CCC
+13,1362,13622,3.2253,3.8396,7.33,22,0.96,Ovarian/adnexal malig w chemotherapy w mod CCC
+13,1362,13623,4.0898,6.8163,16.59,50,1,Ovarian/adnexal malig w chemotherapy w maj CCC
+13,1363,13639,2.7963,4.1122,14.69,44,1,Ovarian/adnexal malig w radiotherapy
+13,1364,13640,1.3943,1.5322,3.52,11,1,Ovarian/adnexal malig w diagnostic procedure wo sig CCC
+13,1364,13641,2.7214,3.5808,9.75,29,1,Ovarian/adnexal malig w diagnostic procedure w min CCC
+13,1365,13650,0.5608,0.5608,2.1,6,1,Ovarian/adnexal malig w blood transfusion wo sig CCC
+13,1365,13651,1.3436,1.5996,7.59,23,1,Ovarian/adnexal malig w blood transfusion w min CCC
+14,1401,14010,1.2675,1.3929,3.99,12,1,Caesarean delivery wo sig CCC
+14,1401,14011,1.6941,1.8616,5.13,15,1,Caesarean delivery w min CCC
+14,1401,14012,2.7526,3.2768,7.18,22,1,Caesarean delivery w mod CCC
+14,1401,14013,3.9914,4.7517,8.55,26,1,Caesarean delivery w maj CCC
+14,1401,14014,5.5775,7.3388,10.47,31,1,Caesarean delivery w ext CCC
+14,1402,14020,0.9625,1.0577,3.34,10,1,Vaginal delivery w complicating OR procedure wo sig CCC
+14,1402,14021,2.0419,2.2439,5.42,16,1,Vaginal delivery w complicating OR procedure w min CCC
+14,1404,14040,1.5829,1.7394,4.42,13,1,Postpartum/post abortion w specific proc wo sig CCC
+14,1404,14041,3.5545,4.2315,7.48,22,1,Postpartum/post abortion w specific proc w min CCC
+14,1405,14050,0.5636,0.5636,1.82,5,0.61,Uncomplicated abortion w D&C and asp currettage wo sig CCC
+14,1405,14051,0.8966,0.8966,2.73,8,1,Uncomplicated abortion w D&C and asp currettage w min CCC
+14,1405,14052,1.6719,1.8373,4.78,14,1,Uncomplicated abortion w D&C and asp currettage w mod CCC
+14,1405,14053,2.6728,3.1818,6.76,20,1,Uncomplicated abortion w D&C and asp currettage w maj CCC
+14,1407,14070,0.7374,0.8103,3.14,9,1,Vaginal delivery w strilization procedure wo sig CCC
+14,1407,14071,0.92,1.011,3.6,11,1,Vaginal delivery w strilization procedure w min CCC
+14,1408,14089,0.5502,0.6046,3.18,10,1,Vaginal delivery w non-OR procedure
+14,1410,14100,0.6191,0.6191,2.04,6,0.99,Complicated abortion w D&C and asp currettage wo sig CCC
+14,1410,14101,0.9697,1.0656,3.61,11,1,Complicated abortion w D&C and asp currettage w min CCC
+14,1411,14110,1.1122,1.1122,2.62,8,1,Molar preegnancy w D&C and asp currettage wo sig CCC
+14,1411,14111,1.5024,1.651,3.66,11,1,Molar preegnancy w D&C and asp currettage w min CCC
+14,1412,14120,1.4751,1.621,3.69,11,1,Ectopic pregnancy w specific proc wo sig CCC
+14,1412,14121,1.6084,1.7675,3.7,11,1,Ectopic pregnancy w specific proc w min CCC
+14,1412,14122,1.8566,2.0402,4.03,12,1,Ectopic pregnancy w specific proc w mod CCC
+14,1450,14500,0.4377,0.4377,2.81,8,0.53,Vaginal delivery wo sig CCC
+14,1450,14501,0.5224,0.5741,3.11,9,0.4,Vaginal delivery w min CCC
+14,1451,14510,0.3188,0.3188,2.7,8,1,Postpartum/post abortion wo sig CCC
+14,1451,14511,0.6597,0.7249,4.15,12,1,Postpartum/post abortion w min CCC
+14,1452,14520,0.2883,0.2883,2,6,0.41,Antenatal condition wo sig CCC
+14,1452,14521,0.3288,0.3288,2.38,7,0.57,Antenatal condition w min CCC
+14,1452,14522,0.4209,0.4209,2.78,8,0.86,Antenatal condition w mod CCC
+14,1452,14523,0.5634,0.6191,3.63,11,1,Antenatal condition w maj CCC
+14,1452,14524,1.2458,1.369,5.86,18,1,Antenatal condition w ext CCC
+14,1453,14530,0.6652,0.6652,2.73,8,1,Ectopic pregnancy wo sig CCC
+14,1453,14531,1.3483,1.4817,3.58,11,1,Ectopic pregnancy w min CCC
+14,1454,14540,0.2443,0.2443,1.78,5,0.53,Threatened abortion wo sig CCC
+14,1454,14541,0.3253,0.3253,2.34,7,1,Threatened abortion w min CCC
+14,1454,14542,0.4602,0.5057,3.1,9,1,Threatened abortion w mod CCC
+14,1455,14550,0.3121,0.3121,1.8,5,1,Abortion wo sig CCC
+14,1455,14551,0.7325,0.7325,2.87,9,1,Abortion w min CCC
+14,1456,14560,0.196,0.196,1.43,4,0.78,False labour wo sig CCC
+14,1456,14561,0.4338,0.4338,2.76,8,0.53,False labour w min CCC
+14,1457,14579,0.417,0.417,2.23,7,1,Complicated abortion
+14,1458,14580,0.5904,0.6488,3.48,10,1,Molar pregnancy wo sig CCC
+14,1458,14581,1.0278,1.1295,4.21,13,0.85,Molar pregnancy w min CCC
+14,1459,14590,0.2898,0.2898,1.87,6,0.55,Antenatal condition with significant complications wo sig CCC
+14,1459,14591,0.417,0.417,2.87,9,1,Antenatal condition with significant complications w min CCC
+14,1460,14600,0.3201,0.3201,2.43,7,0.54,Antenatal condition with genitourinary infection wo sig CCC
+14,1460,14601,0.4043,0.4443,3.2,10,1,Antenatal condition with genitourinary infection w min CCC
+14,1460,14602,1.1726,1.2886,5.34,16,1,Antenatal condition with genitourinary infection w mod CCC
+15,1501,15010,3.1261,3.1261,2.65,8,1,Newb died or transf < 5 d of adm w mj or sign proc wo sig CCC
+15,1501,15011,6.096,6.096,2.74,8,1,Newb died or transf < 5 d of adm w mj or sign proc w min CCC
+15,1502,15020,0.7767,0.7767,1.04,3,1,Newb died or transf < 5 d of adm w minor  proc wo sig CCC
+15,1502,15021,1.9688,1.9688,1.93,6,1,Newb died or transf < 5 d of adm w minor  proc w min CCC
+15,1503,15030,8.3449,18.9656,38.46,115,0.76,Newb adm wt < 1000 gm w sign proc wo sig CCC
+15,1503,15031,12.2339,27.8043,63,189,0.98,Newb adm wt < 1000 gm w sign proc w min CCC
+15,1503,15032,15.636,35.5365,79.5,239,1,Newb adm wt < 1000 gm w sign proc w mod CCC
+15,1504,15049,6.085,13.8295,47.15,141,1,Newb adm wt < 1000 gm w minor  proc
+15,1505,15050,4.204,9.5547,33.38,100,0.7,Newb adm wt 1000-1499 gm w sign proc wo sig CCC
+15,1505,15051,5.6582,12.8596,43.37,130,0.78,Newb adm wt 1000-1499 gm w sign proc w min CCC
+15,1505,15052,7.2316,16.4355,53,159,1,Newb adm wt 1000-1499 gm w sign proc w mod CCC
+15,1506,15060,2.0702,4.705,23.47,70,0.78,Newb adm wt 1000-1499 gm w minor  proc wo sig CCC
+15,1506,15061,3.3834,7.6894,32.97,99,0.81,Newb adm wt 1000-1499 gm w minor  proc w min CCC
+15,1506,15062,4.8531,11.0299,41.61,125,1,Newb adm wt 1000-1499 gm w minor  proc w mod CCC
+15,1507,15070,2.5337,3.7261,14.49,43,0.67,Newb adm wt 1500-2499 gm w sign proc wo sig CCC
+15,1507,15071,3.29,6.327,20.42,61,0.44,Newb adm wt 1500-2499 gm w sign proc w min CCC
+15,1507,15072,4.2799,9.7271,36.71,110,1,Newb adm wt 1500-2499 gm w sign proc w mod CCC
+15,1508,15080,1.118,1.3309,7.22,22,0.99,Newb adm wt 1500-2499 gm w minor  proc wo sig CCC
+15,1508,15081,2.1205,3.1184,14.16,42,0.63,Newb adm wt 1500-2499 gm w minor  proc w min CCC
+15,1508,15082,2.5624,5.8236,23.09,69,0.59,Newb adm wt 1500-2499 gm w minor  proc w mod CCC
+15,1509,15090,2.7998,3.6839,11.28,34,0.77,Newb adm wt >2499 gm w sign proc wo sig CCC
+15,1509,15091,3.6055,6.0091,15.13,45,0.54,Newb adm wt >2499 gm w sign proc w min CCC
+15,1509,15092,3.9954,9.0804,26.96,81,1,Newb adm wt >2499 gm w sign proc w mod CCC
+15,1510,15100,0.5755,0.6324,4.22,13,1,Newb adm wt >2499 gm w minor  proc wo sig CCC
+15,1510,15101,1.5755,1.8757,8.73,26,1,Newb adm wt >2499 gm w minor  proc w min CCC
+15,1510,15102,2.1266,2.7982,11.93,36,0.67,Newb adm wt >2499 gm w minor  proc w mod CCC
+15,1510,15103,2.5082,4.8234,18.26,55,1,Newb adm wt >2499 gm w minor  proc w maj CCC
+15,1511,15119,7.5183,17.0869,37.97,114,1,Newborn with major procedure
+15,1512,15129,14.6183,33.2233,53.18,160,1,Newborn with major cardiothoracic proc
+15,1550,15500,0.1878,0.1878,1.14,3,0.72,Newb transferred < 5 d of adm wo proc wo sig CCC
+15,1550,15501,0.2071,0.2071,0.68,2,0.71,Newb transferred < 5 d of adm wo proc w min CCC
+15,1550,15502,0.3158,0.3158,1.44,4,0.98,Newb transferred < 5 d of adm wo proc w mod CCC
+15,1550,15503,0.467,0.467,1.87,6,1,Newb transferred < 5 d of adm wo proc w maj CCC
+15,1551,15519,2.7986,5.3819,20.26,61,1,Newb adm wt < 1000 gm wo proc
+15,1552,15520,1.2849,1.6906,10.66,32,0.7,Newb adm wt 1000-1499 gm wo proc wo sig CCC
+15,1552,15521,2.3396,5.3171,27.95,84,0.73,Newb adm wt 1000-1499 gm wo proc w min CCC
+15,1553,15530,0.3342,0.3342,2.88,9,0.46,Newb adm wt 1500-2499 gm wo proc wo sig CCC
+15,1553,15531,0.3362,0.3695,3.42,10,0.91,Newb adm wt 1500-2499 gm wo proc w min CCC
+15,1553,15532,1.007,1.1989,7.66,23,0.92,Newb adm wt 1500-2499 gm wo proc w mod CCC
+15,1554,15540,0.2802,0.2802,2.89,9,0.51,Newb adm wt >2499 gm wo proc wo sig CCC
+15,1554,15541,0.493,0.5418,4.1,12,0.5,Newb adm wt >2499 gm wo proc w min CCC
+15,1554,15542,0.6484,0.7719,6.05,18,0.72,Newb adm wt >2499 gm wo proc w mod CCC
+15,1554,15543,0.9402,1.1193,7.22,22,0.82,Newb adm wt >2499 gm wo proc w maj CCC
+15,1554,15544,1.302,1.7132,9.22,28,0.69,Newb adm wt >2499 gm wo proc w ext CCC
+15,1555,15559,0.4186,0.4186,0.93,3,1,Newb died < 5 d of adm wo proc
+16,1601,16010,3.0273,3.604,6.93,21,1,"Splenectomy for blood, bl forming org & imm diseases wo sig CCC"
+16,1601,16011,4.37,5.7501,9.22,28,1,"Splenectomy for blood, bl forming org & imm diseases w min CCC"
+16,1601,16012,5.6785,9.4642,15.17,46,1,"Splenectomy for blood, bl forming org & imm diseases w mod CCC"
+16,1602,16020,1.9295,2.1203,5.53,17,0.59,"Other proc for blood, bl forming org & imm diseases wo sig CCC"
+16,1602,16021,2.7495,4.5825,15.24,46,0.85,"Other proc for blood, bl forming org & imm diseases w min CCC"
+16,1602,16022,3.6108,8.2063,24.27,73,0.69,"Other proc for blood, bl forming org & imm diseases w mod CCC"
+16,1650,16500,0.3013,0.3013,1.5,5,0.84,Red blood cell disorders wo sig CCC
+16,1650,16501,0.4261,0.4261,2.03,6,1,Red blood cell disorders w min CCC
+16,1650,16502,1.0862,1.1936,5.15,15,1,Red blood cell disorders w mod CCC
+16,1650,16503,3.0945,3.684,7.85,24,0.61,Red blood cell disorders w maj CCC
+16,1651,16510,0.5039,0.5039,2.67,8,1,Coagulation disorders wo sig CCC
+16,1651,16511,1.1709,1.2867,4.21,13,1,Coagulation disorders w min CCC
+16,1651,16512,3.0033,3.5754,6.37,19,1,Coagulation disorders w mod CCC
+16,1652,16520,0.7305,0.8028,4.13,12,1,Reticuloendothelial and immuno disorders wo sig CCC
+16,1652,16521,2.0778,2.4736,6.81,20,1,Reticuloendothelial and immuno disorders w min CCC
+16,1652,16522,4.0892,4.8681,8.92,27,0.99,Reticuloendothelial and immuno disorders w mod CCC
+16,1653,16530,0.3273,0.3273,1.24,4,1,Red blood cell disorders w blood transfusion wo sig CCC
+16,1653,16531,0.5557,0.5557,1.73,5,1,Red blood cell disorders w blood transfusion w min CCC
+16,1653,16532,1.1091,1.2188,3.59,11,1,Red blood cell disorders w blood transfusion w mod CCC
+16,1653,16533,2.1542,2.5645,6.53,20,1,Red blood cell disorders w blood transfusion w maj CCC
+16,1653,16534,3.1548,4.6393,12.44,37,1,Red blood cell disorders w blood transfusion w ext CCC
+16,1654,16540,4.3595,4.7907,4.45,13,1,Coagulation disorders w coag fact transfusion wo sig CCC
+16,1654,16541,5.9658,7.8498,9.69,29,1,Coagulation disorders w coag fact transfusion w min CCC
+16,1655,16550,0.8141,0.8946,3.26,10,1,Coagulation disorders w blood transfusion wo sig CCC
+16,1655,16551,1.6695,1.8346,4.37,13,1,Coagulation disorders w blood transfusion w min CCC
+16,1655,16552,3.5966,4.7324,9.45,28,1,Coagulation disorders w blood transfusion w mod CCC
+16,1656,16560,1.6502,1.9645,6.05,18,1,Reticuloendothelial and imm dis w blood transfusion wo sig CCC
+16,1656,16561,3.6911,4.8567,10.94,33,1,Reticuloendothelial and imm dis w blood transfusion w min CCC
+16,1656,16562,4.3547,7.2579,15.65,47,1,Reticuloendothelial and imm dis w blood transfusion w mod CCC
+17,1701,17010,2.9609,3.5249,7.89,24,0.6,Lymphoma and leukemia w major OR procedures wo sig CCC
+17,1701,17011,3.219,7.3158,22.78,68,1,Lymphoma and leukemia w major OR procedures w min CCC
+17,1702,17020,3.6298,4.776,9.85,30,0.71,Other neoplastic disorders w major OR procedures wo sig CCC
+17,1702,17021,4.0057,7.7033,18.55,56,1,Other neoplastic disorders w major OR procedures w min CCC
+17,1750,17500,0.715,0.715,2.61,8,1,Acute leukemia wo sig CCC
+17,1750,17501,1.5817,1.7381,5.28,16,1,Acute leukemia w min CCC
+17,1751,17510,0.4805,0.528,3.13,9,1,Lymphoma & non-acute leukemia wo sig CCC
+17,1751,17511,1.4249,1.5658,5.33,16,1,Lymphoma & non-acute leukemia w min CCC
+17,1751,17512,2.9004,3.8163,10.26,31,0.51,Lymphoma & non-acute leukemia w mod CCC
+17,1752,17520,0.8014,0.8807,3.12,9,0.4,Other Neoplastic disorders wo sig CCC
+17,1752,17521,1.1215,1.2324,5.52,17,0.98,Other Neoplastic disorders w min CCC
+17,1756,17560,6.0128,8.8423,14.07,42,1,Acute leukemia with CRx & RT or CRx & Dx Proc or RT & Dx Proc wo sig CCC
+17,1756,17561,7.2509,16.4794,35.53,107,1,Acute leukemia with CRx & RT or CRx & Dx Proc or RT & Dx Proc w min CCC
+17,1757,17570,1.3832,1.5035,3.47,10,1,Acute leukemia with chemotherapy wo sig CCC
+17,1757,17571,3.6314,4.7782,9.97,30,1,Acute leukemia with chemotherapy w min CCC
+17,1757,17572,4.6348,7.7246,15.11,45,1,Acute leukemia with chemotherapy w mod CCC
+17,1757,17573,6.1534,13.9849,24.63,74,0.62,Acute leukemia with chemotherapy w maj CCC
+17,1758,17589,2.3537,3.4613,12.33,37,1,Acute leukemia with radiotherapy
+17,1759,17590,2.0638,2.2679,4.92,15,1,Acute leukemia with diag proc wo sig CCC
+17,1759,17591,4.4293,5.8279,10.25,31,0.61,Acute leukemia with diag proc w min CCC
+17,1759,17592,4.4293,9.5137,36.32,109,1,Acute leukemia with diag proc w mod CCC
+17,1760,17600,1.4878,1.6349,3.72,11,1,Acute leukemia with blood transfusion wo sig CCC
+17,1760,17601,2.9762,3.916,11.13,33,1,Acute leukemia with blood transfusion w min CCC
+17,1760,17602,4.6168,7.6947,16.12,48,1,Acute leukemia with blood transfusion w mod CCC
+17,1761,17619,4.3935,8.4491,20.17,61,1,L'ma & non-acute leukemia w chemo- and radiother
+17,1762,17620,2.9797,3.2388,3.21,10,1,Lymphoma & non-acute leukemia w chemotherapy wo sig CCC
+17,1762,17621,4.467,4.8554,5.04,15,0.75,Lymphoma & non-acute leukemia w chemotherapy w min CCC
+17,1762,17622,4.6054,6.7726,13.48,40,0.66,Lymphoma & non-acute leukemia w chemotherapy w mod CCC
+17,1763,17630,2.4172,3.1805,10.24,31,0.76,Lymphoma & non-acute leukemia w radiotherapy wo sig CCC
+17,1763,17631,2.8465,6.4695,23.17,70,1,Lymphoma & non-acute leukemia w radiotherapy w min CCC
+17,1764,17640,1.9914,2.1884,5.54,17,0.99,Lymphoma & non-acute leukemia w diag proc wo sig CCC
+17,1764,17641,3.3265,4.892,14.31,43,1,Lymphoma & non-acute leukemia w diag proc w min CCC
+17,1764,17642,4.5023,8.6583,19.13,57,1,Lymphoma & non-acute leukemia w diag proc w mod CCC
+17,1765,17650,0.7353,0.7353,2.14,6,1,Lymphoma & non-acute leukemia w blood transfus wo sig CCC
+17,1765,17651,1.8328,2.1819,6.16,18,0.9,Lymphoma & non-acute leukemia w blood transfus w min CCC
+17,1765,17652,2.7893,3.6702,9.7,29,0.56,Lymphoma & non-acute leukemia w blood transfus w mod CCC
+17,1765,17653,4.1151,6.0516,12.54,38,0.14,Lymphoma & non-acute leukemia w blood transfus w maj CCC
+17,1767,17670,2.29,2.4891,3.22,10,1,Other neoplastic dis with chemotherapy wo sig CCC
+17,1767,17671,3.573,4.7014,10.11,30,1,Other neoplastic dis with chemotherapy w min CCC
+17,1768,17689,2.8243,4.1533,14.75,44,1,Other neoplastic dis with radiotherapy
+17,1769,17690,1.2822,1.409,3.74,11,1,Other neoplastic dis with diag proc wo sig CCC
+17,1769,17691,3.2905,4.3296,10.86,33,1,Other neoplastic dis with diag proc w min CCC
+17,1770,17700,0.9786,1.0754,4.21,13,0.95,Other neoplastic dis with blood transfusion wo sig CCC
+17,1770,17701,2.284,3.0053,10.6,32,0.79,Other neoplastic dis with blood transfusion w min CCC
+18,1801,18019,0.6163,0.6163,1.88,6,1,OR proc group 1 for infectious and parasitic diseases
+18,1802,18020,0.843,0.843,2.45,7,1,OR proc group 2 for infectious and parasitic diseases wo sig CCC
+18,1802,18021,1.172,1.172,2.67,8,1,OR proc group 2 for infectious and parasitic diseases w min CCC
+18,1803,18030,1.6803,2.0003,7.59,23,1,OR proc group 3 for infectious and parasitic diseases wo sig CCC
+18,1803,18031,3.0859,4.5381,12.48,37,0.83,OR proc group 3 for infectious and parasitic diseases w min CCC
+18,1803,18032,3.5591,8.089,21.19,64,1,OR proc group 3 for infectious and parasitic diseases w mod CCC
+18,1804,18049,2.9397,4.8995,15.59,47,1,OR proc group 4 for infectious and parasitic diseases
+18,1805,18059,4.1552,6.9253,16.73,50,1,OR proc group 5 or more for inf and parasitic diseases
+18,1850,18500,0.7171,0.788,4.14,12,1,"Septicemia, adult, not transferred wo sig CCC"
+18,1850,18501,1.8767,2.2341,7.52,23,1,"Septicemia, adult, not transferred w min CCC"
+18,1850,18502,3.358,4.4184,11.04,33,1,"Septicemia, adult, not transferred w mod CCC"
+18,1850,18503,4.3764,6.4359,13.79,41,1,"Septicemia, adult, not transferred w maj CCC"
+18,1850,18504,4.9293,9.4795,18.45,55,1,"Septicemia, adult, not transferred w ext CCC"
+18,1851,18510,0.3535,0.3535,2.99,9,1,"Septicemia, child wo sig CCC"
+18,1851,18511,0.6941,0.7628,4.71,14,0.86,"Septicemia, child w min CCC"
+18,1851,18512,1.7836,2.1233,8.92,27,1,"Septicemia, child w mod CCC"
+18,1851,18513,3.3281,4.8943,14.95,45,1,"Septicemia, child w maj CCC"
+18,1852,18520,0.7967,0.8755,5.33,16,0.87,"Postop and post-traumatic infections, elderly wo sig CCC"
+18,1852,18521,1.0903,1.2981,6.76,20,1,"Postop and post-traumatic infections, elderly w min CCC"
+18,1852,18522,1.8158,2.3892,9.83,29,1,"Postop and post-traumatic infections, elderly w mod CCC"
+18,1852,18523,3.2515,5.4192,15.99,48,1,"Postop and post-traumatic infections, elderly w maj CCC"
+18,1853,18530,0.6665,0.7324,4.62,14,0.72,"Postop and post-traumatic infections, not elderly wo sig CCC"
+18,1853,18531,0.9045,0.994,5.72,17,0.79,"Postop and post-traumatic infections, not elderly w min CCC"
+18,1853,18532,1.4786,1.7603,8.27,25,1,"Postop and post-traumatic infections, not elderly w mod CCC"
+18,1853,18533,3.0836,4.5348,13.97,42,1,"Postop and post-traumatic infections, not elderly w maj CCC"
+18,1854,18540,0.4131,0.4131,3,9,1,"Malaria, adult wo sig CCC"
+18,1854,18541,0.7934,0.8719,4.18,13,1,"Malaria, adult w min CCC"
+18,1854,18542,2.4455,2.9114,6.44,19,1,"Malaria, adult w mod CCC"
+18,1855,18550,0.3702,0.3702,3,9,1,"Malaria, child wo sig CCC"
+18,1855,18551,0.7571,0.832,4.5,14,1,"Malaria, child w min CCC"
+18,1856,18560,0.4074,0.4477,3.14,9,1,"Dengue, adult wo sig CCC"
+18,1856,18561,0.8802,0.9672,4.24,13,1,"Dengue, adult w min CCC"
+18,1856,18562,2.2457,2.4678,5.7,17,1,"Dengue, adult w mod CCC"
+18,1857,18570,0.3527,0.3876,3.01,9,1,"Dengue, child wo sig CCC"
+18,1857,18571,1.1783,1.2948,5.53,17,1,"Dengue, child w min CCC"
+18,1857,18572,3.3496,3.9876,8.02,24,1,"Dengue, child w mod CCC"
+18,1858,18580,0.4691,0.5155,3.23,10,1,"Fever of unknow origin, adult wo sig CCC"
+18,1858,18581,0.834,0.9165,4.62,14,0.99,"Fever of unknow origin, adult w min CCC"
+18,1858,18582,1.3766,1.6387,6.53,20,1,"Fever of unknow origin, adult w mod CCC"
+18,1858,18583,3.5371,4.6541,11.88,36,1,"Fever of unknow origin, adult w maj CCC"
+18,1859,18590,0.3065,0.3065,2.54,8,0.84,"Fever of unknow origin, child wo sig CCC"
+18,1859,18591,0.371,0.371,2.88,9,1,"Fever of unknow origin, child w min CCC"
+18,1859,18592,0.5941,0.6529,3.99,12,1,"Fever of unknow origin, child w mod CCC"
+18,1860,18600,0.387,0.387,2.74,8,1,"Viral illness except dengue, adult wo sig CCC"
+18,1860,18601,1.1808,1.2976,4.86,15,1,"Viral illness except dengue, adult w min CCC"
+18,1860,18602,2.9974,3.9441,11.44,34,1,"Viral illness except dengue, adult w mod CCC"
+18,1861,18610,0.2851,0.2851,2.47,7,0.75,"Viral illness except dengue, child wo sig CCC"
+18,1861,18611,0.3645,0.4006,3.04,9,1,"Viral illness except dengue, child w min CCC"
+18,1861,18612,0.7819,0.8592,4.37,13,1,"Viral illness except dengue, child w mod CCC"
+18,1862,18620,2.089,2.7487,9.77,29,1,"Fungal diseases, adult wo sig CCC"
+18,1862,18621,3.6857,8.3765,22.8,68,1,"Fungal diseases, adult w min CCC"
+18,1863,18639,0.8896,0.9776,4.63,14,1,"Fungal diseases, child"
+18,1864,18640,0.5584,0.6136,3.91,12,1,"Other infectious and parasitic diseases, adult wo sig CCC"
+18,1864,18641,1.7567,2.0913,8.04,24,1,"Other infectious and parasitic diseases, adult w min CCC"
+18,1864,18642,2.7065,3.5612,10.12,30,1,"Other infectious and parasitic diseases, adult w mod CCC"
+18,1864,18643,4.2313,7.0522,16.01,48,1,"Other infectious and parasitic diseases, adult w maj CCC"
+18,1865,18650,0.3977,0.437,3.51,11,1,"Other infectious and parasitic diseases, child wo sig CCC"
+18,1865,18651,0.8239,0.9054,5.29,16,0.54,"Other infectious and parasitic diseases, child w min CCC"
+18,1865,18652,1.4653,2.1548,12.24,37,1,"Other infectious and parasitic diseases, child w mod CCC"
+18,1866,18660,1.3002,1.7108,10.37,31,1,"Melioidosis, adult wo sig CCC"
+18,1866,18661,2.543,3.7397,12.25,37,1,"Melioidosis, adult w min CCC"
+18,1866,18662,4.6308,6.81,13.93,42,1,"Melioidosis, adult w mod CCC"
+18,1867,18679,1.029,1.354,10.3,31,1,"Melioidosis, child"
+18,1868,18680,0.6153,0.6761,3.82,11,1,"Leptospirosis, adult wo sig CCC"
+18,1868,18681,1.757,2.0917,7.44,22,1,"Leptospirosis, adult w min CCC"
+18,1868,18682,3.1828,4.1879,10.33,31,1,"Leptospirosis, adult w mod CCC"
+18,1869,18699,0.4929,0.5417,3.67,11,1,"Leptospirosis, child"
+18,1870,18700,0.5859,0.6438,3.38,10,1,Dengue with shock wo sig CCC
+18,1870,18701,3.3444,3.6752,5.9,18,1,Dengue with shock w min CCC
+18,1872,18720,0.6371,0.6371,2.54,8,0.49,"Septicemia, adult, transferred wo sig CCC"
+18,1872,18721,1.5914,1.7488,5.65,17,1,"Septicemia, adult, transferred w min CCC"
+18,1872,18722,3.5307,4.6456,10.72,32,1,"Septicemia, adult, transferred w mod CCC"
+19,1901,19010,1.1997,2.7267,30.7,92,0.36,Acute psychotic disorders with ECT wo sig CCC
+19,1901,19011,1.7457,3.9676,37.88,114,1,Acute psychotic disorders with ECT w min CCC
+19,1902,19020,1.4994,3.4077,39.45,118,0.23,Chronic psychotic disorders with ECT wo sig CCC
+19,1902,19021,1.9643,4.4644,49.11,147,0.23,Chronic psychotic disorders with ECT w min CCC
+19,1902,19022,2.5924,5.8916,62.27,187,1,Chronic psychotic disorders with ECT w mod CCC
+19,1903,19030,1.0897,2.0957,18.45,55,0.22,Major affective disorders with ECT wo sig CCC
+19,1903,19031,1.2561,2.8549,25.55,77,1,Major affective disorders with ECT w min CCC
+19,1904,19049,1.8984,4.3147,41.79,125,1,Organic disturbance  with ECT
+19,1950,19500,0.4817,0.5293,4.49,13,0.36,Acute psychotic disorders wo sig CCC
+19,1950,19501,0.7972,1.0489,11.52,35,0.23,Acute psychotic disorders w min CCC
+19,1950,19502,0.9578,1.8419,20.94,63,0.34,Acute psychotic disorders w mod CCC
+19,1950,19503,1.1165,2.5375,26.56,80,0.35,Acute psychotic disorders w maj CCC
+19,1951,19510,0.6541,0.8606,9.35,28,0.47,Chronic psychotic disorders wo sig CCC
+19,1951,19511,0.8705,1.4509,15.31,46,0.17,Chronic psychotic disorders w min CCC
+19,1951,19512,0.9853,2.2392,27.84,84,0.24,Chronic psychotic disorders w mod CCC
+19,1951,19513,1.3376,3.04,37.22,112,0.31,Chronic psychotic disorders w maj CCC
+19,1952,19520,0.3676,0.404,3.68,11,0.51,Major affective disorders wo sig CCC
+19,1952,19521,0.7811,0.9299,8.8,26,0.23,Major affective disorders w min CCC
+19,1952,19522,0.892,1.7154,18.49,55,0.59,Major affective disorders w mod CCC
+19,1952,19523,1.1381,2.1887,20.46,61,0.34,Major affective disorders w maj CCC
+19,1953,19530,0.2559,0.2559,1.74,5,0.55,Other affect and somatoform disorders wo sig CCC
+19,1953,19531,0.5478,0.602,4.85,15,0.45,Other affect and somatoform disorders w min CCC
+19,1953,19532,0.858,1.0214,8.92,27,1,Other affect and somatoform disorders w mod CCC
+19,1954,19549,0.3809,0.4186,3.58,11,1,Acute reaction and psychosocial dysfunction
+19,1955,19550,0.285,0.285,2.09,6,1,Anxiety disorders wo sig CCC
+19,1955,19551,0.886,0.9736,4.77,14,0.45,Anxiety disorders w min CCC
+19,1955,19552,1.3702,1.6312,8.63,26,1,Anxiety disorders w mod CCC
+19,1956,19569,0.968,1.2737,10.52,32,1,Eating and obscessive compulsive disorders
+19,1957,19579,1.0032,1.4754,12.45,37,1,Person & impulse control disorders and sexual dysfunt
+19,1958,19580,0.7209,0.9485,9.68,29,0.25,Childhood mental disorders wo sig CCC
+19,1958,19581,0.9311,1.3694,14.49,43,0.25,Childhood mental disorders w min CCC
+19,1958,19582,1.0078,1.9382,20.81,62,1,Childhood mental disorders w mod CCC
+19,1959,19590,0.8274,0.9092,5.94,18,0.37,Organic disturbance wo sig CCC
+19,1959,19591,1.1512,2.2137,20.78,62,0.24,Organic disturbance w min CCC
+19,1959,19592,1.3224,3.0055,29.55,89,0.3,Organic disturbance w mod CCC
+19,1960,19600,0.3186,0.3186,2.03,6,1,Other mental disorders wo sig CCC
+19,1960,19601,0.5776,0.6347,3.19,10,1,Other mental disorders w min CCC
+19,1962,19620,0.7726,1.1362,12.64,38,0.24,Mental retardation wo sig CCC
+19,1962,19621,0.992,2.2544,25.52,77,0.23,Mental retardation w min CCC
+19,1962,19622,1.2917,2.9357,33.78,101,1,Mental retardation w mod CCC
+20,2050,20500,0.36,0.36,2.2,7,0.53,Alcohol intoxication and withdrawal wo sig CCC
+20,2050,20501,0.5871,0.6452,4.61,14,0.79,Alcohol intoxication and withdrawal w min CCC
+20,2050,20502,1.0516,1.2518,8.12,24,1,Alcohol intoxication and withdrawal w mod CCC
+20,2050,20503,2.5171,3.3121,10.96,33,1,Alcohol intoxication and withdrawal w maj CCC
+20,2051,20510,0.6183,0.7361,7.9,24,0.24,Drug use disorders and withdrawal wo sig CCC
+20,2051,20511,0.8009,1.8203,22.88,69,0.22,Drug use disorders and withdrawal w min CCC
+20,2051,20512,1.0239,2.3271,29.29,88,1,Drug use disorders and withdrawal w mod CCC
+20,2052,20520,0.7136,0.8495,8.92,27,0.19,Alcohol use disorders and dependence wo sig CCC
+20,2052,20521,0.8442,1.407,17.06,51,0.29,Alcohol use disorders and dependence w min CCC
+20,2052,20522,0.8591,1.6521,19.22,58,0.25,Alcohol use disorders and dependence w mod CCC
+20,2052,20523,0.9028,2.0517,23.74,71,1,Alcohol use disorders and dependence w maj CCC
+20,2053,20539,0.7771,1.1429,12.84,39,1,Opioid use disorders and dependence
+20,2054,20540,0.8032,1.3386,17.73,53,0.24,Oth drug use disorders and dependence and intoxication wo sig CCC
+20,2054,20541,0.8063,1.8324,23.3,70,0.31,Oth drug use disorders and dependence and intoxication w min CCC
+20,2054,20542,1.1377,2.5857,30.06,90,1,Oth drug use disorders and dependence and intoxication w mod CCC
+21,2101,21010,1.0662,1.1716,4.32,13,0.99,Wound debridements for injuries wo sig CCC
+21,2101,21011,2.7471,4.0398,12.63,38,0.16,Wound debridements for injuries w min CCC
+21,2102,21020,1.3934,1.5312,5.71,17,1,Skin grafts for injuries wo sig CCC
+21,2102,21021,2.3746,4.5667,19.6,59,1,Skin grafts for injuries w min CCC
+21,2103,21039,1.1977,1.3161,3.76,11,1,Hand procedures for injuries
+21,2104,21040,1.8393,2.0212,5.06,15,0.71,Other OR procedures for injuries wo sig CCC
+21,2104,21041,3.2036,4.7112,13.56,41,0.74,Other OR procedures for injuries w min CCC
+21,2104,21042,3.6591,8.3161,23.98,72,1,Other OR procedures for injuries w mod CCC
+21,2107,21079,2.6321,5.982,23.01,69,1,Multiple wound debridements for injuries
+21,2150,21500,0.319,0.319,1.7,5,1,Traumatic injury age >17 wo sig CCC
+21,2150,21501,0.5299,0.5299,2.32,7,1,Traumatic injury age >17 w min CCC
+21,2150,21502,1.0941,1.2023,4.28,13,1,Traumatic injury age >17 w mod CCC
+21,2150,21503,2.5336,3.3337,9.43,28,0.33,Traumatic injury age >17 w maj CCC
+21,2151,21510,0.3509,0.3509,1.76,5,1,Traumatic injury age 0-17 wo sig CCC
+21,2151,21511,0.6735,0.6735,2.8,8,1,Traumatic injury age 0-17 w min CCC
+21,2151,21512,1.2449,1.368,4.73,14,1,Traumatic injury age 0-17 w mod CCC
+21,2152,21520,0.1955,0.1955,1.27,4,1,Allergic reactions age >17 wo sig CCC
+21,2152,21521,0.2784,0.2784,1.56,5,1,Allergic reactions age >17 w min CCC
+21,2152,21522,0.6526,0.6526,2.71,8,1,Allergic reactions age >17 w mod CCC
+21,2152,21523,1.7004,1.8686,5.07,15,1,Allergic reactions age >17 w maj CCC
+21,2153,21530,0.1899,0.1899,1.42,4,0.62,Allergic reactions age 0-17 wo sig CCC
+21,2153,21531,0.2852,0.2852,1.84,6,1,Allergic reactions age 0-17 w min CCC
+21,2154,21540,0.2847,0.2847,1.63,5,1,Poisoning & toxic effects of drugs age >17 wo sig CCC
+21,2154,21541,0.5583,0.5583,2.56,8,1,Poisoning & toxic effects of drugs age >17 w min CCC
+21,2154,21542,1.2881,1.4155,4.85,15,1,Poisoning & toxic effects of drugs age >17 w mod CCC
+21,2154,21543,2.3231,2.7655,7.05,21,1,Poisoning & toxic effects of drugs age >17 w maj CCC
+21,2154,21544,3.8604,5.0794,10.05,30,1,Poisoning & toxic effects of drugs age >17 w ext CCC
+21,2155,21550,0.204,0.204,1.46,4,1,Poisoning & toxic effects of drugs age 0-17 wo sig CCC
+21,2155,21551,0.4556,0.4556,2.32,7,1,Poisoning & toxic effects of drugs age 0-17 w min CCC
+21,2155,21552,1.1304,1.2422,4.41,13,1,Poisoning & toxic effects of drugs age 0-17 w mod CCC
+21,2155,21553,3.0008,3.5724,8.47,25,1,Poisoning & toxic effects of drugs age 0-17 w maj CCC
+21,2156,21560,1.2487,1.3722,5.73,17,1,Complications of treatment wo sig CCC
+21,2156,21561,2.7065,3.5612,10.95,33,1,Complications of treatment w min CCC
+21,2156,21562,3.9486,6.581,15.44,46,1,Complications of treatment w mod CCC
+21,2157,21570,0.4228,0.4228,1.93,6,1,"Other injury, poisoning & toxic effect diag wo sig CCC"
+21,2157,21571,1.9995,2.3803,6.05,18,1,"Other injury, poisoning & toxic effect diag w min CCC"
+21,2157,21572,3.8082,5.0108,11.23,34,1,"Other injury, poisoning & toxic effect diag w mod CCC"
+22,2201,22019,13.1096,29.7945,61.81,185,0.95,Extens burn w debrid w skin flap or skin graft or TPN
+22,2202,22029,4.7946,10.8968,37.34,112,1,Full thickness burns w skin graft or inh inj
+22,2205,22050,3.6599,8.3181,21.87,66,0.64,Extensive burn w debridement wo sig CCC
+22,2205,22051,5.2713,11.9803,33.84,102,1,Extensive burn w debridement w min CCC
+22,2206,22069,7.6805,17.4558,56.11,168,1,Full thickness burn w debridement w skin flap
+22,2207,22070,1.7305,2.2771,10.09,30,0.85,Full thickness burn w debridement wo sig CCC
+22,2207,22071,2.8086,4.681,15.94,48,1,Full thickness burn w debridement w min CCC
+22,2250,22500,1.6009,2.1065,9.12,27,0.79,Extensive burns wo debridement wo sig CCC
+22,2250,22501,2.6937,5.1802,20.81,62,1,Extensive burns wo debridement w min CCC
+22,2251,22510,1.1292,1.3442,6.77,20,0.77,Full thickness burns wo skin graft/inh inj wo sig CCC
+22,2251,22511,2.0848,3.4747,16.87,51,1,Full thickness burns wo skin graft/inh inj w min CCC
+22,2252,22520,0.6959,0.7647,4.27,13,0.68,Non-extensive burns wo sig CCC
+22,2252,22521,1.6243,2.1372,10.23,31,0.7,Non-extensive burns w min CCC
+22,2252,22522,2.4328,4.6783,20.34,61,1,Non-extensive burns w mod CCC
+23,2303,23039,0.668,0.668,1.57,5,1,Aftercare w endoscopy
+23,2304,23040,0.535,0.535,1.43,4,0.83,OR proc group 1 w diag of other contact w health serv wo sig CCC
+23,2304,23041,0.6825,0.6825,1.67,5,0.6,OR proc group 1 w diag of other contact w health serv w min CCC
+23,2305,23059,0.7917,0.7917,2.18,7,1,OR proc group 2 w diag of other contact w health serv
+23,2306,23060,1.4798,1.6261,3.93,12,1,OR proc group 3 w diag of other contact w health serv wo sig CCC
+23,2306,23061,1.9828,2.3605,6.03,18,1,OR proc group 3 w diag of other contact w health serv w min CCC
+23,2307,23079,2.6587,2.9216,5.93,18,1,OR proc group 4 or more w dx of oth contact w hlth serv
+23,2350,23500,0.9441,1.2422,10.07,30,0.51,Rehabilitation wo sig CCC
+23,2350,23501,1.4443,2.4072,15.8,47,0.53,Rehabilitation w min CCC
+23,2351,23510,0.2998,0.2998,1.96,6,0.93,"Signs, symptoms and other abnormal findings wo sig CCC"
+23,2351,23511,0.5338,0.5866,3.21,10,1,"Signs, symptoms and other abnormal findings w min CCC"
+23,2351,23512,1.3894,1.654,6.47,19,1,"Signs, symptoms and other abnormal findings w mod CCC"
+23,2351,23513,3.3534,4.4124,9.16,27,1,"Signs, symptoms and other abnormal findings w maj CCC"
+23,2352,23520,0.8525,0.9368,3.82,11,1,Aftercare wo sig CCC
+23,2352,23521,2.3133,2.5421,5.54,17,1,Aftercare w min CCC
+23,2353,23530,0.6232,0.6848,4.95,15,0.85,"Oth factors influencing health status, in the elderly wo sig CCC"
+23,2353,23531,1.1793,1.4039,8.56,26,0.95,"Oth factors influencing health status, in the elderly w min CCC"
+23,2353,23532,2.3678,3.9465,15.85,48,1,"Oth factors influencing health status, in the elderly w mod CCC"
+23,2354,23540,0.5067,0.5568,4.2,13,0.97,"Oth factors influenc health status, not in the elderly wo sig CCC"
+23,2354,23541,1.2303,1.6188,9.41,28,1,"Oth factors influenc health status, not in the elderly w min CCC"
+23,2354,23542,2.7141,4.5234,16.61,50,1,"Oth factors influenc health status, not in the elderly w mod CCC"
+23,2355,23550,1.3749,2.2915,15.5,47,0.28,Rehabilitation for neuromuscular disorders wo sig CCC
+23,2355,23551,1.4759,3.3541,26.07,78,1,Rehabilitation for neuromuscular disorders w min CCC
+23,2355,23552,2.2193,5.044,29.46,88,1,Rehabilitation for neuromuscular disorders w mod CCC
+24,2401,24010,5.3682,8.9469,15.22,46,0.98,"Intracran w abd/low L/skin, or abd w low L Proc for MST wo sig CCC"
+24,2401,24011,5.3682,11.8745,21.07,63,0.89,"Intracran w abd/low L/skin, or abd w low L Proc for MST w min CCC"
+24,2401,24012,6.3984,14.5417,27.17,82,1,"Intracran w abd/low L/skin, or abd w low L Proc for MST w mod CCC"
+24,2405,24059,6.3798,14.4997,30.67,92,1,Spinal w intracranial/abd/lower ext/skin proc for MST
+24,2411,24110,5.2681,6.9317,10.29,31,0.85,Intracranial procedure for MST wo sig CCC
+24,2411,24111,6.5622,9.6502,14.31,43,0.79,Intracranial procedure for MST w min CCC
+24,2412,24120,4.0959,6.8265,15.45,46,0.75,Spinal procedure for MST wo sig CCC
+24,2412,24121,4.6141,10.4867,25.59,77,1,Spinal procedure for MST w min CCC
+24,2414,24140,1.8528,2.036,5.08,15,0.85,OR procedure group 3 or more for MST wo sig CCC
+24,2414,24141,2.9293,3.8544,9.66,29,0.61,OR procedure group 3 or more for MST w min CCC
+24,2414,24142,3.6172,6.9561,20.66,62,0.9,OR procedure group 3 or more for MST w mod CCC
+24,2417,24170,3.2826,7.4604,27.9,84,0.5,Multiple wound debridement for MST wo sig CCC
+24,2417,24171,4.9577,11.2675,43.98,132,1,Multiple wound debridement for MST w min CCC
+24,2418,24180,4.8629,5.7892,8.8,26,0.92,Abdominal proc for MST wo sig CCC
+24,2418,24181,6.5129,8.5697,11.92,36,0.62,Abdominal proc for MST w min CCC
+24,2418,24182,6.5129,11.0151,20.37,61,1,Abdominal proc for MST w mod CCC
+24,2419,24190,3.703,4.8723,9.05,27,0.77,Chest proc for MST wo sig CCC
+24,2419,24191,4.4432,8.5446,19.38,58,1,Chest proc for MST w min CCC
+24,2420,24200,3.5234,4.6361,9.94,30,1,Maxillfacial proc for MST wo sig CCC
+24,2420,24201,4.7819,7.0322,14.19,43,1,Maxillfacial proc for MST w min CCC
+24,2420,24202,5.2517,10.0996,19.64,59,1,Maxillfacial proc for MST w mod CCC
+24,2421,24210,2.4523,3.6064,13.27,40,1,Lower limb proc for MST wo sig CCC
+24,2421,24211,3.3899,5.6497,16.99,51,0.94,Lower limb proc for MST w min CCC
+24,2421,24212,3.6879,8.3815,22.51,68,0.88,Lower limb proc for MST w mod CCC
+24,2421,24213,4.9678,11.2904,29.83,89,1,Lower limb proc for MST w maj CCC
+24,2422,24220,2.2855,2.7209,6.77,20,0.65,Upper limb proc for MST wo sig CCC
+24,2422,24221,3.2342,4.2555,11.53,35,0.95,Upper limb proc for MST w min CCC
+24,2422,24222,3.7801,7.2694,18.43,55,1,Upper limb proc for MST w mod CCC
+24,2423,24230,4.8944,7.1976,13.68,41,1,MST w cont mech ventilation for 96 hr or more wo sig CCC
+24,2423,24231,5.4499,10.4805,18.37,55,1,MST w cont mech ventilation for 96 hr or more w min CCC
+24,2450,24500,1.7952,1.9728,5.89,18,1,Multiple significant trauma wo sig CCC
+24,2450,24501,2.4221,2.8834,7.68,23,1,Multiple significant trauma w min CCC
+24,2450,24502,3.0294,3.986,9.95,30,0.78,Multiple significant trauma w mod CCC
+25,2501,25019,0.6898,0.6898,2.26,7,0.94,OR proc group 1 for HIV infections
+25,2502,25029,0.8603,0.8603,2.94,9,1,OR proc group 2 for HIV infections
+25,2503,25039,1.44,1.5824,4.17,13,1,OR proc group 3 for HIV infections
+25,2504,25049,3.8651,5.0856,11.95,36,1,OR proc group 4 or more for HIV infections
+25,2550,25500,1.5759,1.8762,6.74,20,1,HIV-related CNS diseases wo sig CCC
+25,2550,25501,3.2148,5.358,16.27,49,1,HIV-related CNS diseases w min CCC
+25,2551,25510,2.6206,3.1198,7.46,22,1,HIV-related malignancy wo sig CCC
+25,2551,25511,4.1112,6.8519,17.25,52,1,HIV-related malignancy w min CCC
+25,2552,25520,1.2085,1.4386,6.63,20,1,"HIV-related infection, not transferred wo sig CCC"
+25,2552,25521,2.1845,2.8743,10.28,31,1,"HIV-related infection, not transferred w min CCC"
+25,2552,25522,3.2308,4.7511,14.9,45,1,"HIV-related infection, not transferred w mod CCC"
+25,2552,25523,4.3166,8.3011,19.27,58,1,"HIV-related infection, not transferred w maj CCC"
+25,2553,25530,0.5926,0.6512,3.2,10,1,Other HIV-related condition wo sig CCC
+25,2553,25531,1.147,1.2604,5.21,16,1,Other HIV-related condition w min CCC
+25,2554,25540,1.1432,1.2563,5.07,15,0.3,"HIV-related infection, transferred wo sig CCC"
+25,2554,25541,1.9136,2.2781,7.71,23,1,"HIV-related infection, transferred w min CCC"
+25,2554,25542,2.7047,3.9775,12.03,36,1,"HIV-related infection, transferred w mod CCC"
+26,2601,26010,0.5402,0.5402,1.96,6,1,OR proc group 1 unrelated to PDx wo sig CCC
+26,2601,26011,0.69,0.69,2.05,6,1,OR proc group 1 unrelated to PDx w min CCC
+26,2601,26012,0.9189,0.9189,2.29,7,1,OR proc group 1 unrelated to PDx w mod CCC
+26,2602,26020,0.8835,0.8835,2.22,7,1,OR proc group 2 unrelated to PDx wo sig CCC
+26,2602,26021,1.2387,1.2387,2.54,8,1,OR proc group 2 unrelated to PDx w min CCC
+26,2602,26022,2.2408,2.2408,2.76,8,1,OR proc group 2 unrelated to PDx w mod CCC
+26,2603,26030,1.5719,1.7274,4.75,14,1,OR proc group 3 unrelated to PDx wo sig CCC
+26,2603,26031,2.7143,3.5714,9.07,27,0.69,OR proc group 3 unrelated to PDx w min CCC
+26,2603,26032,3.3847,6.5091,18.1,54,1,OR proc group 3 unrelated to PDx w mod CCC
+26,2604,26040,2.3674,2.8184,6.44,19,0.99,OR proc group 4 unrelated to PDx wo sig CCC
+26,2604,26041,4.1084,6.0416,13.32,40,1,OR proc group 4 unrelated to PDx w min CCC
+26,2605,26050,4.2964,5.1148,7.91,24,1,OR proc group 5 or more unrelated to PDx wo sig CCC
+26,2605,26051,5.7241,8.4179,13.69,41,1,OR proc group 5 or more unrelated to PDx w min CCC
+26,2611,26119,2.9128,3.2009,5.89,18,1,General major vessel procedures
+26,2612,26120,2.3797,3.1312,10.12,30,0.55,Gastrostomy & Enterostomy wo sig CCC
+26,2612,26121,3.015,6.8522,25.44,76,1,Gastrostomy & Enterostomy w min CCC
+26,2613,26130,1.8752,2.4673,10.91,33,0.45,General skin graft wo sig CCC
+26,2613,26131,2.436,5.5363,26.45,79,1,General skin graft w min CCC
+26,2614,26149,1.8812,2.0672,5.09,15,1,General minor vessel and lymphatic procedures
+26,2650,26509,0,0,0,0,1,Ungroupable
+26,2651,26519,0,0,0,0,1,Unacceptable principal diagnosis
+26,2652,26529,0,0,0,0,1,Unacceptable obstetric diagnosis combination
+26,2653,26539,0,0,0,0,1,"Ungroupable, invalid age"

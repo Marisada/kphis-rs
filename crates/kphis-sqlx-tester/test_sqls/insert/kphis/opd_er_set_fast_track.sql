@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_set_fast_track` (`set_ft_id`, `opd_er_order_master_id`, `set_ft_date`, `set_ft_time`, `set_ft_doctorcode`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, '2024-01-01', '11:11:11', '007', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

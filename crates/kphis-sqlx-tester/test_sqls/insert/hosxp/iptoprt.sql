@@ -1,0 +1,3 @@
+INSERT INTO `hos`.`iptoprt` (`iptoprt_id`, `an`, `doctor`, `enddate`, `endtime`, `icd9`, `icode`, `iprice`, `iqty`, `opdate`, `optime`, `priority`, `ext_code`, `oper_type`, `ovst_oper_type`, `hos_guid`, `hos_guid_ext`, `entry_datetime`, `modify_datetime`, `staff`, `link_table`, `link_id`, `oper_note_text`, `diag_ext_type_id`, `dx_guid`) VALUES
+	(1, '660001234', '009', '2025-01-11', '11:11:11', '9904', NULL, NULL, NULL, '2025-01-11', '11:11:11', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+	(2, '660001234', '007', '2025-01-11', '11:11:11', '9604', NULL, NULL, NULL, '2025-01-11', '11:11:11', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

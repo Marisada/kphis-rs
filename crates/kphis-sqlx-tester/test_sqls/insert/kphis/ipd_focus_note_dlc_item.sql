@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_focus_note_dlc_item` (`fcnote_dlc_item_id`, `fcnote_id`, `dlc_id`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 1, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1);

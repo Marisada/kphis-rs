@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_bed` (`opd_er_bed_id`, `bedno`, `bed_type`, `display_order`, `active`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, '1', 'R', 1, 'Y', 'jommarn', '2021-07-06 09:39:46', 'jommarn', '2021-07-06 09:39:46', 0);

@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_dr_admission_note_item` (`admission_note_item_id`, `admission_note_id`, `an`, `admission_note_doctor`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, '660001234', '007', 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 0);

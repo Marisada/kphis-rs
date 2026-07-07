@@ -1,0 +1,3 @@
+INSERT INTO `hos`.`ipt_newborn` (`an`, `birth_weight`, `dead`, `preg_no`, `doctor`, `born_date`, `born_time`, `note`, `apgar1`, `apgar2`, `birthcondition1`, `birthcondition2`, `anc_complete`, `mother_an`, `father_an`, `newborn_death_cause_id`, `hos_guid`, `has_asphyxia`, `hos_guid_ext`) VALUES
+	('660001234', 3333, 'N', 1, '007', '2023-11-11', '11:11:11', 'Note', 9, 10, 0, 0, 'Y', '660001111', NULL, NULL, NULL, 'N', NULL),
+	('670001234', 3333, 'N', 1, '007', '2024-11-11', '11:11:11', 'Note', 9, 10, 0, 0, 'Y', '670001111', NULL, NULL, NULL, 'N', NULL);

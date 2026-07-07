@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`occupation` (`name`, `occupation`, `nhso_code`, `code506`, `hos_guid`, `surveillance_occupation_id`, `zip09_code`, `hos_guid_ext`, `nhso_eclaim_occupation_code`) VALUES
+    ('อาจารย์โรงเรียน', '111', '2330', '10', NULL, NULL, NULL, NULL, NULL);

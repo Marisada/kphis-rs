@@ -1,0 +1,3 @@
+INSERT INTO `kphis`.`ipd_dr_consult_signature_reply` (`consult_reply_id`, `consult_id`, `consult_doctorcode_reply`, `consult_doctorcode_reply_person2`, `an`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, '008', '009', '660001234', 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
+	(2, 2, '008', '009', '670001234', 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1);

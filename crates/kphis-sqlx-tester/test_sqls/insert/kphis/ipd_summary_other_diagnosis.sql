@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_summary_other_diagnosis` (`other_diagnosis_id`, `summary_id`, `other_diagnosis_detail`, `other_diagnosis_icd10`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 'Hypokalaemia', 'E876', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

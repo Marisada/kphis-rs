@@ -1,0 +1,3 @@
+https://github.com/cetz-package/cetz-plot
+
+- Find and update all "@preview/cetz-plot:" to current version

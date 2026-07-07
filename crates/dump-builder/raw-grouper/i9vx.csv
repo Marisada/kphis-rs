@@ -1,0 +1,4541 @@
+"CODE,C,6","VALIDCODE,L","DESC,C,38"
+000,เท็จ,THERAPEUTIC ULTRASOUND
+0001,จริง,Ther ult head & neck ves
+0002,จริง,Ther ultrasound of heart
+0003,จริง,Ther ult peripheral ves
+0009,จริง,Other therapeutic ultsnd
+001,เท็จ,PHARMACEUTICALS
+0010,จริง,Implant chemothera agent
+0011,จริง,Infus drotrecogin alfa
+0012,จริง,Adm inhal nitric oxide
+0013,จริง,Inject/infus nesiritide
+0014,จริง,Injection oxazolidinone
+0015,จริง,High-dose infusion il-2
+0016,จริง,Pressurized treat graft
+0017,จริง,Infusion of vasopressor
+0018,จริง,Infus immunosup antibody
+0019,จริง,BBBD via infusion
+002,เท็จ,INTRAVAS IMAG BL VESSELS
+0021,จริง,Ivus extracran cereb ves
+0022,จริง,Ivus intrathoracic ves
+0023,จริง,Ivus peripheral vessels
+0024,จริง,Ivus coronary vessels
+0025,จริง,Ivus renal vessels
+0028,จริง,Intravascul imaging NEC
+0029,จริง,Intravascul imaging NOS
+003,เท็จ,COMPUTER ASSIST SURGERY
+0031,จริง,CAS w CT/CTA
+0032,จริง,CAS w MR/MRA
+0033,จริง,CAS w fluoroscopy
+0034,จริง,Imageless comp asst surg
+0035,จริง,CAS w multiple datasets
+0039,จริง,Other CAS
+004,เท็จ,ADJUNCT VAS SYSTEM PROC
+0040,จริง,Procedure-one vessel
+0041,จริง,Procedure-two vessels
+0042,จริง,Procedure-three vessels
+0043,จริง,Procedure-four+ vessels
+0044,จริง,Proc-vessel bifurcation
+0045,จริง,Insert 1 vascular stent
+0046,จริง,Insert 2 vascular stents
+0047,จริง,Insert 3 vascular stents
+0048,จริง,Insert 4+ vasculr stents
+0049,จริง,SuperSat O2 therapy
+005,เท็จ,OTHER CARDIOVAS PROC
+0050,จริง,Impl CRT pacemaker sys
+0051,จริง,Impl CRT defibrillat sys
+0052,จริง,Imp/rep lead lf ven sys
+0053,จริง,Imp/rep CRT pacemakr gen
+0054,จริง,Imp/rep CRT defib genat
+0055,จริง,Ins d-e stent oth periph
+0056,จริง,Ins/rep impl sensor w lead
+0057,จริง,Imp/rep subcue card dev
+0058,จริง,Ins intra-ansm pres mntr
+0059,จริง,Intravasc msmnt cor art
+006,เท็จ,PROC ON BLOOD VESSELS
+0060,จริง,Ins d-e stent supl fem a
+0061,จริง,Perc angioplasty extracran ves
+0062,จริง,Perc angioplasty intracran ves
+0063,จริง,Perc ins carotid stent
+0064,จริง,Perc ins extracran stent
+0065,จริง,Perc ins intracran stent
+0066,จริง,PTCA
+0067,จริง,Intravas msmnt thorc art
+0068,จริง,Intravas msmt periph art
+0069,จริง,Intravs msmt ves NEC/NOS
+007,เท็จ,OTHER HIP PROCEDURES
+0070,จริง,Rev hip repl-acetab/fem
+0071,จริง,Rev hip repl-acetab comp
+0072,จริง,Rev hip repl-fem comp
+0073,จริง,Rev hip repl-liner/head
+0074,จริง,"Hip surface, metal/poly"
+0075,จริง,"Hip surface, metal/metal"
+0076,จริง,"Hip surface, cermc/cermc"
+0077,จริง,"Hip surface, cermc/poly"
+008,เท็จ,OTHER KNEE AND HIP PROC
+0080,จริง,Rev knee replacemt-total
+0081,จริง,Rev knee repl-tibia comp
+0082,จริง,Rev knee repl-femur comp
+0083,จริง,Rev knee replace-patella
+0084,จริง,Rev knee repl-tibia lin
+0085,จริง,"Resrf hip,total-acet/fem"
+0086,จริง,"Resrf hip,part-fem head"
+0087,จริง,"Resrf hip,part-acetablum"
+009,เท็จ,OTHER PROC & INTERVENT
+0091,จริง,Trnsplnt live rel donor
+0092,จริง,Trnsplnt live nonrel don
+0093,จริง,Transplant cadaver donor
+0094,จริง,Intra-op neurophys montr
+0095,จริง,Inj or infus glucarpidase
+0096,จริง,Inf 4-Fact Proth Cpx Conc
+010,เท็จ,CRANIAL PUNCTURE
+0101,จริง,Cisternal puncture
+0102,จริง,Ventriculopunct thru cath
+0109,จริง,Other cranial puncture
+011,เท็จ,SKULL/BRAIN DX PROCEDURE
+0110,จริง,Intracran pressure montr
+0111,จริง,Clos cereb meninges bx
+0112,จริง,Open cereb meninges bx
+0113,จริง,Closed brain biopsy
+0114,จริง,Open brain biopsy
+0115,จริง,Skull biopsy
+0116,จริง,Intracranial 02 monitor
+0117,จริง,Brain temp monitoring
+0118,จริง,Other brain dx procedure
+0119,จริง,Other skull dx procedure
+012,เท็จ,CRANIOTOMY & CRANIECTOMY
+0120,จริง,Cran imp/rep n'sti puls gn
+0121,จริง,Cranial sinus I&D
+0122,จริง,Removal brain stim lead
+0123,จริง,Reopen craniotomy site
+0124,จริง,Other craniotomy
+0125,จริง,Other craniectomy
+0126,จริง,Ins cath cranial cav/tis
+0127,จริง,Rem cath cranial cav/tis
+0128,จริง,Intracereb cth-burr hole
+0129,จริง,Rem cran n'sti pulse gen
+013,เท็จ,INCISE BRAIN & MENINGES
+0131,จริง,Incise cerebral meninges
+0132,จริง,Lobotomy & tractotomy
+0139,จริง,Other brain incision
+014,เท็จ,THALAMUS/GLOBUS PALL OP
+0141,จริง,Thalamus operations
+0142,จริง,Globus pallidus ops
+015,เท็จ,EXCISE BRAIN & MENINGES
+0151,จริง,Ex cereb meningeal les
+0152,จริง,Hemispherectomy
+0153,จริง,Brain lobectomy
+0159,จริง,Other brain excision
+016,จริง,Excise skull lesion
+020,เท็จ,CRANIOPLASTY
+0201,จริง,Linear craniectomy
+0202,จริง,Elevate skull fx fragmnt
+0203,จริง,Skull flap formation
+0204,จริง,Bone graft to skull
+0205,จริง,Skull plate insertion
+0206,จริง,Cranial osteoplasty NEC
+0207,จริง,Skull plate removal
+021,เท็จ,CEREBRAL MENINGES REPAIR
+0211,จริง,Simple suture of dura
+0212,จริง,Brain meninge repair NEC
+0213,จริง,Meninge vessel ligation
+0214,จริง,Choroid plexectomy
+022,จริง,Ventriculostomy
+0221,จริง,Ins/repl EVD
+0222,จริง,Intracran vent shunt/anas
+023,เท็จ,EXTRACRAN VENTRICL SHUNT
+0231,จริง,Ventricl shunt-head/neck
+0232,จริง,Ventri shunt-circula sys
+0233,จริง,Ventricl shunt-thorax
+0234,จริง,Ventricl shunt-abdomen
+0235,จริง,Ventri shunt-uninary sys
+0239,จริง,Ventric shunt to extracranial site NEC
+024,เท็จ,VENTRICLE SHUNT REVISION
+0241,จริง,Irrigate/expl vent shunt
+0242,จริง,Replace ventricle shunt
+0243,จริง,Remove ventricle shunt
+029,เท็จ,SKULL & BRAIN OP NEC
+0291,จริง,Lysis cortical adhesion
+0292,จริง,Brain repair
+0293,จริง,Imp/repl brain stim lead
+0294,จริง,Insert/replac skull tong
+0295,จริง,Remove skull tongs
+0296,จริง,Insert sphenoid electrod
+0299,จริง,Skull & brain op NEC
+030,เท็จ,SPINAL CANAL EXPLORATION
+0301,จริง,Removal FB spinal canal
+0302,จริง,Reopen laminectomy site
+0309,จริง,Spinal canal explor NEC
+031,จริง,Intraspin nerve root div
+032,เท็จ,CHORDOTOMY
+0321,จริง,Percutaneous chordotomy
+0329,จริง,Other chordotomy
+033,เท็จ,SPINAL CANAL DX PROC
+0331,จริง,Spinal tap
+0332,จริง,Spinal cord/meninges bx
+0339,จริง,Other spinal dx proc
+034,จริง,Excis spinal cord lesion
+035,เท็จ,SPINAL CORD PLASTIC OP
+0351,จริง,Spine meningocele repair
+0352,จริง,Myelomeningocel repair
+0353,จริง,Vertebral fx repair
+0359,จริง,Spinal struct repair NEC
+036,จริง,Spinal cord adhesiolysis
+037,เท็จ,SPINAL THECAL SHUNT
+0371,จริง,Subarach-periton shunt
+0372,จริง,Subarach-ureteral shunt
+0379,จริง,Oth spinal thecal shunt
+038,จริง,Destr inject-spine canal
+039,เท็จ,SPIN CANAL STRUCT OP NEC
+0390,จริง,Insert spinal canal cath
+0391,จริง,Anesth inject-spin canal
+0392,จริง,Spinal canal inject NEC
+0393,จริง,Imp/repl spine stim lead
+0394,จริง,Removal spine stim lead
+0395,จริง,Spinal blood patch
+0396,จริง,Percutan facet denervat
+0397,จริง,Revise spine theca shunt
+0398,จริง,Remove spine theca shunt
+0399,จริง,Spine canal struc op NEC
+040,เท็จ,PER NERV INCIS/DIV/EXCIS
+0401,จริง,Excision acoustc neuroma
+0402,จริง,Trigeminal nerv division
+0403,จริง,Periph nerve div NEC
+0404,จริง,Periph nerve incis NEC
+0405,จริง,Gasserian ganglionectomy
+0406,จริง,Periph ganglionect NEC
+0407,จริง,Periph nerv excision NEC
+041,เท็จ,PERIPH NERVE DX PROC
+0411,จริง,Clos periph nerve biopsy
+0412,จริง,Open periph nerve biopsy
+0419,จริง,Periph nerve dx proc NEC
+042,จริง,Periph nerve destruction
+043,จริง,Peripheral nerve suture
+044,เท็จ,PERIPH NERV ADHESIOLYSIS
+0441,จริง,Decompress trigem root
+0442,จริง,Cranial nerv decom NEC
+0443,จริง,Carpal tunnel release
+0444,จริง,Tarsal tunnel release
+0449,จริง,Per nerve adhesiolys NEC
+045,จริง,Peripheral nerve graft
+046,จริง,Periph nerve transposit
+047,เท็จ,OTHER PERIPH NEUROPLASTY
+0471,จริง,Hypogloss-facial anastom
+0472,จริง,Accessory-facial anastom
+0473,จริง,Access-hypogloss anastom
+0474,จริง,Periph nerv anastom NEC
+0475,จริง,Postop revis per nerv op
+0476,จริง,Late repair per nerv inj
+0479,จริง,Other neuroplasty
+048,เท็จ,PERIPHERAL NERVE INJECT
+0480,จริง,Periph nerve inject NOS
+0481,จริง,Anesth injec periph nerv
+0489,จริง,Periph nerve inject NEC
+049,เท็จ,OTH PERIPHERAL NERVE OP
+0491,จริง,Neurectasis
+0492,จริง,Imp/repl peri stim lead
+0493,จริง,Removal peri stim lead
+0499,จริง,Peripheral nerve ops NEC
+050,จริง,Sympath nerve division
+051,เท็จ,SYMPATH NERVE DX PROC
+0511,จริง,Sympathetic nerve biopsy
+0519,จริง,Sympath nrv dx proc NEC
+052,เท็จ,SYMPATHECTOMY
+0521,จริง,Sphenopalatin ganglionec
+0522,จริง,Cervical sympathectomy
+0523,จริง,Lumbar sympathectomy
+0524,จริง,Presacral sympathectomy
+0525,จริง,Periart sympathectomy
+0529,จริง,Other sympathectomy
+053,เท็จ,SYMPATH NERVE INJECTION
+0531,จริง,Anesth inject symp nerve
+0532,จริง,Neurolyt injec-symp nrv
+0539,จริง,Sympath nerve inject NEC
+058,เท็จ,OTH SYMPATHETIC NERVE OP
+0581,จริง,Sympathetic nerve repair
+0589,จริง,Sympathetic nerve op NEC
+059,จริง,Other nervous system ops
+060,เท็จ,THYROID FIELD INCISION
+0601,จริง,Thyroid field aspiration
+0602,จริง,Reopen thyroid field wnd
+0609,จริง,Incis thyroid field NEC
+061,เท็จ,THYROID/PARATHY DX PROC
+0611,จริง,Closed thyroid gland bx
+0612,จริง,Open thyroid gland bx
+0613,จริง,Parathyroid biopsy
+0619,จริง,Thyr/parathy dx proc NEC
+062,จริง,Unilat thyroid lobectomy
+063,เท็จ,OTHER PART THYROIDECTOMY
+0631,จริง,Excision thyroid lesion
+0639,จริง,Part thyroidectomy NEC
+064,จริง,Complete thyroidectomy
+065,เท็จ,SUBSTERNAL THYROIDECTOMY
+0650,จริง,Substern thyroidect NOS
+0651,จริง,Part substern thyroidect
+0652,จริง,Tot substern thyroidect
+066,จริง,Lingual thyroid excision
+067,จริง,Thyrogloss duct excision
+068,เท็จ,PARATHYROIDECTOMY
+0681,จริง,Total parathyroidectomy
+0689,จริง,Other parathyroidectomy
+069,เท็จ,THYROID/PARATHY OP NEC
+0691,จริง,Thyroid isthmus division
+0692,จริง,Thyroid vessel ligation
+0693,จริง,Thyroid suture
+0694,จริง,Thyroid reimplantation
+0695,จริง,Parathyroid reimplant
+0698,จริง,Other thyroid operations
+0699,จริง,Other parathyroid ops
+070,เท็จ,ADRENAL FIELD EXPLOR
+0700,จริง,Adrenal exploration NOS
+0701,จริง,Unilat adrenal explorat
+0702,จริง,Bilat adrenal explorat
+071,เท็จ,OTHER ENDOCRINE DX PROCS
+0711,จริง,Closed adrenal gland bx
+0712,จริง,Open adrenal gland bx
+0713,จริง,Transfront pituitary bx
+0714,จริง,Transphen pituitary bx
+0715,จริง,Pituitary biopsy NOS
+0716,จริง,Thymus biopsy
+0717,จริง,Pineal biopsy
+0719,จริง,Endocrine dx proc NEC
+072,เท็จ,PARTIAL ADRENALECTOMY
+0721,จริง,Adrenal lesion excision
+0722,จริง,Unilateral adrenalectomy
+0729,จริง,Part adrenalectomy NEC
+073,จริง,Bilateral adrenalectomy
+074,เท็จ,OTHER ADRENAL OPERATIONS
+0741,จริง,Adrenal incision
+0742,จริง,Adrenal nerve division
+0743,จริง,Adrenal vessel ligation
+0744,จริง,Adrenal repair
+0745,จริง,Adrenal reimplantation
+0749,จริง,Adrenal operation NEC
+075,เท็จ,PINEAL GLAND OPERATIONS
+0751,จริง,Pineal field exploration
+0752,จริง,Pineal gland incision
+0753,จริง,Partial pinealectomy
+0754,จริง,Total pinealectomy
+0759,จริง,Pineal operation NEC
+076,เท็จ,HYPOPHYSECTOMY
+0761,จริง,Exc pituit les-transfron
+0762,จริง,Exc pituit les-transphen
+0763,จริง,Part excis pituitary NOS
+0764,จริง,Tot exc pituit-transfron
+0765,จริง,Tot exc pituit-transphen
+0768,จริง,Total exc pituitary NEC
+0769,จริง,Total exc pituitary NOS
+077,เท็จ,OTHER HYPOPHYSIS OPS
+0771,จริง,Pituitary fossa explorat
+0772,จริง,Pituitary gland incision
+0779,จริง,Pituitary operation NEC
+078,เท็จ,THYMECTOMY
+0780,จริง,Thymectomy NOS
+0781,จริง,Oth part excision thymus
+0782,จริง,Oth totl excision thymus
+0783,จริง,Thorac part excisn thymus
+0784,จริง,Thorac total exc thymus
+079,เท็จ,OTHER THYMUS OPERATIONS
+0791,จริง,Thymus field exploration
+0792,จริง,Other incision of thymus
+0793,จริง,Repair of thymus
+0794,จริง,Thymus transplantation
+0795,จริง,Thorac incision thymus
+0798,จริง,Oth thorac op thymus NOS
+0799,จริง,Other thymus ops NOS
+080,เท็จ,EYELID INCISION
+0801,จริง,Incision of lid margin
+0802,จริง,Blepharorrhaphy severing
+0809,จริง,Other eyelid incision
+081,เท็จ,DIAGNOSTIC PROC-EYELID
+0811,จริง,Eyelid biopsy
+0819,จริง,Eyelid dx procedure NEC
+082,เท็จ,EXCIS/DESTRUC LID LESION
+0820,จริง,Remove eyelid lesion NOS
+0821,จริง,Chalazion excision
+0822,จริง,Excise minor les lid NEC
+0823,จริง,Exc maj les lid prt-thic
+0824,จริง,Exc maj les lid ful-thic
+0825,จริง,Destruction lid lesion
+083,เท็จ,PTOSIS/LID RETRACT REP
+0831,จริง,Ptosis rep-front mus sut
+0832,จริง,Ptosis rep-fron mus slng
+0833,จริง,Ptosis rep-levat mus adv
+0834,จริง,Ptosis rep-levat mus NEC
+0835,จริง,Ptos rep-tarsal techniq
+0836,จริง,Blepharoptos repair NEC
+0837,จริง,Reduc overcorrect ptosis
+0838,จริง,Correct lid retraction
+084,เท็จ,ENTROPION/ECTROPION REP
+0841,จริง,Thermocaut/entropion rep
+0842,จริง,Suture entropion repair
+0843,จริง,Wedg resec entropion rep
+0844,จริง,Lid recons entropion rep
+0849,จริง,Entropion/ectrop rep NEC
+085,เท็จ,OTH ADJUST LID POSITION
+0851,จริง,Canthotomy
+0852,จริง,Blepharorrhaphy
+0859,จริง,Adjust lid position NEC
+086,เท็จ,LID RECONSTRUCT W GRAFT
+0861,จริง,Lid reconst w skin graft
+0862,จริง,Lid reconst w muc graft
+0863,จริง,Lid reconst w hair graft
+0864,จริง,Lid recon-tarsoconj flap
+0869,จริง,Lid reconstr w graft NEC
+087,เท็จ,OTHER EYELID RECONSTRUCT
+0870,จริง,Lid reconstruction NOS
+0871,จริง,Lid marg recon-part thic
+0872,จริง,Lid recons-part thic NEC
+0873,จริง,Lid marg recons ful thic
+0874,จริง,Lid reconst-ful thic NEC
+088,เท็จ,OTHER REPAIR OF EYELID
+0881,จริง,Lin rep lacer eyelid/brow
+0882,จริง,Rep lac inv lid mar par-th
+0883,จริง,"Oth rep lid lacer, par-th"
+0884,จริง,Rep lac inv lid mar ful-th
+0885,จริง,"Oth rep lid lacer, ful-th"
+0886,จริง,Lower eyelid rhytidectomy
+0887,จริง,Upper eyelid rhytidectomy
+0889,จริง,Other eyelid repair
+089,เท็จ,OTHER EYELID OPERATIONS
+0891,จริง,Electrosurg lid epilat
+0892,จริง,Cryosurg lid epilation
+0893,จริง,Eyelid epilation NEC
+0899,จริง,Eyelid operation NEC
+090,จริง,Lacrimal gland incision
+091,เท็จ,LACRIMAL SYS DX PROC
+0911,จริง,Lacrimal gland biopsy
+0912,จริง,Lacrimal sac biopsy
+0919,จริง,Lacrimal sys dx proc NEC
+092,เท็จ,LACRIMAL GLAND EXCISION
+0920,จริง,Exc lacrimal gland NOS
+0921,จริง,Excis les lacrimal gland
+0922,จริง,Part dacryoadenect NEC
+0923,จริง,Total dacryoadenectomy
+093,จริง,Other lacrimal gland ops
+094,เท็จ,LAC PASSAGE MANIPULATION
+0941,จริง,Lacrimal punctum probe
+0942,จริง,Lac canaliculi probe
+0943,จริง,Nasolacrimal duct probe
+0944,จริง,Nasolac duct intubat
+0949,จริง,Lac passage manip NEC
+095,เท็จ,INCISE LAC SAC/PASSAGES
+0951,จริง,Lac punctum incision
+0952,จริง,Lac canaliculi incision
+0953,จริง,Lacrimal sac incision
+0959,จริง,Lacrim passage incis NEC
+096,จริง,Lacrim sac/passage excis
+097,เท็จ,CANALICULUS/PUNCTUM REP
+0971,จริง,Correct everted punctum
+0972,จริง,Punctum repair NEC
+0973,จริง,Canaliculus repair
+098,เท็จ,NASO-LACRIMAL FISTULIZAT
+0981,จริง,Dacryocystorhinostomy
+0982,จริง,Conjunctivocystorhinost
+0983,จริง,Conjunctivorhinos w tube
+099,เท็จ,OTH LACRIMAL SYST OPS
+0991,จริง,Lac punctum obliteration
+0999,จริง,Lacrimal system op NEC
+100,จริง,Incise/remov conjunct FB
+101,จริง,Conjunctiva incision NEC
+102,เท็จ,CONJUNCTIVA DX PROC
+1021,จริง,Conjunctival biopsy
+1029,จริง,Conjunctiva dx proc NEC
+103,เท็จ,DESTRUCT CONJUNCT LESION
+1031,จริง,Excise conjunctiv lesion
+1032,จริง,Destruct conjunc les NEC
+1033,จริง,Oth conjunc destruc proc
+104,เท็จ,CONJUNCTIVOPLASTY
+1041,จริง,Symbleph rep w free grft
+1042,จริง,Graft conjunc cul-de-sac
+1043,จริง,Conjun cul-de-sac rx NEC
+1044,จริง,Conjunc free graft NEC
+1049,จริง,Conjunctivoplasty NEC
+105,จริง,Conjunc/lid adhesiolysis
+106,จริง,Repair conjunct lacerat
+109,เท็จ,OTHER CONJUNCTIVAL OPS
+1091,จริง,Subconjunctival inject
+1099,จริง,Conjunctival op NEC
+110,จริง,Magnet removal cornea FB
+111,จริง,Corneal incision
+112,เท็จ,DX PROCEDURE ON CORNEA
+1121,จริง,Corneal scrape for smear
+1122,จริง,Corneal biopsy
+1129,จริง,Corneal dx proc NEC
+113,เท็จ,EXCISION OF PTERYGIUM
+1131,จริง,Pterygium transposition
+1132,จริง,Pteryg exc w cornea grft
+1139,จริง,Pterygium excision NEC
+114,เท็จ,DESTRUCT CORNEAL LESION
+1141,จริง,Mech remov cornea epith
+1142,จริง,Thermocaut cornea lesion
+1143,จริง,Cryotherap cornea lesion
+1149,จริง,Destruct cornea les NEC
+115,เท็จ,CORNEAL REPAIR
+1151,จริง,Suture cornea laceration
+1152,จริง,Rep cornea postop dehisc
+1153,จริง,Rx cornea lac w conj flp
+1159,จริง,Corneal repair NEC
+116,เท็จ,CORNEAL TRANSPLANT
+1160,จริง,Corneal transplant NOS
+1161,จริง,Lam keratplast w autgrft
+1162,จริง,Lamellar keratoplast NEC
+1163,จริง,Perf keratopl w autogrft
+1164,จริง,Perforat keratoplast NEC
+1169,จริง,Corneal transplant NEC
+117,เท็จ,OTH RECONST REFRAC SURG
+1171,จริง,Keratomileusis
+1172,จริง,Keratophakia
+1173,จริง,Keratoprosthesis
+1174,จริง,Thermokeratoplasty
+1175,จริง,Radial keratotomy
+1176,จริง,Epikeratophakia
+1179,จริง,Cornea reconstruct NEC
+119,เท็จ,OTHER CORNEAL OPERATIONS
+1191,จริง,Corneal tattooing
+1192,จริง,Remove corneal implant
+1199,จริง,Corneal operation NEC
+120,เท็จ,REMOV INTRAOC FB ANT SEG
+1200,จริง,Remov ant segmnt FB NOS
+1201,จริง,Magnet remov ant seg FB
+1202,จริง,Nonmag remov ant seg FB
+121,เท็จ,IRIDOTOMY/SIMPLE IRIDECT
+1211,จริง,Iridotomy w transfixion
+1212,จริง,Iridotomy NEC
+1213,จริง,Prolapsed iris excision
+1214,จริง,Iridectomy NEC
+122,เท็จ,ANTERIOR SEGMENT DX PROC
+1221,จริง,Dx aspirat-ant chamber
+1222,จริง,Iris biopsy
+1229,จริง,Ant segment dx proc NEC
+123,เท็จ,IRIDOPLASTY/COREOPLASTY
+1231,จริง,Goniosynechiae lysis
+1232,จริง,Ant synechia lysis NEC
+1233,จริง,Post synechiae lysis
+1234,จริง,Corneovitreal adhesiolys
+1235,จริง,Coreoplasty
+1239,จริง,Iridoplasty NEC
+124,เท็จ,DESTR IRIS/CIL BODY LES
+1240,จริง,Remov ant segmnt les NOS
+1241,จริง,Nonexc destruc iris les
+1242,จริง,Excision of iris lesion
+1243,จริง,Nonexc destr cil bod les
+1244,จริง,Excise ciliary body les
+125,เท็จ,INTRAOCUL CIRC FACILITAT
+1251,จริง,Goniopuncture
+1252,จริง,Goniotomy
+1253,จริง,Goniotomy w goniopunctur
+1254,จริง,Trabeculotomy ab externo
+1255,จริง,Cyclodialysis
+1259,จริง,Facilit intraoc circ NEC
+126,เท็จ,SCLERAL FISTULIZATION
+1261,จริง,Trephin sclera w iridect
+1262,จริง,Thermcaut scler w iridec
+1263,จริง,Iridencleisis/iridotasis
+1264,จริง,Trabeculectomy ab externo
+1265,จริง,Scler fistuliz w iridect
+1266,จริง,Postop revis scl fistul
+1267,จริง,Ins aqueous drain dev
+1269,จริง,Scler fistulizing op NEC
+127,เท็จ,HI INTR-OC PRESS RELIEF
+1271,จริง,Cyclodiathermy
+1272,จริง,Cyclocryotherapy
+1273,จริง,Cyclophotocoagulation
+1274,จริง,Cil body diminution NOS
+1279,จริง,Glaucoma procedure NEC
+128,เท็จ,OPERATIONS ON SCLERA
+1281,จริง,Suture scleral lacer
+1282,จริง,Scleral fistula repair
+1283,จริง,Revis ant seg op wnd NEC
+1284,จริง,Destruct scleral lesion
+1285,จริง,Repair staphylom w graft
+1286,จริง,Rep scler staphyloma NEC
+1287,จริง,Graft reinforce sclera
+1288,จริง,Sclera reinforcement NEC
+1289,จริง,Scleral operation NEC
+129,เท็จ,OTH ANTERIOR SEGMENT OPS
+1291,จริง,Therapeut evac ant chamb
+1292,จริง,Anterior chamber inject
+1293,จริง,Remov epithel downgrowth
+1297,จริง,Iris operation NEC
+1298,จริง,Ciliary body op NEC
+1299,จริง,Anterior chamber op NEC
+130,เท็จ,REMOVE FB FROM LENS
+1300,จริง,Remove FB lens NOS
+1301,จริง,Magnet remove FB lens
+1302,จริง,Nonmagnet remove FB lens
+131,เท็จ,INTRACAPSUL LENS EXTRAC
+1311,จริง,Temp-inf intrcap lens ex
+1319,จริง,Intracapsul lens ext NEC
+132,จริง,Linear extracap lens ext
+133,จริง,Simpl aspir lens extract
+134,เท็จ,FRAG-ASP XTRACAP LENS EX
+1341,จริง,Catarac phacoemuls/aspir
+1342,จริง,Post catarac frag/aspir
+1343,จริง,Cataract frag/aspir NEC
+135,เท็จ,EXTRACAPS LENS EXTR NEC
+1351,จริง,Temp-inf xtracap lens ex
+1359,จริง,Extracap lens extrac NEC
+136,เท็จ,OTH CATARACT EXTRACTION
+1364,จริง,After-catar discission
+1365,จริง,After-cataract excision
+1366,จริง,After catar fragmntation
+1369,จริง,Cataract extraction NEC
+137,เท็จ,INSERT PROSTHETIC LENS
+1370,จริง,Insert pseudophakos NOS
+1371,จริง,Insert lens at catar ext
+1372,จริง,Secondary insert lens
+138,จริง,Implanted lens removal
+139,จริง,Other operations on lens
+1390,จริง,Operation on lens NEC
+1391,จริง,Impl intraoc telesc pros
+140,เท็จ,REMOVE POST SEGMENT FB
+1400,จริง,Remov post segmnt FB NOS
+1401,จริง,Magnet remov post seg FB
+1402,จริง,Nonmag remov post seg FB
+141,เท็จ,POSTERIOR SEG DIAGNOS OP
+1411,จริง,Diagnost vitreous aspir
+1419,จริง,Dx proc post seg NEC
+142,เท็จ,RETINA-CHOR LES DESTRUCT
+1421,จริง,Chorioret les diathermy
+1422,จริง,Chorioretin les cryother
+1423,จริง,Chorioret les xenon coag
+1424,จริง,Chorioret les laser coag
+1425,จริง,Chorioret les p/coag NOS
+1426,จริง,Chorioret les radiother
+1427,จริง,Chorioret les rad implan
+1429,จริง,Chorioret les destr NEC
+143,เท็จ,REPAIR OF RETINAL TEAR
+1431,จริง,Retinal tear diathermy
+1432,จริง,Retinal tear cryotherapy
+1433,จริง,Retinal tear xenon coag
+1434,จริง,Retinal tear laser coag
+1435,จริง,Retina tear photocoa NOS
+1439,จริง,Retinal tear repair NEC
+144,เท็จ,REP RETINA DETACH/BUCKLE
+1441,จริง,Scleral buckle w implant
+1449,จริง,Scleral buckling NEC
+145,เท็จ,OTH REPAIR RETINA DETACH
+1451,จริง,Detach retina-diathermy
+1452,จริง,Detach retina-cryotherap
+1453,จริง,Detach retina xenon coag
+1454,จริง,Detach retina laser coag
+1455,จริง,Detach ret photocoag NOS
+1459,จริง,Repair retina detach NEC
+146,จริง,Remov pros mat post seg
+147,เท็จ,OPERATIONS ON VITREOUS
+1471,จริง,Anterior remov vitreous
+1472,จริง,Vitreous removal NEC
+1473,จริง,Anterior mechan vitrect
+1474,จริง,Mech vitrectomy NEC
+1475,จริง,Vitreous substitut injec
+1479,จริง,Vitreous operation NEC
+1481,จริง,Impl epiretinal vis prosth
+1482,จริง,Rem epiretinal vis prosth
+1483,จริง,Rev/rep epiretin vis pros
+149,จริง,Other post segment ops
+150,เท็จ,XTRAOC MUSC-TEND DX PROC
+1501,จริง,Extraoc musc-tend biopsy
+1509,จริง,Extraoc musc dx proc NEC
+151,เท็จ,1 XTRAOC MUS OP W DETACH
+1511,จริง,One extraoc mus recess
+1512,จริง,1 extraoc muscl advance
+1513,จริง,1 extraoc muscl resect
+1519,จริง,Xtraoc mus op/detach NEC
+152,เท็จ,OTH OPS ON 1 EXTROC MUSC
+1521,จริง,Lengthen 1 extraoc musc
+1522,จริง,Shorten 1 extraoc musc
+1529,จริง,Op on 1 extraoc musc NEC
+153,จริง,Temp detach >1 xtroc mus
+154,จริง,Oth op on >1 extraoc mus
+155,จริง,Extraocul mus transposit
+156,จริง,Revis extraoc musc surg
+157,จริง,Extraoc musc inj repair
+159,จริง,Oth extraoc mus-tend op
+160,เท็จ,ORBITOTOMY
+1601,จริง,Orbitotomy w bone flap
+1602,จริง,Orbitotomy w implant
+1609,จริง,Orbitotomy NEC
+161,จริง,Remove penetrat FB eye
+162,เท็จ,ORBIT & EYEBALL DX PROC
+1621,จริง,Ophthalmoscopy
+1622,จริง,Diagnostic asp of orbit
+1623,จริง,Eyeball & orbit biopsy
+1629,จริง,Eyebal/orbit dx proc NEC
+163,เท็จ,EVISCERATION OF EYEBALL
+1631,จริง,Eye evisc w synch implan
+1639,จริง,Eyeball evisceration NEC
+164,เท็จ,ENUCLEATION OF EYEBALL
+1641,จริง,Eye enuc/implan/musc att
+1642,จริง,Eye enuc w implant NEC
+1649,จริง,Eyeball enucleation NEC
+165,เท็จ,EXENTERATION OF ORBIT
+1651,จริง,Radical orbitomaxillect
+1652,จริง,Orbit exent w bone remov
+1659,จริง,Orbital exenteration NEC
+166,เท็จ,2NDRY OP POST EYE REMOVL
+1661,จริง,2ndry ocular imp insert
+1662,จริง,Revis/reinsert ocul imp
+1663,จริง,Revis enuc socket w grft
+1664,จริง,Enuc socket revis NEC
+1665,จริง,2ndry exent cavity graft
+1666,จริง,Revis exenter cavity NEC
+1669,จริง,2nd op post eye rem NEC
+167,เท็จ,OCUL-ORBIT IMPLANT REMOV
+1671,จริง,Remove ocular implant
+1672,จริง,Remove orbital implant
+168,เท็จ,EYEBALL/ORBIT INJ REPAIR
+1681,จริง,Repair of orbital wound
+1682,จริง,Repair eyeball rupture
+1689,จริง,Eye/orbit inj repair NEC
+169,เท็จ,OTHER EYE & ORBIT OPS
+1691,จริง,Retrobulbar injection
+1692,จริง,Excision orbital lesion
+1693,จริง,Excision eye lesion NOS
+1698,จริง,Operation on orbit NEC
+1699,จริง,Operation on eyeball NEC
+1711,จริง,Lap dir ing hern-graft
+1712,จริง,Lap indir ing hern-graft
+1713,จริง,Lap ing hern-graft NOS
+1721,จริง,Lap bil dir ing hrn-grft
+1722,จริง,Lap bi indir ing hrn-grf
+1723,จริง,Lap bi dr/ind ing hrn-gr
+1724,จริง,Lap bil ing hern-grf NOS
+1731,จริง,Lap mul seg res lg intes
+1732,จริง,Laparoscopic cecectomy
+1733,จริง,Lap right hemicolectomy
+1734,จริง,Lap res transverse colon
+1735,จริง,Lap left hemicolectomy
+1736,จริง,Lap sigmoidectomy
+1739,จริง,Lap pt ex lrg intest NEC
+1741,จริง,Open robotic assist proc
+1742,จริง,Lap robotic assist proc
+1743,จริง,Perc robotic assist proc
+1744,จริง,Endo robotic assist proc
+1745,จริง,Thoraco robotic ast proc
+1749,จริง,Robotic ast proc NEC/NOS
+1751,จริง,"Implant CCM,total system"
+1752,จริง,Implant CCM pulse genrtr
+1753,จริง,Perc atherect extracran v
+1754,จริง,Perc atherect intracran v
+1755,จริง,Translumi coro atherect
+1756,จริง,Atherect oth non-coro v
+1761,จริง,"LITT lesn brain,guidance"
+1762,จริง,"LITT les hd/nck,guidance"
+1763,จริง,"LITT lesn liver,guidance"
+1769,จริง,"LITT lesn, guide oth/NOS"
+1770,จริง,IV infusion clofarabine
+1771,จริง,Non-coronary IFVA
+1781,จริง,Ins antimicrob envelop
+180,เท็จ,EXTERNAL EAR INCISION
+1801,จริง,Piercing of ear lobe
+1802,จริง,Ext auditory canal incis
+1809,จริง,External ear incis NEC
+181,เท็จ,EXT EAR DIAGNOSTIC PROC
+1811,จริง,Otoscopy
+1812,จริง,External ear biopsy
+1819,จริง,Ext ear diagnos proc NEC
+182,เท็จ,DESTRUCT EXT EAR LESION
+1821,จริง,Preauricular sinus excis
+1829,จริง,Destruct ext ear les NEC
+183,เท็จ,OTHER EXTERNAL EAR EXCIS
+1831,จริง,Rad excis ext ear les
+1839,จริง,Excis external ear NEC
+184,จริง,Suture ext ear lac
+185,จริง,Correction prominent ear
+186,จริง,Ext audit canal reconstr
+187,เท็จ,OTH PLASTIC REP EXT EAR
+1871,จริง,Construction ear auricle
+1872,จริง,Reattach amputated ear
+1879,จริง,Plastic rep ext ear NEC
+189,จริง,Other ext ear operations
+190,จริง,Stapes mobilization
+191,เท็จ,STAPEDECTOMY
+1911,จริง,Stapedect w replac incus
+1919,จริง,Stapedectomy NEC
+192,เท็จ,STAPEDECTOMY REVISION
+1921,จริง,Rev stapdec w incus repl
+1929,จริง,Stapedectomy revis NEC
+193,จริง,Ossicular chain op NEC
+194,จริง,Myringoplasty
+195,เท็จ,OTHER TYMPANOPLASTY
+1952,จริง,Type 2 tympanoplasty
+1953,จริง,Type 3 tympanoplasty
+1954,จริง,Type 4 tympanoplasty
+1955,จริง,Type 5 tympanoplasty
+196,จริง,Tympanoplasty revision
+199,จริง,Middle ear repair NEC
+200,เท็จ,MYRINGOTOMY
+2001,จริง,Myringotomy w intubation
+2009,จริง,Myringotomy NEC
+201,จริง,Tympanostomy tube remove
+202,เท็จ,MASTOID & MID EAR INCIS
+2021,จริง,Mastoid incision
+2022,จริง,Petrus pyram air cel inc
+2023,จริง,Middle ear incision
+203,เท็จ,MID & INNER EAR DX PROC
+2031,จริง,Electrocochleography
+2032,จริง,Mid & inner ear biopsy
+2039,จริง,Mid/in ear dx proc NEC
+204,เท็จ,MASTOIDECTOMY
+2041,จริง,Simple mastoidectomy
+2042,จริง,Radical mastoidectomy
+2049,จริง,Mastoidectomy NEC
+205,เท็จ,OTH MIDDLE EAR EXCISION
+2051,จริง,Excise middle ear lesion
+2059,จริง,Middle ear excision NEC
+206,เท็จ,INNER EAR FENESTRATION
+2061,จริง,Inner ear fenestration
+2062,จริง,Revis inner ear fenestra
+207,เท็จ,INCIS/EXCIS/DESTR IN EAR
+2071,จริง,Endolymphatic shunt
+2072,จริง,Inner ear injection
+2079,จริง,Inc/exc/destr in ear NEC
+208,จริง,Eustachian tube ops
+209,เท็จ,OTHER MID-INNER EAR OPS
+2091,จริง,Tympanosympathectomy
+2092,จริง,Mastoidectomy revision
+2093,จริง,Repair oval/round window
+2094,จริง,Tympanic injection
+2095,จริง,Elecmag hear dev implant
+2096,จริง,Implt cochlear prost NOS
+2097,จริง,Imp/rep schan coch pros
+2098,จริง,Imp/rep mchan cochl pros
+2099,จริง,Mid-inner ear ops NEC
+210,เท็จ,CONTROL OF EPISTAXIS
+2100,จริง,Control of epistaxis NOS
+2101,จริง,Ant nasal pack for epist
+2102,จริง,Post nasal pac for epist
+2103,จริง,Cautery to stop epistax
+2104,จริง,Ethmoid art ligat-epist
+2105,จริง,Max art lig for epistax
+2106,จริง,Ext carot art lig-epist
+2107,จริง,Nasal sept grft-epistax
+2109,จริง,Epistaxis control NEC
+211,จริง,Incision of nose
+212,เท็จ,NASAL DIAGNOSTIC PROCED
+2121,จริง,Rhinoscopy
+2122,จริง,Nasal biopsy
+2129,จริง,Nasal dx proc NEC
+213,เท็จ,NASAL LESION DESTRUCTION
+2130,จริง,Nasal lesion excis NOS
+2131,จริง,Intranas les destruction
+2132,จริง,Nasal les destruct NEC
+214,จริง,Resection of nose
+215,จริง,Submuc nasal sept resect
+216,เท็จ,TURBINECTOMY
+2161,จริง,Diather/cryo turbinectom
+2162,จริง,Turbinate fracture
+2169,จริง,Turbinectomy NEC
+217,เท็จ,NASAL FRACTURE REDUCTION
+2171,จริง,Clos reduction nasal fx
+2172,จริง,Open reduction nasal fx
+218,เท็จ,NASAL REPAIR & PLASTIC
+2181,จริง,Nasal laceration suture
+2182,จริง,Nasal fistula closure
+2183,จริง,Tot nasal reconstruction
+2184,จริง,Revision rhinoplasty
+2185,จริง,Augmentation rhinoplasty
+2186,จริง,Limited rhinoplasty
+2187,จริง,Rhinoplasty NEC
+2188,จริง,Septoplasty NEC
+2189,จริง,Nasal repair NEC
+219,เท็จ,OTHER NASAL OPERATIONS
+2191,จริง,Lysis of nasal adhesions
+2199,จริง,Nasal operation NEC
+220,เท็จ,NASAL SINUS ASPIR/LAVAGE
+2200,จริง,Sinus aspirat/lavage NOS
+2201,จริง,Sinus punct for lavage
+2202,จริง,Sinus lavage thru ostium
+221,เท็จ,NASAL SINUS DIAGNOS PROC
+2211,จริง,Closed nasal sinus bx
+2212,จริง,Open biopsy nasal sinus
+2219,จริง,Nasal sinus dx proc NEC
+222,จริง,Intranasal antrotomy
+223,เท็จ,EXT MAXILLARY ANTROTOMY
+2231,จริง,Radical maxillary antrot
+2239,จริง,Ext maxillary antrot NEC
+224,เท็จ,FRONT SINUSOT & SINUSECT
+2241,จริง,Frontal sinusotomy
+2242,จริง,Frontal sinusectomy
+225,เท็จ,OTHER NASAL SINUSOTOMY
+2250,จริง,Sinusotomy NOS
+2251,จริง,Ethmoidotomy
+2252,จริง,Sphenoidotomy
+2253,จริง,Multiple sinus incision
+226,เท็จ,OTHER NASAL SINUSECTOMY
+2260,จริง,Sinusectomy NOS
+2261,จริง,C-luc exc max sinus les
+2262,จริง,Exc max sinus lesion NEC
+2263,จริง,Ethmoidectomy
+2264,จริง,Sphenoidectomy
+227,เท็จ,NASAL SINUS REPAIR
+2271,จริง,Nasal sinus fistula clos
+2279,จริง,Nasal sinus repair NEC
+229,จริง,Other nasal sinus ops
+230,เท็จ,FORCEPS TOOTH EXTRACTION
+2301,จริง,Deciduous tooth extract
+2309,จริง,Tooth extraction NEC
+231,เท็จ,SURG REMOVAL OF TOOTH
+2311,จริง,Residual root removal
+2319,จริง,Surg tooth extract NEC
+232,จริง,Tooth restor by filling
+233,จริง,Tooth restorat by inlay
+234,เท็จ,OTHER DENTAL RESTORATION
+2341,จริง,Crown application
+2342,จริง,Fixed bridge insertion
+2343,จริง,Insert removable bridge
+2349,จริง,Dental restoration NEC
+235,จริง,Tooth implantation
+236,จริง,Prosthet dental implant
+237,เท็จ,ROOT CANAL RX & APICOECT
+2370,จริง,Root canal NOS
+2371,จริง,Root canal w irrigation
+2372,จริง,Root canal w apicoectomy
+2373,จริง,Apicoectomy
+240,จริง,Gum or alveolar incision
+241,เท็จ,TOOTH & GUM DIAGNOS PROC
+2411,จริง,Gum biopsy
+2412,จริง,Alveolus biopsy
+2419,จริง,Tooth & gum dx proc NEC
+242,จริง,Gingivoplasty
+243,เท็จ,OTHER OPERATIONS ON GUMS
+2431,จริง,Gum lesion excision
+2432,จริง,Suture of gum laceration
+2439,จริง,Gum operation NEC
+244,จริง,Exc of dental les of jaw
+245,จริง,Alveoloplasty
+246,จริง,Exposure of tooth
+247,จริง,Applic orthodont appliance
+248,จริง,Other orthodontic operat
+249,เท็จ,OTHER DENTAL OPERATION
+2491,จริง,Exten buccolabial/sulcus
+2499,จริง,Dental operation NEC
+250,เท็จ,DX PROCEDURES ON TONGUE
+2501,จริง,Closed biopsy of tongue
+2502,จริง,Open biopsy of tongue
+2509,จริง,Tongue dx procedure NEC
+251,จริง,Destruction tongue les
+252,จริง,Partial glossectomy
+253,จริง,Complete glossectomy
+254,จริง,Radical glossectomy
+255,เท็จ,REPAIR OF TONGUE
+2551,จริง,Suture of tongue lacerat
+2559,จริง,Repair of tongue NEC
+259,เท็จ,OTHER TONGUE OPERATIONS
+2591,จริง,Lingual frenotomy
+2592,จริง,Lingual frenectomy
+2593,จริง,Lysis of tongue adhesion
+2594,จริง,Other glossotomy
+2599,จริง,Tongue operation NEC
+260,จริง,Incis salivary glnd/duct
+261,เท็จ,SALIVARY DIAGNOSTIC PROC
+2611,จริง,Clos bx saliv gland/duct
+2612,จริง,Open bx saliv gland/duct
+2619,จริง,Saliv glnd dx proc NEC
+262,เท็จ,EXCIS OF SALIV GLAND LES
+2621,จริง,Salivary cyst marsupial
+2629,จริง,Saliv lesion excis NEC
+263,เท็จ,SIALOADENECTOMY
+2630,จริง,Sialoadenectomy NOS
+2631,จริง,Partial sialoadenectomy
+2632,จริง,Complete sialoadenectomy
+264,เท็จ,SALIV GLND & DUCT REPAIR
+2641,จริง,Suture of saliv glnd lac
+2642,จริง,Salivary fistula closure
+2649,จริง,Salivary repair NEC
+269,เท็จ,OTH SALIVARY OPERATIONS
+2691,จริง,Salivary duct probing
+2699,จริง,Salivary operation NEC
+270,จริง,Drain face & mouth floor
+271,จริง,Incision of palate
+272,เท็จ,ORAL CAVITY DX PROCEDURE
+2721,จริง,Bony palate biopsy
+2722,จริง,Uvula and soft palate bx
+2723,จริง,Biopsy of lip
+2724,จริง,Mouth biopsy NOS
+2729,จริง,Oral cavity dx proc NEC
+273,เท็จ,EXCIS OF BONY PALATE LES
+2731,จริง,Loc exc bony palate les
+2732,จริง,Wide exc bony palate les
+274,เท็จ,OTHER EXCISION OF MOUTH
+2741,จริง,Labial frenumectomy
+2742,จริง,Wide excision of lip les
+2743,จริง,Excision of lip les NEC
+2749,จริง,Excision of mouth NEC
+275,เท็จ,PLASTIC REPAIR OF MOUTH
+2751,จริง,Suture of lip laceration
+2752,จริง,Suture of mouth lac NEC
+2753,จริง,Closure of mouth fistula
+2754,จริง,Repair of cleft lip
+2755,จริง,Full-thick grft to mouth
+2756,จริง,Skin graft to mouth NEC
+2757,จริง,Pedicle attach to mouth
+2759,จริง,Mouth repair NEC
+276,เท็จ,PALATOPLASTY
+2761,จริง,Suture of palate lacerat
+2762,จริง,Cleft palate correction
+2763,จริง,Revis cleft palat repair
+2764,จริง,Insert palatal implant
+2769,จริง,Oth plastic repair palat
+277,เท็จ,OPERATIONS ON UVULA
+2771,จริง,Incision of uvula
+2772,จริง,Excision of uvula
+2773,จริง,Repair of uvula
+2779,จริง,Other uvula operations
+279,เท็จ,OTHER MOUTH & FACE OPS
+2791,จริง,Labial frenotomy
+2792,จริง,Mouth incision NOS
+2799,จริง,Oral cavity ops NEC
+280,จริง,Peritonsillar I&D
+281,เท็จ,TONSIL&ADENOID DX PROC
+2811,จริง,Tonsil&adenoid biopsy
+2819,จริง,Tonsil&adenoid dx op NEC
+282,จริง,Tonsillectomy
+283,จริง,Tonsillectomy/adenoidec
+284,จริง,Excision of tonsil tag
+285,จริง,Excision lingual tonsil
+286,จริง,Adenoidectomy
+287,จริง,Hemorr contrl post T & A
+289,เท็จ,OTHER TONSIL/ADENOID OPS
+2891,จริง,Incis to remov tonsil FB
+2892,จริง,Excis tonsil/adenoid les
+2899,จริง,Tonsil&adenoid ops NEC
+290,จริง,Pharyngotomy
+291,เท็จ,PHARYNGEAL DX PROCEDURES
+2911,จริง,Pharyngoscopy
+2912,จริง,Pharyngeal biopsy
+2919,จริง,Pharyngeal dx proc NEC
+292,จริง,Exc branchial cleft cyst
+293,เท็จ,DESTRUCT PHARYNGEAL LES
+2931,จริง,Cricopharyngeal myotomy
+2932,จริง,Pharyngeal diverticulec
+2933,จริง,Pharyngectomy
+2939,จริง,Excis/destr les phar NEC
+294,จริง,Plastic op on pharynx
+295,เท็จ,OTHER PHARYNGEAL REPAIR
+2951,จริง,Suture of pharyngeal lac
+2952,จริง,Clos branch cleft fistul
+2953,จริง,Clos pharynx fistula NEC
+2954,จริง,Lysis pharyngeal adhes
+2959,จริง,Pharyngeal repair NEC
+299,เท็จ,OTHER PHARYNGEAL OPS
+2991,จริง,Pharyngeal dilation
+2992,จริง,Divis glossopharyng nerv
+2999,จริง,Pharyngeal operation NEC
+300,เท็จ,DESTROY LARYNGEAL LESION
+3001,จริง,Larynx cyst marsupializ
+3009,จริง,Destruct larynx les NEC
+301,จริง,Hemilaryngectomy
+302,เท็จ,PARTIAL LARYNGECTOMY NEC
+3021,จริง,Epiglottidectomy
+3022,จริง,Vocal cordectomy
+3029,จริง,Other part laryngectomy
+303,จริง,Complete laryngectomy
+304,จริง,Radical laryngectomy
+310,จริง,Injection of larynx
+311,จริง,Temporary tracheostomy
+312,เท็จ,PERMANENT TRACHEOSTOMY
+3121,จริง,Mediastinal tracheostomy
+3129,จริง,Other perm tracheostomy
+313,จริง,Incis larynx trachea NEC
+314,เท็จ,LARYNX TRACHEA DX PROCS
+3141,จริง,Tracheoscopy thru stoma
+3142,จริง,Larygnoscopy/tracheoscop
+3143,จริง,Closed biopsy larynx
+3144,จริง,Closed biopsy trachea
+3145,จริง,Opn bx larynx or trachea
+3148,จริง,Oth larynx dx procedure
+3149,จริง,Oth trachea dx procedure
+315,จริง,Local destruc trach les
+316,เท็จ,REPAIR OF LARYNX
+3161,จริง,Suture of laryngeal lac
+3162,จริง,Laryngeal fistula clos
+3163,จริง,Laryngostomy revision
+3164,จริง,Laryngeal fx repair
+3169,จริง,Other laryngeal repair
+317,เท็จ,REPAIR OF TRACHEA
+3171,จริง,Suture of tracheal lacer
+3172,จริง,Closure of tracheostomy
+3173,จริง,Trachea fistula clos NEC
+3174,จริง,Revision of tracheostomy
+3175,จริง,Tracheal reconstruction
+3179,จริง,Other tracheal repair
+319,เท็จ,LARYNX TRACHEA OPS NEC
+3191,จริง,Laryngeal nerv division
+3192,จริง,Lysis trach/larynx adhes
+3193,จริง,Replace trac/laryn stent
+3194,จริง,Tracheal injection
+3195,จริง,Tracheoesoph fistulizat
+3198,จริง,Oth laryngeal operation
+3199,จริง,Other tracheal operation
+320,เท็จ,LOCAL DESTRUCT BRONC LES
+3201,จริง,Endosc destruc bronc les
+3209,จริง,Other destruc bronc les
+321,จริง,Other bronchial excision
+322,เท็จ,LOCAL DESTRUCT LUNG LES
+3220,จริง,Thorac exc lung lesion
+3221,จริง,Emphysema bleb plication
+3222,จริง,Lung vol reduction surg
+3223,จริง,Open abltn lung les/tiss
+3224,จริง,Perc abltn lung les/tiss
+3225,จริง,Thor abltn lung les/tiss
+3226,จริง,Abltn lung tiss NEC/NOS
+3227,จริง,Bronchosc thermpl abl aw m
+3228,จริง,Endosc destruc lung les
+3229,จริง,Destroy loc lung les NEC
+323,จริง,Segmental lung resection
+3230,จริง,Thorac seg lung resect
+3239,จริง,Oth seg lung resect NOS
+324,จริง,Lobectomy of lung
+3241,จริง,Thorac lobectomy lung
+3249,จริง,Lobectomy of lung NEC
+325,จริง,Complete pneumonectomy
+3250,จริง,Thoracospc pneumonectomy
+3259,จริง,Other pneumonectomy NOS
+326,จริง,Rad dissec thorac struct
+329,จริง,Other excision of lung
+330,จริง,Incision of bronchus
+331,จริง,Incision of lung
+332,เท็จ,BRONCHIAL/LUNG DX PROCS
+3320,จริง,Thoracoscopc lung biopsy
+3321,จริง,Bronchoscopy thru stoma
+3322,จริง,Fiber-optic bronchoscopy
+3323,จริง,Other bronchoscopy
+3324,จริง,Closed bronchial biopsy
+3325,จริง,Open bronchial biopsy
+3326,จริง,Closed lung biopsy
+3327,จริง,Clos endoscopic lung bx
+3328,จริง,Open lung biopsy
+3329,จริง,Bronch/lung dx proc NEC
+333,เท็จ,SURG COLLAPSE OF LUNG
+3331,จริง,Destr phren-lung collaps
+3332,จริง,Pnemothorax-lung collaps
+3333,จริง,Pneumoperit-lung collaps
+3334,จริง,Thoracoplasty
+3339,จริง,Surg collaps of lung NEC
+334,เท็จ,LUNG AND BRONCHUS REPAIR
+3341,จริง,Bronchial lacerat suture
+3342,จริง,Bronchial fistula clos
+3343,จริง,Lung laceration closure
+3348,จริง,Bronchial repair NEC
+3349,จริง,Lung repair NEC
+335,เท็จ,LUNG TRANSPLANT
+3350,จริง,Lung transplant NOS
+3351,จริง,Unilat lung transplant
+3352,จริง,Bilat lung transplant
+336,จริง,Comb heart/lung transpla
+337,เท็จ,ENDO INTERV BRON/LUNG
+3371,จริง,"Endo ins/re bron val,one"
+3372,จริง,Endo pulm arwy flow msmt
+3373,จริง,"Endo ins/re brnc val,mul"
+3378,จริง,Endo rem bronch devc/sub
+3379,จริง,Endo insrt bronc def/sub
+339,เท็จ,OTHER BRONCHIAL LUNG OPS
+3391,จริง,Bronchial dilation
+3392,จริง,Bronchial ligation
+3393,จริง,Puncture of lung
+3398,จริง,Bronchial operation NEC
+3399,จริง,Lung operation NEC
+340,เท็จ,INCIS CHEST WALL/PLEURA
+3401,จริง,Incision of chest wall
+3402,จริง,Exploratory thoracotomy
+3403,จริง,Reopen thoracotomy site
+3404,จริง,Insertion of ICD
+3405,จริง,Pleuroperitoneal shunt
+3406,จริง,Thorac drain pleurl cav
+3409,จริง,Other pleural incision
+341,จริง,Incision of mediastinum
+342,เท็จ,THORAX DX PROCEDURES
+3420,จริง,Thoracoscopic pleural bx
+3421,จริง,Transpleura thoracoscopy
+3422,จริง,Mediastinoscopy
+3423,จริง,Chest wall biopsy
+3424,จริง,Pleural biopsy NEC
+3425,จริง,Clos mediastinal biopsy
+3426,จริง,Open mediastinal biopsy
+3427,จริง,Biopsy of diaphragm
+3428,จริง,Dx procedure thorax NEC
+3429,จริง,Dx proc mediastinum NEC
+343,จริง,Destruct mediastin les
+344,จริง,Destruct chest wall les
+345,เท็จ,PLEURECTOMY
+3451,จริง,Decortication of lung
+3452,จริง,Thoracoscopc decort lung
+3459,จริง,Other pleural excision
+346,จริง,Scarification of pleura
+347,เท็จ,REPAIR OF CHEST WALL
+3471,จริง,Suture chest wall lacer
+3472,จริง,Thoracostomy closure
+3473,จริง,Clos thoracic fistul NEC
+3474,จริง,Pectus deformity repair
+3479,จริง,Other chest wall repair
+348,เท็จ,OPERATIONS ON DIAPHRAGM
+3481,จริง,Excise diaphragm lesion
+3482,จริง,Suture diaphragm lacerat
+3483,จริง,Close diaphragm fistula
+3484,จริง,Other diaphragm repair
+3485,จริง,Implant diaphra pacemake
+3489,จริง,Diaphragm operation NEC
+349,เท็จ,OTHER OPS ON THORAX
+3491,จริง,Thoracentesis
+3492,จริง,Inject into thorax cavit
+3493,จริง,Repair of pleura
+3499,จริง,Thoracic operation NEC
+350,เท็จ,CLOSED HEART VALVOTOMY
+3500,จริง,Closed valvotomy NOS
+3501,จริง,Closed aortic valvotomy
+3502,จริง,Closed mitral valvotomy
+3503,จริง,Closed pulmon valvotomy
+3504,จริง,Closed tricusp valvotomy
+3505,จริง,Endovasc repl of aor v
+3506,จริง,Transapical repl avor
+3507,จริง,Endovasc repl pul v
+3508,จริง,Transapical repl pul v
+3509,จริง,Endovasc repl unspec v
+351,เท็จ,OPEN HEART VALVULOPLASTY
+3510,จริง,Open valvuloplasty NOS
+3511,จริง,Opn aortic valvuloplasty
+3512,จริง,Opn mitral valvuloplasty
+3513,จริง,Opn pulmon valvuloplasty
+3514,จริง,Opn tricus valvuloplasty
+352,เท็จ,HEART VALVE REPLACEMENT
+3520,จริง,Open and oth repl heart valve NOS
+3521,จริง,Open and oth repl aort valv-tissue
+3522,จริง,Open and oth repl aortic valve NEC
+3523,จริง,Replace mitr valv-tissue
+3524,จริง,Open and oth repl mitral valve NEC
+3525,จริง,Open and oth repl pulm valv-tissue
+3526,จริง,Open and oth repl pulmon valve NEC
+3527,จริง,Open and oth repl tric valv-tissue
+3528,จริง,Open and oth repl tricusp valv NEC
+353,เท็จ,TISSUE ADJAC TO VALV OPS
+3531,จริง,Papillary muscle ops
+3532,จริง,Chordae tendineae ops
+3533,จริง,Annuloplasty
+3534,จริง,Infundibulectomy
+3535,จริง,Trabecul carneae cord op
+3539,จริง,Tiss adj to valv ops NEC
+354,เท็จ,SEPTAL DEFECT PRODUCTION
+3541,จริง,Enlarge existing sep def
+3542,จริง,Create septal defect
+355,เท็จ,PROSTH REPAIR HEART SEPT
+3550,จริง,Prosth rep hrt septa NOS
+3551,จริง,Pros rep atrial def-opn
+3552,จริง,Pros repair atria def-cl
+3553,จริง,Pros rep ventric def-opn
+3554,จริง,Pros rep endocar cushion
+3555,จริง,Pros rep ventrc def-clos
+356,เท็จ,GRAFT REPAIR HEART SEPTA
+3560,จริง,Grft repair hrt sept NOS
+3561,จริง,Graft repair atrial def
+3562,จริง,Graft repair ventric def
+3563,จริง,Grft rep endocar cushion
+357,เท็จ,HEART SEPTA REPAIR NEC
+3570,จริง,Heart septa repair NOS
+3571,จริง,Atria septa def rep NEC
+3572,จริง,Ventr septa def rep NEC
+3573,จริง,Endocar cushion rep NEC
+358,เท็จ,TOT REPAIR CONGEN ANOMAL
+3581,จริง,Tot repair tetral fallot
+3582,จริง,Total repair of tapvc
+3583,จริง,Tot rep truncus arterios
+3584,จริง,Tot cor transpos grt ves
+359,เท็จ,VALVES & SEPTA OPS NEC
+3591,จริง,Interat ven retrn transp
+3592,จริง,Conduit rt vent-pul art
+3593,จริง,Conduit left ventr-aorta
+3594,จริง,Conduit artium-pulm art
+3595,จริง,Heart repair revision
+3596,จริง,Perc balloon valvuplasty
+3597,จริง,Percut MV rep w implant
+3598,จริง,Other heart septa ops
+3599,จริง,Other heart valve ops
+360,เท็จ,REM COR ART OBS & INS STNT
+3603,จริง,Open coronry angioplasty
+3604,จริง,Intrcoronry thromb infus
+3606,จริง,Ins nondrug elut cor st
+3607,จริง,Ins drug-elut coronry st
+3609,จริง,Rem of cor art obstr NEC
+361,เท็จ,HEART REVASC BYPASS ANAS
+3610,จริง,Aortocoronary bypass NOS
+3611,จริง,Aortocor bypas-1 cor art
+3612,จริง,Aortocor bypas-2 cor art
+3613,จริง,Aortocor bypas-3 cor art
+3614,จริง,Aortcor bypas-4+ cor art
+3615,จริง,1 int mam-cor art bypass
+3616,จริง,2 int mam-cor art bypass
+3617,จริง,Abd-coron artery bypass
+3619,จริง,Hrt revas byps anas NEC
+362,จริง,Arterial implant revasc
+363,เท็จ,HEART REVASCULARIZAT NEC
+3631,จริง,Open chest trans revasc
+3632,จริง,Oth transmyo revascular
+3633,จริง,Endo transmyo revascular
+3634,จริง,Perc transmyo revascular
+3639,จริง,Oth heart revascular
+369,เท็จ,OTHER HEART VESSEL OPS
+3691,จริง,Coron vess aneurysm rep
+3699,จริง,Heart vessel op NEC
+370,จริง,Pericardiocentesis
+371,เท็จ,CARDIOTOMY & PERICARDIOT
+3710,จริง,Incision of heart NOS
+3711,จริง,Cardiotomy
+3712,จริง,Pericardiotomy
+372,เท็จ,HEART & PERICARD DX PROC
+3720,จริง,Noninvas elect stimulatn
+3721,จริง,Rt heart cardiac cath
+3722,จริง,Left heart cardiac cath
+3723,จริง,Rt/left heart card cath
+3724,จริง,Pericardial biopsy
+3725,จริง,Cardiac biopsy
+3726,จริง,Cath base invasv ep test
+3727,จริง,Cardiac mapping
+3728,จริง,Intracardiac echocardio
+3729,จริง,Hrt/pericar dx proc NEC
+373,เท็จ,PERICARDIECT/EXC HRT LES
+3731,จริง,Pericardiectomy
+3732,จริง,Heart aneurysm excision
+3733,จริง,Exc/dest hrt lesion open
+3734,จริง,"Exc/des hrt les,endovasc approach"
+3735,จริง,Partial ventriculectomy
+3736,จริง,Excis/des/exclus left atrial appendage
+3737,จริง,Thor exc/des oth les/tis h
+374,จริง,Heart & pericard repair
+3741,จริง,Impl cardiac support dev
+3749,จริง,Heart/pericard repr NEC
+375,เท็จ,Heart transplantation
+3751,จริง,Heart transplantation
+3752,จริง,Imp tot int bi ht rp sys
+3753,จริง,Repl/rep thr unt tot hrt
+3754,จริง,Repl/rep oth tot hrt sys
+3755,จริง,Rem int bivent hrt sys
+376,เท็จ,IMPLANT HRT ASSIST SYST
+3760,จริง,Imp bivn ext hrt ast sys
+3761,จริง,Pulsation balloon implan
+3762,จริง,Insrt non-impl circ dev
+3763,จริง,Repair heart assist sys
+3764,จริง,Remve ext hrt assist sys
+3765,จริง,Imp vent ext hrt ast sys
+3766,จริง,Ins Implantable hrt assist
+3767,จริง,Imp cardiomyostimul sys
+3768,จริง,Percutan hrt assist syst
+377,เท็จ,INSERT CARD PACEMAK SYS
+3770,จริง,Int insert pacemak lead
+3771,จริง,Int insert lead in vent
+3772,จริง,Int insert lead atri-vent
+3773,จริง,Int insert lead in atrium
+3774,จริง,Int or repl lead epicar
+3775,จริง,Revision of lead
+3776,จริง,Repl tv atri-vent lead
+3777,จริง,Removal of lead w/o repl
+3778,จริง,Inser temp pacemaker sys
+3779,จริง,Rev/reloc card dev pockt
+378,เท็จ,REVISE & REMOV PACEMAKER
+3780,จริง,Ins or repl perm pacemkr
+3781,จริง,"Int insert 1-cham, non"
+3782,จริง,"Int insert 1-cham, rate"
+3783,จริง,Int insert dual-cham dev
+3785,จริง,"Repl pacem w 1-cham, non"
+3786,จริง,"Repl pacem 1-cham, rate"
+3787,จริง,Repl pacem w dual-cham
+3789,จริง,Revise or remove pacemak
+379,เท็จ,HEART & PERICARD OPS NEC
+3790,จริง,Ins left atr append dev
+3791,จริง,Opn chest cardiac massag
+3792,จริง,Injection into heart
+3793,จริง,Injection into pericard
+3794,จริง,Implt/repl carddefib tot
+3795,จริง,Implt cardiodefib leads
+3796,จริง,Implt cardiodefib genatr
+3797,จริง,Repl cardiodefib leads
+3798,จริง,Repl cardiodefib genratr
+3799,จริง,Other heart/pericard ops
+380,เท็จ,INCISION OF VESSEL
+3800,จริง,Incision of vessel NOS
+3801,จริง,Intracran vessel incis
+3802,จริง,Head/neck ves incis NEC
+3803,จริง,Upper limb vessel incis
+3804,จริง,Incision of aorta
+3805,จริง,Thoracic vessel inc NEC
+3806,จริง,Abdomen artery incision
+3807,จริง,Abdominal vein incision
+3808,จริง,Lower limb artery incis
+3809,จริง,Lower limb vein incision
+381,เท็จ,ENDARTERECTOMY
+3810,จริง,Endarterectomy NOS
+3811,จริง,Intracran endarterectomy
+3812,จริง,Head & neck endarter NEC
+3813,จริง,Upper limb endarterectom
+3814,จริง,Endarterectomy of aorta
+3815,จริง,Thoracic endarterectomy
+3816,จริง,Abdominal endarterectomy
+3818,จริง,Lower limb endarterect
+382,เท็จ,BLOOD VESSEL DX PROCS
+3821,จริง,Blood vessel biopsy
+3822,จริง,Percutaneous angioscopy
+3823,จริง,Intravasclr spectroscopy
+3824,จริง,Intravas img cor ves OCT
+3825,จริง,Intravas img non-cor OCT
+3826,จริง,Ins imp pr sens for hd mon
+3829,จริง,Blood vessel dx proc NEC
+383,เท็จ,VESSEL RESECT & ANASTOM
+3830,จริง,Vessel resect/anast NOS
+3831,จริง,Intracran ves resec-anas
+3832,จริง,Head/neck ves resec-anas
+3833,จริง,Arm vessel resect/anast
+3834,จริง,Aorta resection & anast
+3835,จริง,Thor vessel resect/anast
+3836,จริง,Abd vessel resect/anast
+3837,จริง,Abd vein resect & anast
+3838,จริง,Leg artery resect/anast
+3839,จริง,Leg vein resect/anastom
+384,เท็จ,VESSEL RESECT & REPLACE
+3840,จริง,Vessel resect/replac NOS
+3841,จริง,Intracran ves resec-repl
+3842,จริง,Head/neck ves resec-repl
+3843,จริง,Arm ves resect w replace
+3844,จริง,Resect abdm aorta w repl
+3845,จริง,Resect thorac ves w repl
+3846,จริง,Abd artery resec w repla
+3847,จริง,Abd vein resect w replac
+3848,จริง,Leg artery resec w repla
+3849,จริง,Leg vein resect w replac
+385,เท็จ,VARICOSE LIGAT & STRIP
+3850,จริง,Varicose v lig-strip NOS
+3851,จริง,Intcran var v lig-strip
+3852,จริง,Head/neck var v lig-str
+3853,จริง,Arm varicose v lig-strip
+3855,จริง,Thorac var v lig-strip
+3857,จริง,Abd varicos v liga-strip
+3859,จริง,Leg varicos v liga-strip
+386,เท็จ,OTHER VESSEL EXCISION
+3860,จริง,Excision of vessel NOS
+3861,จริง,Intracran vessel excis
+3862,จริง,Head/neck vessel excis
+3863,จริง,Arm vessel excision
+3864,จริง,Excision of aorta
+3865,จริง,Thoracic vessel excision
+3866,จริง,Abdominal artery excis
+3867,จริง,Abdominal vein excision
+3868,จริง,Leg artery excision
+3869,จริง,Leg vein excision
+387,จริง,Interruption vena cava
+388,เท็จ,OTHER SURG VESSEL OCCLUS
+3880,จริง,Surg vessel occlus NEC
+3881,จริง,Occlus intracran ves NEC
+3882,จริง,Occlus head/neck ves NEC
+3883,จริง,Occlude arm vessel NEC
+3884,จริง,Occlude aorta NEC
+3885,จริง,Occlude thoracic ves NEC
+3886,จริง,Occlude abd artery NEC
+3887,จริง,Occlude abd vein NEC
+3888,จริง,Occlude leg artery NEC
+3889,จริง,Occlude leg vein NEC
+389,เท็จ,PUNCTURE OF VESSEL
+3891,จริง,Arterial catheterization
+3892,จริง,Umbilical vein cath
+3893,จริง,Venous cath NEC
+3894,จริง,Venous cutdown
+3895,จริง,Ven cath renal dialysis
+3897,จริง,Cent v cath place w guidnc
+3898,จริง,Arterial puncture NEC
+3899,จริง,Venous puncture NEC
+390,จริง,Systemic-pulm art shunt
+391,จริง,Intra-abd venous shunt
+392,เท็จ,OTHER SHUNT/VASC BYPASS
+3921,จริง,Caval-pulmon art anastom
+3922,จริง,Aorta-subclv-carot bypas
+3923,จริง,Intrathoracic shunt NEC
+3924,จริง,Aorta-renal bypass
+3925,จริง,Aorta-iliac-femor bypass
+3926,จริง,Intra-abdomin shunt NEC
+3927,จริง,Dialysis arteriovenostom
+3928,จริง,Extracran-intracr bypass
+3929,จริง,Vasc shunt & bypass NEC
+393,เท็จ,SUTURE OF VESSEL
+3930,จริง,Suture of vessel NOS
+3931,จริง,Suture of artery
+3932,จริง,Suture of vein
+394,เท็จ,VASC PROCEDURE REVISION
+3941,จริง,Postop vasc op hem contr
+3942,จริง,Revis ren dialysis shunt
+3943,จริง,Remov ren dialysis shunt
+3949,จริง,Vasc proc revision NEC
+395,เท็จ,OTHER VESSEL REPAIR
+3950,จริง,Angioplasty oth non-coro ves
+3951,จริง,Clipping of aneurysm
+3952,จริง,Aneurysm repair NEC
+3953,จริง,Arterioven fistula rep
+3954,จริง,Re-entry operation
+3955,จริง,Reimplan aberr renal ves
+3956,จริง,Repair vess w tis patch
+3957,จริง,Rep vess w synth patch
+3958,จริง,Repair vess w patch NOS
+3959,จริง,Repair of vessel NEC
+396,เท็จ,OPN HEART AUXILIARY PROC
+3961,จริง,Extracorporeal circulat
+3962,จริง,Hypothermia w open heart
+3963,จริง,Cardioplegia
+3964,จริง,Intraop cardiac pacemak
+3965,จริง,Extracorporeal memb oxy
+3966,จริง,Per cardiopulmon bypass
+397,เท็จ,ENDOVASC REPAIR VESSEL
+3971,จริง,Endo implant other grft abd aorta
+3972,จริง,Endovasc (total) embol head ves
+3973,จริง,Endo imp grft thor aorta
+3974,จริง,Endo rem obs hd/neck ves
+3975,จริง,"Endo emb hd/nk,bare coil"
+3976,จริง,"Endo em hd/nk,bioac coil"
+3977,จริง,Tmp thera endovas occl ves
+3978,จริง,Endv imp brnch/fen grf ao
+3979,จริง,Oth endo proc oth vessel
+398,จริง,Vascular body operations
+3981,จริง,Imp/rep caro sin st dv tot
+3982,จริง,Imp/rep carot sin sti lead
+3983,จริง,Iml/rep caro sin st pul gn
+3984,จริง,Rev caro sin sti lead
+3985,จริง,Rev caro sin sti  pul gen
+3986,จริง,Rem caro sin sti dev tot
+3987,จริง,Rem caro sin sti lead
+3988,จริง,Rem caro sin sti pul gen
+3989,จริง,Oth op caro body s& oth
+399,เท็จ,OTHER VESSEL OPERATIONS
+3990,จริง,Ins non-d-e non-cor stnt
+3991,จริง,Freeing of vessel
+3992,จริง,Vein inject-scleros agnt
+3993,จริง,Insert ves-to-ves cannul
+3994,จริง,Replac ves-to-ves cannul
+3995,จริง,Hemodialysis
+3996,จริง,Total body perfusion
+3997,จริง,Other perfusion
+3998,จริง,Hemorrhage control NOS
+3999,จริง,Vessel operation NEC
+400,จริง,Incis lymphatic structur
+401,เท็จ,LYMPHATIC DX PROC
+4011,จริง,Lymphatic struct biopsy
+4019,จริง,Lymphatic diag proc NEC
+402,เท็จ,SIMP EXCIS LYMPH STRUCT
+4021,จริง,Excis deep cervical node
+4022,จริง,Excise int mammary node
+4023,จริง,Excise axillary node
+4024,จริง,Excise inguinal node
+4029,จริง,Simp exc lymph struc NEC
+403,จริง,Regional lymph node exc
+404,เท็จ,RAD CERVICAL NODE EXCIS
+4040,จริง,Rad neck dissection NOS
+4041,จริง,Unilat rad neck dissect
+4042,จริง,Bilat rad neck dissect
+405,เท็จ,OTH RAD NODE DISSECTION
+4050,จริง,Rad node dissection NOS
+4051,จริง,Rad dissec axillary node
+4052,จริง,Rad dissec periaort node
+4053,จริง,Rad dissect iliac nodes
+4054,จริง,Radical groin dissection
+4059,จริง,Rad node dissection NEC
+406,เท็จ,THORACIC DUCT OPERATIONS
+4061,จริง,Thorac duct cannulation
+4062,จริง,Thoracic duct fistulizat
+4063,จริง,Close thoracic duct fist
+4064,จริง,Ligate thoracic duct
+4069,จริง,Thoracic duct op NEC
+409,จริง,Lymph structure op NEC
+410,เท็จ,BM/HEM STEM CELL TRNSPLNT
+4100,จริง,Bone marrow trnsplnt NOS
+4101,จริง,Auto bone mt w/o purg
+4102,จริง,Alo bone marrow trnsplnt
+4103,จริง,Allogrft bone marrow NOS
+4104,จริง,Auto hem stem ct w/o pur
+4105,จริง,Allo hem stem ct w/o pur
+4106,จริง,Cord bld stem cell trans
+4107,จริง,Auto hem stem ct w purg
+4108,จริง,Allo hem stem ct w purg
+4109,จริง,Auto bone mt w purging
+411,จริง,Puncture of spleen
+412,จริง,Splenotomy
+413,เท็จ,MARROW & SPLEEN DX PROC
+4131,จริง,Bone marrow biopsy
+4132,จริง,Closed spleen biopsy
+4133,จริง,Open spleen biopsy
+4138,จริง,Marrow diagnost proc NEC
+4139,จริง,Spleen diagnost proc NEC
+414,เท็จ,DESTRUCT SPLENIC TISSUE
+4141,จริง,Splenic cyst marsupial
+4142,จริง,Exc splenic lesion/tiss
+4143,จริง,Partial splenectomy
+415,จริง,Total splenectomy
+419,เท็จ,OTH SPLEEN & MARROW OPS
+4191,จริง,Donor marrow aspiration
+4192,จริง,Injection into marrow
+4193,จริง,Exc of accessory spleen
+4194,จริง,Spleen transplantation
+4195,จริง,Repair of spleen
+4198,จริง,Bone marrow ops NEC
+4199,จริง,Spleen operation NEC
+420,เท็จ,ESOPHAGOTOMY
+4201,จริง,Esophageal web incision
+4209,จริง,Esophageal incision NEC
+421,เท็จ,ESOPHAGOSTOMY
+4210,จริง,Esophagostomy NOS
+4211,จริง,Cervical esophagostomy
+4212,จริง,Esoph pouch exteriorizat
+4219,จริง,Ext fistulizat esoph NEC
+422,เท็จ,ESOPHAGEAL DIAGNOS PROCS
+4221,จริง,Esophagoscopy by incis
+4222,จริง,Esophagoscopy thru stoma
+4223,จริง,Esophagoscopy NEC
+4224,จริง,Closed bx of esophagus
+4225,จริง,Open biopsy of esophagus
+4229,จริง,Esophageal dx proc NEC
+423,เท็จ,ESOPHAG LESION DESTRUCT
+4231,จริง,Loc excis esoph divertic
+4232,จริง,Local excis esophag NEC
+4233,จริง,Endosc destruc esoph les
+4239,จริง,Destruct esophag les NEC
+424,เท็จ,EXCISION OF ESOPHAGUS
+4240,จริง,Esophagectomy NOS
+4241,จริง,Partial esophagectomy
+4242,จริง,Total esophagectomy
+425,เท็จ,INTRATHOR ESOPH ANASTOM
+4251,จริง,Thorac esophagoesophagos
+4252,จริง,Thorac esophagogastrost
+4253,จริง,Thorac sm bowel interpos
+4254,จริง,Thorac esophagoenter NEC
+4255,จริง,Thorac lg bowel interpos
+4256,จริง,Thorac esophagocolos NEC
+4258,จริง,Thorac interposition NEC
+4259,จริง,Thorac esophag anast NEC
+426,เท็จ,ANTESTERN ESOPH ANASTOM
+4261,จริง,Stern esophagoesophagost
+4262,จริง,Stern esophagogastrostom
+4263,จริง,Stern sm bowel interpos
+4264,จริง,Stern esophagoenter NEC
+4265,จริง,Stern lg bowel interpos
+4266,จริง,Stern esophagocolos NEC
+4268,จริง,Stern interposition NEC
+4269,จริง,Stern esophag anast NEC
+427,จริง,Esophagomyotomy
+428,เท็จ,OTHER ESOPHAGEAL REPAIR
+4281,จริง,Insert perm tube into eso
+4282,จริง,Suture esophageal lacer
+4283,จริง,Esophagostomy closure
+4284,จริง,Esoph fistula repair NEC
+4285,จริง,Esophag stricture repair
+4286,จริง,Prod subq tunnel no anas
+4287,จริง,Esophageal graft NEC
+4289,จริง,Esophageal repair NEC
+429,เท็จ,OTHER ESOPHAGEAL OPS
+4291,จริง,Ligation esoph varix
+4292,จริง,Dilation of esophagus
+4299,จริง,Esophageal operation NEC
+430,จริง,Gastrotomy
+431,เท็จ,GASTROSTOMY
+4311,จริง,Percu endosc gastrostomy
+4319,จริง,Other gastrostomy
+433,จริง,Pyloromyotomy
+434,เท็จ,LOCAL DESTRUCT GASTR LES
+4341,จริง,Endosc destr stomach les
+4342,จริง,Local gastr excision NEC
+4349,จริง,Local gastr destruct NEC
+435,จริง,Proximal gastrectomy
+436,จริง,Distal gastrectomy
+437,จริง,Part gastrec w jej anast
+438,เท็จ,OTH PARTIAL GASTRECTOMY
+4381,จริง,Part gast w jej transpos
+4382,จริง,Lap vertical gastrect
+4389,จริง,Open and other partial gastrectomy
+439,เท็จ,TOTAL GASTRECTOMY
+4391,จริง,Tot gast w intes interpo
+4399,จริง,Total gastrectomy NEC
+440,เท็จ,VAGOTOMY
+4400,จริง,Vagotomy NOS
+4401,จริง,Truncal vagotomy
+4402,จริง,Highly select vagotomy
+4403,จริง,Selective vagotomy NEC
+441,เท็จ,GASTRIC DIAGNOST PROCED
+4411,จริง,Transabdomin gastroscopy
+4412,จริง,Gastroscopy thru stoma
+4413,จริง,Gastroscopy NEC
+4414,จริง,Closed gastric biopsy
+4415,จริง,Open gastric biopsy
+4419,จริง,Gastric diagnos proc NEC
+442,เท็จ,PYLOROPLASTY
+4421,จริง,"Dilate pylorus, incision"
+4422,จริง,Endoscop dilate pylorus
+4429,จริง,Other pyloroplasty
+443,เท็จ,GASTROENTEROSTOMY
+4431,จริง,High gastric bypass
+4432,จริง,Percu gastrojejunostomy
+4438,จริง,Lap gastroenterostomy
+4439,จริง,Gastroenterostomy NEC
+444,เท็จ,CONTROL HEM STOMACH ULCE
+4440,จริง,Suture peptic ulcer NOS
+4441,จริง,Sut gastric ulcer site
+4442,จริง,Suture duoden ulcer site
+4443,จริง,Endos ctrl gast/duod bleed
+4444,จริง,Transcath embo gast hem
+4449,จริง,Other control gast hem
+445,จริง,Revision gastric anastom
+446,เท็จ,OTHER GASTRIC REPAIR
+4461,จริง,Suture gastric lacerat
+4462,จริง,Gastrostomy closure
+4463,จริง,Close gastric fistul NEC
+4464,จริง,Gastropexy
+4465,จริง,Esophagogastroplasty
+4466,จริง,Creat esophagastr sphinc
+4467,จริง,Lap creat esoph sphinct
+4468,จริง,Laparoscop gastroplasty
+4469,จริง,Gastric repair NEC
+449,เท็จ,OTHER GASTRIC OPERATIONS
+4491,จริง,Ligate gastric varices
+4492,จริง,Intraop gastric manipul
+4493,จริง,Insert gastric balloon
+4494,จริง,Remove gastric balloon
+4495,จริง,Lap gastric restric proc
+4496,จริง,Lap rev gast restri proc
+4497,จริง,Lap rem gast restric dev
+4498,จริง,Adjust gast restrict dev
+4499,จริง,Gastric operation NEC
+450,เท็จ,ENTEROTOMY
+4500,จริง,Intestinal incision NOS
+4501,จริง,Duodenal incision
+4502,จริง,Small bowel incision NEC
+4503,จริง,Large bowel incision
+451,เท็จ,SMALL BOWEL DX PROC
+4511,จริง,Transab sm bowel endosc
+4512,จริง,Endosc sm bowel thru st
+4513,จริง,Sm bowel endoscopy NEC
+4514,จริง,Clos small bowel biopsy
+4515,จริง,Open small bowel biopsy
+4516,จริง,Egd with closed biopsy
+4519,จริง,Sm bowel dx proc NEC
+452,เท็จ,BOWEL DIAGNOS PROCS NEC
+4521,จริง,Transab lg bowel endosc
+4522,จริง,Endosc lg bowel thru st
+4523,จริง,Colonoscopy
+4524,จริง,Flexible sigmoidoscopy
+4525,จริง,Clos large bowel biopsy
+4526,จริง,Open large bowel biopsy
+4527,จริง,Intestinal biopsy NOS
+4528,จริง,Lg bowel dx proced NEC
+4529,จริง,Bowel diagnost proc NEC
+453,เท็จ,LOCAL DESTRUCT SM BOWEL
+4530,จริง,Endosc destru duoden les
+4531,จริง,Oth excise duodenum les
+4532,จริง,Destruct duoden les NEC
+4533,จริง,Local excis sm bowel NEC
+4534,จริง,Destr sm bowel les NEC
+454,เท็จ,LOCAL DESTRUCT LG BOWEL
+4541,จริง,Excise lg intestine les
+4542,จริง,Endo polpectomy lrge int
+4543,จริง,Endosc destru lg int les
+4549,จริง,Destruc lg bowel les NEC
+455,เท็จ,INTESTINAL SEG ISOLATION
+4550,จริง,Intest seg isolat NOS
+4551,จริง,Sm bowel segment isolat
+4552,จริง,Lg bowel segment isolat
+456,เท็จ,OTHER SM BOWEL EXCISION
+4561,จริง,Mult seg sm bowel excis
+4562,จริง,Part sm bowel resect NEC
+4563,จริง,Total removal sm bowel
+457,เท็จ,PART LG BOWEL EXCISION
+4571,จริง,Opn/oth mul seg lg int res
+4572,จริง,Open/oth cecectomy
+4573,จริง,Opn/oth rt hemicolectomy
+4574,จริง,Opn/oth transv colon res
+4575,จริง,Opn/oth lft hemicolectmy
+4576,จริง,Open/oth sigmoidectomy
+4579,จริง,Prt lg intes exc NEC/NOS
+458,จริง,Tot intra-abd colectomy
+4581,จริง,Lap tot intr-ab colectmy
+4582,จริง,Op tot intr-abd colectmy
+4583,จริง,Tot abd colectmy NEC/NOS
+459,เท็จ,INTESTINAL ANASTOMOSIS
+4590,จริง,Intestinal anastom NOS
+4591,จริง,Sm-to-sm bowel anastom
+4592,จริง,Sm bowel-rect stump anas
+4593,จริง,Small-to-large bowel NEC
+4594,จริง,Lg-to-lg bowel anastom
+4595,จริง,Anal anastomosis
+460,เท็จ,EXTERIORIZATION OF BOWEL
+4601,จริง,Sm bowel exteriorization
+4602,จริง,Resect ext seg sm bowel
+4603,จริง,Lg bowel exteriorization
+4604,จริง,Resect ext seg lg bowel
+461,เท็จ,COLOSTOMY
+4610,จริง,Colostomy NOS
+4611,จริง,Temporary colostomy
+4613,จริง,Permanent colostomy
+4614,จริง,Delay opening of colostomy
+462,เท็จ,ILEOSTOMY
+4620,จริง,Ileostomy NOS
+4621,จริง,Temporary ileostomy
+4622,จริง,Continent ileostomy
+4623,จริง,Permanent ileostomy NEC
+4624,จริง,Delay opening ileostomy
+463,เท็จ,OTHER ENTEROSTOMY
+4631,จริง,Delay opening enterostom
+4632,จริง,Percut endo jejunostomy
+4639,จริง,Other enterostomy
+464,เท็จ,INTEST STOMA REVISION
+4640,จริง,Intest stoma revis NOS
+4641,จริง,Sm bowel stoma revision
+4642,จริง,Pericolost hernia repair
+4643,จริง,Lg bowel stoma revis NEC
+465,เท็จ,INTESTINAL STOMA CLOSURE
+4650,จริง,Intest stoma closure NOS
+4651,จริง,Sm bowel stoma closure
+4652,จริง,Lg bowel stoma closure
+466,เท็จ,FIXATION OF INTESTINE
+4660,จริง,Intestinal fixation NOS
+4661,จริง,Sm bowel-abd wall fixat
+4662,จริง,Small bowel fixation NEC
+4663,จริง,Lg bowel-abd wall fixat
+4664,จริง,Large bowel fixation NEC
+467,เท็จ,OTHER INTESTINAL REPAIR
+4671,จริง,Duodenal lacerat suture
+4672,จริง,Duodenal fistula closure
+4673,จริง,Small bowel suture NEC
+4674,จริง,Close sm bowel fist NEC
+4675,จริง,Suture lg bowel lacerat
+4676,จริง,Close lg bowel fistula
+4679,จริง,Repair of intestine NEC
+468,เท็จ,DILATION MANIPUL INTEST
+4680,จริง,Intra-ab bowel manip NOS
+4681,จริง,Intra-abd sm bowel manip
+4682,จริง,Intra-abd lg bowel manip
+4685,จริง,Dilation of intestine
+4686,จริง,Endo insrt colonic stent
+4687,จริง,Insert colonic stent NEC
+469,เท็จ,OTHER INTESTINAL OPS
+4691,จริง,Myotomy of sigmoid colon
+4692,จริง,Myotomy of colon NEC
+4693,จริง,Revise sm bowel anastom
+4694,จริง,Revise lg bowel anastom
+4695,จริง,Local sm bowel perfusion
+4696,จริง,Local lg bowel perfusion
+4697,จริง,Transplant of intestine
+4699,จริง,Intestinal op NEC
+470,เท็จ,APPENDECTOMY
+4701,จริง,Lap appendectomy
+4709,จริง,Other appendectomy
+471,เท็จ,INCIDENTAL APPENDECTOMY
+4711,จริง,Lap incid appendectomy
+4719,จริง,Other incid appendectomy
+472,จริง,Drain appendiceal absc
+479,เท็จ,OTHER APPENDICEAL OPS
+4791,จริง,Appendicostomy
+4792,จริง,Close appendiceal fistul
+4799,จริง,Appendiceal ops NEC
+480,จริง,Proctotomy
+481,จริง,Proctostomy
+482,เท็จ,RECTAL/PERIRECT DX PROC
+4821,จริง,Transab proctosigmoidosc
+4822,จริง,Proctosigmoidosc thru st
+4823,จริง,Rigid proctosigmoidoscpy
+4824,จริง,Closed rectal biopsy
+4825,จริง,Open rectal biopsy
+4826,จริง,Perirectal tissue biopsy
+4829,จริง,Rect/perirect dx op NEC
+483,เท็จ,LOCAL DESTRUC RECTAL LES
+4831,จริง,Rad electrocoag-rect les
+4832,จริง,Electrocoag rect les NEC
+4833,จริง,Laser destruc rectal les
+4834,จริง,Cryosurg destr rect les
+4835,จริง,Local excis rectal les
+4836,จริง,Polypectomy of rectum
+484,เท็จ,PULL-THRU RECT RESECTION
+4840,จริง,Pull-thru res rectum NOS
+4841,จริง,Soave submuc rect resect
+4842,จริง,Lap pull-thru res rectum
+4843,จริง,Opn pull-thru res rectum
+4849,จริง,Pull-thru rect resec NEC
+485,จริง,Abd-perineal rect resect
+4850,จริง,Abdperneal res rectm NOS
+4851,จริง,Lap abdperneal resc rec
+4852,จริง,Opn abdperneal resc rec
+4859,จริง,Abdperineal resc rect NEC
+486,เท็จ,OTHER RECTAL RESECTION
+4861,จริง,Transsac rectosigmoidect
+4862,จริง,Ant rect resect w colost
+4863,จริง,Anterior rect resect NEC
+4864,จริง,Posterior rect resection
+4865,จริง,Duhamel rectal resection
+4869,จริง,Rectal resection NEC
+487,เท็จ,REPAIR OF RECTUM
+4871,จริง,Suture of rectal lacer
+4872,จริง,Closure of proctostomy
+4873,จริง,Close rectal fist NEC
+4874,จริง,Rectorectostomy
+4875,จริง,Abdominal proctopexy
+4876,จริง,Proctopexy NEC
+4879,จริง,Repair of rectum NEC
+488,เท็จ,PERIRECTAL INCIS/EXCIS
+4881,จริง,Perirectal incision
+4882,จริง,Perirectal excision
+489,เท็จ,OTH RECTAL/PERIRECT OP
+4891,จริง,Incis rectal stricture
+4892,จริง,Anorectal myomectomy
+4893,จริง,Repair perirect fistula
+4899,จริง,Rectal perirect op NEC
+490,เท็จ,PERIANAL INCIS & EXCIS
+4901,จริง,Incis perianal abscess
+4902,จริง,Perianal incision NEC
+4903,จริง,Excis perianal skin tag
+4904,จริง,Perianal excision NEC
+491,เท็จ,INCIS/EXCIS ANAL FISTULA
+4911,จริง,Anal fistulotomy
+4912,จริง,Anal fistulectomy
+492,เท็จ,ANAL & PERIANAL DX PROC
+4921,จริง,Anoscopy
+4922,จริง,Perianal biopsy
+4923,จริง,Biopsy of anus
+4929,จริง,Anal/perian dx proc NEC
+493,เท็จ,LOC DESTR ANAL LES NEC
+4931,จริง,Endosc destruc anus les
+4939,จริง,Other destruc anus les
+494,เท็จ,HEMORRHOID PROCEDURES
+4941,จริง,Hemorrhoid reduction
+4942,จริง,Hemorrhoid injection
+4943,จริง,Hemorrhoid cauterizat
+4944,จริง,Hemorrhoid cryotherapy
+4945,จริง,Hemorrhoid ligation
+4946,จริง,Hemorrhoidectomy
+4947,จริง,Hemorrhoid evacuation
+4949,จริง,Hemorrhoid procedure NEC
+495,เท็จ,ANAL SPHINCTER DIVISION
+4951,จริง,Left lat sphincterotomy
+4952,จริง,Post sphincterotomy
+4959,จริง,Anal sphincterotomy NEC
+496,จริง,Excision of anus
+497,เท็จ,REPAIR OF ANUS
+4971,จริง,Suture anal laceration
+4972,จริง,Anal cerclage
+4973,จริง,Closure of anal fistula
+4974,จริง,Gracilis musc transplan
+4975,จริง,Impl or rev art anal sph
+4976,จริง,Remov art anal sphincter
+4979,จริง,Anal sphinct repair NEC
+499,เท็จ,OTH OPERATIONS ON ANUS
+4991,จริง,Incision of anal septum
+4992,จริง,Insert subq anal stimul
+4993,จริง,Anal incision NEC
+4994,จริง,Reduction anal prolapse
+4995,จริง,Control anal hemorrhage
+4999,จริง,Anal operation NEC
+500,จริง,Hepatotomy
+501,เท็จ,HEPATIC DIAGNOSTIC PROC
+5011,จริง,Closed liver biopsy
+5012,จริง,Open liver biopsy
+5013,จริง,Transjugular liver bx
+5014,จริง,Laparoscopic liver bx
+5019,จริง,Hepatic dx proc NEC
+502,เท็จ,LOCAL DESTRUC LIVER LES
+5021,จริง,Marsupializat liver les
+5022,จริง,Partial hepatectomy
+5023,จริง,Opn abltn liver les/tiss
+5024,จริง,Perc abltn liver les/tis
+5025,จริง,Lap abltn liver les/tiss
+5026,จริง,Abltn liver les/tiss NEC
+5029,จริง,Destruc hepatic les NEC
+503,จริง,Hepatic lobectomy
+504,จริง,Total hepatectomy
+505,เท็จ,LIVER TRANSPLANT
+5051,จริง,Auxiliary liver transpl
+5059,จริง,Liver transplant NEC
+506,เท็จ,REPAIR OF LIVER
+5061,จริง,Closure liver lacerat
+5069,จริง,Liver repair NEC
+509,เท็จ,OTHER LIVER OPERATIONS
+5091,จริง,Percutan liver aspirat
+5092,จริง,Extracorpor hepat assis
+5093,จริง,Local perfusion liver
+5094,จริง,Hepatic injection NEC
+5099,จริง,Liver operation NEC
+510,เท็จ,GALLBLADDER INCISION
+5101,จริง,Percutan aspiration gb
+5102,จริง,Trocar cholecystostomy
+5103,จริง,Cholecystostomy NEC
+5104,จริง,Cholecystotomy NEC
+511,เท็จ,BILIARY TRACT DX PROCS
+5110,จริง,Endosc retro cholangiopa
+5111,จริง,Endoscop retro cholangio
+5112,จริง,Percu bx gb/bile duct
+5113,จริง,Open biliary tract bx
+5114,จริง,Clo endosc bx bile duct
+5115,จริง,Press measure sph Oddi
+5119,จริง,Biliary tr dx proc NEC
+512,เท็จ,CHOLECYSTECTOMY
+5121,จริง,Oth part cholecystectomy
+5122,จริง,Cholecystectomy
+5123,จริง,Laparoscopic cholecystec
+5124,จริง,Lap part cholecystectomy
+513,เท็จ,BILIARY TRACT ANASTOMOS
+5131,จริง,Gb-to-hepat duct anast
+5132,จริง,Gb-to-intestine anastom
+5133,จริง,Gb-to-pancreas anastom
+5134,จริง,Gb-to-stomach anastomos
+5135,จริง,Gallbladder anastom NEC
+5136,จริง,Choledochoenterostomy
+5137,จริง,Hepatic duct-gi anastom
+5139,จริง,Bile duct anastomos NEC
+514,เท็จ,INCIS OBSTRUC BILE DUCT
+5141,จริง,Cde for calculus remov
+5142,จริง,Cde for obstruction NEC
+5143,จริง,Choledochohepat intubat
+5149,จริง,Incis obstr bile duc NEC
+515,เท็จ,OTH BILE DUCT INCISION
+5151,จริง,Common duct exploration
+5159,จริง,Bile duct incision NEC
+516,เท็จ,DESTRUC BILE DUCTS LES
+5161,จริง,Excis cyst duct remnant
+5162,จริง,Excis ampulla of vater
+5163,จริง,Common duct excis NEC
+5164,จริง,Endosc destru bile les
+5169,จริง,Bile duct excision NEC
+517,เท็จ,REPAIR OF BILE DUCTS
+5171,จริง,Simple sut-common duct
+5172,จริง,Choledochoplasty
+5179,จริง,Bile duct repair NEC
+518,เท็จ,OTH OP BILE DUCT/SPHINC
+5181,จริง,Sphincter of oddi dilat
+5182,จริง,Pancreat sphincterotom
+5183,จริง,Pancreat sphincteroplas
+5184,จริง,Endosc dilation ampulla
+5185,จริง,Endosc sphincterotomy
+5186,จริง,Endosc inser nasobil tub
+5187,จริง,Endosc inser stent bile
+5188,จริง,Endo rem stone fr bil trac
+5189,จริง,Sphinct of oddi op NEC
+519,เท็จ,OTHER BILIARY TRACT OPS
+5191,จริง,Repair gb laceration
+5192,จริง,Closure cholecystostomy
+5193,จริง,Clos biliary fistul NEC
+5194,จริง,Revis bile tract anastom
+5195,จริง,Remove bile duct prosth
+5196,จริง,Perc extract CBD stone
+5198,จริง,Oth perc proc on bil tract
+5199,จริง,Biliary tract op NEC
+520,เท็จ,PANCREATOTOMY
+5201,จริง,Cath drain-pancreat cyst
+5209,จริง,Pancreatotomy NEC
+521,เท็จ,PANCREATIC DIAGNOST PROC
+5211,จริง,Closed pancreatic biopsy
+5212,จริง,Open pancreatic biopsy
+5213,จริง,Endosc retro pancreatog
+5214,จริง,Clo endosc bx pancre duc
+5219,จริง,Pancreatic dx proc NEC
+522,เท็จ,DESTRU PANCREATIC DUCT
+5221,จริง,Endosc destr pancrea les
+5222,จริง,Other destru pancrea les
+523,จริง,Pancreat cyst marsupiali
+524,จริง,Int drain pancreat cyst
+525,เท็จ,PARTIAL PANCREATECTOMY
+5251,จริง,Proximal pancreatectomy
+5252,จริง,Distal pancreatectomy
+5253,จริง,Rad subtot pancreatectom
+5259,จริง,Partial pancreatect NEC
+526,จริง,Total pancreatectomy
+527,จริง,Rad pancreaticoduodenect
+528,เท็จ,TRANSPLANT OF PANCREAS
+5280,จริง,Pancreat transplant NOS
+5281,จริง,Reimplant pancreatic tis
+5282,จริง,Pancreatic homotransplan
+5283,จริง,Pancreatic heterotranspl
+5284,จริง,Islets cell autotransplant
+5285,จริง,Islets cell allotransplant
+5286,จริง,Islets cell transplnt NOS
+529,เท็จ,OTHER OPS ON PANCREAS
+5292,จริง,Cannulation pancrea duc
+5293,จริง,Endosc inser panc stent
+5294,จริง,Endo rem stone fr pan duct
+5295,จริง,Pancreatic repair NEC
+5296,จริง,Pancreatic anastomosis
+5297,จริง,Endosc inser nasopan tub
+5298,จริง,Endosc dil pancreat duct
+5299,จริง,Pancreatic operation NEC
+530,เท็จ,UNILAT ING HERNIA REPAIR
+5300,จริง,Unilat inq hern rep NOS
+5301,จริง,Opn/oth rep dir ing hern
+5302,จริง,Opn/oth rep ind ing hern
+5303,จริง,Opn/oth dir ing hern-gft
+5304,จริง,Opn/oth ind ing hern-gft
+5305,จริง,Ing hernia rep-graft NOS
+531,เท็จ,BILAT ING HERNIA REPAIR
+5310,จริง,Bilat ing hernia rep NOS
+5311,จริง,Opn/oth bil dir ing hern
+5312,จริง,Opn/oth bil ind ing hern
+5313,จริง,Opnoth bi dr/in ing hrn
+5314,จริง,Opn/oth bi dr ing hrn-gr
+5315,จริง,Opn/oth bi in ing hrn-grf
+5316,จริง,Opn/oth bi dr/in ig hr-gr
+5317,จริง,Bil ing hrn rep-grft NOS
+532,เท็จ,UNILAT FEMOR HERNIA REP
+5321,จริง,Unil femor hrn rep-grft
+5329,จริง,Unil femor hern rep NEC
+533,เท็จ,BILAT FEMOR HERN REPAIR
+5331,จริง,Bil fem hern repair-grft
+5339,จริง,Bil fem hern repair NEC
+534,เท็จ,UMBILICAL HERNIA REPAIR
+5341,จริง,Opn/oth rep umb hrn-grft
+5342,จริง,Lap umbil hernia-graft
+5343,จริง,Lap umbilical hernia NEC
+5349,จริง,Open rep umbil hern NEC
+535,เท็จ,REPAIR OTH ABD WALL HERN
+5351,จริง,Incisional hernia repair
+5359,จริง,Abd wall hern repair NEC
+536,เท็จ,REPAIR OTH ABD HERN-GRFT
+5361,จริง,Open incis hern-grft NEC
+5362,จริง,Lap incis hern repr-grft
+5363,จริง,Lap hern ant abd-gft NEC
+5369,จริง,Opn hern ant abd-grf NEC
+537,จริง,Abd repair-diaphr hernia
+5371,จริง,Lap abd rep-diaphr hern
+5372,จริง,Opn abd diaphrm hern NEC
+5375,จริง,Abd rep-diaphr hern NOS
+538,เท็จ,THOR REPAIR-DIAPH HERNIA
+5380,จริง,Thor rep-diaph hern NOS
+5381,จริง,Diaphragmatic plication
+5382,จริง,Parastern hernia repair
+5383,จริง,Lap thorc app-diaph hern
+5384,จริง,Opn thorc diaph hern NEC
+539,จริง,Other hernia repair
+540,จริง,Abdominal wall incision
+541,เท็จ,LAPAROTOMY
+5411,จริง,Exploratory laparotomy
+5412,จริง,Reopen recent lap site
+5419,จริง,Laparotomy NEC
+542,เท็จ,ABD REGION DIAGNOS PROCS
+5421,จริง,Laparoscopy
+5422,จริง,Abdominal wall biopsy
+5423,จริง,Peritoneal biopsy
+5424,จริง,Closed intra-abd mass bx
+5425,จริง,Peritoneal lavage
+5429,จริง,Abd region dx proc NEC
+543,จริง,Destruct abd wall lesion
+544,จริง,Destruct peritoneal tiss
+545,เท็จ,PERITONEAL ADHESIOLYSIS
+5451,จริง,Lap periton adhesiolysis
+5459,จริง,Oth periton adhesiolysis
+546,เท็จ,ABD WALL PERITON SUTURE
+5461,จริง,Reclose post op disrupt
+5462,จริง,Delayed clos abd wound
+5463,จริง,Abd wall suture NEC
+5464,จริง,Peritoneal suture
+547,เท็จ,OTH ABD WALL PERITON REP
+5471,จริง,Repair of gastroschisis
+5472,จริง,Abdomen wall repair NEC
+5473,จริง,Peritoneal repair NEC
+5474,จริง,Omental repair NEC
+5475,จริง,Mesenteric repair NEC
+549,เท็จ,OTHER ABDOMEN REGION OPS
+5491,จริง,Percu abdominal drainage
+5492,จริง,Remove FB from periton
+5493,จริง,Create cutanperiton fist
+5494,จริง,Creat peritoneovas shunt
+5495,จริง,Peritoneal incision
+5496,จริง,Injec air-periton cavity
+5497,จริง,Inj therap subst periton
+5498,จริง,Peritoneal dialysis
+5499,จริง,Abdomen region ops NEC
+550,เท็จ,NEPHROTOMY & NEPHROSTOMY
+5501,จริง,Nephrotomy
+5502,จริง,Nephrostomy
+5503,จริง,Percu nephrostm w/o frag
+5504,จริง,Percu nephrostmy w frag
+551,เท็จ,PYELOTOMY & PYELOSTOMY
+5511,จริง,Pyelotomy
+5512,จริง,Pyelostomy
+552,เท็จ,RENAL DIAGNOSTIC PROCED
+5521,จริง,Nephroscopy
+5522,จริง,Pyeloscopy
+5523,จริง,Closed renal biopsy
+5524,จริง,Open renal biopsy
+5529,จริง,Renal diagnost proc NEC
+553,เท็จ,LOCAL DESTRUC RENAL LES
+5531,จริง,Renal les marsupializat
+5532,จริง,Opn abltn renal les/tiss
+5533,จริง,Perc abltn renl les/tiss
+5534,จริง,Lap abltn renal les/tiss
+5535,จริง,Abltn renal les/tiss NEC
+5539,จริง,Loc destr renal les NEC
+554,จริง,Partial nephrectomy
+555,เท็จ,COMPLETE NEPHRECTOMY
+5551,จริง,Nephroureterectomy
+5552,จริง,Solitary kidney nephrect
+5553,จริง,Rejected kidney nephrect
+5554,จริง,Bilateral nephrectomy
+556,เท็จ,KIDNEY TRANSPLANT
+5561,จริง,Renal autotransplant
+5569,จริง,Kidney transplant NEC
+557,จริง,Nephropexy
+558,เท็จ,OTHER KIDNEY REPAIR
+5581,จริง,Suture kidney laceration
+5582,จริง,Close nephrost & pyelost
+5583,จริง,Close renal fistula NEC
+5584,จริง,Reduce renal pedicl tors
+5585,จริง,Symphysiotomy
+5586,จริง,Renal anastomosis
+5587,จริง,Correct ureteropelv junc
+5589,จริง,Renal repair NEC
+559,เท็จ,OTHER RENAL OPERATIONS
+5591,จริง,Renal decapsulation
+5592,จริง,Percutan renal aspirat
+5593,จริง,Replace nephrostomy tube
+5594,จริง,Replace pyelostomy tube
+5595,จริง,Local renal perfusion
+5596,จริง,Renal injection NEC
+5597,จริง,Implant mechanic kidney
+5598,จริง,Remov mechanical kidney
+5599,จริง,Renal operation NEC
+560,จริง,Tu remov ureter obstruct
+561,จริง,Ureteral meatotomy
+562,จริง,Ureterotomy
+563,เท็จ,URETERAL DIAGNOST PROC
+5631,จริง,Ureteroscopy
+5632,จริง,Closed ureteral biopsy
+5633,จริง,Clos endosc ureteral bx
+5634,จริง,Open ureteral biopsy
+5635,จริง,Endoscopic ileal conduit
+5639,จริง,Ureteral dx procedur NEC
+564,เท็จ,URETERECTOMY
+5640,จริง,Ureterectomy NOS
+5641,จริง,Partial ureterectomy
+5642,จริง,Total ureterectomy
+565,เท็จ,CUTAN URETERO-ILEOSTOMY
+5651,จริง,Form cutan ileoureterost
+5652,จริง,Revis cutan ileoureteros
+566,เท็จ,EXT URIN DIVERSION NEC
+5661,จริง,Form cutan ureterostomy
+5662,จริง,Revis cutan ureteros NEC
+567,เท็จ,OTHER URETERAL ANASTOMOS
+5671,จริง,Urin diversion to bowel
+5672,จริง,Revis ureteroenterostomy
+5673,จริง,Nephrocystanastomosi NOS
+5674,จริง,Ureteroneocystostomy
+5675,จริง,Transureteroureterostomy
+5679,จริง,Ureteral anastomosis NEC
+568,เท็จ,REPAIR OF URETER
+5681,จริง,Intralum urete adhesioly
+5682,จริง,Suture ureteral lacerat
+5683,จริง,Ureterostomy closure
+5684,จริง,Close ureter fistula NEC
+5685,จริง,Ureteropexy
+5686,จริง,Remove ureteral ligature
+5689,จริง,Repair of ureter NEC
+569,เท็จ,OTHER URETERAL OPERATION
+5691,จริง,Dilation ureteral meatus
+5692,จริง,Implant ureteral stimul
+5693,จริง,Replace ureteral stimul
+5694,จริง,Remove ureteral stimulat
+5695,จริง,Ligation of ureter
+5699,จริง,Ureteral operation NEC
+570,จริง,Transurethral clear blad
+571,เท็จ,CYSTOTOMY AND CYSTOSTOMY
+5711,จริง,Percutan bladder aspirat
+5712,จริง,Cystotomy & adhesiolysis
+5717,จริง,Percutaneous cystostomy
+5718,จริง,Other suprapu cystostomy
+5719,จริง,Cystotomy NEC
+572,เท็จ,VESICOSTOMY
+5721,จริง,Vesicostomy
+5722,จริง,Revise clo vesicostomy
+573,เท็จ,BLADDER DIAGNOSTIC PROC
+5731,จริง,Cystoscopy thru stoma
+5732,จริง,Cystoscopy NEC
+5733,จริง,Clos transureth bladd bx
+5734,จริง,Open bladder biopsy
+5739,จริง,Bladder diagnos proc NEC
+574,เท็จ,TU DESTRUCT BLADDER LES
+5741,จริง,Tu adhesiolysis bladder
+5749,จริง,Tu destruc bladd les NEC
+575,เท็จ,BLADDER LES DESTRUCT NEC
+5751,จริง,Excision of urachus
+5759,จริง,Bladder les destruct NEC
+576,จริง,Partial cystectomy
+577,เท็จ,TOTAL CYSTECTOMY
+5771,จริง,Radical cystectomy
+5779,จริง,Total cystectomy NEC
+578,เท็จ,OTHER BLADDER REPAIR
+5781,จริง,Suture bladder lacerat
+5782,จริง,Cystostomy closure
+5783,จริง,Enterovesico fist repair
+5784,จริง,Vesic fistula repair NEC
+5785,จริง,Cystourethroplasty
+5786,จริง,Bladder exstrophy repair
+5787,จริง,Bladder reconstruction
+5788,จริง,Bladder anastomosis NEC
+5789,จริง,Bladder repair NEC
+579,เท็จ,OTHER BLADDER OPERATIONS
+5791,จริง,Bladder sphincterotomy
+5792,จริง,Bladder neck dilation
+5793,จริง,Control bladd hemorrhage
+5794,จริง,Insert indwelling cath
+5795,จริง,Replace indwelling cath
+5796,จริง,Implant bladder stimulat
+5797,จริง,Replace bladder stimulat
+5798,จริง,Remove bladder stimulat
+5799,จริง,Bladder operation NEC
+580,จริง,Urethrotomy
+581,จริง,Urethral meatotomy
+582,เท็จ,URETHRAL DIAGNOSTIC PROC
+5821,จริง,Perineal urethroscopy
+5822,จริง,Urethroscopy NEC
+5823,จริง,Urethral biopsy
+5824,จริง,Periurethral biopsy
+5829,จริง,Urethral dx proc NEC
+583,เท็จ,URETHRAL LES DESTRUCTION
+5831,จริง,Endosc destr urethra les
+5839,จริง,Other destru urethra les
+584,เท็จ,REPAIR OF URETHRA
+5841,จริง,Suture urethral lacerat
+5842,จริง,Urethrostomy closure
+5843,จริง,Close ureth fistula NEC
+5844,จริง,Urethral reanastomosis
+5845,จริง,Hypo-epispadius repair
+5846,จริง,Ureth reconstruction NEC
+5847,จริง,Urethral meatoplasty
+5849,จริง,Urethral repair NEC
+585,จริง,Ureth stricture release
+586,จริง,Urethral dilation
+589,เท็จ,OTH URETH/PERIURETH OPS
+5891,จริง,Periurethral incision
+5892,จริง,Periurethral excision
+5893,จริง,Implt artf urin sphinct
+5899,จริง,Ureth/periureth op NEC
+590,เท็จ,RETROPERITONEAL DISSECT
+5900,จริง,Retroperit dissect NOS
+5902,จริง,Periren adhesiolys NEC
+5903,จริง,Lap lys periren/uret adh
+5909,จริง,Periren/ureter incis NEC
+591,เท็จ,PERIVESICAL INCISION
+5911,จริง,Oth lys perives adhesio
+5912,จริง,Lap lys perivesureth adh
+5919,จริง,Perivesical incision NEC
+592,เท็จ,PERIREN/URETER DX PROCS
+5921,จริง,Periren/ureteral biopsy
+5929,จริง,Periren/uret dx proc NEC
+593,จริง,Urethroves junct plicat
+594,จริง,Suprapubic sling op
+595,จริง,Retropubic ureth suspens
+596,จริง,Paraurethral suspension
+597,เท็จ,OTH URIN INCONTIN REPAIR
+5971,จริง,Levator musc suspension
+5972,จริง,Inject implant urethra
+5979,จริง,Urin incontin repair NEC
+598,จริง,Ureteral catheterization
+599,เท็จ,OTHER URINARY SYSTEM OPS
+5991,จริง,Periren/vesicle excision
+5992,จริง,Periren/vesicle op NEC
+5993,จริง,Replace ureterost tube
+5994,จริง,Replace cystostomy tube
+5995,จริง,Ultrason fragment-stone
+5999,จริง,Urinary system op NEC
+600,จริง,Incision of prostate
+601,เท็จ,PROST & SEM VES DX PROC
+6011,จริง,Closed prostatic biopsy
+6012,จริง,Open prostatic biopsy
+6013,จริง,Clos seminal vesicles bx
+6014,จริง,Open seminal vesicles bx
+6015,จริง,Periprostatic biopsy
+6018,จริง,Prostatic dx proc NEC
+6019,จริง,Semin ves dx proc NEC
+602,เท็จ,TRANSURETHRAL PROSTATECT
+6021,จริง,Transureth prostatectomy (TULIP)
+6029,จริง,Oth transureth prostatec
+603,จริง,Suprapubic prostatectomy
+604,จริง,Retropubic prostatectomy
+605,จริง,Radical prostatectomy
+606,เท็จ,OTHER PROSTATECTOMY
+6061,จริง,Los excis prostatic les
+6062,จริง,Perineal prostatectomy
+6069,จริง,Prostatectomy NEC
+607,เท็จ,SEMINAL VESICLE OPS
+6071,จริง,Percut semin ves aspirat
+6072,จริง,Seminal vesicle incision
+6073,จริง,Seminal vesicle excision
+6079,จริง,Seminal vesicle op NEC
+608,เท็จ,PERIPROSTAT INCIS & EXC
+6081,จริง,Periprostatic incision
+6082,จริง,Periprostatic excision
+609,เท็จ,OTHER PROSTATIC OPS
+6091,จริง,Percut prostatic aspirat
+6092,จริง,Injection into prostate
+6093,จริง,Repair of prostate
+6094,จริง,Control prostate hemorr
+6095,จริง,Trans bal dil pros ureth
+6096,จริง,Tu destr prostate by mt
+6097,จริง,Oth tu destr pros - rt
+6099,จริง,Prostatic operation NEC
+610,จริง,Scrotum & tunica I&D
+611,เท็จ,SCROTUM & TUNICA DX PROC
+6111,จริง,Scrotum & tunica biopsy
+6119,จริง,Scrot/tunica dx proc NEC
+612,จริง,Excision of hydrocele
+613,จริง,Scrotal les destruction
+614,เท็จ,SCROTUM & TUNICA REPAIR
+6141,จริง,Suture scrotal lacerat
+6142,จริง,Scrotal fistula repair
+6149,จริง,Scrotum/tunic repair NEC
+619,เท็จ,OTHER SCROTUM/TUNIC OPS
+6191,จริง,Percut tunica aspiration
+6192,จริง,Excision tunica les NEC
+6199,จริง,Scrotum & tunica op NEC
+620,จริง,Incision of testes
+621,เท็จ,TESTES DIAGNOSTIC PROCS
+6211,จริง,Closed testicular biopsy
+6212,จริง,Open testicular biopsy
+6219,จริง,Testes dx procedure NEC
+622,จริง,Testicular les destruct
+623,จริง,Unilateral orchiectomy
+624,เท็จ,BILATERAL ORCHIECTOMY
+6241,จริง,Remove both testes
+6242,จริง,Remove solitary testis
+625,จริง,Orchiopexy
+626,เท็จ,REPAIR OF TESTES
+6261,จริง,Suture testicular lacer
+6269,จริง,Testicular repair NEC
+627,จริง,Insert testicular prosth
+629,เท็จ,OTHER TESTICULAR OPS
+6291,จริง,Aspiration of testes
+6292,จริง,Injection into testes
+6299,จริง,Testicular operation NEC
+630,เท็จ,SPERMATIC CORD/VAS DX OP
+6301,จริง,Spermatic cord/vas biops
+6309,จริง,Spermat cord/vas dx NEC
+631,จริง,Exc spermatic varicocele
+632,จริง,Excise epididymis cyst
+633,จริง,Excise cord/epid les NEC
+634,จริง,Epididymectomy
+635,เท็จ,CORD & EPIDIDYMIS REPAIR
+6351,จริง,Suture cord & epid lacer
+6352,จริง,Reduction torsion testes
+6353,จริง,Transplant spermat cord
+6359,จริง,Cord & epidid repair NEC
+636,จริง,Vasotomy
+637,เท็จ,VASECTOMY & VAS LIGATION
+6370,จริง,Male sterilization NOS
+6371,จริง,Ligation of vas deferens
+6372,จริง,Spermatic cord ligation
+6373,จริง,Vasectomy
+638,เท็จ,VAS & EPIDIDYMIS REPAIR
+6381,จริง,Suture vas & epidid lac
+6382,จริง,Postop vas reconstruct
+6383,จริง,Epididymovasostomy
+6384,จริง,Removal vas ligature
+6385,จริง,Remov vas deferens valve
+6389,จริง,Vas & epididy repair NEC
+639,เท็จ,OTHER CORD/EPID/VAS OPS
+6391,จริง,Spermatocele aspiration
+6392,จริง,Epididymotomy
+6393,จริง,Spermatic cord incision
+6394,จริง,Sperm cord adhesiolysis
+6395,จริง,Insert valve in vas def
+6399,จริง,Cord/epid/vas ops NEC
+640,จริง,Circumcision
+641,เท็จ,PENILE DIAGNOSTIC PROCS
+6411,จริง,Penile biopsy
+6419,จริง,Penile diagnost proc NEC
+642,จริง,Local excis penile les
+643,จริง,Amputation of penis
+644,เท็จ,PENILE REPAIR
+6441,จริง,Suture penile laceration
+6442,จริง,Release of chordee
+6443,จริง,Construction of penis
+6444,จริง,Reconstruction of penis
+6445,จริง,Replantation of penis
+6449,จริง,Penile repair NEC
+645,จริง,Sex transformat op NEC
+649,เท็จ,OTHER MALE GENITAL OPS
+6491,จริง,Dorsal/lat slit prepuce
+6492,จริง,Incision of penis
+6493,จริง,Division of penile adhes
+6494,จริง,Fit ext penile prosthes
+6495,จริง,Ins noninfl penis prosth
+6496,จริง,Remove int penile prosth
+6497,จริง,Ins inflate penis prosth
+6498,จริง,Penile operation NEC
+6499,จริง,Male genital op NEC
+650,เท็จ,OOPHOROTOMY
+6501,จริง,Laparoscopic oophorotomy
+6509,จริง,Other oophorotomy
+651,เท็จ,OVARIAN DIAGNOST PROCS
+6511,จริง,Ovarian aspirat biopsy
+6512,จริง,Ovarian biopsy NEC
+6513,จริง,Lap biopsy of ovary
+6514,จริง,Oth lap dx proc ovaries
+6519,จริง,Ovarian dx procedure NEC
+652,เท็จ,LOCAL DESTRUCT OVARY LES
+6521,จริง,Ovarian cyst marsupializ
+6522,จริง,Ovarian wedge resection
+6523,จริง,Lap marsup ovarian cyst
+6524,จริง,Lap wedge resect ovary
+6525,จริง,Oth lap loc exc dest ova
+6529,จริง,Local destr ova les NEC
+653,เท็จ,UNILATERAL OOPHORECTOMY
+6531,จริง,Lap unilat oophorectomy
+6539,จริง,Oth unilat oophorectomy
+654,เท็จ,UNILAT SALPINGO-OOPHOREC
+6541,จริง,Lap uni salpingo-oophor
+6549,จริง,Oth uni salpingo-oophor
+655,เท็จ,BILATERAL OOPHORECTOMY
+6551,จริง,Oth remove both ovaries
+6552,จริง,Oth remove remain ovary
+6553,จริง,Lap remove both ovaries
+6554,จริง,Lap remove remain ovary
+656,เท็จ,BILAT SALPINGO-OOPHORECT
+6561,จริง,Oth remove ovaries&tubes
+6562,จริง,Oth remove rem ova&tube
+6563,จริง,Lap remove ovaries&tubes
+6564,จริง,Lap remove rem ova&tube
+657,เท็จ,REPAIR OF OVARY
+6571,จริง,Oth simple suture ovary
+6572,จริง,Oth reimplant of ovary
+6573,จริง,Oth salpingo-oophoroplas
+6574,จริง,Lap simple suture ovary
+6575,จริง,Lap reimplant of ovary
+6576,จริง,Lap salpingo-oophoroplas
+6579,จริง,Repair of ovary NEC
+658,เท็จ,TUBO-OVARIAN ADHESIOLYS
+6581,จริง,Lap adhesiolys ova/tube
+6589,จริง,Adhesiolysis ovary/tube
+659,เท็จ,OTHER OVARIAN OPERATIONS
+6591,จริง,Aspiration of ovary
+6592,จริง,Transplantation of ovary
+6593,จริง,Manual rupt ovarian cyst
+6594,จริง,Ovarian denervation
+6595,จริง,Ovarian torsion release
+6599,จริง,Ovarian operation NEC
+660,เท็จ,SALPINGOTOMY
+6601,จริง,Salpingotomy
+6602,จริง,Salpingostomy
+661,เท็จ,FALLOPIAN TUBE DX PROCS
+6611,จริง,Fallopian tube biopsy
+6619,จริง,Fallop tube dx proc NEC
+662,เท็จ,BILAT ENDOSC OCCL FALLOP
+6621,จริง,Bilat endosc crush tube
+6622,จริง,Bilat endosc divis tube
+6629,จริง,Bilat endos occ tube NEC
+663,เท็จ,OTHER BILAT TUBE DESTRUC
+6631,จริง,Bilat tubal crushing NEC
+6632,จริง,Bilat tubal division NEC
+6639,จริง,Bilat tubal destruct NEC
+664,จริง,Total unilat salpingect
+665,เท็จ,TOTAL BILAT SALPINGECTOM
+6651,จริง,Remove both fallop tubes
+6652,จริง,Remove solitary fal tube
+666,เท็จ,OTHER SALPINGECTOMY
+6661,จริง,Destroy fallop tube les
+6662,จริง,Remov tube & ectop preg
+6663,จริง,Bilat part salpingec NOS
+6669,จริง,Partial salpingectom NEC
+667,เท็จ,REPAIR OF FALLOPIAN TUBE
+6671,จริง,Simpl suture fallop tube
+6672,จริง,Salpingo-oophorostomy
+6673,จริง,Salpingo-salpingostomy
+6674,จริง,Salpingo-uterostomy
+6679,จริง,Fallop tube repair NEC
+668,จริง,Fallopian tube insufflat
+669,เท็จ,OTHER FALLOPIAN TUBE OPS
+6691,จริง,Fallopian tube aspirat
+6692,จริง,Unilat fallop tube destr
+6693,จริง,Impl fallop tube prosth
+6694,จริง,Remov fallop tube prosth
+6695,จริง,Blow therapeut into tube
+6696,จริง,Fallopian tube dilation
+6697,จริง,Bury fimbriae in uterus
+6699,จริง,Fallopian tube op NEC
+670,จริง,Cervical canal dilation
+671,เท็จ,CERVICAL DIAGNOSTIC PROC
+6711,จริง,Endocervical biopsy
+6712,จริง,Cervical biopsy NEC
+6719,จริง,Cervical dx procedur NEC
+672,จริง,Conization of cervix
+673,เท็จ,DESTROY CERVICAL LES NEC
+6731,จริง,Cervical cyst marsupial
+6732,จริง,Cervical les cauterizat
+6733,จริง,Cervical les cryotherapy
+6739,จริง,Cervical les destruc NEC
+674,จริง,Amputation of cervix
+675,เท็จ,REP OF INTERNAL CERV OS
+6751,จริง,Transab cerclage cervix
+6759,จริง,Oth rep int cervical os
+676,เท็จ,OTHER REPAIR OF CERVIX
+6761,จริง,Suture cervical lacerat
+6762,จริง,Cervical fistula repair
+6769,จริง,Cervical repair NEC
+680,จริง,Hysterotomy
+681,เท็จ,UTERUS & SUPPORT DX PROC
+6811,จริง,Digital exam of uterus
+6812,จริง,Hysteroscopy
+6813,จริง,Open uterine biopsy
+6814,จริง,Open uterine ligament bx
+6815,จริง,Clos uterine ligament bx
+6816,จริง,Closed uterine biopsy
+6819,จริง,Uterus/adnex dx proc NEC
+682,เท็จ,UTERINE LES DESTRUCTION
+6821,จริง,Endomet synechiae divis
+6822,จริง,Incision uterine septum
+6823,จริง,Endometrial ablation
+6824,จริง,Uter a emb [UAE] w coils
+6825,จริง,Uter a emb [UAE] wo coils
+6829,จริง,Uterine les destruct NEC
+683,เท็จ,Subtot abd hysterectomy
+6831,จริง,Lap scervic hysterectomy
+6839,จริง,Subtotl abd hyst NEC/NOS
+684,จริง,Total abd hysterectomy
+6841,จริง,Lap total abdominal hyst
+6849,จริง,Total abd hyst NEC/NOS
+685,เท็จ,VAGINAL HYSTERECTOMY
+6851,จริง,Lap ast vag hysterectomy
+6859,จริง,Vag hysterectomy NEC/NOS
+686,จริง,Radical abd hysterectomy
+6861,จริง,Lap radical abdomnl hyst
+6869,จริง,Radical abd hyst NEC/NOS
+687,จริง,Radical vag hysterectomy
+6871,จริง,Lap radical vaginal hyst
+6879,จริง,Radical vag hyst NEC/NOS
+688,จริง,Pelvic evisceration
+689,จริง,Hysterectomy NEC/NOS
+690,เท็จ,UTERINE D & C
+6901,จริง,D & C for preg terminat
+6902,จริง,D & C post delivery
+6909,จริง,D & C NEC
+691,เท็จ,DESTRUC UTER SUPPORT LES
+6919,จริง,Destruc uter support NEC
+692,เท็จ,UTERINE SUPPORT REPAIR
+6921,จริง,Interposit op uterin lig
+6922,จริง,Uterine suspension NEC
+6923,จริง,Vag repair invers uterus
+6929,จริง,Uterus/adnexa repair NEC
+693,จริง,Paracerv uterine denerv
+694,เท็จ,UTERINE REPAIR
+6941,จริง,Suture uterine lacerat
+6942,จริง,Closure uterine fistula
+6949,จริง,Uterine repair NEC
+695,เท็จ,ASPIRAT CURETTAGE UTERUS
+6951,จริง,Aspirat curet-preg termi
+6952,จริง,Aspirat curet-post deliv
+6959,จริง,Oth asp curettage uterus
+696,จริง,Menstrual extraction
+697,จริง,Insertion of IUD
+699,เท็จ,OTHER UTERUS/SUPPORT OPS
+6991,จริง,Insert uterine device
+6992,จริง,Artificial insemination
+6993,จริง,Insertion of laminaria
+6994,จริง,Man replace invert uter
+6995,จริง,Incision of cervix
+6996,จริง,Remove cervical cerclage
+6997,จริง,Remove penetrat cerv FB
+6998,จริง,Uterine support op NEC
+6999,จริง,Uterine operation NEC
+700,จริง,Culdocentesis
+701,เท็จ,INCIS VAGINA/CUL-DE-SAC
+7011,จริง,Hymenotomy
+7012,จริง,Culdotomy
+7013,จริง,Intralum vag adhesiolys
+7014,จริง,Vaginotomy NEC
+702,เท็จ,VAGIN/CUL-DE-SAC DX PROC
+7021,จริง,Vaginoscopy
+7022,จริง,Culdoscopy
+7023,จริง,Cul-de-sac biopsy
+7024,จริง,Vaginal biopsy
+7029,จริง,Vagin/cul-de-sac dx NEC
+703,เท็จ,EXCIS VAG/CUL-DE-SAC LES
+7031,จริง,Hymenectomy
+7032,จริง,Excis cul-de-sac lesion
+7033,จริง,Excision vaginal lesion
+704,จริง,Vaginal obliteration
+705,เท็จ,CYSTOCEL/RECTOCEL REPAIR
+7050,จริง,Cystocel/rectocel repair
+7051,จริง,Cystocele repair
+7052,จริง,Rectocele repair
+7053,จริง,Cysto & recto w grf/pros
+7054,จริง,Rep cystocel w grft/pros
+7055,จริง,Rep rectocele w grf/pros
+706,เท็จ,VAG CONSTRUC/RECONSTRUC
+7061,จริง,Vaginal construction
+7062,จริง,Vaginal reconstruction
+7063,จริง,Vaginal const w grf/pros
+7064,จริง,Vag reconst w grft/pros
+707,เท็จ,OTHER VAGINAL REPAIR
+7071,จริง,Suture vagina laceration
+7072,จริง,Repair colovagin fistula
+7073,จริง,Repair rectovag fistula
+7074,จริง,Rep vaginoent fistul NEC
+7075,จริง,Repair vag fistula NEC
+7076,จริง,Hymenorrhaphy
+7077,จริง,Vaginal suspens & fixat
+7078,จริง,Vag susp/fix w grft/pros
+7079,จริง,Vaginal repair NEC
+708,จริง,Vaginal vault obliterat
+709,เท็จ,OTH VAG & CUL-DE-SAC OPS
+7091,จริง,Vaginal operation NEC
+7092,จริง,Cul-de-sac operation NEC
+7093,จริง,Cul-de-sac grf/pros NEC
+7094,จริง,Insert biological graft
+7095,จริง,Insert synth graft/prost
+710,เท็จ,INCIS VULVA & PERINEUM
+7101,จริง,Vulvar adhesiolysis
+7109,จริง,Incis vulva/perineum NEC
+711,เท็จ,VULVAR DIAGNOSTIC PROCS
+7111,จริง,Vulvar biopsy
+7119,จริง,Vulvar diagnos proc NEC
+712,เท็จ,BARTHOLIN'S GLAND OPS
+7121,จริง,Percutan bartholin aspir
+7122,จริง,Incise bartholin's gland
+7123,จริง,Bartholin gland marsup
+7124,จริง,Destruc bartholin gland
+7129,จริง,Bartholin's gland op NEC
+713,จริง,Local vulvar excis NEC
+714,จริง,Operations on clitoris
+715,จริง,Radical vulvectomy
+716,เท็จ,OTHER VULVECTOMY
+7161,จริง,Unilateral vulvectomy
+7162,จริง,Bilateral vulvectomy
+717,เท็จ,VULVAR & PERINEAL REPAIR
+7171,จริง,Suture vulvar laceration
+7172,จริง,Repair vulvar fistula
+7179,จริง,Vulvar/perin repair NEC
+718,จริง,Other vulvar operations
+719,จริง,Other female genital ops
+720,จริง,Low forceps operation
+721,จริง,Low forceps op w episiotom
+722,เท็จ,MID FORCEPS OPERATION
+7221,จริง,Mid forceps op w episiotom
+7229,จริง,Oth mid forceps operation
+723,เท็จ,HIGH FORCEPS OPERATION
+7231,จริง,High forceps op w episioto
+7239,จริง,Oth high forceps operation
+724,จริง,Forceps rotatn of fetal hd
+725,เท็จ,BREECH EXTRACTION
+7251,จริง,Part breech ext w forceps
+7252,จริง,Oth part breech extraction
+7253,จริง,Tot breech ext w forceps
+7254,จริง,Oth tot breech ext w forc
+726,จริง,Forceps-aftercoming head
+727,เท็จ,VACUUM EXTRACTION DELIV
+7271,จริง,Vac ext w episiotomy
+7279,จริง,Other vacuum extraction
+728,จริง,Instrument delivery NEC
+729,จริง,Instrument delivery NOS
+730,เท็จ,ARTIFICIAL RUPT MEMBRANE
+7301,จริง,Induct labor-rupt memb
+7309,จริง,Artif rupt membranes NEC
+731,จริง,Surg induct labor NEC
+732,เท็จ,INT/COMB VERSION/EXTRACT
+7321,จริง,Int & comb ext vers wo ext
+7322,จริง,Int & comb ext vers w ext
+733,จริง,Failed forceps
+734,จริง,Medical induction labor
+735,เท็จ,MANUALLY ASSISTED DELIV
+7351,จริง,Manual rotation fetal head
+7359,จริง,Oth manual assist delivery
+736,จริง,Episiotomy
+738,จริง,Op on fetus fac delivery
+739,เท็จ,OTH OPS ASSISTING DELIV
+7391,จริง,Ext version-assist deliv
+7392,จริง,Replac prolaps umb cord
+7393,จริง,Incis cx to assist deliv
+7394,จริง,Pubiotomy to assist del
+7399,จริง,Ops assisting deliv NEC
+740,จริง,Classical c-section
+741,จริง,Low cervical c-section
+742,จริง,Extraperitoneal c-sect
+743,จริง,Rem extratub ectop preg
+744,จริง,Cesarean section NEC
+749,เท็จ,CESAREAN SECTION NOS
+7491,จริง,Hysterotomy to termin pg
+7499,จริง,Cesarean section NOS
+750,จริง,Intra-amnion inj for abort
+751,จริง,Diagnostic amniocentesis
+752,จริง,Intrauterine transfusion
+753,เท็จ,INTRAUT FETAL OPS NEC
+7531,จริง,Amnioscopy
+7532,จริง,Fetal EKG
+7533,จริง,Fetal blood sampling & Bx
+7534,จริง,Other fetal monitoring
+7535,จริง,Dx proc fetus/amnion NEC
+7536,จริง,Correction fetal defect
+7537,จริง,Amnioinfusion
+7538,จริง,Fetal pulse oximetry
+754,จริง,Manual remove ret placenta
+755,เท็จ,REPAIR OB LACERAT UTERUS
+7550,จริง,Repair ob lac uterus NOS
+7551,จริง,Repair ob lacerat cervix
+7552,จริง,Repair ob lac corp uteri
+756,เท็จ,REPAIR OTH OB LACERATION
+7561,จริง,Repair ob lac blad/ureth
+7562,จริง,Rep curr ob lac rect/anus
+7569,จริง,Rep oth curr OB laceration
+757,จริง,"Man explor uter cav,PP"
+758,จริง,Ob tamponade uterus/vag
+759,เท็จ,OTHER OBSTETRIC OPS
+7591,จริง,Evac OB incis hem perineum
+7592,จริง,Evac oth hem vulva/vag
+7593,จริง,Surg corr invert uterus
+7594,จริง,Man replac inverted uterus
+7599,จริง,Obstetric operation NEC
+760,เท็จ,FACIAL BONE INCISION
+7601,จริง,Facial bone sequestrect
+7609,จริง,Facial bone incision NEC
+761,เท็จ,DX PROC FACIAL BONE/JNT
+7611,จริง,Facial bone biopsy
+7619,จริง,Facial bone dx proc NEC
+762,จริง,Destruct facial bone les
+763,เท็จ,PARTIAL FACIAL OSTECTOMY
+7631,จริง,Partial mandibulectomy
+7639,จริง,Part facial ostectom NEC
+764,เท็จ,FACIAL BONE EXC & RECONS
+7641,จริง,Tot mandibulec w reconst
+7642,จริง,Total mandibulectomy NEC
+7643,จริง,Mandibular reconst NEC
+7644,จริง,Tot face ostect w recons
+7645,จริง,Tot face bone ostect NEC
+7646,จริง,Facial bone reconstr NEC
+765,จริง,Temporomand arthroplasty
+766,เท็จ,OTHER FACIAL BONE REPAIR
+7661,จริง,Cl osteoplasty mand rami
+7662,จริง,Open osteoplas mand rami
+7663,จริง,Osteoplasty mandible bdy
+7664,จริง,Mand orthognathic op NEC
+7665,จริง,Seg osteoplasty maxilla
+7666,จริง,Tot osteoplasty maxilla
+7667,จริง,Reduction genioplasty
+7668,จริง,Augmentation genioplasty
+7669,จริง,Facial bone repair NEC
+767,เท็จ,REDUCTION OF FACIAL FX
+7670,จริง,Reduction facial fx NOS
+7671,จริง,Cl reduct malar/zygo fx
+7672,จริง,Opn reduct malar/zygo fx
+7673,จริง,Cl reduct maxillary fx
+7674,จริง,Open reduct maxillary fx
+7675,จริง,Cl reduct mandible fx
+7676,จริง,Open reduct mandible fx
+7677,จริง,open reduct alveolar fx
+7678,จริง,Cl reduct facial fx NEC
+7679,จริง,Open reduct face fx NEC
+769,เท็จ,OTH OPS FACIAL BONE/JNT
+7691,จริง,Bone graft to face bone
+7692,จริง,Syn implant to face bone
+7693,จริง,Clos reduct tm dislocat
+7694,จริง,Open reduct tm dislocat
+7695,จริง,Tm manipulation NEC
+7696,จริง,Injec therap sbst TM jnt
+7697,จริง,Remove int fix face bone
+7699,จริง,Facial bone/jnt op NEC
+770,เท็จ,SEQUESTRECTOMY
+7700,จริง,Sequestrectomy NOS
+7701,จริง,Chest cage sequestrec
+7702,จริง,Humerus sequestrectomy
+7703,จริง,Radius & ulna sequestrec
+7704,จริง,Metacarp/carp sequestrec
+7705,จริง,Femoral sequestrectomy
+7706,จริง,Patellar sequestrectomy
+7707,จริง,Tibia/fibula sequestrec
+7708,จริง,Metatar/tar sequestrec
+7709,จริง,Sequestrectomy NEC
+771,เท็จ,OTH BONE INCIS W/O DIVIS
+7710,จริง,Other bone incision NOS
+7711,จริง,Other chest cage incis
+7712,จริง,Other humerus incision
+7713,จริง,Other radius/ulna incis
+7714,จริง,Oth metacarp/carp incis
+7715,จริง,Other femoral incision
+7716,จริง,Other patellar incision
+7717,จริง,Other tibia/fibula incis
+7718,จริง,Oth metatars/tars incis
+7719,จริง,Bone incis w/o div NEC
+772,เท็จ,WEDGE OSTEOTOMY
+7720,จริง,Wedge osteotomy NOS
+7721,จริง,Chest cage wedg osteotom
+7722,จริง,Humerus wedge osteotomy
+7723,จริง,Radius/ulna wedg osteoto
+7724,จริง,Metacar/car wedg osteoto
+7725,จริง,Femoral wedge osteotomy
+7726,จริง,Patellar wedge osteotomy
+7727,จริง,Tibia/fibul wedg osteot
+7728,จริง,Metatar/tar wedg osteot
+7729,จริง,Wedge osteotomy NEC
+773,เท็จ,OTHER DIVISION OF BONE
+7730,จริง,Other bone division NOS
+7731,จริง,Chest cage bone div NEC
+7732,จริง,Humerus division NEC
+7733,จริง,Radius/ulna division NEC
+7734,จริง,Metacar/car division NEC
+7735,จริง,Femoral division NEC
+7736,จริง,Patellar division NEC
+7737,จริง,Tibia/fibula div NEC
+7738,จริง,Metatar/tar division NEC
+7739,จริง,Bone division NEC
+774,เท็จ,BIOPSY OF BONE
+7740,จริง,Bone biopsy NOS
+7741,จริง,Chest cage bone biopsy
+7742,จริง,Humerus biopsy
+7743,จริง,Radius & ulna biopsy
+7744,จริง,Metacarpal/carpal biopsy
+7745,จริง,Femoral biopsy
+7746,จริง,Patellar biopsy
+7747,จริง,Tibia & fibula biopsy
+7748,จริง,Metatarsal/tarsal biopsy
+7749,จริง,Bone biopsy NEC
+775,เท็จ,EXC REPAIR BUNION
+7751,จริง,Bunionect/sft/osteotomy
+7752,จริง,Bunionect/sft/arthrodes
+7753,จริง,Oth bunionect w sft corr
+7754,จริง,Exc correct bunionette
+7756,จริง,Repair of hammer toe
+7757,จริง,Repair of claw toe
+7758,จริง,"Oth exc, fus, repair toe"
+7759,จริง,Bunionectomy NEC
+776,เท็จ,LOC EXC BONE LESION
+7760,จริง,Loc exc bone lesion NOS
+7761,จริง,Exc chest cage bone les
+7762,จริง,Loc exc bone les humerus
+7763,จริง,Loc exc les radius/ulna
+7764,จริง,Loc exc les metacar/car
+7765,จริง,Loc exc bone les femur
+7766,จริง,Loc exc bone les patella
+7767,จริง,Loc exc les tibia/fibula
+7768,จริง,Loc exc les metatar/tar
+7769,จริง,Loc exc bone lesion NEC
+777,เท็จ,EXCISE BONE FOR GRAFT
+7770,จริง,Excise bone for grft NOS
+7771,จริง,Ex chest cage bone-gft
+7772,จริง,Excise humerus for graft
+7773,จริง,Excis radius/ulna-graft
+7774,จริง,Excis metacar/car-graft
+7775,จริง,Excise femur for graft
+7776,จริง,Excise patella for graft
+7777,จริง,Excise tib/fib for graft
+7778,จริง,Excis metatar/tar-graft
+7779,จริง,Excise bone for gft NEC
+778,เท็จ,OTHER PARTIAL OSTECTOMY
+7780,จริง,Oth part ostectomy NOS
+7781,จริง,Oth chest cage ostectomy
+7782,จริง,Partial humerectomy NEC
+7783,จริง,Part ostect-radius/ulna
+7784,จริง,Part ostect-metacar/car
+7785,จริง,Part ostectomy-femur
+7786,จริง,Partial patellectomy
+7787,จริง,Part ostect-tibia/fibula
+7788,จริง,Part ostect-metatar/tar
+7789,จริง,Partial ostectomy NEC
+779,เท็จ,TOTAL OSTECTOMY
+7790,จริง,Total ostectomy NOS
+7791,จริง,Tot chest cage ostectomy
+7792,จริง,Total ostectomy-humerus
+7793,จริง,Tot ostect-radius/ulna
+7794,จริง,Tot ostect-metacarp/carp
+7795,จริง,Tot ostectomy-femur
+7796,จริง,Total patellectomy
+7797,จริง,Tot ostect-tibia/fibula
+7798,จริง,Tot ostect-metatars/tars
+7799,จริง,Total ostectomy NEC
+780,เท็จ,BONE GRAFT
+7800,จริง,Bone graft NOS
+7801,จริง,Bone graft to chest cage
+7802,จริง,Bone graft to humerus
+7803,จริง,Bone graft-radius/ulna
+7804,จริง,Bone grft to metacar/car
+7805,จริง,Bone graft to femur
+7806,จริง,Bone graft to patella
+7807,จริง,Bone graft-tibia/fibula
+7808,จริง,Bone graft- metatar/tar
+7809,จริง,Bone graft NEC
+781,เท็จ,PERIOSTEAL SUTURE
+7810,จริง,Applic ext fix dev NOS
+7811,จริง,Appl ext fix-chest cage
+7812,จริง,Applic ext fix-humerus
+7813,จริง,Appl ext fix-radius/ulna
+7814,จริง,Appl ext fix-metacar/car
+7815,จริง,Applic ext fix dev-femur
+7816,จริง,Appl ext fix dev-patella
+7817,จริง,Appl ext fix-tib/fibula
+7818,จริง,Appl ext fix-metatar/tar
+7819,จริง,Applic ext fix dev NEC
+782,เท็จ,EPIPHYSEAL STAPLING
+7820,จริง,Limb shorten proc NOS
+7822,จริง,Limb short proc-humerus
+7823,จริง,Limb shorten-radius/ulna
+7824,จริง,Limb shorten-metacar/car
+7825,จริง,Limb short proc-femur
+7827,จริง,Limb shorten-tib/fibula
+7828,จริง,Limb shorten-metatar/tar
+7829,จริง,Limb shorten proc NEC
+783,เท็จ,OTHER BONE LENGTH CHANGE
+7830,จริง,Limb lengthen proc NOS
+7832,จริง,Limb length proc-humerus
+7833,จริง,Limb length-radius/ulna
+7834,จริง,Limb length-metacar/car
+7835,จริง,Limb length proc-femur
+7837,จริง,Limb lengthen-tib/fibula
+7838,จริง,Limb lengthn-metatar/tar
+7839,จริง,Limb lengthen proc NEC
+784,เท็จ,OTHER BONE REPAIR
+7840,จริง,Oth bone repair/plast op
+7841,จริง,Oth chest cage rep/plast
+7842,จริง,Oth humerus repair/plast
+7843,จริง,Oth rad/uln repair/plast
+7844,จริง,Oth metac/carp rep/plast
+7845,จริง,Oth femur repair/plastic
+7846,จริง,Oth patella repair/plast
+7847,จริง,Oth tib/fib repair/plast
+7848,จริง,Oth meta/tar repa/plast
+7849,จริง,Oth bone repa/plast NEC
+785,เท็จ,INT FIX W/O FX REDUCTION
+7850,จริง,Int fix w/o fx reduc NOS
+7851,จริง,Int fixation-chest cage
+7852,จริง,Int fixation-humerus
+7853,จริง,Int fixation-radius/ulna
+7854,จริง,Int fixation-metacar/car
+7855,จริง,Internal fixation-femur
+7856,จริง,Internal fix-patella
+7857,จริง,Int fixation-tibia/fibul
+7858,จริง,Int fixation-metatar/tar
+7859,จริง,Int fix-no fx reduct NEC
+786,เท็จ,REMOVE IMPLANT BONE DEV
+7860,จริง,Remove imp device NOS
+7861,จริง,Remov imp dev-chest cage
+7862,จริง,Remove impl dev-humerus
+7863,จริง,Remov imp dev-radius/uln
+7864,จริง,Remov imp dev-metac/carp
+7865,จริง,Remove imp device-femur
+7866,จริง,Remov imp device-patella
+7867,จริง,Remov imp dev-tib/fibula
+7868,จริง,Remove imp dev-metat/tar
+7869,จริง,Remove impl device NEC
+787,เท็จ,OSTEOCLASIS
+7870,จริง,Osteoclasis NOS
+7871,จริง,Osteoclasis-chest cage
+7872,จริง,Osteoclasis-humerus
+7873,จริง,Osteoclasis-radius/ulna
+7874,จริง,Osteoclasis-metacar/car
+7875,จริง,Osteoclasis-femur
+7876,จริง,Osteoclasis-patella
+7877,จริง,Osteoclasis-tibia/fibula
+7878,จริง,Osteoclasis-metatar/tar
+7879,จริง,Osteoclasis NEC
+788,เท็จ,OTHER BONE DIAGNOST PROC
+7880,จริง,Other bone dx proc NOS
+7881,จริง,Oth dx proced-chest cage
+7882,จริง,Oth dx proced-humerus
+7883,จริง,Oth dx proc-radius/ulna
+7884,จริง,Oth dx proc-metacar/car
+7885,จริง,Oth dx proced-femur
+7886,จริง,Oth dx proced-patella
+7887,จริง,Oth dx proc-tibia/fibula
+7888,จริง,Oth dx proc-metatar/tar
+7889,จริง,Other bone dx proc NEC
+789,เท็จ,OTHER BONE OPERATIONS
+7890,จริง,Insert bone stimul NOS
+7891,จริง,Insert bone stimul-chest
+7892,จริง,Insert bone stim-humerus
+7893,จริง,Inser bone stim-rad/ulna
+7894,จริง,Inser bone stim-meta/car
+7895,จริง,Insert bone stim-femur
+7896,จริง,Insert bone stim-patella
+7897,จริง,Inser bone stim-tib/fib
+7898,จริง,Inser bone stim-meta/tar
+7899,จริง,Insert bone stimul NEC
+790,เท็จ,CLOSED FRACTURE REDUCT
+7900,จริง,Closed fx reduction NOS
+7901,จริง,Closed fx reduct humerus
+7902,จริง,Cl fx reduc-radius/ulna
+7903,จริง,Cl fx reduc-metacar/car
+7904,จริง,Cl fx reduc-finger
+7905,จริง,Cl fx reduc-femur
+7906,จริง,Cl fx reduc-tibia/fibula
+7907,จริง,Cl fx reduc-metatar/tar
+7908,จริง,Cl fx reduc-toe
+7909,จริง,Closed fx reduction NEC
+791,เท็จ,CL FX REDUC W INT FIX
+7910,จริง,Cl fx reduc-int fix NOS
+7911,จริง,Clos red-int fix humerus
+7912,จริง,Cl red-int fix rad/ulna
+7913,จริง,Cl red-int fix metac/car
+7914,จริง,Close red-int fix finger
+7915,จริง,Closed red-int fix femur
+7916,จริง,Cl red-int fix tib/fibu
+7917,จริง,Cl red-int fix metat/tar
+7918,จริง,Close red-int fix toe fx
+7919,จริง,Cl fx reduc-int fix NEC
+792,เท็จ,OPEN FRACTURE REDUCTION
+7920,จริง,Open fx reduction NOS
+7921,จริง,Open reduc-humerus fx
+7922,จริง,Open reduc-radius/uln fx
+7923,จริง,Open reduc-metac/car fx
+7924,จริง,Open reduction-finger fx
+7925,จริง,Open reduction-femur fx
+7926,จริง,Open reduc-tibia/fib fx
+7927,จริง,Open reduc-metat/tars fx
+7928,จริง,Open reduction-toe fx
+7929,จริง,Open fx reduction NEC
+793,เท็จ,OPEN FX REDUCT W INT FIX
+7930,จริง,Opn fx red w int fix NOS
+7931,จริง,Open red-int fix humerus
+7932,จริง,Op red-int fix rad/ulna
+7933,จริง,Op red-int fix metac/car
+7934,จริง,Open red-int fix finger
+7935,จริง,Open reduc-int fix femur
+7936,จริง,Op red-int fix tib/fibul
+7937,จริง,Op red-int fix metat/tar
+7938,จริง,Open reduct-int fix toe
+7939,จริง,Opn fx red w int fix NEC
+794,เท็จ,CLOSED REDUCT-SEP EPIPHY
+7940,จริง,Cls reduc-sep epiphy NOS
+7941,จริง,Close red-humerus epiphy
+7942,จริง,Cls red-radius/ul epiphy
+7945,จริง,Close reduc-femur epiphy
+7946,จริง,Cls red-tibia/fib epiphy
+7949,จริง,Cls reduc-sep epiphy NEC
+795,เท็จ,OPEN REDUC-SEP EPIPHY
+7950,จริง,Open red-sep epiphy NOS
+7951,จริง,Opn red-sep epiphy-humer
+7952,จริง,Op red-radius/uln epiphy
+7955,จริง,Opn red-sep epiphy-femur
+7956,จริง,Op red-tibia/fib epiphys
+7959,จริง,Open red-sep epiphy NEC
+796,เท็จ,OPEN FX SITE DEBRIDEMENT
+7960,จริง,Open fx site debride NOS
+7961,จริง,Debrid open fx-humerus
+7962,จริง,Debrid open fx-radius/uln
+7963,จริง,Debrid opn fx-metac/car
+7964,จริง,Debrid opn fx-finger
+7965,จริง,Debrid opn fx-femur
+7966,จริง,Debrid opn fx-tibia/fib
+7967,จริง,Debrid opn fx-metat/tar
+7968,จริง,Debrid opn fx-toe
+7969,จริง,Open fx site debride NEC
+797,เท็จ,CL REDUC DISLOCATION
+7970,จริง,Cl reduc disloc NOS
+7971,จริง,Cl reduc disloc-shoulder
+7972,จริง,Cl reduc disloc-elbow
+7973,จริง,Cl reduc disloc-wrist
+7974,จริง,Cl reduc disloc-hand/fng
+7975,จริง,Cl reduc disloc-hip
+7976,จริง,Cl reduc disloc-knee
+7977,จริง,Cl reduc disloc-ankle
+7978,จริง,Cl reduc disloc-foot/toe
+7979,จริง,Cl reduc dislocation NEC
+798,เท็จ,OPN REDUC DISLOCATION
+7980,จริง,Open reduc-dislocat NOS
+7981,จริง,Opn reduc disloc-shouldr
+7982,จริง,Open reduc-elbow disloc
+7983,จริง,Open reduc-wrist disloc
+7984,จริง,Opn reduc disloc-hand
+7985,จริง,Open reduc-hip dislocat
+7986,จริง,Open reduc-knee dislocat
+7987,จริง,Open reduc-ankle disloc
+7988,จริง,Opn reduc disloc-ft/toe
+7989,จริง,Open reduc-dislocat NEC
+799,เท็จ,BONE INJURY OP NOS
+7990,จริง,Unspec op bone inj NOS
+7991,จริง,Humerus injury op NOS
+7992,จริง,Radius/ulna inj op NOS
+7993,จริง,Metacarp/carp inj op NOS
+7994,จริง,Finger injury op NOS
+7995,จริง,Femur injury op NOS
+7996,จริง,Tibia/fibula inj op NOS
+7997,จริง,Metatars/tars inj op NOS
+7998,จริง,Toe injury operation NOS
+7999,จริง,Unspec op-bone inj NEC
+800,เท็จ,ARTHROTOMY-REMOVE PROSTH
+8000,จริง,Arth/pros rem wo repl NOS
+8001,จริง,Arth/pros rem wo repl-shld
+8002,จริง,Arth/pros rem wo repl-elb
+8003,จริง,Arth/pros rem wo repl-wrst
+8004,จริง,Arth/pros rem wo repl-hnd
+8005,จริง,Arth/pros rem wo repl-hip
+8006,จริง,Arth/pros rem wo repl-knee
+8007,จริง,Arth/pros rem wo repl-ank
+8008,จริง,Arth/pros rem wo repl-foot
+8009,จริง,Arth/pros rem wo repl NEC
+801,เท็จ,OTHER ARTHROTOMY
+8010,จริง,Other arthrotomy NOS
+8011,จริง,Oth arthrotomy-shoulder
+8012,จริง,Oth arthrotomy-elbow
+8013,จริง,Oth arthrotomy-wrist
+8014,จริง,Oth arthrotomy-hand/fngr
+8015,จริง,Oth arthrotomy-hip
+8016,จริง,Oth arthrotomy-knee
+8017,จริง,Oth arthrotomy-ankle
+8018,จริง,Oth arthrotomy-foot/toe
+8019,จริง,Other arthrotomy NEC
+802,เท็จ,ARTHROSCOPY
+8020,จริง,Arthroscopy NOS
+8021,จริง,Shoulder arthroscopy
+8022,จริง,Elbow arthroscopy
+8023,จริง,Wrist arthroscopy
+8024,จริง,Hand & finger arthroscop
+8025,จริง,Hip arthroscopy
+8026,จริง,Knee arthroscopy
+8027,จริง,Ankle arthroscopy
+8028,จริง,Foot & toe arthroscopy
+8029,จริง,Arthroscopy NEC
+803,เท็จ,BIOPSY JOINT STRUCTURE
+8030,จริง,Joint biopsy NOS
+8031,จริง,Shoulder joint biopsy
+8032,จริง,Elbow joint biopsy
+8033,จริง,Wrist joint biopsy
+8034,จริง,Hand/finger joint biopsy
+8035,จริง,Hip joint biopsy
+8036,จริง,Knee joint biopsy
+8037,จริง,Ankle joint biopsy
+8038,จริง,Foot & toe joint biopsy
+8039,จริง,Joint biopsy NEC
+804,เท็จ,JT CAPSULE/LIG/CARTL DIV
+8040,จริง,Jt structur division NOS
+8041,จริง,Shoulder struct division
+8042,จริง,Elbow structure division
+8043,จริง,Wrist structure division
+8044,จริง,Hand joint struct divis
+8045,จริง,Hip structure division
+8046,จริง,Knee structure division
+8047,จริง,Ankle structure division
+8048,จริง,Foot joint struct divis
+8049,จริง,Jt structur division NEC
+805,เท็จ,EXC/DEST INTVRT DISC
+8050,จริง,Exc/dest intvrt disc NOS
+8051,จริง,Excision intervert disc
+8052,จริง,Chemonucleolysis iv disc
+8053,จริง,Rep anulus fibrosus-grft
+8054,จริง,Rep anuls fibros NEC/NOS
+8059,จริง,Oth exc/dest intvrt disc
+806,จริง,Excis knee semilun cartl
+807,เท็จ,SYNOVECTOMY
+8070,จริง,Synovectomy-site NOS
+8071,จริง,Shoulder synovectomy
+8072,จริง,Elbow synovectomy
+8073,จริง,Wrist synovectomy
+8074,จริง,Hand synovectomy
+8075,จริง,Hip synovectomy
+8076,จริง,Knee synovectomy
+8077,จริง,Ankle synovectomy
+8078,จริง,Foot synovectomy
+8079,จริง,Synovectomy-site NEC
+808,เท็จ,OTH DESTRUCT JOINT LES
+8080,จริง,Destruct joint les NOS
+8081,จริง,Destruc-shoulder les NEC
+8082,จริง,Destruc-elbow lesion NEC
+8083,จริง,Destruc-wrist lesion NEC
+8084,จริง,Destruc-hand jt les NEC
+8085,จริง,Destruct-hip lesion NEC
+8086,จริง,Destruct-knee lesion NEC
+8087,จริง,Destruc-ankle lesion NEC
+8088,จริง,Destruc-foot jt les NEC
+8089,จริง,Destruct joint les NEC
+809,เท็จ,OTHER EXCISION OF JOINT
+8090,จริง,Excision of joint NOS
+8091,จริง,Excision of shoulder NEC
+8092,จริง,Excision of elbow NEC
+8093,จริง,Excision of wrist NEC
+8094,จริง,Excision hand joint NEC
+8095,จริง,Excision of hip NEC
+8096,จริง,Excision of knee NEC
+8097,จริง,Excision of ankle NEC
+8098,จริง,Excision foot joint NEC
+8099,จริง,Excision of joint NEC
+810,เท็จ,SPINAL FUSION
+8100,จริง,Spinal fusion NOS
+8101,จริง,Atlas-axis fusion
+8102,จริง,"Oth cerv fusion ant col, ant tech"
+8103,จริง,"Oth cerv fusion post col, post tech"
+8104,จริง,"Drsl/drslumb fus ant col, ant tech"
+8105,จริง,"Drsl/dslmb fus post col, post tech"
+8106,จริง,"Lumb/lmbosac fus ant col, ant tech"
+8107,จริง,"Lmb/lmbsac fus post col, post tech"
+8108,จริง,"Lumb/lmbsac fus ant col, post tech"
+811,เท็จ,FOOT & ANKLE ARTHRODESIS
+8111,จริง,Ankle fusion
+8112,จริง,Triple arthrodesis
+8113,จริง,Subtalar fusion
+8114,จริง,Midtarsal fusion
+8115,จริง,Tarsometatarsal fusion
+8116,จริง,Metatarsophalangeal fus
+8117,จริง,Other fusion of foot
+8118,จริง,Subtalr jt arthroereisis
+812,เท็จ,ARTHRODESIS OF OTH JOINT
+8120,จริง,Arthrodesis NOS
+8121,จริง,Arthrodesis of hip
+8122,จริง,Arthrodesis of knee
+8123,จริง,Arthrodesis of shoulder
+8124,จริง,Arthrodesis of elbow
+8125,จริง,Carporadial fusion
+8126,จริง,Metacarpocarpal fusion
+8127,จริง,Metacarpophalangeal fus
+8128,จริง,Interphalangeal fusion
+8129,จริง,Arthrodesis NEC
+813,เท็จ,REFUSION OF SPINE
+8130,จริง,Spinal refusion NOS
+8131,จริง,Refusion of atlas-axis
+8132,จริง,"Refus oth cervcl ant col, ant tech"
+8133,จริง,"Refus oth cerv post col, post tech"
+8134,จริง,"Refus drs/drslmb ant col, ant tech"
+8135,จริง,"Refus drs/drslmb post col, post tech"
+8136,จริง,"Refus lmb/lmbsac ant col, ant tech"
+8137,จริง,"Refus lmb/lmbsac post col, post tech"
+8138,จริง,"Refus lmb/lmbsc ant col, post tech"
+8139,จริง,Refusion of spine NEC
+814,เท็จ,OTH REPAIR JOINT LOW EXT
+8140,จริง,"Repair of hip, NEC"
+8142,จริง,Five-in-one knee repair
+8143,จริง,Triad knee repair
+8144,จริง,Patellar stabilization
+8145,จริง,Cruciate lig repair NEC
+8146,จริง,Collaterl lig repair NEC
+8147,จริง,Other repair of knee
+8149,จริง,Other repair of ankle
+815,เท็จ,JOINT REPL OF LOW EXT
+8151,จริง,Total hip replacement
+8152,จริง,Partial hip replacement
+8153,จริง,Revise hip replacemt NOS
+8154,จริง,Total knee replacement
+8155,จริง,Revise knee replace NOS
+8156,จริง,Total ankle replacement
+8157,จริง,"Repl joint of foot, toe"
+8159,จริง,Rev jt repl low ext NEC
+816,เท็จ,OTHER PROC ON SPINE
+8162,จริง,Fus/refus 2-3 vertebrae
+8163,จริง,Fus/refus 4-8 vertebrae
+8164,จริง,Fus/refus 9 vertebrae
+8165,จริง,Percutan vertebroplasty
+8166,จริง,Percut vertebral augment
+817,เท็จ,ARTHROPLAS HAN/FIN/WRIS
+8171,จริง,Arthroplas metacarp wit
+8172,จริง,Arthroplasty metacar w/o
+8173,จริง,Total wrist replacement
+8174,จริง,Arthroplasty carpal wit
+8175,จริง,Arthroplasty carpal w/o
+8179,จริง,Oth repair han/fin/wris
+818,เท็จ,ARTHROPLASTY SHOUL/ELBOW
+8180,จริง,Other total shoulder replace
+8181,จริง,Partial shoulder replace
+8182,จริง,Rep recur shlder disloc
+8183,จริง,Shoulder arthroplast NEC
+8184,จริง,Total elbow replacement
+8185,จริง,Elbow arthroplasty NEC
+8188,จริง,Revers tot shoulder repl
+819,เท็จ,OTHER JOINT STRUCTURE OP
+8191,จริง,Arthrocentesis
+8192,จริง,Injection into joint
+8193,จริง,Sutur capsul/ligamen arm
+8194,จริง,Suture capsul/lig ank/ft
+8195,จริง,Sutur capsul/lig leg NEC
+8196,จริง,Other repair of joint
+8197,จริง,Rev jt repl upper extrem
+8198,จริง,Other joint dx procedure
+8199,จริง,Joint structure op NEC
+820,เท็จ,INC HAND MUS/TEN/FAS/BUR
+8201,จริง,Explor tend sheath-hand
+8202,จริง,Myotomy of hand
+8203,จริง,Bursotomy of hand
+8204,จริง,I & D palmar/thenar spac+
+8209,จริง,Inc soft tissue hand NEC
+821,เท็จ,DIV HAND MUSC/TEND/FASC
+8211,จริง,Tenotomy of hand
+8212,จริง,Fasciotomy of hand
+8219,จริง,Div soft tissue hand NEC
+822,เท็จ,EXC LES HAND MUS/TEN/FAS
+8221,จริง,Exc les tend sheath hand
+8222,จริง,Excision hand muscle les
+8229,จริง,Exc les sft tiss hnd NEC
+823,เท็จ,OTH EXCIS HAND SOFT TISS
+8231,จริง,Bursectomy of hand
+8232,จริง,Excis hand tend for grft
+8233,จริง,Hand tenonectomy NEC
+8234,จริง,Exc hnd mus/fas for grft
+8235,จริง,Hand fasciectomy NEC
+8236,จริง,Other myectomy of hand
+8239,จริง,Hand soft tissue exc NEC
+824,เท็จ,SUTURE HAND MUS/TEN/FASC
+8241,จริง,Suture tendn sheath hand
+8242,จริง,Delay sut flex tend hand
+8243,จริง,Delay sut hand tend NEC
+8244,จริง,Sutur flex tend hand NEC
+8245,จริง,Suture hand tendon NEC
+8246,จริง,Suture hand muscle/fasc
+825,เท็จ,HAND MUSC/TEND TRANSPLAN
+8251,จริง,Hand tendon advancement
+8252,จริง,Hand tendon recession
+8253,จริง,Hand tendon reattachment
+8254,จริง,Hand muscle reattachment
+8255,จริง,Chng hnd mus/ten lng NEC
+8256,จริง,Transplant hand tend NEC
+8257,จริง,Transposit hand tend NEC
+8258,จริง,Transplant hand musc NEC
+8259,จริง,Transposit hand musc NEC
+826,เท็จ,RECONSTRUCTION OF THUMB
+8261,จริง,Pollicization operation
+8269,จริง,Thumb reconstruction NEC
+827,เท็จ,PLAST OP HAND-GRFT/IMPLA
+8271,จริง,Hand tend pulley reconst
+8272,จริง,Plast op hnd-mus/fas grf
+8279,จริง,Plast op hand w grft NEC
+828,เท็จ,OTHER PLASTIC OPS HAND
+8281,จริง,Transfer of finger
+8282,จริง,Repair of cleft hand
+8283,จริง,Repair of macrodactyly
+8284,จริง,Repair of mallet finger
+8285,จริง,Other tenodesis of hand
+8286,จริง,Other tenoplasty of hand
+8289,จริง,Hand plastic op NEC
+829,เท็จ,OTH HAND MUS/TEN/FAS OPS
+8291,จริง,Lysis of hand adhesions
+8292,จริง,Aspiration bursa of hand
+8293,จริง,Aspir soft tiss hand NEC
+8294,จริง,Inject bursa of hand
+8295,จริง,Inject tendon of hand
+8296,จริง,Hand sft tissu injec NEC
+8299,จริง,Hand mus/ten/fas/ops NEC
+830,เท็จ,INCIS MUS/TEND/FASC/BURS
+8301,จริง,Tendon sheath explorat
+8302,จริง,Myotomy
+8303,จริง,Bursotomy
+8309,จริง,Soft tissue incision NEC
+831,เท็จ,MUSCL/TEND/FASC DIVISION
+8311,จริง,Achillotenotomy
+8312,จริง,Adductor tenotomy of hip
+8313,จริง,Other tenotomy
+8314,จริง,Fasciotomy
+8319,จริง,Soft tissue division NEC
+832,เท็จ,MUS/TEN/FAS/BURS DX PROC
+8321,จริง,Open biopsy soft tissue
+8329,จริง,Soft tissue dx proc NEC
+833,เท็จ,EXC LES MUS/TEN/FAS/BURS
+8331,จริง,Excis les tendon sheath
+8332,จริง,Excis lesion of muscle
+8339,จริง,Exc les soft tissue NEC
+834,เท็จ,OTHER EXCIS MUS/TEN/FASC
+8341,จริง,Tendon excision for grft
+8342,จริง,Other tenonectomy
+8343,จริง,Musc/fasc excis for grft
+8344,จริง,Other fasciectomy
+8345,จริง,Other myectomy
+8349,จริง,Other soft tissue excis
+835,จริง,Bursectomy
+836,เท็จ,SUTURE MUSCL/TENDON/FASC
+8361,จริง,Tendon sheath suture
+8362,จริง,Delayed tendon suture
+8363,จริง,Rotator cuff repair
+8364,จริง,Other suture of tendon
+8365,จริง,Other muscle/fasc suture
+837,เท็จ,MUSCLE/TENDON RECONSTRUC
+8371,จริง,Tendon advancement
+8372,จริง,Tendon recession
+8373,จริง,Tendon reattachment
+8374,จริง,Muscle reattachment
+8375,จริง,Tendon trnsfr/transplant
+8376,จริง,Other tendon transposit
+8377,จริง,Muscle trnsfr/transplant
+8379,จริง,Other muscle transposit
+838,เท็จ,OTH MUS/TEN/FAS PLAST OP
+8381,จริง,Tendon graft
+8382,จริง,Muscle or fascia graft
+8383,จริง,Tendon pulley reconstruc
+8384,จริง,Clubfoot release NEC
+8385,จริง,Musc/tend lng change NEC
+8386,จริง,Quadricepsplasty
+8387,จริง,Other plastic ops muscle
+8388,จริง,Other plastic ops tendon
+8389,จริง,Other plastic ops fascia
+839,เท็จ,OTHER MUS/TEN/FAS/BUR OP
+8391,จริง,Adhesiolysis mus/ten/fas
+8392,จริง,Insert skel musc stimula
+8393,จริง,Remov skel musc stimulat
+8394,จริง,Aspiration of bursa
+8395,จริง,Soft tissue aspirat NEC
+8396,จริง,Injection into bursa
+8397,จริง,Injection into tendon
+8398,จริง,Soft tissue inject NEC
+8399,จริง,Mus/ten/fas/bur op NEC
+840,เท็จ,AMPUTATION OF UPPER LIMB
+8400,จริง,Upper limb amputat NOS
+8401,จริง,Finger amputation
+8402,จริง,Thumb amputation
+8403,จริง,Amputation through hand
+8404,จริง,Disarticulation of wrist
+8405,จริง,Amputation thru forearm
+8406,จริง,Disarticulation of elbow
+8407,จริง,Amputation thru humerus
+8408,จริง,Shoulder disarticulation
+8409,จริง,Forequarter amputation
+841,เท็จ,AMPUTATION OF LOWER LIMB
+8410,จริง,Lower limb amputat NOS
+8411,จริง,Toe amputation
+8412,จริง,Amputation through foot
+8413,จริง,Disarticulation of ankle
+8414,จริง,Amputat through malleoli
+8415,จริง,Below knee amputat NEC
+8416,จริง,Disarticulation of knee
+8417,จริง,Above knee amputation
+8418,จริง,Disarticulation of hip
+8419,จริง,Hindquarter amputation
+842,เท็จ,EXTREMITY REATTACHMENT
+8421,จริง,Thumb reattachment
+8422,จริง,Finger reattachment
+8423,จริง,Forearm/wrist/hand reatt
+8424,จริง,Upper arm reattachment
+8425,จริง,Toe reattachment
+8426,จริง,Foot reattachment
+8427,จริง,Lower leg/ankle reattach
+8428,จริง,Thigh reattachment
+8429,จริง,Reattachment NEC
+843,จริง,Amputation stump revis
+844,เท็จ,IMPLANT/FIT PROSTH LIMB
+8440,จริง,Implnt/fit pros limb NOS
+8441,จริง,Fit up arm/should prosth
+8442,จริง,Fit lo arm/hand prosthes
+8443,จริง,Fit arm prosthesis NOS
+8444,จริง,Implant arm prosthesis
+8445,จริง,Fit above knee prosthes
+8446,จริง,Fit below knee prosthes
+8447,จริง,Fit leg prosthesis NOS
+8448,จริง,Implant leg prosthesis
+845,เท็จ,IMPLANT OTH MS DEV&SUBS
+8451,จริง,Ins spinal fusion device
+8452,จริง,Insert recombinant bmp
+8453,จริง,Imp limb length kinetic
+8454,จริง,Impl other limb length
+8455,จริง,Ins bone void filler
+8456,จริง,Ins or rep cement spacer
+8457,จริง,Removal of cement spacer
+8459,จริง,Insert othr spin device
+846,เท็จ,REPLACMNT OF SPINAL DISC
+8460,จริง,Insert disc pros NOS
+8461,จริง,Ins part disc pros cerv
+8462,จริง,Ins tot disc prost cerv
+8463,จริง,Ins spin disc pros thor
+8464,จริง,Ins part disc pros lumb
+8465,จริง,Ins totl disc pros lumb
+8466,จริง,Revise disc prost cerv
+8467,จริง,Revise disc prost thora
+8468,จริง,Revise disc prosth lumb
+8469,จริง,Revise disc prosth NOS
+847,เท็จ,ADJUNCT EXT FIX DEV
+8471,จริง,App ext fix dev-monoplan
+8472,จริง,App ext fix dev-ring sys
+8473,จริง,App hybrid ext fix dev
+8480,จริง,Ins/repl interspine dev
+8481,จริง,Rev interspine device
+8482,จริง,Ins/repl pdcl stabil dev
+8483,จริง,Rev pedcl dyn stabil dev
+8484,จริง,Ins/repl facet replc dev
+8485,จริง,Rev facet replace device
+849,เท็จ,OTHER MUSCULOSKELETAL OP
+8491,จริง,Amputation NOS
+8492,จริง,Separat equal join twin
+8493,จริง,Separat unequl join twin
+8494,จริง,Ins stern fix dev w rig pl
+8499,จริง,Musculoskeletal op NEC
+850,จริง,Mastotomy
+851,เท็จ,BREAST DIAGNOSTIC PROCS
+8511,จริง,Closed breast biopsy
+8512,จริง,Open breast biopsy
+8519,จริง,Breast dx procedure NEC
+852,เท็จ,BREAST TISSUE DESTRUCT
+8520,จริง,Breast tissu destruc NOS
+8521,จริง,Local excis breast les
+8522,จริง,Quadrant resect breast
+8523,จริง,Subtotal mastectomy
+8524,จริง,Exc ectopic breast tissu
+8525,จริง,Excision of nipple
+853,เท็จ,RED MAMMOPL/SUBQ MAMMECT
+8531,จริง,Unilat reduct mammoplast
+8532,จริง,Bilat reduct mammoplasty
+8533,จริง,Unil subq mammect-implnt
+8534,จริง,Unilat subq mammect NEC
+8535,จริง,Bil subq mammect-implant
+8536,จริง,Bilat subq mammectom NEC
+854,เท็จ,MASTECTOMY
+8541,จริง,Unilat simple mastectomy
+8542,จริง,Bilat simple mastectomy
+8543,จริง,Unilat exten simp mastec
+8544,จริง,Bilat extend simp mastec
+8545,จริง,Unilat radical mastectom
+8546,จริง,Bilat radical mastectomy
+8547,จริง,Unil ext rad mastectomy
+8548,จริง,Bil exten rad mastectomy
+855,เท็จ,AUGMENTATION MAMMOPLASTY
+8550,จริง,Augment mammoplasty NOS
+8551,จริง,Unil breast injec-augmen
+8552,จริง,Bil breast injec-augment
+8553,จริง,Unilat breast implant
+8554,จริง,Bilateral breast implant
+8555,จริง,Fat graft to breast
+856,จริง,Mastopexy
+857,จริง,Total breast reconstruct
+8570,จริง,Tot reconst breast NOS
+8571,จริง,Latiss dorsi myocut flap
+8572,จริง,"TRAM flap, pedicled"
+8573,จริง,"TRAM flap, free"
+8574,จริง,"DIEP flap, free"
+8575,จริง,"SIEA flap, free"
+8576,จริง,"GAP flap, free"
+8579,จริง,Tot reconst breast NEC
+858,เท็จ,OTHER BREAST REPAIR
+8581,จริง,Suture breast laceration
+8582,จริง,Breast split-thick graft
+8583,จริง,Breast full-thick graft
+8584,จริง,Breast pedicle graft
+8585,จริง,Breast muscle flap graft
+8586,จริง,Transposition of nipple
+8587,จริง,Nipple repair NEC
+8589,จริง,Mammoplasty NEC
+859,เท็จ,OTHER BREAST OPERATIONS
+8591,จริง,Aspiration of breast
+8592,จริง,Breast injection
+8593,จริง,Breast implant revision
+8594,จริง,Breast implant removal
+8595,จริง,Inser breast tissu expan
+8596,จริง,Remov breast tissu expan
+8599,จริง,Breast operation NEC
+860,เท็จ,INCISION SKIN & SUBQ
+8601,จริง,Aspiration skin & subq
+8602,จริง,Skin defect tattooing
+8603,จริง,Incision pilonidal sinus
+8604,จริง,Other skin & subq I&D
+8605,จริง,Removal fb/dev from skin
+8606,จริง,Insert infusion pump
+8607,จริง,Insert vasc access dev
+8609,จริง,Skin & subq incision NEC
+861,เท็จ,SKIN & SUBQ DIAGNOS PROC
+8611,จริง,Closed bx skin/subcut tiss
+8619,จริง,Skin & subq dx proc NEC
+862,เท็จ,DESTRUCT OF SKIN LESION
+8621,จริง,Excision of pilonid cyst
+8622,จริง,Exc wound debridement
+8623,จริง,Nail removal
+8624,จริง,Skin chemosurgery
+8625,จริง,Dermabrasion
+8626,จริง,Ligation dermal appendag
+8627,จริง,Debridement of nail
+8628,จริง,Nonexcis debridement wnd
+863,จริง,Other local destruc skin
+864,จริง,Radical excis skin les
+865,เท็จ,SKIN & SUBQ SUTURE
+8651,จริง,Replantation of scalp
+8659,จริง,Skin closure NEC
+866,เท็จ,FREE SKIN GRAFT
+8660,จริง,Free skin graft NOS
+8661,จริง,Full-thick hand skin grf
+8662,จริง,Hand skin graft NEC
+8663,จริง,Full-thick skin grft NEC
+8664,จริง,Hair transplant
+8665,จริง,Heterograft to skin
+8666,จริง,Homograft to skin
+8667,จริง,Dermal regener graft
+8669,จริง,Free skin graft NEC
+867,เท็จ,PEDICLE GRAFTS OR FLAPS
+8670,จริง,Pedicle graft/flap NOS
+8671,จริง,Cut & prep pedicle graft
+8672,จริง,Pedicle graft advancemen
+8673,จริง,Attach pedicle to hand
+8674,จริง,Attach pedicle graft NEC
+8675,จริง,Revision of pedicle grft
+868,เท็จ,OTHER SKIN & SUBQ REPAIR
+8681,จริง,Repair facial weakness
+8682,จริง,Facial rhytidectomy
+8683,จริง,Size reduct plastic op
+8684,จริง,Relaxation of scar
+8685,จริง,Syndactyly correction
+8686,จริง,Onychoplasty
+8687,จริง,Fat graft skin&subcut tis
+8689,จริง,Skin repair & plasty NEC
+869,เท็จ,OTHER SKIN & SUBQ OPS
+8690,จริง,Extract fat for graft/bank
+8691,จริง,Skin excision for graft
+8692,จริง,Epilation of skin
+8693,จริง,Insert tissue expander
+8694,จริง,Ins/repl single pul gen
+8695,จริง,"Ins/repl mul array pulse gen, not spec"
+8696,จริง,Insert/repl oth neurost
+8697,จริง,"Ins/rep 1 pul gen,rechrg"
+8698,จริง,Ins/repl mul array rechrg pulse gen
+8699,จริง,Skin & subq op NEC
+870,เท็จ,HEAD/NECK SOFT TISS XRAY
+8701,จริง,Pneumoencephalogram
+8702,จริง,Brain/skull contrst xray
+8703,จริง,CT of head
+8704,จริง,Head tomography NEC
+8705,จริง,Contrast dacryocystogram
+8706,จริง,Nasophary contrast x-ray
+8707,จริง,Contrast laryngogram
+8708,จริง,Cervical lymphangiogram
+8709,จริง,Head soft tiss x-ray NEC
+871,เท็จ,OTHER HEAD/NECK X-RAY
+8711,จริง,Full-mouth x-ray
+8712,จริง,Dental x-ray NEC
+8713,จริง,TM contrast arthrogram
+8714,จริง,Contrast x-ray of orbit
+8715,จริง,Contrast x-ray of sinus
+8716,จริง,Facial bone x-ray NEC
+8717,จริง,Skull x-ray NEC
+872,เท็จ,X-RAY OF SPINE
+8721,จริง,Contrast myelogram
+8722,จริง,Cervical spine x-ray NEC
+8723,จริง,Thoracic spine x-ray NEC
+8724,จริง,Lumbosac spine x-ray NEC
+8729,จริง,Spinal x-ray NEC
+873,เท็จ,THORAX SOFT TISSUE X-RAY
+8731,จริง,Endotracheal bronchogram
+8732,จริง,Contrast bronchogram NEC
+8733,จริง,Mediastinal pneumogram
+8734,จริง,Intrathor lymphangiogram
+8735,จริง,Contr mammary ductogram
+8736,จริง,Breast xerography
+8737,จริง,Mammography NEC
+8738,จริง,Chest wall sinogram
+8739,จริง,Thorax sft tiss xray NEC
+874,เท็จ,OTHER X-RAY OF THORAX
+8741,จริง,CT of thorax
+8742,จริง,Thoracic tomography NEC
+8743,จริง,Rib/sternum/clavic x-ray
+8744,จริง,Routine chest x-ray
+8749,จริง,Chest x-ray NEC
+875,เท็จ,BILIARY TRACT X-RAY
+8751,จริง,Perc hepat cholangiogram
+8752,จริง,Intraven cholangiogram
+8753,จริง,Intraoper cholangiogram
+8754,จริง,Cholangiogram NEC
+8759,จริง,Biliary tract x-ray NEC
+876,เท็จ,OTHER DIGESTIVE SYS XRAY
+8761,จริง,Barium swallow
+8762,จริง,Upper GI series
+8763,จริง,Small bowel series
+8764,จริง,Lower GI series
+8765,จริง,Intestinal x-ray NEC
+8766,จริง,Contrast pancreatogram
+8769,จริง,Digestive tract xray NEC
+877,เท็จ,X-RAY OF URINARY SYSTEM
+8771,จริง,CT of kidney
+8772,จริง,Nephrotomogram NEC
+8773,จริง,Intravenous pyelogram
+8774,จริง,Retrograde pyelogram
+8775,จริง,Percutaneous pyelogram
+8776,จริง,Retrogr cystourethrogram
+8777,จริง,Cystogram NEC
+8778,จริง,Ileal conduitogram
+8779,จริง,Urinary system x-ray NEC
+878,เท็จ,FEMALE GENITAL X-RAY
+8781,จริง,X-ray of gravid uterus
+8782,จริง,Gas hysterosalpingogram
+8783,จริง,Dye hysterosalpingogram
+8784,จริง,Percutaneous hysterogram
+8785,จริง,Tube & uterus x-ray NEC
+8789,จริง,Female genital x-ray NEC
+879,เท็จ,MALE GENITAL X-RAY
+8791,จริง,Contr semin vesiculogram
+8792,จริง,Prostat/sem ves xray NEC
+8793,จริง,Contrast epididymogram
+8794,จริง,Contrast vasogram
+8795,จริง,Epididymis/vas x-ray NEC
+8799,จริง,Male genital x-ray NEC
+880,เท็จ,SOFT TISSUE X-RAY ABDOM
+8801,จริง,CT of abdomen
+8802,จริง,Abdominal tomography NEC
+8803,จริง,Abdominal wall sinogram
+8804,จริง,Abdominal lymphangiogram
+8809,จริง,Abdominal wall x-ray NEC
+881,เท็จ,OTHER X-RAY OF ABDOMEN
+8811,จริง,Pelvic dye contrast xray
+8812,จริง,Pelvic gas contrast xray
+8813,จริง,Periton pneumogram NEC
+8814,จริง,Retroperiton fistulogram
+8815,จริง,Retroperiton pneumogram
+8816,จริง,Retroperitoneal xray NEC
+8819,จริง,Abdominal x-ray NEC
+882,เท็จ,SKEL XRAY-LIMBS & PELVIS
+8821,จริง,Skl xray-shoulder/up arm
+8822,จริง,Skel xray-elbow/forearm
+8823,จริง,Skel xray-wrist & hand
+8824,จริง,Skel xray-upper limb NOS
+8825,จริง,Pelvimetry
+8826,จริง,Skel xray-pelvis/hip NEC
+8827,จริง,Skel xray-thigh/knee/leg
+8828,จริง,Skel xray-ankle & foot
+8829,จริง,Skel xray-lower limb NOS
+883,เท็จ,OTHER X-RAY
+8831,จริง,Skeletal series x-ray
+8832,จริง,Contrast arthrogram
+8833,จริง,Other skeletal x-ray
+8834,จริง,Upper limb lymphangiogrm
+8835,จริง,Up limb sft tis xray NEC
+8836,จริง,Lower limb lymphangiogrm
+8837,จริง,Lo limb sft tis xray NEC
+8838,จริง,Other computed tomography
+8839,จริง,X-ray NEC and NOS
+884,เท็จ,CONTRAST ARTERIOGRAPHY
+8840,จริง,Contrast arteriogram NOS
+8841,จริง,Contr cerebr arteriogram
+8842,จริง,Contrast aortogram
+8843,จริง,Contr pulmon arteriogram
+8844,จริง,Contr thor arteriogr NEC
+8845,จริง,Contrast renal arteriogr
+8846,จริง,Contrast placentogram
+8847,จริง,Contr abd arteriogrm NEC
+8848,จริง,Contrast arteriogram-leg
+8849,จริง,Contrast arteriogram NEC
+885,เท็จ,CONTRAST ANGIOCARDIOGRAM
+8850,จริง,Angiocardiography NOS
+8851,จริง,Vena cav angiocardiogram
+8852,จริง,Rt heart angiocardiogram
+8853,จริง,Lt heart angiocardiogram
+8854,จริง,Rt & lt heart angiocard
+8855,จริง,Coronar arteriogr-1 cath
+8856,จริง,Coronar arteriogr-2 cath
+8857,จริง,Coronary arteriogram NEC
+8858,จริง,Negatve-contr cardiogram
+8859,จริง,Intraop cor flr vas angiography
+886,เท็จ,PHLEBOGRAPHY
+8860,จริง,Contrast phlebogram NOS
+8861,จริง,Contr phlebogram-hd/neck
+8862,จริง,Contr phlebogram-pulmon
+8863,จริง,Thorac contr phlebog NEC
+8864,จริง,Portal contr phlebogram
+8865,จริง,Abd contr phlebogram NEC
+8866,จริง,Contrast phlebogram-leg
+8867,จริง,Contrast phlebogram NEC
+8868,จริง,Impedance phlebogram
+887,เท็จ,DIAGNOSTIC ULTRASOUND
+8871,จริง,Dx ultrasound-head/neck
+8872,จริง,Dx ultrasound-heart
+8873,จริง,Dx ultrasound-thorax NEC
+8874,จริง,Dx ultrasound-digestive
+8875,จริง,Dx ultrasound-urinary
+8876,จริง,Dx ultrasound-abdomen
+8877,จริง,Dx ultrasound-vascular
+8878,จริง,Dx ultrasound-grav uter
+8879,จริง,Dx ultrasound NEC
+888,เท็จ,THERMOGRAPHY
+8881,จริง,Cerebral thermography
+8882,จริง,Ocular thermography
+8883,จริง,Bone thermography
+8884,จริง,Muscle thermography
+8885,จริง,Breast thermography
+8886,จริง,Blood vessel thermograph
+8889,จริง,Thermography NEC
+889,เท็จ,OTHER DIAGNOSTIC IMAGING
+8890,จริง,Diagnostic imaging NOS
+8891,จริง,Mri of brain & brainstem
+8892,จริง,Mri chest & heart
+8893,จริง,Mri spinal canal
+8894,จริง,Mri musculoskeletal
+8895,จริง,"Mri pelvis,prostate,blad"
+8896,จริง,Oth intraop mag res imag
+8897,จริง,Magnetic res image unsp
+8898,จริง,Bone mineral density
+890,เท็จ,DX INTERVIEW/CONSUL/EXAM
+8901,จริง,Brief interview & evalua
+8902,จริง,Limited interview/evalua
+8903,จริง,Comprehen interview/eval
+8904,จริง,Interview & evaluat NEC
+8905,จริง,Interview & evaluat NOS
+8906,จริง,Limited consultation
+8907,จริง,Comprehensive consultat
+8908,จริง,Consultation NEC
+8909,จริง,Consultation NOS
+891,เท็จ,NERVOUS SYS-EXAMINATION
+8910,จริง,Intracarot amobarb test
+8911,จริง,Tonometry
+8912,จริง,Nasal function study
+8913,จริง,Neurologic examination
+8914,จริง,Electroencephalogram
+8915,จริง,Neurologic func test NEC
+8916,จริง,Skull transilluminat
+8917,จริง,Polysomnogram
+8918,จริง,Oth sleep dis funct test
+8919,จริง,Video/radio eeg monitor
+892,เท็จ,GU SYSTEM-EXAMINATION
+8921,จริง,Urinary manometry
+8922,จริง,Cystometrogram
+8923,จริง,Urethral sphincter emg
+8924,จริง,Uroflowmetry
+8925,จริง,Urethral pressure profil
+8926,จริง,Gynecologic examination
+8929,จริง,Other GU system exams
+893,เท็จ,OTHER EXAMINATIONS
+8931,จริง,Dental examination
+8932,จริง,Esophageal manometry
+8933,จริง,Digital enterostomy exam
+8934,จริง,Digital rectal exam
+8935,จริง,Nasal sinus transillumin
+8936,จริง,Manual exam of breast
+8937,จริง,Vital capacity determin
+8938,จริง,Respiratory measure NEC
+8939,จริง,Nonoperative exams NEC
+894,เท็จ,PACEMKR/CARD STRESS TEST
+8941,จริง,Treadmill stress test
+8942,จริง,Masters' 2-step test
+8943,จริง,Bicycle ergometer test
+8944,จริง,Cardiac stress test NEC
+8945,จริง,Pacemaker rate check
+8946,จริง,Pacemaker wave form chck
+8947,จริง,Pacemaker impedance chck
+8948,จริง,Pacemaker volt threshold
+8949,จริง,Aicd check
+895,เท็จ,OTHER CARDIAC FUNCT TEST
+8950,จริง,Ambu cardiac monitoring
+8951,จริง,Rhythm electrocardiogram
+8952,จริง,Electrocardiogram
+8953,จริง,Vectorcardiogram
+8954,จริง,Electrocardiograph monit
+8955,จริง,Phonocardiogram
+8956,จริง,Carotid pulse tracing
+8957,จริง,Apexcardiogram
+8958,จริง,Plethysmogram
+8959,จริง,Nonop cardiac/vasc exam
+896,เท็จ,CIRCULATORY MONITORING
+8960,จริง,Cnt intraart bld gas mon
+8961,จริง,Arterial pressure monit
+8962,จริง,CVP monitoring
+8963,จริง,Pulmon art press monitor
+8964,จริง,Pulmon art wedge monitor
+8965,จริง,Arterial bld gas measure
+8966,จริง,Mix venous bld gas meas
+8967,จริง,Oxygen consumption monit
+8968,จริง,Oth cardiac mon output
+8969,จริง,Coronary bld flow monit
+897,จริง,General physical exam
+898,จริง,Autopsy
+900,เท็จ,MICRO EXAM-NERVOUS SYST
+9001,จริง,Bact smear-nervous syst
+9002,จริง,Culture-nervous syst
+9003,จริง,C&S-nervous syst
+9004,จริง,Parasitology-nerv syst
+9005,จริง,Toxicology-nervous syst
+9006,จริง,Cell blk/pap-nervous sys
+9009,จริง,Micro exam-nervous NEC
+901,เท็จ,MICRO EXAM-ENDOCRINE
+9011,จริง,Bact smear-endocrine
+9012,จริง,Culture-endocrine
+9013,จริง,C&S-endocrine
+9014,จริง,Parasitology-endocrine
+9015,จริง,Toxicology-endocrine
+9016,จริง,Cell block/pap-endocrine
+9019,จริง,Micro exam-endocrine NEC
+902,เท็จ,MICRO EXAM-EYE
+9021,จริง,Bact smear-eye
+9022,จริง,Culture-eye
+9023,จริง,C&S-eye
+9024,จริง,Parasitology-eye
+9025,จริง,Toxicology-eye
+9026,จริง,Cell block/pap-eye
+9029,จริง,Micro exam-eye NEC
+903,เท็จ,MICRO EXAM-ENT/LARYNX
+9031,จริง,Bact smear-ent/larynx
+9032,จริง,Culture-ent/larynx
+9033,จริง,C&S-ent/larynx
+9034,จริง,Parasitology-ent/larynx
+9035,จริง,Toxicology-ent/larynx
+9036,จริง,Cell block/pap-ent/laryn
+9039,จริง,Micro exam-ent/laryn NEC
+904,เท็จ,MICRO EXAM-LOWER RESP
+9041,จริง,Bact smear-lower resp
+9042,จริง,Culture-lower resp
+9043,จริง,C&S-lower resp
+9044,จริง,Parasitology-lower resp
+9045,จริง,Toxicology-lower resp
+9046,จริง,Cell block/pap-lowr resp
+9049,จริง,Micro exam-lowr resp NEC
+905,เท็จ,MICRO EXAM-BLOOD
+9051,จริง,Bact smear-blood
+9052,จริง,Culture-blood
+9053,จริง,C&S-blood
+9054,จริง,Parasitology-blood
+9055,จริง,Toxicology-blood
+9056,จริง,Cell block/pap-blood
+9059,จริง,Micro exam-blood NEC
+906,เท็จ,MICRO EXAM-SPLEEN/MARROW
+9061,จริง,Bact smear-spleen/marrow
+9062,จริง,Culture-spleen/marrow
+9063,จริง,C&S-spleen/marrow
+9064,จริง,Parasitol-spleen/marrow
+9065,จริง,Toxicology-spleen/marrow
+9066,จริง,Cell blk/pap-spleen/marr
+9069,จริง,Micro exam-spln/marr NEC
+907,เท็จ,MICRO EXAM-LYMPH SYSTEM
+9071,จริง,Bact smear-lymph system
+9072,จริง,Culture-lymph system
+9073,จริง,C&S-lymph system
+9074,จริง,Parasitology-lymph sys
+9075,จริง,Toxicology-lymph system
+9076,จริง,Cell blk/pap-lymph sys
+9079,จริง,Micro exam-lymph sys NEC
+908,เท็จ,MICRO EXAM-UPPER GI
+9081,จริง,Bact smear-upper GI
+9082,จริง,Culture-upper GI
+9083,จริง,C&S-upper GI
+9084,จริง,Parasitology-upper GI
+9085,จริง,Toxicology-upper GI
+9086,จริง,Cell blk/pap-upper GI
+9089,จริง,Micro exam-upper GI NEC
+909,เท็จ,MICRO EXAM-LOWER GI
+9091,จริง,Bact smear-lower GI
+9092,จริง,Culture-lower GI
+9093,จริง,C&S-lower GI
+9094,จริง,Parasitology-lower GI
+9095,จริง,Toxicology-lower GI
+9096,จริง,Cell blk/pap-lower GI
+9099,จริง,Micro exam-lower GI NEC
+910,เท็จ,MICRO EXAM-BILI/PANCREAS
+9101,จริง,Bact smear-bili/pancreas
+9102,จริง,Culture-bili/pancreas
+9103,จริง,C&S-bili/pancreas
+9104,จริง,Parasitology-bili/pancr
+9105,จริง,Toxicology-bili/pancreas
+9106,จริง,Cell blk/pap-bili/pancre
+9109,จริง,Micro exam-bili/panc NEC
+911,เท็จ,MICRO EXAM-PERITONEUM
+9111,จริง,Bact smear-peritoneum
+9112,จริง,Culture-peritoneum
+9113,จริง,C&S-peritoneum
+9114,จริง,Parasitology-peritoneum
+9115,จริง,Toxicology-peritoneum
+9116,จริง,Cell blk/pap-peritoneum
+9119,จริง,Micro exam-periton NEC
+912,เท็จ,MICRO EXAM-UPPER URINARY
+9121,จริง,Bact smear-upper urinary
+9122,จริง,Culture-upper urinary
+9123,จริง,C&S-upper urinary
+9124,จริง,Parasitology-upper urin
+9125,จริง,Toxicology-upper urinary
+9126,จริง,Cell blk/pap-upper urin
+9129,จริง,Micro exam-uppr urin NEC
+913,เท็จ,MICRO EXAM-LOWER URINARY
+9131,จริง,Bact smear-lower urinary
+9132,จริง,Culture-lower urinary
+9133,จริง,C&S-lower urinary
+9134,จริง,Parasitlolgy-lower urin
+9135,จริง,Toxicology-lower urinary
+9136,จริง,Cell blk/pap-lower urin
+9139,จริง,Micro exam-low urin NEC
+914,เท็จ,MICRO EXAM-FEMALE GENIT
+9141,จริง,Bact smear-female genit
+9142,จริง,Culture-female genital
+9143,จริง,C&S-female genital
+9144,จริง,Parasitology-female gen
+9145,จริง,Toxicology-female genit
+9146,จริง,Cell blk/pap-female gen
+9149,จริง,Micro exam-femal gen NEC
+915,เท็จ,MICRO EXAM-MUSCULOSKEL
+9151,จริง,Bact smear-musculoskel
+9152,จริง,Culture-musculoskeletal
+9153,จริง,C&S-musculoskeletal
+9154,จริง,Parasitology-musculoskel
+9155,จริง,Toxicology-musculoskel
+9156,จริง,Cell blk/pap-musculoskel
+9159,จริง,Micro exam-musculosk NEC
+916,เท็จ,MICRO EXAM-INTEGUMENT
+9161,จริง,Bact smear-integument
+9162,จริง,Culture-integument
+9163,จริง,C&S-integument
+9164,จริง,Parasitology-integument
+9165,จริง,Toxicology-integument
+9166,จริง,Cell blk/pap-integument
+9169,จริง,Micro exam-integumen NEC
+917,เท็จ,MICRO EXAM-OP WOUND
+9171,จริง,Bact smear-op wound
+9172,จริง,Culture-op wound
+9173,จริง,C&S-op wound
+9174,จริง,Parasitology-op wound
+9175,จริง,Toxicology-op wound
+9176,จริง,Cell blk/pap-op wound
+9179,จริง,Micro exam-op wound NEC
+918,เท็จ,MICRO EXAM NEC
+9181,จริง,Bact smear NEC
+9182,จริง,Culture NEC
+9183,จริง,C&S NEC
+9184,จริง,Parasitology NEC
+9185,จริง,Toxicology NEC
+9186,จริง,Cell blk/pap NEC
+9189,จริง,Micro exam NEC
+919,เท็จ,MICRO EXAM NOS
+9191,จริง,Bact smear NOS
+9192,จริง,Culture NOS
+9193,จริง,C&S NOS
+9194,จริง,Parasitology NOS
+9195,จริง,Toxicology NOS
+9196,จริง,Cell blk/pap NOS
+9199,จริง,Micro exam NOS
+920,เท็จ,ISOTOPE SCAN & FUNCTION
+9201,จริง,Thyroid scan/isotop func
+9202,จริง,Liver scan/isotope funct
+9203,จริง,Renal scan/isotope funct
+9204,จริง,Gi scan & isotope funct
+9205,จริง,C-vasc scan/isotop funct
+9209,จริง,Other isotope function
+921,เท็จ,OTHER RADIOISOTOPE SCAN
+9211,จริง,Cerebral scan
+9212,จริง,Head scan NEC
+9213,จริง,Parathyroid scan
+9214,จริง,Bone scan
+9215,จริง,Pulmonary scan
+9216,จริง,Lymphatic system scan
+9217,จริง,Placental scan
+9218,จริง,Total body scan
+9219,จริง,Scan of other sites
+922,เท็จ,THERAP RADIOL & NUCL MED
+9220,จริง,Inf liquid brachy isotop
+9221,จริง,Superficial radiation
+9222,จริง,Orthovoltage radiation
+9223,จริง,Radioisot teleradiother
+9224,จริง,Teleradio using photons
+9225,จริง,Electron teleradiotherap
+9226,จริง,Particul teleradioth NEC
+9227,จริง,Radioactive elem implant
+9228,จริง,Isotope inject/instill
+9229,จริง,Radiotherapeut proc NEC
+923,เท็จ,STEREOTACT RADIOSURGERY
+9230,จริง,Stereo radiosurgery NOS
+9231,จริง,Sing source radiosurgery
+9232,จริง,Multisource radiosurgery
+9233,จริง,Particulate radiosurgery
+9239,จริง,Stereo radiosurgery NEC
+9241,จริง,Intra-op electron rad rx
+930,เท็จ,DIAGNOSTIC PHYSICAL THER
+9301,จริง,Functional PT evaluation
+9302,จริง,Orthotic evaluation
+9303,จริง,Prosthetic evaluation
+9304,จริง,Manual muscle funct test
+9305,จริง,Range of motion testing
+9306,จริง,Limb length measurement
+9307,จริง,Body measurement
+9308,จริง,Electromyography
+9309,จริง,Other dx PT procedure
+931,เท็จ,PHYS THERAPY EXERCISES
+9311,จริง,Assisting exercise
+9312,จริง,Activ musculosk exer NEC
+9313,จริง,Resistive exercise
+9314,จริง,Joint movement training
+9315,จริง,Mobilization of spine
+9316,จริง,Other joint mobilization
+9317,จริง,Pass musculosk exer NEC
+9318,จริง,Pt breathing exercise
+9319,จริง,Pt exercise NEC
+932,เท็จ,OTH PT MUSCULOSKEL MANIP
+9321,จริง,Manual & mechan traction
+9322,จริง,Ambulat & gait training
+9323,จริง,Orthotic device fitting
+9324,จริง,Prosthet/orthot training
+9325,จริง,Forced limb extension
+9326,จริง,Manual rupt joint adhes
+9327,จริง,Musc or tend stretching
+9328,จริง,Stretching of fascia
+9329,จริง,Forcib correct defor NEC
+933,เท็จ,OTHER PT THERAPEUT PROCS
+9331,จริง,Assisted pool exercise
+9332,จริง,Whirlpool treatment
+9333,จริง,Other hydrotherapy
+9334,จริง,Diathermy
+9335,จริง,Other heat therapy
+9336,จริง,Cardiac retraining
+9337,จริง,Prenatal training
+9338,จริง,Combined PT NOS
+9339,จริง,Physical therapy NEC
+934,เท็จ,SKELETAL & OTH TRACTION
+9341,จริง,Spine tract w skull dev
+9342,จริง,Other spinal traction
+9343,จริง,Intermitt skel traction
+9344,จริง,Other skeletal traction
+9345,จริง,Thomas' splint traction
+9346,จริง,Limb skin traction NEC
+935,เท็จ,OTH IMMOBILIZ/WOUND ATTN
+9351,จริง,Plaster jacket applicat
+9352,จริง,Neck support application
+9353,จริง,Other cast application
+9354,จริง,Application of splint
+9355,จริง,Dental wiring
+9356,จริง,Pressure dressing applic
+9357,จริง,Dressing of wound NEC
+9358,จริง,Pressure trouser applica
+9359,จริง,Immobiliz/wound attn NEC
+936,เท็จ,OSTEOPATHIC MANIPULATION
+9361,จริง,OMT for gen'l mobilizat
+9362,จริง,"OMT with hi-vel,lo-ampli"
+9363,จริง,"OMT with lo-vel,hi-ampli"
+9364,จริง,"OMT with isoton,isometri"
+9365,จริง,OMT with indirect forces
+9366,จริง,OMT to move tissue fluid
+9367,จริง,Osteopath manipulat NEC
+937,เท็จ,SPEECH/READ/BLIND REHAB
+9371,จริง,Dyslexia training
+9372,จริง,Dysphasia training
+9373,จริง,Esophag speech training
+9374,จริง,Speech defect training
+9375,จริง,Other speech therapy
+9376,จริง,Training in lead dog use
+9377,จริง,Braille or moon training
+9378,จริง,Rehab for the blind NEC
+938,เท็จ,OTHER REHAB THERAPY
+9381,จริง,Recreational therapy
+9382,จริง,Educational therapy
+9383,จริง,Occupational therapy
+9384,จริง,Music therapy
+9385,จริง,Vocational rehabilitat
+9389,จริง,Rehabilitation NEC
+939,เท็จ,RESPIRATORY THERAPY
+9390,จริง,Non-invasive mech vent
+9391,จริง,IPPB
+9393,จริง,Nonmechan resuscitation
+9394,จริง,Nebulizer therapy
+9395,จริง,Hyperbaric oxygenation
+9396,จริง,Oxygen enrichment NEC
+9397,จริง,Decompression chamber
+9398,จริง,Atmos press/compos contr
+9399,จริง,Other resp procedures
+940,เท็จ,PSYCHOLOG EVAL & TESTING
+9401,จริง,Intelligence test admin
+9402,จริง,Psychologic test adminis
+9403,จริง,Character analysis
+9408,จริง,Psychol eval & test NEC
+9409,จริง,Psychol mental stat NOS
+941,เท็จ,PSYCHIATRIC EVAL/CONSULT
+9411,จริง,Psychiat mental determin
+9412,จริง,Routine psychiat visit
+9413,จริง,Psychia commitment eval
+9419,จริง,Psychia interv/eval NEC
+942,เท็จ,PSYCHIATRIC SOMATOTHERAP
+9421,จริง,Narcoanalysis
+9422,จริง,Lithium therapy
+9423,จริง,Neuroleptic therapy
+9424,จริง,Chemical shock therapy
+9425,จริง,Psychiat drug therap NEC
+9426,จริง,Subconvulsive EST
+9427,จริง,Other electroshock therapy
+9429,จริง,Psychiatr somatother NEC
+943,เท็จ,INDIVIDUAL PSYCHOTHERAPY
+9431,จริง,Psychoanalysis
+9432,จริง,Hypnotherapy
+9433,จริง,Behavior therapy
+9434,จริง,Ind therap psychsex dysf
+9435,จริง,Crisis intervention
+9436,จริง,Play psychotherapy
+9437,จริง,Explor verbal psychother
+9438,จริง,Suppor verbal psychother
+9439,จริง,Individ psychotherap NEC
+944,เท็จ,OTH PSYCHOTH/COUNSELLING
+9441,จริง,Grp therap psychsex dysf
+9442,จริง,Family therapy
+9443,จริง,Psychodrama
+9444,จริง,Other group therapy
+9445,จริง,Drug addict counselling
+9446,จริง,Alcoholism counselling
+9449,จริง,Other counselling
+945,เท็จ,PSYCHOLOGIC REHAB REFERR
+9451,จริง,Referral for psychother
+9452,จริง,Referral psych aftercare
+9453,จริง,Referral alcohol rehab
+9454,จริง,Referral for drug rehab
+9455,จริง,Referral vocation rehab
+9459,จริง,Referral psych rehab NEC
+946,เท็จ,ALCOHOL/DRUG REHAB/DETOX
+9461,จริง,Alcohol rehabilitation
+9462,จริง,Alcohol detoxification
+9463,จริง,Alcohol rehab/detox
+9464,จริง,Drug rehabilitation
+9465,จริง,Drug detoxification
+9466,จริง,Drug rehab/detox
+9467,จริง,Comb alcohol/drug rehab
+9468,จริง,Comb alcohol/drug detox
+9469,จริง,Comb alco/drug reha/deto
+950,เท็จ,GEN'L & SUBJECT EYE EXAM
+9501,จริง,Limited eye examination
+9502,จริง,Comprehensive eye exam
+9503,จริง,Extended ophthal work-up
+9504,จริง,Anesthetized eye exam
+9505,จริง,Visual field study
+9506,จริง,Color vision study
+9507,จริง,Dark adaptation study
+9509,จริง,Eye examination NOS
+951,เท็จ,FORM & STRUCTUR EYE EXAM
+9511,จริง,Fundus photography
+9512,จริง,Eye fluorescein angiogra
+9513,จริง,Ultrasound study of eye
+9514,จริง,X-ray study of eye
+9515,จริง,Ocular motility study
+9516,จริง,P32 & eye tracer NEC
+952,เท็จ,OBJECTV FUNCT EYE TESTS
+9521,จริง,Electroretinogram
+9522,จริง,Electro-oculogram
+9523,จริง,Visual evoked potential
+9524,จริง,Electronystagmogram
+9525,จริง,Electromyogram of eye
+9526,จริง,Glaucoma testing
+953,เท็จ,SPECIAL VISION SERVICES
+9531,จริง,Spectacle fit & dispense
+9532,จริง,Perscr/fit/disp contacts
+9533,จริง,Oth lo vision aid dispen
+9534,จริง,Ocular prosthetics
+9535,จริง,Orthoptic training
+9536,จริง,Ophth counsel & instruct
+954,เท็จ,NON-OP HEARING PROCEDURE
+9541,จริง,Audiometry
+9542,จริง,Clinical hearing test
+9543,จริง,Audiological evaluation
+9544,จริง,Clin vestibul funct test
+9545,จริง,Rotation tests
+9546,จริง,Audit & vestib test NEC
+9547,จริง,Hearing examination NOS
+9548,จริง,Fitting of hearing aid
+9549,จริง,Non-op hearing proc NEC
+960,เท็จ,NON-OP GI & RESP INTUBAT
+9601,จริง,Insert nasopharyn airway
+9602,จริง,Insert oropharyn airway
+9603,จริง,Insert esoph obtu airway
+9604,จริง,Insert endotracheal tube
+9605,จริง,Resp tract intubat NEC
+9606,จริง,Insert sengstaken tube
+9607,จริง,Insert gastric tube NEC
+9608,จริง,Insert intestinal tube
+9609,จริง,Insert rectal tube
+961,เท็จ,OTHER NON-OP INSERTION
+9611,จริง,Pack ext auditory canal
+9614,จริง,Vaginal packing
+9615,จริง,Vaginal mold insertion
+9616,จริง,Other vaginal dilation
+9617,จริง,Vag diaphragm insertion
+9618,จริง,Oth vagin pessary insert
+9619,จริง,Rectal packing
+962,เท็จ,NON-OP DILATION & MANIP
+9621,จริง,Dilat frontonasal duct
+9622,จริง,Dilation of rectum
+9623,จริง,Dilation anal sphincter
+9624,จริง,Dilat enterostomy stoma
+9625,จริง,Therapeut distent bladd
+9626,จริง,Manual reduc rect prolap
+9627,จริง,Manual reduction hernia
+9628,จริง,Manl reduct stoma prolap
+9629,จริง,Reduct intuss ali tract
+963,เท็จ,NON-OP GI IRRIG & INSTIL
+9631,จริง,Gastric cooling
+9632,จริง,Gastric freezing
+9633,จริง,Gastric lavage
+9634,จริง,Gastric tube irrigat NEC
+9635,จริง,Gastric gavage
+9636,จริง,Gi ostomy irrigation
+9637,จริง,Proctoclysis
+9638,จริง,Impacted feces removal
+9639,จริง,Other transanal enema
+964,เท็จ,DIGEST & GU IRRIG/INSTIL
+9641,จริง,Biliary tube irrigation
+9642,จริง,Pancreatic tube irrigat
+9643,จริง,Gi tract instillat NEC
+9644,จริง,Vaginal douche
+9645,จริง,Nephrost/pyelost irrigat
+9646,จริง,Urterost/urete cth irrig
+9647,จริง,Cystostomy irrigation
+9648,จริง,Indwell cath irrig NEC
+9649,จริง,Other GU instillation
+965,เท็จ,OTHER NON-OP IRRIGATION
+9651,จริง,Irrigation of eye
+9652,จริง,Irrigation of ear
+9653,จริง,Irrigation of nasal pass
+9654,จริง,Dental scaling & debride
+9655,จริง,Tracheostomy toilette
+9656,จริง,Bronch/trach lavage NEC
+9657,จริง,Vascular cath irrigation
+9658,จริง,Wound catheter irrigat
+9659,จริง,Wound irrigation NEC
+966,จริง,Entral infus nutrit sub
+967,เท็จ,CONT MECH VENT
+9670,จริง,Cont mech vent-unspc dur
+9671,จริง,Cont mech vent < 96 hrs
+9672,จริง,Cont mech vent 96+ hrs
+970,เท็จ,GI APPLIANCE REPLACEMENT
+9701,จริง,Replace gast/esoph tube
+9702,จริง,Replace gastrostomy tube
+9703,จริง,Replace small bowel tube
+9704,จริง,Replace large bowel tube
+9705,จริง,Repl stent in bile duct
+971,เท็จ,REPLAC MUSCSKEL APPLIANC
+9711,จริง,Replace upper limb cast
+9712,จริง,Replace lower limb cast
+9713,จริง,Replace cast NEC
+9714,จริง,Replac M/S immob dev NEC
+9715,จริง,Replace wound catheter
+9716,จริง,Replace wound pack/drain
+972,เท็จ,OTHER NON-OP REPLACEMENT
+9721,จริง,Replace nasal packing
+9722,จริง,Replace dental packing
+9723,จริง,Replace trach tube
+9724,จริง,Replace vag diaphragm
+9725,จริง,Replace vaginal pessary
+9726,จริง,Replace vag/vulv packing
+9729,จริง,Non-op replacement NEC
+973,เท็จ,REMOV THERAP DEVICE-HEAD
+9731,จริง,Remove eye prosthesis
+9732,จริง,Remove nasal packing
+9733,จริง,Remove dental wiring
+9734,จริง,Remove dental packing
+9735,จริง,Remove dental prosthesis
+9736,จริง,Remove ext mand fix dev
+9737,จริง,Remove tracheostomy tube
+9738,จริง,Remove head/neck sutures
+9739,จริง,Remove head/neck dev NEC
+974,เท็จ,REMOV THOR THERAP DEVICE
+9741,จริง,Remov thoracotomy tube
+9742,จริง,Remov mediastinal drain
+9743,จริง,Remov thorax sutures
+9744,จริง,Nonop remov hrt asst sys
+9749,จริง,Remov thor ther dev NEC
+975,เท็จ,REMOV GI THERAPEU DEVIC
+9751,จริง,Remov gastrostomy tube
+9752,จริง,Remov small bowel tube
+9753,จริง,Remov large bowel tube
+9754,จริง,Remov cholecystost tube
+9755,จริง,Remov biliary/liver tube
+9756,จริง,Remov pancreatic tube
+9759,จริง,Remov other GI device
+976,เท็จ,REMOV URIN THERAP DEVIC
+9761,จริง,Remov pyelos/nephros tub
+9762,จริง,Remov ureteral drain
+9763,จริง,Remov cystostomy tube
+9764,จริง,Remov urin drainage NEC
+9765,จริง,Remov urethral stent
+9769,จริง,Remov other urin device
+977,เท็จ,REMOVAL GENIT THERAP DEV
+9771,จริง,Removal IUD
+9772,จริง,Remov intrauterine pack
+9773,จริง,Remov vaginal diaphragm
+9774,จริง,Removal oth vag pessary
+9775,จริง,Remov vag/vulv packing
+9779,จริง,Remov other genit device
+978,เท็จ,OTHER NON-OP REMOVAL-DEV
+9781,จริง,Remov retroperiton drain
+9782,จริง,Remov peritoneal drain
+9783,จริง,Remov abdom wall suture
+9784,จริง,Remov trunk suture NEC
+9785,จริง,Remov trunk packing NEC
+9786,จริง,Remov abdomen device NEC
+9787,จริง,Remov trunk device NEC
+9788,จริง,Remov ext immobilization
+9789,จริง,Remov therapeut dev NEC
+980,เท็จ,REMOV INTRALUM GI FB
+9801,จริง,Remov intralum mouth FB
+9802,จริง,Rem eso FB wo incision
+9803,จริง,Rem gas & sm int FB wo inc
+9804,จริง,Rem large int FB wo inc
+9805,จริง,Remov intralum rect FB
+981,เท็จ,REMOV INTRALUM FB NEC
+9811,จริง,Remov intralum ear FB
+9812,จริง,Remov intralum nose FB
+9813,จริง,Remov intralum pharyn FB
+9814,จริง,Remov intralum laryn FB
+9815,จริง,Remov intralum trach FB
+9816,จริง,Remov intralum uter FB
+9817,จริง,Remov intralum vag FB
+9818,จริง,Remov intralum stoma FB
+9819,จริง,Remove intralum ureth FB
+982,เท็จ,REMOVE OTHER FB-NO INCIS
+9820,จริง,Removal of FB NOS
+9821,จริง,Removal superfic FB eye
+9822,จริง,Removal head/neck FB
+9823,จริง,Removal vulvar FB
+9824,จริง,Removal scrotal/penis FB
+9825,จริง,Removal trunk FB NEC
+9826,จริง,Removal FB from hand
+9827,จริง,Removal FB from arm
+9828,จริง,Removal FB from foot
+9829,จริง,Removal FB from leg
+985,เท็จ,ESWL
+9851,จริง,Eswl kid/ureter/bladder
+9852,จริง,Eswl gb/bile duct
+9859,จริง,Eswl other sites
+990,เท็จ,BLOOD TRANSFUSION
+9900,จริง,Periop aut trans hol bld
+9901,จริง,Exchange transfusion
+9902,จริง,Transfus prev auto blood
+9903,จริง,Whole blood transfus NEC
+9904,จริง,Packed cell transfusion
+9905,จริง,Platelet transfusion
+9906,จริง,Coag factor transfusion
+9907,จริง,Serum transfusion NEC
+9908,จริง,Blood expander transfus
+9909,จริง,Transfusion NEC
+991,เท็จ,INJ/INFUS THERAP SUBSTAN
+9910,จริง,Thrombolytic inj/inf
+9911,จริง,Inject rh immune globul
+9912,จริง,Allergy immunization
+9913,จริง,Autoimmune dis immunizat
+9914,จริง,Injct/inf immunoglobulin
+9915,จริง,Parent infus nutrit sub
+9916,จริง,Inject antidote
+9917,จริง,Inject insulin
+9918,จริง,Inject/infuse electrolyt
+9919,จริง,Inject anticoagulant
+992,เท็จ,OTH INJ/INF THERAP SUBST
+9920,จริง,Inj/inf platelet inhibit
+9921,จริง,Inject antibiotic
+9922,จริง,Inject anti-infect NEC
+9923,จริง,Inject steroid
+9924,จริง,Inject hormone NEC
+9925,จริง,Inject ca chemother NEC
+9926,จริง,Inject tranquilizer
+9927,จริง,Iontophoresis
+9928,จริง,Immunotherapy as antineo
+9929,จริง,Inject/infuse NEC
+993,เท็จ,PROPHYLACT IMMUN-BACTER
+9931,จริง,Cholera vaccination
+9932,จริง,Typhoid/paratyphoid vacc
+9933,จริง,Tuberculosis vaccination
+9934,จริง,Plague vaccination
+9935,จริง,Tularemia vaccination
+9936,จริง,Diphtheria toxoid admin
+9937,จริง,Pertussis vaccination
+9938,จริง,Tetanus toxoid administ
+9939,จริง,DPT administration
+994,เท็จ,VIRAL IMMUNIZATION
+9941,จริง,Polio vaccine administra
+9942,จริง,Smallpox vaccination
+9943,จริง,Yellow fever vaccination
+9944,จริง,Rabies vaccination
+9945,จริง,Measles vaccination
+9946,จริง,Mumps vaccination
+9947,จริง,Rubella vaccination
+9948,จริง,Mmr administration
+995,เท็จ,OTHER IMMUNIZATION
+9951,จริง,Common cold vaccination
+9952,จริง,Influenza vaccination
+9953,จริง,Arbovirus enceph vaccin
+9954,จริง,Arbovirus vaccinat NEC
+9955,จริง,Vaccination NEC
+9956,จริง,Tetanus antitoxin admini
+9957,จริง,Botulism antitoxin admin
+9958,จริง,Antitoxin administra NEC
+9959,จริง,Vaccination/innocula NEC
+996,เท็จ,CARDIAC RHYTH CONVERSION
+9960,จริง,Cardiopulm resuscita NOS
+9961,จริง,Atrial cardioversion
+9962,จริง,Oth elec countershock hrt
+9963,จริง,Closed chest card massag
+9964,จริง,Carotid sinus stiumlat
+9969,จริง,Cardiac rhythm conv NEC
+997,เท็จ,THERAPEUTIC APHERESIS
+9971,จริง,Therapeu plasmapheresis
+9972,จริง,Therapeutc leukopheresis
+9973,จริง,Therapeu erythropheresis
+9974,จริง,Therapeu plateltpheresis
+9975,จริง,Adm neuroprotective agnt
+9976,จริง,Extracorp immunoabsorpt
+9977,จริง,App adhesion barrier sub
+9978,จริง,Aquapheresis
+9979,จริง,Other therapeu apheresis
+998,เท็จ,MISC PHYSICAL PROCEDURES
+9981,จริง,Hypothermia
+9982,จริง,Ultraviolet light therap
+9983,จริง,Other phototherapy
+9984,จริง,Isolation
+9985,จริง,Hyperthermia ca therapy
+9986,จริง,Non-invasive bone stimul
+9988,จริง,Therapeutc photopheresis
+999,เท็จ,OTHER MISC PROCEDURES
+9991,จริง,Anesthesia acupuncture
+9992,จริง,Other acupuncture
+9993,จริง,Rectal massage
+9994,จริง,Prostatic massage
+9995,จริง,Stretching of foreskin
+9996,จริง,Sperm collection
+9997,จริง,Denture fitting
+9998,จริง,Milk extraction
+9999,จริง,Other

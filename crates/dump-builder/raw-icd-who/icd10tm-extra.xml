@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ClaML SYSTEM "ClaML.dtd">
+<ClaML version="2.0.0">
+
+		<Reference class="in brackets" code="F10">F10-F19 with common fourth character .7</Reference>
+
+		<ModifiedBy code="TM_S326"/>
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-00" kind="inclusion">
+			<Label xml:lang="en" xml:space="default"></Label>
+		</Rubric>
+
+
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-00" kind="inclusion">
+			<Label xml:lang="en" xml:space="default"> <Reference class="in brackets" usage="aster">D16.4</Reference></Label>
+		</Rubric>
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-00" kind="inclusion">
+			<Label xml:lang="en" xml:space="default">
+				<Fragment type="item" usage="dagger">Cryptococcal meningitis<Reference class="in brackets" usage="aster">G02.1</Reference></Fragment>
+			</Label>
+		</Rubric>
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-00" kind="inclusion">
+			<Label xml:lang="en" xml:space="default">
+				<Fragment type="list">:</Fragment>
+				<Fragment type="list"></Fragment>
+			</Label>
+		</Rubric>
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-00" kind="inclusion">
+			<Label xml:lang="en" xml:space="default">
+				<Fragment type="item">Abrasion</Fragment>
+				<Fragment type="item">NOS</Fragment>
+			</Label>
+		</Rubric>
+		
+
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-00" kind="exclusion">
+			<Label xml:lang="en" xml:space="default"> <Reference class="in brackets">D16.4</Reference></Label>
+		</Rubric>
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-00" kind="exclusion">
+			<Label xml:lang="en" xml:space="default">
+				<Fragment type="item">Cryptococcal meningitis<Reference class="in brackets">G02.1</Reference></Fragment>
+			</Label>
+		</Rubric>
+
+
+
+
+		<Rubric id="id-ICD10TM2016_v2016-September-11-TM_X-301" kind="modifierlink">
+			<Label xml:lang="en" xml:space="default">
+				<Reference code="S04E10_4">[See before E10 for subdivisions]</Reference>
+			</Label>
+		</Rubric>
+		
+
+		
+		
+
+		
+		
+		
+		
+		
+		
+
+
+
+</ClaML>

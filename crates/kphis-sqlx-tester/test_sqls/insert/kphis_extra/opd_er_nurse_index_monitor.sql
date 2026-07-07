@@ -1,0 +1,3 @@
+INSERT INTO `kphis_extra`.`opd_er_nurse_index_monitor` (`monitor_id`, `action_id`, `opd_er_order_master_id`, `monitor_datetime`, `monitor_doctor`, `monitor_abnormal`, `monitor_result`, `monitor_remark`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 1, '2023-12-31 23:59:59', '007', 'Y', 'RESULT', 'REMARK', 'user', '2023-12-31 23:59:59', 'user', '2023-12-31 23:59:59', 1),
+	(2, 1, 1, '2024-01-01 01:01:01', '007', 'N', NULL, NULL, 'user', '2024-01-01 01:01:01', 'user', '2024-01-01 01:01:01', 1);

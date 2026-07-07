@@ -1,0 +1,181 @@
+[workspace]
+members = [ "crates/*"]
+resolver = "3"
+
+[workspace.package]
+version = "0.4.19"
+rust-version = "1.96"
+edition = "2024"
+authors = ["Marisada Pitakthum <p.marisada@gmail.com>"]
+description = "KPHIS ported to Rust"
+license = "MIT"
+repository = "https://github.com/marisada/kphis-rs"
+keywords = ["his"]
+
+[workspace.dependencies]
+
+dump-builder = { path = "crates/dump-builder" }
+kphis-api-core = { path = "crates/kphis-api-core" }
+kphis-api-handler = { path = "crates/kphis-api-handler" }
+kphis-api-pacs = { path = "crates/kphis-api-pacs" }
+kphis-api-pdf = { path = "crates/kphis-api-pdf" }
+kphis-api-query = { path = "crates/kphis-api-query" }
+kphis-api-router = { path = "crates/kphis-api-router" }
+kphis-backend = { path = "crates/kphis-backend" }
+kphis-db-util = { path = "crates/kphis-db-util" }
+kphis-drg-worker = { path = "crates/kphis-drg-worker" }
+kphis-frontend = { path = "crates/kphis-frontend" }
+kphis-model = { path = "crates/kphis-model" }
+kphis-sql = { path = "crates/kphis-sql" }
+kphis-sqlx-tester = { path = "crates/kphis-sqlx-tester" }
+kphis-typst-worker = { path = "crates/kphis-typst-worker" }
+kphis-ui-app = { path = "crates/kphis-ui-app" }
+kphis-ui-component = { path = "crates/kphis-ui-component" }
+kphis-ui-core = { path = "crates/kphis-ui-core" }
+kphis-ui-page = { path = "crates/kphis-ui-page" }
+kphis-util = { path = "crates/kphis-util" }
+kphis-worker = { path = "crates/kphis-worker" }
+
+argon2 = { version = "0.5", features = [ "std" ]}
+async-once-cell = "0.5"
+axum = { version = "0.8", features = [ "multipart", "macros" ] }
+axum-extra = { version = "0.12", features = [ "typed-header" ] }
+axum-macros = "0.5"
+axum-prometheus = "0.10"
+axum-server = { version = "0.8", features = [ "tls-rustls" ] }
+base64 = "0.22"
+bitcode = { version = "0.6", features = [ "time" ] }
+chart-js-rs = { git = "https://codeberg.org/marisada/chart-js-rs" }
+# chart-js-rs = { path = "../chart-js-rs/" }
+clap = { version = "4", features = [ "derive" ] }
+config = "0.15"
+console_error_panic_hook = "0.1"
+console_log = { version = "1", features = ["color"] }
+csv = "1"
+derive-demo = { git = "https://codeberg.org/marisada/derive-demo" }
+discard = "1"
+dominator = { git = "https://codeberg.org/marisada/rust-dominator" }
+# dominator = { path = "../rust-dominator/" }
+encoding_rs = "0.8"
+enum_dispatch = "0.3"
+futures = { version = "0.3", features = ["async-await"] }
+futures-core = "0.3"
+futures-channel = "0.3"
+futures-signals = "0.3"
+futures-util = "0.3"
+hayro = { version = "0.7", default-features = false }
+hayro-syntax = { version = "0.7.2", default-features = false }
+hayro-interpret = { version = "0.7", default-features = false }
+gloo-events = "0.3"
+hex = "0.4"
+http = "1"
+http-body-util = "0.1"
+image = "0.25"
+include_dir = "0.7"
+js-sys = "0.3"
+locspan = "0.9"
+log = "0.4"
+md-5 = "0.11"
+num = "0.4"
+orion = "0.17"
+pasetors = "0.7"
+rand = "0.9"
+regex = "1"
+rstest = "0.26"
+rust_decimal = { version = "1", default-features = false, features = [ "serde", "serde_json" ] }
+rustls = { version = "0.23", default-features = false }
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
+serde_repr = "0.1"
+serde-wasm-bindgen = "0.6"
+sqlx = { version = "0.9", features = [ "mysql", "runtime-tokio", "time", "rust_decimal" ] }
+sqlx_binder = { git = "https://codeberg.org/marisada/sqlx_binder" }
+# sqlx_binder = { path = "../sqlx_binder" }
+# pin strum as biblatex and croner
+strum = { version = "0.27", features = [ "derive" ] }
+syntect = { version = "5.3", default-features = false, features = [ "html" ] }
+time = { version = "0.3", features = [ "macros", "parsing", "serde-human-readable", "wasm-bindgen" ]}
+time-datepicker-core = { git = "https://codeberg.org/marisada/time-datepicker-core" }
+tl = "0.7"
+tokio = { version = "1", features = [ "full" ]}
+tokio-cron-scheduler = "0.15"
+tokio-stream = "0.1"
+tokio-util = { version = "0.7", features = [ "io-util" ]}
+totp-rs = { version = "5", features = [ "gen_secret", "qr" ]}
+tower-cookies = "0.11"
+tower_governor = "0.8"
+tower-http = { version = "0.7", features = [ "fs", "compression-br", "compression-gzip", "set-header", "trace", "timeout" ]}
+tracing = "0.1"
+tracing-appender = "0.2"
+tracing-subscriber = { version = "0.3", features = [ "time", "env-filter" ] }
+# we use ulid in frontend, backend, model and util. ulid 1.2 use getrandom 0.3 that cannot use in frontend WASM
+# ulid = { version = "~1.1", features = ["serde"] }
+ulid = { version = "1", features = ["serde"] }
+unicode-width = { version = "0.2", default-features = false }
+urlencoding = "2"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+wasm-bindgen-test = "0.3"
+web-sys = "0.3"
+# winauth = "0.0.5"
+winauth = { git = "https://codeberg.org/marisada/winauth-rs" }
+# winauth = { path = "../winauth-rs/winauth" }
+xml = "1"
+
+# Typst related
+codespan-reporting = "0.13"
+# pin ecow as typst
+ecow = "0.2.6"
+# pin pdf-writer as krilla
+pdf-writer = "0.15.0"
+
+# typst = "0.14"
+# typst-library = "0.14"
+# typst-pdf = "0.14"
+# typst-svg = "0.14"
+# typst-syntax = "0.14"
+# typst-timing = "0.14"
+# typst-utils = "0.14"
+
+typst = { git = "https://codeberg.org/marisada/typst" }
+typst-layout = { git = "https://codeberg.org/marisada/typst" }
+typst-library = { git = "https://codeberg.org/marisada/typst" }
+typst-pdf = { git = "https://codeberg.org/marisada/typst" }
+typst-svg = { git = "https://codeberg.org/marisada/typst" }
+typst-syntax = { git = "https://codeberg.org/marisada/typst" }
+typst-timing = { git = "https://codeberg.org/marisada/typst" }
+typst-utils = { git = "https://codeberg.org/marisada/typst" }
+
+# typst = { path = "../typst/crates/typst/" }
+# typst-layout = { path = "../typst/crates/typst-layout/" }
+# typst-library = { path = "../typst/crates/typst-library/" }
+# typst-pdf = { path = "../typst/crates/typst-pdf/" }
+# typst-svg = { path = "../typst/crates/typst-svg/" }
+# typst-syntax = { path = "../typst/crates/typst-syntax/" }
+# typst-timing = { path = "../typst/crates/typst-timing/" }
+# typst-utils = { path = "../typst/crates/typst-utils/" }
+
+xmp-writer = "0.3"
+
+# PDF Signer
+cryptographic-message-syntax = { git = "https://codeberg.org/marisada/cryptography-rs", default-features = false, features = [ "ureq" ] }
+# cryptographic-message-syntax = { path = "../cryptography-rs/cryptographic-message-syntax/", default-features = false, features = [ "ureq" ] }
+x509-certificate = { git = "https://codeberg.org/marisada/cryptography-rs" }
+# x509-certificate = { path = "../cryptography-rs/x509-certificate/" }
+
+# OpenApi
+utoipa = { git = "https://codeberg.org/Marisada/utoipa", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
+# utoipa = { path = "../utoipa/utoipa/", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
+
+# read https://doc.rust-lang.org/cargo/reference/profiles.html for more informations
+[profile.dev]
+# prevent rust-lld linking error 0xc0000005
+strip = true
+# debug-assertions = false
+
+[profile.release]
+lto = "fat"
+panic = "abort"
+codegen-units = 1
+strip = true # needed by rustup 1.87 (LLVM 20) with wasm-opt

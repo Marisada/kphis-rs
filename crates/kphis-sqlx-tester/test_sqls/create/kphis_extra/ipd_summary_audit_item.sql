@@ -1,0 +1,21 @@
+CREATE TABLE `kphis_extra`.`ipd_summary_audit_item` (
+  `summary_audit_item_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `summary_audit_id` INT(11) UNSIGNED NOT NULL,
+  `summary_id` INT(11) UNSIGNED NOT NULL,
+  `ty` VARCHAR(3) NOT NULL,
+  `sum_dx` TEXT DEFAULT NULL,
+  `sum_icd` VARCHAR(7) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NULL DEFAULT NULL,
+  `com_icd` VARCHAR(7) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NULL DEFAULT NULL,
+  `rev_dx` TEXT DEFAULT NULL,
+  `rev_icd` VARCHAR(7) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NULL DEFAULT NULL,
+  `sa` VARCHAR(2) NOT NULL,
+  `ca` VARCHAR(2) NOT NULL,
+  `remark` TEXT NULL DEFAULT NULL,
+  `create_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `create_datetime` DATETIME NOT NULL,
+  `update_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+  `update_datetime` DATETIME NOT NULL,
+  `version` INT(11) NOT NULL,
+  PRIMARY KEY (`summary_audit_item_id`) USING BTREE,
+  INDEX `summary_audit_id` (`summary_audit_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;

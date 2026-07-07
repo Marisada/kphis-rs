@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`operation_item` (`operation_item_id`, `name`, `icode`, `price`, `price2`, `price3`, `price_ipd`, `price_ipd2`, `price_ipd3`, `icd9`, `operation_group_id`, `operation_item_type_id`, `hos_guid`, `active_status`, `keyword`) VALUES
+	(147, 'TR (66.32)', '3001389', 2500.000, 2500.000, 2500.000, 2500.000, 2500.000, 2500.000, NULL, NULL, NULL, NULL, 'Y', NULL);

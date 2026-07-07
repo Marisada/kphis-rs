@@ -1,0 +1,3 @@
+INSERT INTO `kphis`.`ipd_focus_list` (`fclist_id`, `smp_id`, `focus_id`, `focus_text`, `goal_id`, `goal_text`, `fclist_stdate`, `fclist_sttime`, `fclist_enddate`, `fclist_endtime`, `fclist_status`, `hn`, `an`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 1, NULL, NULL, NULL, '2024-01-01', '11:11:11', '2024-11-11', '11:11:11', '2', '0001234', '660001234', 'admin', '2024-01-01 11:11:11', 'admin', '2024-11-11 11:11:11', 1),
+	(2, 1, 1, 'FOCUS', NULL, 'GOAL', '2024-01-11', '11:11:11', NULL, NULL, '1', '0001234', '660001234', 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1);

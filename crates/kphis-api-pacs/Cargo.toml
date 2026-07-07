@@ -1,0 +1,35 @@
+[package]
+name = "kphis-api-pacs"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-model = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+axum = "0.8"
+base64 = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+time = { workspace = true }
+tl = { workspace = true }
+winauth = { workspace = true }
+
+# this crate only
+# minimal for Synapse PACs, MUSL has DNS limitation (doesn’t support DNS over TCP, not allow UDP packets larger than 512 bytes)
+[target.'cfg(target_env = "musl")'.dependencies]
+reqwest = { version = "0.13", default-features = false, features = [ "cookies", "form", "json", "hickory-dns" ] }
+[target.'cfg(not(target_env = "musl"))'.dependencies]
+reqwest = { version = "0.13", default-features = false, features = [ "cookies", "form", "json" ] }
+
+[dev-dependencies]
+kphis-sqlx-tester = { workspace = true }

@@ -1,0 +1,1 @@
+ALTER TABLE `hos`.`icd_codemap` ADD INDEX IF NOT EXISTS `ix_icd10` (`icd10`);

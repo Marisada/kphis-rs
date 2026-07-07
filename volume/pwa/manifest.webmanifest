@@ -1,0 +1,81 @@
+{
+    "name": "KPHIS",
+    "short_name": "KPHIS",
+    "id": "RUSTY-KPHIS",
+    "start_url": "/",
+    "scope": "/",
+    "display_override": ["fullscreen", "window-controls-overlay"],
+    "display": "standalone",
+    "background_color": "#222",
+    "theme_color": "#222",
+    "description": "Rust version of KPHIS",
+    "dir": "ltr",
+    "lang": "th-TH",
+    "orientation": "landscape",
+    "screenshots": [
+        {
+            "src": "/statics/screenshots/patient-list-wide.png",
+            "sizes": "1339x795",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Application"
+        },
+        {
+            "src": "/statics/screenshots/report.png",
+            "sizes": "1018x852",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Application"
+        }
+    ],
+    "icons": [
+        {
+            "src": "/statics/icons/maskable_icon_x48.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/statics/icons/maskable_icon_x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/statics/icons/maskable_icon_x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/statics/icons/maskable_icon_x128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/statics/icons/maskable_icon_x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/statics/icons/maskable_icon_x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/statics/icons/maskable_icon_x384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/statics/icons/maskable_icon_x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

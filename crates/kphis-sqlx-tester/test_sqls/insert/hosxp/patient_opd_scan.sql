@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`patient_opd_scan` (`patient_opd_scan_id`, `vn`, `hn`, `vstdate`, `vsttime`, `image`, `scan_date_time`, `staff`, `page_no`, `thumbnail`) VALUES
+	(1, '651231235959', '0001234', '2022-12-31', '23:59:59', '����\0C\0\0\0?\0�� ��', '2023-01-01 11:11:11', 'admin', 1, NULL);

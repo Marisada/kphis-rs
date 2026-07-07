@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`ipd_summary_external_cause` (`external_cause_id`, `summary_id`, `external_cause_detail`, `external_cause_icd10`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 'ผู้ใช้รถสามล้อเครื่องบาดเจ็บจากการชนกับรถเครื่องสองล้อหรือสามล้อเครื่อง', 'V32', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

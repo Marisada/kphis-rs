@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_allergy_history` (`er_allergy_history_id`, `opd_er_order_master_id`, `er_allergy_history_agent`, `er_allergy_history_symptom`, `er_allergy_history_doctorcode`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, 'PARACETAMOL', 'Rash', '007', 'admin', '2023-12-31 23:59:59', 'admin', '2023-12-31 23:59:59', 1);

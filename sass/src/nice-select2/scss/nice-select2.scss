@@ -1,0 +1,305 @@
+@use "sass:math";
+@use "sass:color";
+
+// Default variables
+$font_size: 14px !default;
+$font_size_small: 12px !default;
+
+$input_border_radius: 5px !default;
+$input_height: 38px !default;
+$input_height_small: 36px !default;
+$dropdown_padding: 18px !default;
+
+$gray_dark: #444 !default;
+
+// Style the dropdown
+.nice-select {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  background-color: var(--bs-body-bg);
+  border-radius: $input_border_radius;
+  border: solid 1px var(--bs-border-color);
+  box-sizing: border-box;
+  clear: both;
+  cursor: pointer;
+  display: block;
+  font-family: inherit;
+  font-weight: normal;
+  outline: none;
+  padding-left: $dropdown_padding;
+  padding-right: $dropdown_padding + 12;
+  position: relative;
+  text-align: left !important;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+  white-space: nowrap;
+
+  &:hover, &:active, &:focus {
+    border-color: var(--bs-border-color)
+  }
+
+  // Arrow
+  &:after {
+    border-bottom: 2px solid var(--bs-body-color);
+    border-right: 2px solid var(--bs-body-color);
+    content: "";
+    display: block;
+    height: 8px;
+    margin-top: -5px;
+    pointer-events: none;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform-origin: 66% 66%;
+    transform: rotate(45deg);
+    transition: all 0.15s ease-in-out;
+    width: 8px;
+  }
+
+  &.open {
+    border-color: var(--bs-border-color);
+    &:after {
+      transform: rotate(-135deg);
+    }
+    .nice-select-dropdown {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  &.disabled {
+    border-color: var(--bs-secondary-bg);
+    background-color: var(--bs-secondary-bg);
+    pointer-events: none;
+    &:after {
+      border-color: var(--bs-secondary-color);
+    }
+  }
+
+  // Modifiers
+  &.wide {
+    width: 100%;
+    .nice-select-dropdown {
+      left: 0 !important;
+      right: 0 !important;
+    }
+  }
+
+  &.right {
+    float: right;
+    .nice-select-dropdown {
+      left: auto;
+      right: 0;
+    }
+  }
+
+  &.small {
+    font-size: $font_size_small;
+    height: $input_height_small;
+    line-height: $input_height_small - 2;
+    &:after {
+      height: 4px;
+      width: 4px;
+    }
+    .option {
+      line-height: $input_height_small - 2;
+      min-height: $input_height_small - 2;
+    }
+  }
+
+  &.has-multiple {
+    white-space: inherit;
+    height: auto;
+    min-height: 36px;
+    line-height: 22px;
+
+    span.current {
+      border: 1px solid var(--bs-border-color);
+      background: var(--bs-body-bg);
+      padding: 0 10px;
+      border-radius: 3px;
+      display: inline-block;
+      line-height: 24px;
+      font-size: 14px;
+      margin-bottom: 3px;
+      margin-right: 3px;
+      box-shadow: 3px 3px var(--bs-primary-bg-subtle);
+
+      &:hover {
+        color: var(--bs-body-bg);
+        background-color: var(--bs-secondary-color)
+      }
+    }
+
+    .multiple-options {
+      display: block;
+      line-height: 24px;
+      padding: 0;
+    }
+  }
+
+  .nice-select-search-box {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px;
+    pointer-events: none;
+    border-radius: 5px 5px 0 0;
+  }
+
+  .nice-select-search {
+    box-sizing: border-box;
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 3px;
+    color: var(--bs-body-color);
+    display: inline-block;
+    vertical-align: middle;
+    padding: 7px 12px;
+    margin: 0 10px 0 0;
+    width: 100%;
+    min-height: 36px;
+    line-height: 22px;
+    height: auto;
+    outline: 0 !important;
+    font-size: $font_size;
+  }
+
+  .nice-select-dropdown {
+    margin-top: 4px;
+    background-color: var(--bs-body-bg);
+    border-radius: $input_border_radius;
+    box-shadow: 0 0 0 1px rgba($gray_dark, 0.11);
+    pointer-events: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transform-origin: 50% 0;
+    transform: scale(0.75) translateY(math.div($input_height, 2));
+    transition: all 0.2s cubic-bezier(0.5, 0, 0, 1.25), opacity 0.15s ease-out;
+    z-index: 9;
+    opacity: 0;
+    max-height: 230px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  // List and options
+  .list {
+    border-radius: $input_border_radius;
+    box-sizing: border-box;
+    padding: 0;
+
+    &:hover .option:not(:hover) {
+      background-color: transparent !important;
+    }
+  }
+
+  .option {
+    cursor: pointer;
+    font-weight: 400;
+    line-height: 1.5;
+    list-style: none;
+    outline: none;
+    padding-left: $dropdown_padding;
+    padding-right: $dropdown_padding + 11;
+    text-align: left;
+
+    &.selected.focus:not(:hover) {
+      color: var(--bs-emphasis-color);
+    }
+    &:hover,
+    &.focus,
+    &.selected.focus {
+      color: var(--bs-body-bg);
+      background-color: var(--bs-secondary-color)
+    }
+
+    &.selected {
+      font-weight: bold;
+    }
+
+    &.disabled {
+      background-color: transparent;
+      color: var(--bs-secondary-color);
+      cursor: default;
+    }
+  }
+
+  .extra {
+    float: right;
+  }
+
+  .optgroup {
+    font-weight: bold;
+  }
+}
+
+// Fallback for IE <= 10
+.no-csspointerevents .nice-select {
+  .nice-select-dropdown {
+    display: none;
+  }
+  &.open {
+    .nice-select-dropdown {
+      display: block;
+    }
+  }
+}
+
+.nice-select .list::-webkit-scrollbar {
+  width: 0;
+}
+
+.hidden-select {
+  opacity: 0;
+  width: 0;
+  padding: 0;
+  border: 0;
+  height: 0;
+  font-size: 0;
+  min-height: auto;
+}
+
+.select-selection-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+  .select-selection {
+      background-color: #e4e4e4;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      box-sizing: border-box;
+      display: inline-block;
+      margin-left: 5px;
+      margin-top: 5px;
+      padding: 2px 5px;
+      position: relative;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: bottom;
+      white-space: nowrap;
+  }
+
+  button.remove-select-selection {
+    height: 15px;
+    width: 15px;
+    line-height: 15px;
+    padding: 0px;
+    background-color: #bd2919;
+    border-radius: 20%;
+  } 
+}
+
+// specific rounded corners fixed for "nice-select2 in .form-control" in .input-group
+.input-group {
+  > div:not(:last-child) > .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  > div:not(:first-child) > .form-control {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}

@@ -1,0 +1,39 @@
+[package]
+name = "kphis-drg-worker"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[features]
+api = []
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+
+# workspace crate
+kphis-worker = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+bitcode = { workspace = true }
+csv = { workspace = true }
+serde = { workspace = true }
+serde_derive = { workspace = true }
+serde_json = { workspace = true }
+time = { workspace = true }
+
+# for kphis-worker
+console_error_panic_hook = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+
+# This js feature should only be enabled for binary, test, or benchmark crates.
+# This feature has no effect on targets other than wasm32-unknown-unknown.
+getrandom = { version = "0.2", features = ["js"] }

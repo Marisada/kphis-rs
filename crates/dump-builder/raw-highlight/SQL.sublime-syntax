@@ -1,0 +1,228 @@
+%YAML 1.2
+---
+name: SQL
+file_extensions:
+  - sql
+scope: sql
+contexts:
+  main:
+    - include: comments
+    - include: placeholders
+    - match: '(?i:\s*\b(create(?:\s+or\s+replace)?)\s+(aggregate|conversion|database|domain|function|group|(?:unique\s+)?index|language|operator class|operator|procedure|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)(?:(\w+)|''(\w+)''|"(\w+)"|`(\w+)`)'
+      captures:
+        1: keyword.other.create
+        2: keyword.other
+        3: entity.name.function
+        4: entity.name.function
+        5: entity.name.function
+        6: entity.name.function
+    - match: (?i:\s*\b(drop)\s+(aggregate|conversion|database|domain|function|group|index|language|operator class|operator|procedure|rule|schema|sequence|table|tablespace|trigger|type|user|view))
+      captures:
+        1: keyword.other.create
+        2: keyword.other
+    - match: (?i:\s*(drop)\s+(table)\s+(\w+)(\s+cascade)?\b)
+      captures:
+        1: keyword.other.create
+        2: keyword.other.table
+        3: entity.name.function
+        4: keyword.other.cascade
+    - match: (?i:\s*\b(alter)\s+(aggregate|conversion|database|domain|function|group|index|language|operator class|operator|procedure|rule|schema|sequence|table|tablespace|trigger|type|user|view)\s+)
+      captures:
+        1: keyword.other.create
+        2: keyword.other.table
+    - match: |-
+        (?xi)
+        				# normal stuff, capture 1
+        				 \b(bigint|bigserial|bit|boolean|box|bytea|cidr|circle|date|datetime|double\sprecision|inet|int|integer|line|lseg|macaddr|money|ntext|oid|path|point|polygon|real|serial|smallint|sysdate|sysname|text)\b
+
+        				# numeric suffix, capture 2 + 3i
+        				|\b(bit\svarying|character\s(?:varying)?|tinyint|var\schar|float|interval)\((\d+)\)
+
+        				# optional numeric suffix, capture 4 + 5i
+        				|\b(char|number|nvarchar|varbinary|varchar\d?)\b(?:\((\d+)\))?
+
+        				# special case, capture 6 + 7i + 8i
+        				|\b(numeric|decimal)\b(?:\((\d+),(\d+)\))?
+
+        				# special case, captures 9, 10i, 11
+        				|\b(times?)\b(?:\((\d+)\))?(\swith(?:out)?\stime\szone\b)?
+
+        				# special case, captures 12, 13, 14i, 15
+        				|\b(timestamp)(?:(s|tz))?\b(?:\((\d+)\))?(\s(with|without)\stime\szone\b)?
+      captures:
+        1: storage.type
+        2: storage.type
+        3: constant.numeric
+        4: storage.type
+        5: constant.numeric
+        6: storage.type
+        7: constant.numeric
+        8: constant.numeric
+        9: storage.type
+        10: constant.numeric
+        11: storage.type
+        12: storage.type
+        13: storage.type
+        14: constant.numeric
+        15: storage.type
+    - match: (?i:\b((?:primary|foreign)\s+key|references|on\sdelete(\s+cascade)?|on\supdate(\s+cascade)?|check|constraint|default)\b)
+      scope: storage.modifier
+    - match: \b\d+\b
+      scope: constant.numeric
+    - match: (?i:\b(true|false)\b)
+      scope: constant.boolean
+    - match: (?i:\b(select(\s+(distinct|top))?|insert(\s+(ignore\s+)?into)?|update|delete|truncate|from|set|where|group\sby|or|rlike|like|between|and|with|case|when|then|else|end|union(\s+all)?|having|using|order\sby|limit|offset|(inner|cross)\s+join|join|straight_join|(left|right)(\s+outer)?\s+join|natural(\s+(left|right)(\s+outer)?)?\s+join)\b)
+      scope: keyword.other.DML
+    - match: (?i:\b(on|((is\s+)?not\s+)?null)\b)
+      scope: keyword.other.DDL.create.II
+    - match: (?i:\bvalues\b)
+      scope: keyword.other.DML.II
+    - match: (?i:\b(begin(\s+work)?|start\s+transaction|commit(\s+work)?|rollback(\s+work)?)\b)
+      scope: keyword.other.LUW
+    - match: (?i:\b(grant(\swith\sgrant\soption)?|revoke)\b)
+      scope: keyword.other.authorization
+    - match: (?i:\bin\b)
+      scope: keyword.other.data-integrity
+    - match: (?i:\s*\b(comment\s+on\s+(table|column|aggregate|constraint|database|domain|function|index|operator|rule|schema|sequence|trigger|type|view))\s+.*?\s+(is)\s+)
+      scope: keyword.other.object-comments
+    - match: (?i)\bAS\b
+      scope: keyword.other.alias
+    - match: (?i)\b(DESC|ASC)\b
+      scope: keyword.other.order
+    - match: (?i)\b(DISTINCT|EXISTS|INTERVAL)\b
+      scope: keyword.other.language
+    - match: (?i)\b(MICRO(SECOND)?|SECOND(_MICROSECOND)?|MINUTE(_MICROSECOND|_SECOND)?|HOUR(_MICROSECOND|_SECOND|_MINUTE)?|DAY(_MICROSECOND|_SECOND|_MINUTE|_HOUR)?|WEEK|MONTH|QUARTER|YEAR(_MONTH)?)\b
+      scope: keyword.interval
+    - match: \*
+      scope: keyword.operator.star
+    - match: "<=>|[!<>]?=|<>|<|>"
+      scope: keyword.operator.comparison
+    - match: '-|\+|/'
+      scope: keyword.operator.math
+    - match: \|\|
+      scope: keyword.operator.concatenator
+    - match: (?i)\b(CURRENT_USER|(SESSION|SYSTEM)_USER)\b
+      comment: List of SQL99 built-in functions from http://www.oreilly.com/catalog/sqlnut/chapter/ch04.html
+      scope: support.function.scalar
+    - match: (?i)\b(AVG|BIT_(AND|OR|XOR)?|COUNT|GROUP_CONCAT|JSON_(ARRAYAGG|OBJECTAGG)?|MIN|MAX|STD(DEV(_POP|_SAMP)?)?|SUM|VAR(_POP|_SAMP|IANCE)?)(?=\s*\()
+      scope: support.function.aggregate
+    - match: (?i)\b(ASCII|BIN|BIT_LENGTH|CHAR((RACTOR)?_LENGHT)?|CONCAT(_WS)?|ELT|EXPORT_SET|FIELD|FIND_IN_SET|FORMAT|FROM_BASE64|HEX|INSERT|INSTR|LCASE|LEFT|LENGTH|LOAD_FILE|LOCATE|LOWER|LPAD|LTRIM|MAKE_SET|MATCH|MID|OCT(ET_LENGTH)?|ORD|POSITION|QUOTE|RE(GEXP(_INSTR|_LIKE|_REPLACE|_SUBSTR)?|PEAT|PLACE|VERSE)?|RIGHT|RPAD|RTRIM|SOUNDEX|SPACE|STRCMP|SUB(STR(ING(_INDEX)?)?)?|TO_BASE64|TRIM|UCASE|UNHEX|UPPER|WEIGHT_STRING)(?=\s*\()
+      scope: support.function.string
+    - match: (?i)\b(ADD(DATE|TIME)?|CONVERT_TZ|CUR(DATE|RENT_(DATE|TIME(STAMP)?)?|TIME)?|DATE(DIFF)?|DATE_(ADD|FORMAT|SUB)?|DAY(NAME|OF(MONTH|WEEK|YEAR)?)?|EXTRACT|FROM_(DAYS|UNIXTIME)?|GET_FORMAT|HOUR|LAST_DAY|LOCALTIME(STAMP)?|MAKE(DATE|TIME)?|MICROSECOND|MINUTE|MONTH(NAME)?|NOW|PERIOD_(ADD|DIFF)?|QUARTER|SEC_TO_TIME|SECOND|STR_TO_DATE|SUB(DATE|TIME)?|SYSDATE|TIME(_FORMAT|_TO_SEC|DIFF|STAMP(ADD|DIFF)?)?|TO_(DAYS|SECONDS)?|UNIX_TIMESTAMP|UTC_(DATE|TIME(STAMP)?)?|WEEK(DAY|OFYEAR)?|YEAR(WEEK)?)(?=\s*\()
+      scope: support.function.datetime
+    - match: \b(\w+?)\.(\w+)\b
+      captures:
+        1: constant.other.database-name
+        2: constant.other.table-name
+    - include: strings
+    - include: regexps
+    - match: (\()(\))
+      comment: Allow for special ↩ behavior
+      captures:
+        1: punctuation.section.scope
+        2: punctuation.section.scope
+  comments:
+    - match: "--"
+      scope: punctuation.definition.comment
+      push:
+        - meta_scope: comment.line.double-dash
+        - match: \n
+          pop: true
+    - match: "#"
+      scope: punctuation.definition.comment
+      push:
+        - meta_scope: comment.line.number-sign
+        - match: \n
+          pop: true
+    - match: /\*
+      scope: punctuation.definition.comment
+      push:
+        - meta_scope: comment.block
+        - match: \*/
+          pop: true
+  placeholders:
+    - match: "('|`)?__"
+      scope: punctuation.section.placeholder
+      push:
+        - meta_scope: placeholder.block
+        - match: "__('|`)?"
+          scope: punctuation.section.placeholder
+          pop: true
+  regexps:
+    - match: /(?=\S.*/)
+      captures:
+        0: punctuation.definition.string
+      push:
+        - meta_scope: string.regexp
+        - match: /
+          captures:
+            0: punctuation.definition.string
+          pop: true
+        - include: string_interpolation
+        - match: \\/
+          scope: constant.character.escape.slash
+    - match: '%r\{'
+      comment: We should probably handle nested bracket pairs!?! -- Allan
+      captures:
+        0: punctuation.definition.string
+      push:
+        - meta_scope: string.regexp.modr
+        - match: '\}'
+          captures:
+            0: punctuation.definition.string
+          pop: true
+        - include: string_interpolation
+  string_escape:
+    - match: \\.
+      scope: constant.character.escape
+  string_interpolation:
+    - match: '(#\{)([^\}]*)(\})'
+      scope: string.interpolated
+      captures:
+        1: punctuation.definition.string
+        3: punctuation.definition.string
+  strings:
+    - match: "'"
+      captures:
+        0: punctuation.definition.string
+      push:
+        - meta_scope: string.quoted.single
+        - match: "''"
+          scope: constant.character.escape
+        - match: "'"
+          captures:
+            0: punctuation.definition.string
+          pop: true
+        - include: string_escape
+    - match: "`"
+      captures:
+        0: punctuation.definition.string
+      push:
+        - meta_scope: string.quoted.other.backtick
+        - match: "`"
+          captures:
+            0: punctuation.definition.string
+          pop: true
+        - include: string_escape
+    - match: '"'
+      captures:
+        0: punctuation.definition.string
+      push:
+        - meta_scope: string.quoted.double
+        - match: '""'
+          scope: constant.character.escape
+        - match: '"'
+          captures:
+            0: punctuation.definition.string
+          pop: true
+        - include: string_interpolation
+    - match: '%\{'
+      captures:
+        0: punctuation.definition.string
+      push:
+        - meta_scope: string.other.quoted.brackets
+        - match: '\}'
+          captures:
+            0: punctuation.definition.string
+          pop: true
+        - include: string_interpolation

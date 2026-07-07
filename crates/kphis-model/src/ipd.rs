@@ -1,0 +1,15 @@
+pub mod admission_note_dr;
+pub mod admission_note_nurse;
+pub mod consult;
+pub mod dc_plan_tmp;
+pub mod doctor_in_charge;
+pub mod document;
+pub mod his;
+pub mod index_note;
+pub mod io;
+pub mod mra;
+pub mod passcode;
+pub mod pharmacy_monitor;
+pub mod summary;
+pub mod summary_audit;
+pub mod tmp;

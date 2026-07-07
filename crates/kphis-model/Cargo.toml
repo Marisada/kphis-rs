@@ -1,0 +1,83 @@
+[package]
+name = "kphis-model"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[dependencies]
+
+# workspace crate
+kphis-util = { workspace = true }
+
+# from workspace
+argon2 = { workspace = true }
+base64 = { workspace = true }
+derive-demo = { workspace = true }
+bitcode = { workspace = true }
+encoding_rs = { workspace = true }
+enum_dispatch = { workspace = true }
+futures = { workspace = true }
+futures-core = { workspace = true }
+futures-channel = { workspace = true }
+futures-signals = { workspace = true }
+hayro = { workspace = true }
+hayro-syntax = { workspace = true }
+hayro-interpret = { workspace = true }
+http = { workspace = true }
+image = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+md-5 = { workspace = true }
+rust_decimal = { workspace = true }
+serde = { workspace = true }
+serde_derive = { workspace = true }
+serde_json = { workspace = true }
+serde_repr = { workspace = true }
+serde-wasm-bindgen = { workspace = true }
+sqlx_binder = { workspace = true }
+strum = { workspace = true }
+time = { workspace = true }
+urlencoding = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = [
+    "Blob",
+    "BlobPropertyBag",
+    "CacheStorage",
+    "Clipboard",
+    "Crypto",
+    "Document",
+    "Element",
+    "File",
+    "FileList",
+    "FormData",
+    "Headers",
+    "History",
+    "HtmlElement",
+    "Location",
+    "MediaQueryList",
+    "Navigator",
+    "Range",
+    "RequestInit",
+    "Response",
+    "ScrollBehavior",
+    "ScrollToOptions",
+    "Selection",
+    "ServiceWorkerContainer",
+    "ServiceWorkerRegistration",
+    "Storage",
+    "Text",
+    "Url",
+    "Window",
+]}
+
+# OpenApi
+utoipa = { workspace = true }
+
+# this crate only
+sqlx = { version = "0.9", default-features = false, features = [ "mysql", "time", "rust_decimal", "macros" ] }

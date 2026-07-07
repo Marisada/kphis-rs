@@ -1,0 +1,2 @@
+INSERT INTO `kphis_log`.`history_log` (`history_id`, `history_datetime`, `history_table_name`, `history_type`, `history_user`, `data`) VALUES
+	(1, '2024-01-01 11:11:11', 'order', 'I', 'user', '{"key":"value}');

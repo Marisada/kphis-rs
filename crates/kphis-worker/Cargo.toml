@@ -1,0 +1,46 @@
+[package]
+name = "kphis-worker"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+
+# workspace crate
+kphis-ui-core = { workspace = true }
+
+# from workspace
+console_error_panic_hook = { workspace = true }
+discard = { workspace = true }
+dominator = { workspace = true }
+futures-channel = { workspace = true }
+futures-core = { workspace = true }
+futures-signals = { workspace = true }
+futures-util = { workspace = true }
+gloo-events = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = [
+    "Clipboard",
+    "DedicatedWorkerGlobalScope",
+    "Document",
+    "DomTokenList", 
+    "Element",
+    "MessageEvent",
+    "Navigator",
+    "Node",
+    "Window",
+    "Worker",
+    "WorkerOptions",
+    "WorkerType",
+]}

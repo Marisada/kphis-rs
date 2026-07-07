@@ -1,0 +1,41 @@
+[package]
+name = "kphis-ui-app"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+description = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+license = { workspace = true }
+readme = "README.md"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+
+# workspace crate
+kphis-drg-worker = { workspace = true, features = ["api"]}
+kphis-model = { workspace = true }
+kphis-typst-worker = { workspace = true, features = ["api"]}
+kphis-ui-core = { workspace = true }
+kphis-util = { workspace = true }
+
+# from workspace
+async-once-cell = { workspace = true }
+bitcode = { workspace = true }
+discard = { workspace = true }
+dominator = { workspace = true }
+futures-signals = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+typst-utils = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = [
+    "Event",
+    "EventSource",
+    "MessageEvent",
+]}

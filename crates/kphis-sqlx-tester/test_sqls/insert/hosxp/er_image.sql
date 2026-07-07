@@ -1,0 +1,2 @@
+INSERT INTO `hos`.`er_image` (`vn`, `image1`, `image2`, `image3`, `image4`, `image5`, `image1_note`, `image2_note`, `image3_note`, `image4_note`, `image5_note`, `hos_guid`) VALUES
+	('651231235959', '����\0C\0\0\0?\0�� ��', NULL, NULL, NULL, NULL, 'note', NULL, NULL, NULL, NULL, NULL);

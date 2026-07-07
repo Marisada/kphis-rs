@@ -1,0 +1,6 @@
+# read https://rust-lang.github.io/rustfmt for more details
+
+# for screen width 1920, default is 100
+max_width = 200
+# default is "Auto"
+newline_style = "Unix"

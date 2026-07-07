@@ -1,0 +1,2 @@
+INSERT INTO `kphis`.`opd_er_consult` (`er_consult_id`, `opd_er_order_master_id`, `er_consult_ward`, `er_consult_date`, `er_consult_time`, `er_consult_doctor_reply`, `er_consult_date_reply`, `er_consult_time_reply`, `er_consult_doctorcode`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
+	(1, 1, '1', '2024-01-01', '11:11:11', '007', '2024-01-01', '11:11:11', '009', 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);
