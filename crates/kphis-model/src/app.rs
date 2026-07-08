@@ -750,6 +750,17 @@ impl AppState {
     pub fn doctor_entryposition(&self) -> Option<String> {
         self.user.lock_ref().as_ref().map(|user| user.user.entryposition.get_cloned())
     }
+    pub fn guess_view_by(&self) -> &'static str {
+        if self.has_permission(Permission::DataTypeDoctorUse) {
+            "doctor"
+        } else if self.has_permission(Permission::DataTypeNurseUse) {
+            "nurse"
+        } else if self.has_permission(Permission::DataTypePharmacyUse) {
+            "pharmacist"
+        } else {
+            "other"
+        }
+    }
     pub fn has_permission(&self, permission: Permission) -> bool {
         if self.is_production() {
             let read_only_perm = if self.is_read_only_mode() { permission.read_only() } else { true };
