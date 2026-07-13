@@ -273,6 +273,7 @@ pub const BTN_SM_FR_L: [&str; 4] = ["btn","btn-sm","float-end","me-1"];
 pub const BTN_SM_FR_R: [&str; 4] = ["btn","btn-sm","float-end","ms-1"];
 pub const BTN_SM_FR_RT: [&str; 5] = ["btn","btn-sm","float-end","mt-1","ms-1"];
 pub const BTN_SM_FR_RT_CYAN: [&str; 6] =["btn","btn-sm","btn-info","float-end","mt-1","ms-1"];
+pub const BTN_SM_FR_RT_BLUEO: [&str; 6] =["btn","btn-sm","btn-outline-primary","float-end","mt-1","ms-1"];
 
 pub const BTN_GROUP_SM: [&str; 2] = ["btn-group","btn-group-sm"];
 pub const BTN_GROUP_T: [&str; 2] = ["btn-group","mb-2"];

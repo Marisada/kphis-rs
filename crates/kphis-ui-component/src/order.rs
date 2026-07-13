@@ -44,7 +44,10 @@ use kphis_util::{
 
 use crate::{
     admission_note::AdmissionNoteCpn,
-    gadget::{image::ImageCpn, pdf_button::{PdfButtons, static_pdf_btn_with_modal}},
+    gadget::{
+        image::ImageCpn,
+        pdf_button::{PdfButtons, static_pdf_btn_with_modal},
+    },
     modal::{
         blank_modal,
         index_plan_action_form::{FormType, IndexPlanActionForm, OrderType},
@@ -2917,7 +2920,16 @@ impl OrderCpn {
         })
     }
 
-    fn render_order_item(cpn_id: &'static str, order_item: Rc<OrderItem>, order: Rc<Order>, is_oneday: bool, due_mutables: Rc<DueMutables>, flags: Rc<OrderFlags>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    fn render_order_item(
+        cpn_id: &'static str,
+        order_item: Rc<OrderItem>,
+        order: Rc<Order>,
+        is_oneday: bool,
+        due_mutables: Rc<DueMutables>,
+        flags: Rc<OrderFlags>,
+        page: Rc<Self>,
+        app: Rc<App>,
+    ) -> Dom {
         let is_due = order_item.due_status.as_ref().map(|due_status| due_status == "Y").unwrap_or_default();
         let has_info = order_item.info_status.as_ref().map(|info_status| info_status == "Y").unwrap_or_default();
         let will_blue = if is_oneday {
@@ -3004,6 +3016,37 @@ impl OrderCpn {
                             page.edit_order.set(None);
                         }))
                     })))
+                    // +PLAN BUTTON
+                    .apply_if(
+                        !flags.is_readonly
+                        && flags.is_nurse
+                        && flags.is_confirm
+                        && (flags.is_nurse_accepted || !flags.is_by_doctor)
+                        // && order_item.off_by_datetime.is_none()
+                        && if page.is_ipd {
+                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, flags.is_pre_admit)
+                        } else {
+                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderItem, false)
+                        },
+                    clone!(page, order, order_item => move |dom| dom.child(html!("button", {
+                        .attr("type", "button")
+                        .class(class::BTN_SM_FR_RT_BLUEO)
+                        .attr("data-bs-toggle", "modal")
+                        .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
+                        .text("+Plan")
+                        .event(clone!(page, order_item => move |_: events::Click| {
+                            page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
+                                order_item.order_item_id,
+                                None,
+                                None,
+                                page.patient.clone(),
+                                OrderType::new_from_str(&order.as_ref().order_type),
+                                FormType::Plan,
+                                page.view_by.clone(),
+                            )));
+                        }))
+                        // ipd-nurse-index-plan-action-form.php::onclickAddIndexPlanOrderItem(event, order_item.order_item_id, order_item.order_item_detail);
+                    }))))
                     // DUE button
                     .apply(|dom| {
                         if is_due && (flags.is_doctor || flags.is_nurse || flags.is_pharmacist) {
@@ -3139,40 +3182,9 @@ impl OrderCpn {
                                         app.clone(),
                                     )
                                 })
-                            })))       
+                            })))
                         }))
                     )
-                    // +PLAN BUTTON
-                    .apply_if(
-                        !flags.is_readonly
-                        && flags.is_nurse
-                        && flags.is_confirm
-                        && (flags.is_nurse_accepted || !flags.is_by_doctor)
-                        // && order_item.off_by_datetime.is_none()
-                        && if page.is_ipd {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, flags.is_pre_admit)
-                        } else {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderItem, false)
-                        },
-                    clone!(page, order, order_item => move |dom| dom.child(html!("button", {
-                        .attr("type", "button")
-                        .class(class::BTN_SM_FR_T_BLUEO)
-                        .attr("data-bs-toggle", "modal")
-                        .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
-                        .text("+Plan")
-                        .event(clone!(page, order_item => move |_: events::Click| {
-                            page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
-                                order_item.order_item_id,
-                                None,
-                                None,
-                                page.patient.clone(),
-                                OrderType::new_from_str(&order.as_ref().order_type),
-                                FormType::Plan,
-                                page.view_by.clone(),
-                            )));
-                        }))
-                        // ipd-nurse-index-plan-action-form.php::onclickAddIndexPlanOrderItem(event, order_item.order_item_id, order_item.order_item_detail);
-                    }))))
                     // MED NAME
                     .child(html!("span", {
                         .child(html!("span", {
@@ -3545,6 +3557,32 @@ impl OrderCpn {
                     // onclickOffContinuousOrderItem(event, order_item.order_item_id, (order_item.icode == null ? '' : (order_item.med_name + (order_item.order_item_detail != '' ? '\n' : ''))) + order_item.order_item_detail);
                 }))
             }))))
+            // PLAN BUTTON
+            .apply_if(
+                !is_readonly
+                && is_nurse
+                // && order_item.off_by_datetime.is_none()
+                // && ["doctor","nurse"].contains(&order_item.order_owner_type.clone().unwrap_or_default().as_str())
+                && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, is_pre_admit),
+            clone!(page, order_item, order_type => move |dom| dom.child(html!("button", {
+                .attr("type", "button")
+                .class(class::BTN_SM_FR_RT_BLUEO)
+                .attr("data-bs-toggle", "modal")
+                .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
+                .text("+Plan")
+                .event(clone!(page, order_item, order_type => move |_: events::Click| {
+                    page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
+                        order_item.order_item_id,
+                        None,
+                        None,
+                        page.patient.clone(),
+                        order_type.clone(),
+                        FormType::Plan,
+                        page.view_by.clone(),
+                    )));
+                }))
+                // ipd-nurse-index-plan-action-form.php::onclickAddIndexPlanOrderItem(event, order_item.order_item_id, order_item.order_item_detail);
+            }))))
             // ADDICT PDF BUTTON
             .apply_if(
                 order_item.addict_type_id.map(|id| id == 2).unwrap_or_default()
@@ -3592,35 +3630,9 @@ impl OrderCpn {
                                 app.clone(),
                             )
                         })
-                    })))       
+                    })))
                 }))
             )
-            // PLAN BUTTON
-            .apply_if(
-                !is_readonly
-                && is_nurse
-                // && order_item.off_by_datetime.is_none()
-                // && ["doctor","nurse"].contains(&order_item.order_owner_type.clone().unwrap_or_default().as_str())
-                && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, is_pre_admit),
-            clone!(page, order_item, order_type => move |dom| dom.child(html!("button", {
-                .attr("type", "button")
-                .class(class::BTN_SM_FR_T_BLUEO)
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
-                .text("+Plan")
-                .event(clone!(page, order_item, order_type => move |_: events::Click| {
-                    page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
-                        order_item.order_item_id,
-                        None,
-                        None,
-                        page.patient.clone(),
-                        order_type.clone(),
-                        FormType::Plan,
-                        page.view_by.clone(),
-                    )));
-                }))
-                // ipd-nurse-index-plan-action-form.php::onclickAddIndexPlanOrderItem(event, order_item.order_item_id, order_item.order_item_detail);
-            }))))
             .child(html!("span", {
                 .child(html!("span", {
                     .apply_if(order_item.order_item_type.as_ref().map(|ty| will_blue.contains(&ty.as_str())).unwrap_or_default(), |d| d.class(class::BOLD_BLUE_EM))
