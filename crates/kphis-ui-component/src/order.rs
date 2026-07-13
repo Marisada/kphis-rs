@@ -3089,9 +3089,15 @@ impl OrderCpn {
                         }
                     })
                     // ADDICT PDF BUTTON
-                    .apply_if(order_item.addict_type_id.map(|id| id == 2).unwrap_or_default(), |dom| dom
+                    .apply_if(
+                        order_item.addict_type_id.map(|id| id == 2).unwrap_or_default()
+                        && flags.is_nurse
+                        && flags.is_confirm
+                        && (flags.is_nurse_accepted || !flags.is_by_doctor)
+                        && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false),
+                    |dom| dom
                         .child(html!("div", {
-                            .class(class::FLOAT_RB1)
+                            .class(class::FLOAT_RRB1)
                             .child_signal(page.patient.signal_cloned().map(clone!(app, order, order_item => move |opt| {
                                 opt.map(|patient| {
                                     static_pdf_btn_with_modal(
@@ -3112,9 +3118,15 @@ impl OrderCpn {
                         }))
                     )
                     // HABIT-FORMING PDF BUTTON
-                    .apply_if(order_item.habit_forming_type.map(|id| id == 2).unwrap_or_default(), |dom| dom
+                    .apply_if(
+                        order_item.habit_forming_type.map(|id| id == 2).unwrap_or_default()
+                        && flags.is_nurse
+                        && flags.is_confirm
+                        && (flags.is_nurse_accepted || !flags.is_by_doctor)
+                        && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false),
+                    |dom| dom
                         .child(html!("div", {
-                            .class(class::FLOAT_RB1)
+                            .class(class::FLOAT_RRB1)
                             .child_signal(page.patient.signal_cloned().map(clone!(app, order, order_item => move |opt| {
                                 opt.map(|patient| {
                                     static_pdf_btn_with_modal(

@@ -601,6 +601,7 @@ pub const FLOAT_L: [&str; 2] = ["float-start","me-2"];
 pub const FLOAT_RB1: [&str; 2] = ["float-end","mt-1"];
 pub const FLOAT_RB: [&str; 2] = ["float-end","mt-2"];
 pub const FLOAT_RR: [&str; 2] = ["float-end","ms-2"];
+pub const FLOAT_RRB1: [&str; 3] = ["float-end","ms-1","mt-1"];
 pub const FLOAT_RR_Y1: [&str; 3] = ["float-end","ms-2","my-1"];
 pub const FLOAT_RT: [&str; 2] = ["float-end","mb-2"];
 pub const FLOAT_RL: [&str; 2] = ["float-end","me-2"];
