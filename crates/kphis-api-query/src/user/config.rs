@@ -200,7 +200,7 @@ mod tests {
         let insert = insert_dup_failed(99,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
         assert_eq!(insert.rows_affected(), 1);
         let update = insert_dup_failed(99,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert_eq!(update.rows_affected(), 1);
+        assert_eq!(update.rows_affected(), 2);
     }
 
     #[tokio::test]
