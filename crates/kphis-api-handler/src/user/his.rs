@@ -233,7 +233,7 @@ pub async fn check_totp(
 
 async fn login_response(socket_addr: SocketAddr, user: &UserDb, cookies: &Cookies, app: &ApiState) -> Result<LoginResponse, AppError> {
     // generate new state_id, access token and refresh token
-    let Ulid(state_id) = Ulid::new();
+    let Ulid(state_id) = Ulid::generate();
     let access_token = gen_token_public(
         state_id,
         (app.access_limit(), app.refresh_limit()),

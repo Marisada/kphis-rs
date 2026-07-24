@@ -217,7 +217,7 @@ fn image_path_from_row(row: &MySqlRow) -> sqlx::Result<ImagePath> {
 
 /// new Ulid to `01J/G0/M004KYHATX7J2W7MB28X4.webp`
 fn new_ulid_to_path() -> String {
-    let mut s = Ulid::new().to_string();
+    let mut s = Ulid::generate().to_string();
     // please copy 3 lines below to test_new_ulid_to_path()
     s.insert_str(s.len(), ".webp");
     s.insert(5, '/');

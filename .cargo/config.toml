@@ -2,7 +2,7 @@
 git-fetch-with-cli = true
 
 [target.wasm32-unknown-unknown]
-rustflags = ['-Ctarget-feature=+simd128']
+rustflags = ['-Ctarget-feature=+simd128','-Cdebuginfo=0']
 runner = 'wasm-bindgen-test-runner'
 
 [env]

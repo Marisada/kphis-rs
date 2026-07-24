@@ -40,7 +40,7 @@ async fn api_image_path() {
     assert_eq!(post_multipart_empty_filename_error.message.as_str(), "No field 'file_name'");
 
     // POST not webp part-content-type Multipart
-    let multipart_not_webp = MultipartForm::new().add_part(PATH_PREFIX_IMAGE, Part::bytes(b"test_thumb".as_slice()).file_name(&Ulid::new().to_string()).mime_type("image/png"));
+    let multipart_not_webp = MultipartForm::new().add_part(PATH_PREFIX_IMAGE, Part::bytes(b"test_thumb".as_slice()).file_name(&Ulid::generate().to_string()).mime_type("image/png"));
     let post_multipart_not_webp = server.post(&EndPoint::Image.base()).multipart(multipart_not_webp).expect_failure().await;
     assert_eq!(post_multipart_not_webp.status_code(), StatusCode::BAD_REQUEST);
     let post_multipart_not_webp_error = post_multipart_not_webp.json::<AppError>();
@@ -48,7 +48,7 @@ async fn api_image_path() {
     assert_eq!(post_multipart_not_webp_error.message.as_str(), "'content_type' not `webp`");
 
     // POST image + thumbnail files with Multipart
-    let filename_success = Ulid::new().to_string();
+    let filename_success = Ulid::generate().to_string();
     let multipart_success = MultipartForm::new()
         .add_part(PATH_PREFIX_IMAGE, Part::bytes(b"test_image".as_slice()).file_name(&filename_success).mime_type("image/webp"))
         .add_part(PATH_PREFIX_THUMB, Part::bytes(b"test_thumb".as_slice()).file_name(&filename_success).mime_type("image/webp"));

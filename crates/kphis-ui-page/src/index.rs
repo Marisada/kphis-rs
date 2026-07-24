@@ -164,11 +164,11 @@ impl IndexPage {
                 }
             }
 
-            // clear UI
-            page.username.set_neq(String::new());
-            page.password.set_neq(String::new());
-            page.token_2fa.set_neq(String::new());
-            page.wait_2fa.set(false);
+            // // clear UI
+            // page.username.set_neq(String::new());
+            // page.password.set_neq(String::new());
+            // page.token_2fa.set_neq(String::new());
+            // page.wait_2fa.set(false);
 
             // Clear (if exists) reconnecting TimeOut (prevent reconnect again)
             if let Some(handle) = page.reconnecting.get() {
