@@ -44,40 +44,20 @@ enum SortBy {
 pub struct IpdPostAdmitListPage {
     view_by: Mutable<String>,
 
-    adm_doctor: Mutable<String>,
-    dch_doctor: Mutable<String>,
     patient: Mutable<String>,
     passcode: Mutable<String>,
     search_result: MutableVec<Rc<PostAdmitList>>,
 
     changed: Mutable<bool>,
-    use_date_limit: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
     is_desc: Mutable<bool>,
 }
 
 impl IpdPostAdmitListPage {
-    pub fn new(view_by: &str, app: Rc<App>) -> Rc<Self> {
-        let (adm_doctor, dch_doctor) = if view_by == "doctor" {
-            if let Some(doctorcode) = app.doctor_code() {
-                app.dch_doctor_select.set_neq(doctorcode);
-            }
-            if app.summary_status_select.get_cloned().is_empty() {
-                app.summary_status_select.set(AuditStatus::Null.as_ref().to_string());
-            }
-            (app.adm_doctor_select.clone(), app.dch_doctor_select.clone())
-        } else {
-            (Mutable::new(String::new()), Mutable::new(String::new()))
-        };
-        let use_date_limit = AuditStatus::from_str(&app.summary_status_select.get_cloned())
-            .map(|status| status.is_list_with_date_limit())
-            .unwrap_or(true);
+    pub fn new(view_by: &str) -> Rc<Self> {
         Rc::new(Self {
             view_by: Mutable::new(view_by.to_owned()),
-            adm_doctor,
-            dch_doctor,
-            use_date_limit: Mutable::new(use_date_limit),
             ..Default::default()
         })
     }
@@ -142,7 +122,7 @@ impl IpdPostAdmitListPage {
 
     // send GET method
     fn submit(page: Rc<Self>, app: Rc<App>) {
-        let (start_dchdate, end_dchdate) = if page.use_date_limit.get() {
+        let (start_dchdate, end_dchdate) = if app.use_date_limit.get() {
             (date_8601(&app.start_dchdate.lock_ref()), date_8601(&app.end_dchdate.lock_ref()))
         } else {
             (None, None)
@@ -150,8 +130,8 @@ impl IpdPostAdmitListPage {
         let params = PostAdmitParams {
             ward: str_some(app.ward_select.get_cloned()),
             inscl: str_some(app.inscl_select.get_cloned()),
-            adm_doctor: str_some(page.adm_doctor.get_cloned()),
-            dch_doctor: str_some(page.dch_doctor.get_cloned()),
+            adm_doctor: str_some(app.adm_doctor_select.get_cloned()),
+            dch_doctor: str_some(app.dch_doctor_select.get_cloned()),
             patient: str_some(page.patient.get_cloned()),
             passcode: str_some(page.passcode.get_cloned()),
             start_dchdate,
@@ -240,7 +220,7 @@ impl IpdPostAdmitListPage {
                                             .with_node!(element => {
                                                 .event(clone!(app, page, element => move |_: events::Change| {
                                                     let value = element.value();
-                                                    page.use_date_limit.set_neq(AuditStatus::from_str(&value).map(|status| status.is_list_with_date_limit()).unwrap_or(true));
+                                                    app.use_date_limit.set_neq(AuditStatus::from_str(&value).map(|status| status.is_list_with_date_limit()).unwrap_or(true));
                                                     app.summary_status_select.set_neq(value);
                                                     app.to_local_storage();
                                                     page.changed.set_neq(true);
@@ -364,13 +344,13 @@ impl IpdPostAdmitListPage {
                                                 .text("ทั้งหมด")
                                             }))
                                             .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, &page.adm_doctor.lock_ref())
+                                                doms::select_option(option, &app.adm_doctor_select.lock_ref())
                                             }))
                                             //.apply(mixins::string_value_select(page.adm_doctor.clone(), page.changed.clone()))
-                                            .prop_signal("value", page.adm_doctor.signal_cloned())
+                                            .prop_signal("value", app.adm_doctor_select.signal_cloned())
                                             .with_node!(element => {
                                                 .event(clone!(app, page, element => move |_: events::Change| {
-                                                    page.adm_doctor.set_neq(element.value());
+                                                    app.adm_doctor_select.set_neq(element.value());
                                                     if page.view_by.lock_ref().as_str() == "doctor" {
                                                         app.to_local_storage();
                                                     }
@@ -385,12 +365,12 @@ impl IpdPostAdmitListPage {
                                         .child(html!("i", {.class(class::FA_USER)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
-                                            let neq = page.adm_doctor.lock_ref().as_str() != doctor_code.as_str();
+                                            let neq = app.adm_doctor_select.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
                                                 if let Some(elm) = app.get_id("adm_doctor") {
                                                     NiceSelect::new_default_with_value(&elm, &doctor_code);
                                                 }
-                                                page.adm_doctor.set_neq(doctor_code);
+                                                app.adm_doctor_select.set_neq(doctor_code);
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();
                                                 }
@@ -403,12 +383,12 @@ impl IpdPostAdmitListPage {
                                         .class(class::BTN_SM_RED)
                                         .child(html!("i", {.class(class::FA_X)}))
                                         .event(clone!(app, page => move |_: events::Click| {
-                                            let no_doctor = page.adm_doctor.lock_ref().is_empty();
+                                            let no_doctor = app.adm_doctor_select.lock_ref().is_empty();
                                             if !no_doctor {
                                                 if let Some(elm) = app.get_id("adm_doctor") {
                                                     NiceSelect::new_default_with_value(&elm,"");
                                                 }
-                                                page.adm_doctor.set_neq(String::new());
+                                                app.adm_doctor_select.set_neq(String::new());
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();
                                                 }
@@ -432,13 +412,13 @@ impl IpdPostAdmitListPage {
                                                 .text("ทั้งหมด")
                                             }))
                                             .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, &page.dch_doctor.lock_ref())
+                                                doms::select_option(option, &app.dch_doctor_select.lock_ref())
                                             }))
                                             //.apply(mixins::string_value_select(page.dch_doctor.clone(), page.changed.clone()))
-                                            .prop_signal("value", page.dch_doctor.signal_cloned())
+                                            .prop_signal("value", app.dch_doctor_select.signal_cloned())
                                             .with_node!(element => {
                                                 .event(clone!(app, page, element => move |_: events::Change| {
-                                                    page.dch_doctor.set_neq(element.value());
+                                                    app.dch_doctor_select.set_neq(element.value());
                                                     if page.view_by.lock_ref().as_str() == "doctor" {
                                                         app.to_local_storage();
                                                     }
@@ -453,12 +433,12 @@ impl IpdPostAdmitListPage {
                                         .child(html!("i", {.class(class::FA_USER)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
-                                            let neq = page.dch_doctor.lock_ref().as_str() != doctor_code.as_str();
+                                            let neq = app.dch_doctor_select.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
                                                 if let Some(elm) = app.get_id("dch_doctor") {
                                                     NiceSelect::new_default_with_value(&elm, &doctor_code);
                                                 }
-                                                page.dch_doctor.set_neq(doctor_code);
+                                                app.dch_doctor_select.set_neq(doctor_code);
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();
                                                 }
@@ -471,12 +451,12 @@ impl IpdPostAdmitListPage {
                                         .class(class::BTN_SM_RED)
                                         .child(html!("i", {.class(class::FA_X)}))
                                         .event(clone!(app, page => move |_: events::Click| {
-                                            let no_doctor = page.dch_doctor.lock_ref().is_empty();
+                                            let no_doctor = app.dch_doctor_select.lock_ref().is_empty();
                                             if !no_doctor {
                                                 if let Some(elm) = app.get_id("dch_doctor") {
                                                     NiceSelect::new_default_with_value(&elm,"");
                                                 }
-                                                page.dch_doctor.set_neq(String::new());
+                                                app.dch_doctor_select.set_neq(String::new());
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();
                                                 }
@@ -496,12 +476,12 @@ impl IpdPostAdmitListPage {
                                                 .attr("type", "checkbox")
                                                 .attr("id", "show-all-date-checkbox")
                                                 .with_node!(element => {
-                                                    .future(page.use_date_limit.signal().for_each(clone!(element => move |v| {
+                                                    .future(app.use_date_limit.signal().for_each(clone!(element => move |v| {
                                                         element.set_checked(!v);
                                                         async {}
                                                     })))
-                                                    .event(clone!(page => move |_: events::Click| {
-                                                        page.use_date_limit.set(!page.use_date_limit.get());
+                                                    .event(clone!(app, page => move |_: events::Click| {
+                                                        app.use_date_limit.set(!app.use_date_limit.get());
                                                         page.changed.set_neq(true);
                                                     }))
                                                 })
@@ -517,7 +497,7 @@ impl IpdPostAdmitListPage {
                                     doms::label_group_for("start_dchdate","จำหน่ายวันที่"),
                                     doms::date_picker(
                                         app.start_dchdate.clone(),
-                                        page.changed.clone(), not(page.use_date_limit.signal()), None,
+                                        page.changed.clone(), not(app.use_date_limit.signal()), None,
                                         |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
                                         |d| d.class(class::FORM_CTRL_ONLY_SM_R0),
                                         |d| d.class(class::FORM_CTRL_ONLY_SM_R0).attr("id", "start_dchdate"),
@@ -526,7 +506,7 @@ impl IpdPostAdmitListPage {
                                     doms::label_group_for("end_dchdate","ถึงวันที่"),
                                     doms::date_picker(
                                         app.end_dchdate.clone(),
-                                        page.changed.clone(), not(page.use_date_limit.signal()), None,
+                                        page.changed.clone(), not(app.use_date_limit.signal()), None,
                                         |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
                                         |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
                                         |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "end_dchdate"),

@@ -223,7 +223,7 @@ impl MenuCpn {
                             match e.status {
                                 409 => {
                                     menu.token_2fa.set(String::new());
-                                    menu.token_2fa_result.set_neq(String::from("Token ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง"));
+                                    menu.token_2fa_result.set_neq(String::from("2FA ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง"));
                                 }
                                 408 => {
                                     post_user_config(Some(true), Some(menu.totp_qr.clone()), app.clone());
@@ -1329,7 +1329,9 @@ impl MenuCpn {
                                                             .class(class::TXT_CT)
                                                             .text("Scan ด้วย Authenticator Application")
                                                             .child(html!("br"))
-                                                            .text("เช่น Google Authenticator เพื่อสร้าง Token")
+                                                            .text("เช่น Google Authenticator เพื่อสร้าง")
+                                                            .child(html!("br"))
+                                                            .text("Two-Factor Authentication (2FA)")
                                                             .child(html!("br"))
                                                             .text("สำหรับเข้าสู่ระบบทุกครั้ง")
                                                         }),
