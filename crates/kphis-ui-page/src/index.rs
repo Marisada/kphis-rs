@@ -125,7 +125,7 @@ impl IndexPage {
                             page.token_2fa.set_neq(String::new());
                             match e.status {
                                 401 => {
-                                    page.result.set_neq(String::from("Token ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง"));
+                                    page.result.set_neq(String::from("2FA ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง"));
                                 }
                                 408 => {
                                     page.username.set_neq(String::new());
@@ -164,20 +164,14 @@ impl IndexPage {
                 }
             }
 
-            // clear UI
-            page.username.set_neq(String::new());
-            page.password.set_neq(String::new());
-            page.token_2fa.set_neq(String::new());
-            page.wait_2fa.set(false);
-
             // Clear (if exists) reconnecting TimeOut (prevent reconnect again)
             if let Some(handle) = page.reconnecting.get() {
                 Timeout::manual_drop(handle);
                 page.reconnecting.set(None);
             }
             // change SSE from anonymous to User specific one
+            // remains old sse_ready_state to prevent page re-render
             app.sse_end(false);
-            app.sse_ready_state.set(0);
             App::sse_new(app.clone());
             app.get_initial_user_alert().await;
 
@@ -394,7 +388,7 @@ impl IndexPage {
                                                         .attr("type", "button")
                                                         .class(class::BTN_LG_CTRL_BLUE)
                                                         .child(html!("i",{.class(class::FA_SIGN_IN)}))
-                                                        .text_signal(page.wait_2fa.signal_cloned().map(|wait_2fa| if wait_2fa {" ยืนยัน 2FA"} else {" เข้าสู่ระบบ"}))
+                                                        .text_signal(page.wait_2fa.signal_cloned().map(|wait_2fa| if wait_2fa {" ยืนยัน Two-Factor Authentication (2FA)"} else {" เข้าสู่ระบบ"}))
                                                         .with_node!(element => {
                                                             .future(app.sse_ready_state.signal_cloned().map(|state| state != 1).for_each(move |disable| {
                                                                 element.set_disabled(disable);

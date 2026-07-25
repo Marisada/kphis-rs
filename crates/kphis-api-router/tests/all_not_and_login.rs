@@ -162,7 +162,7 @@ async fn api_all_match(ep: EndPoint, server: &TestServer, status_code: StatusCod
         EndPoint::Image => {
             // image::file_path::post_image_file
             // POST api/image
-            let post_api_image_filename = Ulid::new().to_string();
+            let post_api_image_filename = Ulid::generate().to_string();
             let post_api_image_multipart = MultipartForm::new()
                 .add_part(PATH_PREFIX_IMAGE, Part::bytes(b"test_image".as_slice()).file_name(&post_api_image_filename).mime_type("image/webp"))
                 .add_part(PATH_PREFIX_THUMB, Part::bytes(b"test_thumb".as_slice()).file_name(&post_api_image_filename).mime_type("image/webp"));

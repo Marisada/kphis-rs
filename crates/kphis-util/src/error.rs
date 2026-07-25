@@ -232,7 +232,7 @@ impl IntoResponse for AppError {
 
 #[cfg(not(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none"))))]
 fn new_eror_id() -> String {
-    Ulid::new().to_string()
+    Ulid::generate().to_string()
 }
 
 #[cfg(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none")))]

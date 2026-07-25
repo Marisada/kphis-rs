@@ -33,7 +33,7 @@ ulid = { workspace = true }
 utoipa = { workspace = true }
 
 [dev-dependencies]
-axum-test = "20"
+axum-test = "21"
 http-body-util = { workspace = true }
 kphis-sqlx-tester = { workspace = true }
 serde = { workspace = true }

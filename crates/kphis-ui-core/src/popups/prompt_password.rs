@@ -43,6 +43,15 @@ impl PromptPasswordPopup {
         }
     }
 
+    fn not_ready_signal(&self) -> impl Signal<Item = bool> + use<> {
+        let totp_done = self.totp_done;
+        map_ref! {
+            let no_password = self.password.signal_ref(|s| s.is_empty()),
+            let no_totp = self.token_2fa.signal_ref(|s| s.is_empty()) =>
+            *no_password || (totp_done && *no_totp)
+        }
+    }
+
     pub fn finished(&self) -> impl Signal<Item = bool> + use<> {
         self.finished.signal()
     }
@@ -52,7 +61,7 @@ impl PromptPasswordPopup {
         let token_2fa = self.token_2fa.get_cloned();
         if password.is_empty() {
             self.focus_password.set(true);
-        } else if !token_2fa.is_empty() {
+        } else if !self.totp_done || !token_2fa.is_empty() {
             self.result.set(PopupAuth::Ok(password, token_2fa));
             self.finished.set(true);
         }
@@ -80,13 +89,13 @@ impl PromptPasswordPopup {
                         .child(html!("div",{
                             .class(class::COL_MD12_T)
                             .children([
-                                html!("h4", {.text("กรุณาต่อเวลาการเข้าใช้งาน")}),
+                                html!("h4", {.text("กรุณายืนยันตัวตนของท่าน")}),
                                 html!("p", {
                                     .text("เรียน \u{00a0}")
                                     .text(&app.user_name().unwrap_or_default())
                                 }),
                                 html!("p", {
-                                    .text("เนื่องจากท่านได้เข้าใช้งานต่อเนื่องนานเกินกำหนด หากท่านต้องการใช้งานต่อ กรุณากรอกข้อมูลเพื่อยืนยันตัวตนของท่าน")
+                                    .text("เนื่องจากท่านได้เข้าใช้งานต่อเนื่องนานเกินกำหนด หากต้องการใช้งานต่อ กรุณากรอกข้อมูลเพื่อยืนยันตัวตนของท่าน")
                                 }),
                             ])
                         }))
@@ -146,11 +155,7 @@ impl PromptPasswordPopup {
                                     .attr("type", "button")
                                     .class(class::BTN_L_BLUE)
                                     .text("ใช้งานต่อ")
-                                    .apply(mixins::other_true_signal_disable(map_ref!{
-                                        let no_password = page.password.signal_ref(|s| s.is_empty()),
-                                        let no_totp = page.token_2fa.signal_ref(|s| s.is_empty()) =>
-                                        *no_password || *no_totp
-                                    }))
+                                    .apply(mixins::other_true_signal_disable(page.not_ready_signal()))
                                     .event(clone!(page => move |_: events::Click| {
                                         page.save();
                                     }))

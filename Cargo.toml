@@ -43,7 +43,7 @@ axum-extra = { version = "0.12", features = [ "typed-header" ] }
 axum-macros = "0.5"
 axum-prometheus = "0.10"
 axum-server = { version = "0.8", features = [ "tls-rustls" ] }
-base64 = "0.22"
+base64 = "0.23"
 bitcode = { version = "0.6", features = [ "time" ] }
 chart-js-rs = { git = "https://codeberg.org/marisada/chart-js-rs" }
 # chart-js-rs = { path = "../chart-js-rs/" }
@@ -78,7 +78,7 @@ log = "0.4"
 md-5 = "0.11"
 num = "0.4"
 orion = "0.17"
-pasetors = "0.7"
+pasetors = "0.8"
 rand = "0.9"
 regex = "1"
 rstest = "0.26"
@@ -92,8 +92,7 @@ serde-wasm-bindgen = "0.6"
 sqlx = { version = "0.9", features = [ "mysql", "runtime-tokio", "time", "rust_decimal" ] }
 sqlx_binder = { git = "https://codeberg.org/marisada/sqlx_binder" }
 # sqlx_binder = { path = "../sqlx_binder" }
-# pin strum as biblatex and croner
-strum = { version = "0.27", features = [ "derive" ] }
+strum = { version = "0.27", features = [ "derive" ] } # pin as biblatex and croner
 syntect = { version = "5.3", default-features = false, features = [ "html" ] }
 time = { version = "0.3", features = [ "macros", "parsing", "serde-human-readable", "wasm-bindgen" ]}
 time-datepicker-core = { git = "https://codeberg.org/marisada/time-datepicker-core" }
@@ -109,9 +108,7 @@ tower-http = { version = "0.7", features = [ "fs", "compression-br", "compressio
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = { version = "0.3", features = [ "time", "env-filter" ] }
-# we use ulid in frontend, backend, model and util. ulid 1.2 use getrandom 0.3 that cannot use in frontend WASM
-# ulid = { version = "~1.1", features = ["serde"] }
-ulid = { version = "1", features = ["serde"] }
+ulid = { version = "3", features = ["serde"] } # MUST not use in WASM (only version ~1.1 compat with WASM )
 unicode-width = { version = "0.2", default-features = false }
 urlencoding = "2"
 wasm-bindgen = "0.2"
@@ -125,10 +122,8 @@ xml = "1"
 
 # Typst related
 codespan-reporting = "0.13"
-# pin ecow as typst
-ecow = "0.2.6"
-# pin pdf-writer as krilla
-pdf-writer = "0.15.0"
+ecow = "0.2.6" # pin as typst
+pdf-writer = "0.15.0" # pin as krilla
 
 # typst = "0.14"
 # typst-library = "0.14"

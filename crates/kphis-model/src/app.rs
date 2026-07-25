@@ -68,6 +68,7 @@ pub struct AppState {
     pub dch_doctor_select: Mutable<String>,
     pub spclty_select: Mutable<String>,
 
+    pub use_date_limit: Mutable<bool>,
     pub monitor_refresh_interval: Mutable<String>,
     pub ipd_pharmacy_order_monitor_is_discharged: Mutable<String>,
     pub opd_er_pharmacy_order_monitor_is_discharged: Mutable<String>,
@@ -124,6 +125,7 @@ impl AppState {
             dch_doctor_select: Mutable::new(String::new()),
             spclty_select: Mutable::new(String::new()),
 
+            use_date_limit: Mutable::new(true),
             monitor_refresh_interval: Mutable::new(String::from("60")),
             ipd_pharmacy_order_monitor_is_discharged: Mutable::new(String::from("N")),
             opd_er_pharmacy_order_monitor_is_discharged: Mutable::new(String::from("N")),
@@ -192,6 +194,7 @@ impl AppState {
             dch_doctor_select: Mutable::new(item.dch_doctor_select),
             spclty_select: Mutable::new(item.spclty_select),
 
+            use_date_limit: Mutable::new(true),
             monitor_refresh_interval: Mutable::new(item.monitor_refresh_interval),
             ipd_pharmacy_order_monitor_is_discharged: Mutable::new(item.ipd_pharmacy_order_monitor_is_discharged),
             opd_er_pharmacy_order_monitor_is_discharged: Mutable::new(item.opd_er_pharmacy_order_monitor_is_discharged),

@@ -52,7 +52,7 @@ async fn api_user() {
     assert_eq!(try_logout_error.message.as_str(), "Token Not Found");
 
     // Try PUT without Refresh Token and username is a random state_id
-    user.username = Ulid::new().to_string();
+    user.username = Ulid::generate().to_string();
     let try_put_refresh_random = server.put(&EndPoint::User.base()).json(&user).expect_failure().await;
     assert_eq!(try_put_refresh_random.status_code(), StatusCode::UNAUTHORIZED);
     let try_put_refresh_random_error = try_put_refresh_random.json::<AppError>();

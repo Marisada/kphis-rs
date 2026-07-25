@@ -147,7 +147,7 @@ async fn render_inner(route: Route, app: Rc<App>) -> Dom {
                                 IpdOrderPharmacyPage::render(page, app.clone())
                             }
                             Route::IpdPostAdmitList { view_by } => {
-                                let page = IpdPostAdmitListPage::new(&view_by, app.clone());
+                                let page = IpdPostAdmitListPage::new(&view_by);
                                 IpdPostAdmitListPage::render(page, app.clone())
                             }
                             Route::IpdPreAdmitList { view_by } => {

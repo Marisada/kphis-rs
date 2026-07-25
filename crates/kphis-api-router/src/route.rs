@@ -499,7 +499,7 @@ pub fn api_router(state: ApiState) -> Router {
                     method = tracing::field::display(request.method()),
                     uri = tracing::field::display(request.uri()),
                     version = tracing::field::debug(request.version()),
-                    request_id = tracing::field::display(ulid::Ulid::new()),
+                    request_id = tracing::field::display(ulid::Ulid::generate()),
                 )
             }),
         )
