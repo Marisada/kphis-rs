@@ -407,7 +407,10 @@ impl Route {
                         && (app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainId, false))
                         && app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErVitalSign, false)
                 }
-                Self::PermissionList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleRole, false),
+                Self::PermissionList => {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false)
+                        && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleRole, false)
+                }
                 Self::PrescriptionScreen { .. } => {
                     (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess))
                         && app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
@@ -454,7 +457,10 @@ impl Route {
                         && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxHospText, false)
                         && check_permission_view_by(&view_by, app.clone())
                 }
-                Self::UserList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleUser, false),
+                Self::UserList => {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false)
+                        && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleUser, false)
+                }
                 Self::Image | Self::Index | Self::Info | Self::Root | Self::NotFound { .. } | Self::UnAuthorized { .. } | Self::External { .. } => true,
             }
         } else {

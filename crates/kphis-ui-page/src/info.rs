@@ -10,7 +10,7 @@ use std::rc::Rc;
 use time::Date;
 use wasm_bindgen::JsCast;
 
-use kphis_model::{app::AppState, fetch::fetch_json_api, user::his::UserClientMutable};
+use kphis_model::{app::AppState, fetch::fetch_json_api};
 use kphis_ui_app::App;
 use kphis_ui_core::class;
 use kphis_util::{
@@ -45,7 +45,7 @@ impl InfoPage {
         );
     }
 
-    pub fn render(page: Rc<Self>, user: Rc<UserClientMutable>, app: Rc<App>) -> Dom {
+    pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         app.set_title("KPHIS - Info");
         body().set_class_name("");
 
@@ -64,12 +64,16 @@ impl InfoPage {
             .class(["container","pt-3"])
             .child(html!("article", {
                 .class("jumbotron")
+                .child_signal(app.state().user.signal_cloned().map(|opt| {
+                    opt.map(|user| {
+                        html!("h1", {
+                            .class("display-6")
+                            .text("ยินดีต้อนรับ ")
+                            .text_signal(user.user.name.signal_cloned())
+                        })
+                    })
+                }))
                 .children([
-                    html!("h1", {
-                        .class("display-6")
-                        .text("ยินดีต้อนรับ ")
-                        .text_signal(user.user.name.signal_cloned())
-                    }),
                     html!("p", {
                         .class("lead")
                         .text("กรุณาเลือกการทำงานของคุณจากเมนูด้านบน")

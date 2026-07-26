@@ -39,7 +39,8 @@ pub async fn get_sse(State(app): State<ApiState>) -> impl IntoResponse {
 
     let stream_map = rx.map(|msg| match msg {
         SseMessage::Msg(message) => Ok::<Event, axum::Error>(Event::default().data(message)),
-        SseMessage::GlobalMsg(_) | SseMessage::WardMsg(_) | SseMessage::SpcltyMsg(_) | SseMessage::DirectMsg(_) | SseMessage::Logout(_) => Ok(Event::default().data("Wrong message")),
+        SseMessage::Logout(message) => Ok(Event::default().event("logout").data(message)),
+        SseMessage::GlobalMsg(_) | SseMessage::WardMsg(_) | SseMessage::SpcltyMsg(_) | SseMessage::DirectMsg(_) => Ok(Event::default().data("Wrong message")),
     });
 
     // Add "X-Accel-Buffering: no" to header to prevent proxy buffering

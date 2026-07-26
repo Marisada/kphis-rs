@@ -116,11 +116,11 @@ impl App {
         self.drg_worker.get_or_init(async { kphis_drg_worker::spawn("/drg_worker_init.js").await }).await
     }
 
-    pub fn async_load<F>(&self, using_token: bool, fut: F)
+    pub fn async_load<F>(&self, check_user_token: bool, fut: F)
     where
         F: Future<Output = ()> + 'static,
     {
-        if using_token {
+        if check_user_token {
             let state = self.state.clone();
             self.loader_load(async move {
                 if token::update_token(state.clone()).await {
@@ -394,6 +394,28 @@ impl App {
                 event_source.set_onerror(Some(error_cs.as_ref().unchecked_ref()));
                 // event_source.add_event_listener_with_callback("error", error_cs.as_ref().unchecked_ref()).unwrap();
                 error_cs.forget();
+            }
+            {
+                // logout message
+                let logout_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                    let sse_data = event.data().dyn_into::<JsString>().unwrap().as_string().unwrap();
+                    if let Some(elm) = app.get_id("alert") {
+                        if let Some(title_elm) = elm.first_element_child() {
+                            title_elm.set_text_content(Some("ระบบ ปิดใช้งานชั่วคราว"));
+                        }
+                        if let Some(message_elm) = elm.last_element_child() {
+                            message_elm.set_text_content(Some(&sse_data));
+                        }
+                        elm.class_list().add_2("show", "danger").unwrap();
+                        let show = Timeout::new(7000, clone!(app => move || {
+                            elm.class_list().remove_2("show", "danger").unwrap();
+                            app.sse_end(true);
+                        }));
+                        show.forget();
+                    }
+                }));
+                event_source.add_event_listener_with_callback("logout", logout_cs.as_ref().unchecked_ref()).unwrap();
+                logout_cs.forget();
             }
             app.sse.set(Some(Rc::new(event_source.clone())));
 
@@ -696,7 +718,7 @@ impl App {
                     app.unregister_sw().await;
                 } else {
                     app.to_local_storage();
-                    app.clear_in_memory_except_user();
+                    app.clear_in_memory_except_user_and_asset();
                 }
                 Route::Index.hard_redirect();
             }),

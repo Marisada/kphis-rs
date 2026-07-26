@@ -79,202 +79,193 @@ async fn render_inner(route: Route, app: Rc<App>) -> Dom {
         // app.sse_end(true);
         app.route.set_neq(route.clone());
         return UnAuthorizedPage { hash: hash.to_owned() }.render();
+    // may has user, update user token or get user from refresh token (true = has user)
     } else if token::update_token(app.state()).await {
-        // redirect authorized user out of root and index
+        // redirect authorized user from `root`/`index` to `info`
         if matches!(route, Route::Root | Route::Index) {
             Route::Info.hard_redirect();
             Dom::empty()
         } else {
             app.route.set_neq(route.clone());
-
-            match app.user.get_cloned() {
-                Some(user) => {
-                    // app_assets not in local-storage, we use CACHE_CONTROL header and cache in service-worker
-                    if app.app_asset.lock_ref().is_none() {
-                        match AppAsset::get_asset(app.state()).await {
-                            Ok(asset) => {
-                                app.app_asset.set_neq(Some(Rc::new(asset)));
-                                app.no_cache_mode.set(false);
-                            }
-                            Err(e) => {
-                                app.alert_app_error(&e).await;
-                            }
-                        }
+            // app_assets not in local-storage, we use CACHE_CONTROL header and cache in service-worker
+            if app.app_asset.lock_ref().is_none() {
+                match AppAsset::get_asset(app.state()).await {
+                    Ok(asset) => {
+                        app.app_asset.set_neq(Some(Rc::new(asset)));
+                        app.no_cache_mode.set(false);
                     }
-                    // for refresh brower, EventSource will throw Error => sse_ready_state > 1
-                    if app.sse_ready_state.get() > 1 {
-                        app.sse_end(false);
-                        app.sse_ready_state.set(0);
-                        App::sse_new(app.clone());
-                        app.get_initial_user_alert().await;
+                    Err(e) => {
+                        app.alert_app_error(&e).await;
                     }
-
-                    app.load_theme();
-                    let mut is_fixed_height = false;
-
-                    let content = if route.has_permission(app.state()) {
-                        match &route {
-                            Route::Image => ImagePage::render(app.clone()),
-                            Route::Info => InfoPage::render(InfoPage::new(), user.clone(), app.clone()),
-                            Route::IpdAdmissionNoteDr { an } => {
-                                let page = IpdAdmissionNoteDrPage::new(an.clone());
-                                IpdAdmissionNoteDrPage::render(page, app.clone())
-                            }
-                            Route::IpdAdmissionNoteNurse { an } => {
-                                let page = IpdAdmissionNoteNursePage::new(an.clone(), app.clone());
-                                IpdAdmissionNoteNursePage::render(page, app.clone())
-                            }
-                            Route::Summary { view_by, an } => SummaryPage::render(SummaryPage::new(view_by.clone(), an.clone()), app.clone()),
-                            Route::IpdConsultList { view_by } => {
-                                let page = IpdConsultListPage::new(view_by.clone());
-                                IpdConsultListPage::render(page, app.clone())
-                            }
-                            Route::IpdIndexPlan => {
-                                is_fixed_height = true;
-                                let page = IndexPlanPage::new_ipd();
-                                IndexPlanPage::render(page, app.clone())
-                            }
-                            Route::IpdMain { view_by, an, tab, sub, id } => {
-                                let page = IpdMainPage::new(view_by.clone(), an.clone(), Tab::from_string(&tab), sub.to_owned(), *id);
-                                IpdMainPage::render(page, app.clone())
-                            }
-                            Route::IpdMra { an } => {
-                                let page = IpdMraPage::new(an.clone());
-                                IpdMraPage::render(page, app.clone())
-                            }
-                            Route::IpdOrderPharmacy => {
-                                let page = IpdOrderPharmacyPage::new();
-                                IpdOrderPharmacyPage::render(page, app.clone())
-                            }
-                            Route::IpdPostAdmitList { view_by } => {
-                                let page = IpdPostAdmitListPage::new(&view_by);
-                                IpdPostAdmitListPage::render(page, app.clone())
-                            }
-                            Route::IpdPreAdmitList { view_by } => {
-                                let page = IpdPreAdmitListPage::new(&view_by);
-                                IpdPreAdmitListPage::render(page, app.clone())
-                            }
-                            Route::IpdPreOrder { view_by, pre_order_master_id } => {
-                                let page = IpdPreOrderPage::new(view_by, *pre_order_master_id);
-                                IpdPreOrderPage::render(page, app.clone())
-                            }
-                            Route::IpdPreOrderList { view_by } => {
-                                let page = IpdPreOrderListPage::new(&view_by, app.clone());
-                                IpdPreOrderListPage::render(page, app.clone())
-                            }
-                            Route::IpdSearchPatientDr => {
-                                let page = IpdSearchPatientDrPage::new();
-                                IpdSearchPatientDrPage::render(page, app.clone())
-                            }
-                            Route::IpdSearchPatientNurse => {
-                                let page = IpdSearchPatientNursePage::new();
-                                IpdSearchPatientNursePage::render(page, app.clone())
-                            }
-                            Route::IpdSearchPatientOther => {
-                                let page = IpdSearchPatientOtherPage::new();
-                                IpdSearchPatientOtherPage::render(page, app.clone())
-                            }
-                            Route::IpdSearchPatientPharmacist => {
-                                let page = IpdSearchPatientPharmacistPage::new();
-                                IpdSearchPatientPharmacistPage::render(page, app.clone())
-                            }
-                            Route::IpdSummaryAudit { an } => {
-                                let page = IpdSummaryAuditPage::new(an.clone());
-                                IpdSummaryAuditPage::render(page, app.clone())
-                            }
-                            Route::IpdVitalSign => {
-                                is_fixed_height = true;
-                                let page = VitalSignPage::new(true, app.clone());
-                                VitalSignPage::render(page, app.clone())
-                            }
-                            Route::OpdErIndexPlan => {
-                                is_fixed_height = true;
-                                let page = IndexPlanPage::new_opd_er();
-                                IndexPlanPage::render(page, app.clone())
-                            }
-                            Route::OpdErMain {
-                                view_by,
-                                opd_er_order_master_id,
-                                tab,
-                                id,
-                            } => {
-                                let page = OpdErMainPage::new(view_by.clone(), *opd_er_order_master_id, Tab::from_string(&tab), *id);
-                                OpdErMainPage::render(page, app.clone())
-                            }
-                            Route::OpdErOrderList { view_by } => {
-                                let page = OpdErOrderListPage::new(view_by.clone());
-                                OpdErOrderListPage::render(page, app.clone())
-                            }
-                            Route::OpdErOrderPharmacy => {
-                                let page = OpdErOrderPharmacyPage::new();
-                                OpdErOrderPharmacyPage::render(page, app.clone())
-                            }
-                            Route::OpdErVitalSign => {
-                                is_fixed_height = true;
-                                let page = VitalSignPage::new(false, app.clone());
-                                VitalSignPage::render(page, app.clone())
-                            }
-
-                            Route::PrescriptionScreen { hn } => {
-                                is_fixed_height = true;
-                                PrescriptionScreenPage::render(PrescriptionScreenPage::new(hn.clone()), app.clone())
-                            }
-                            Route::DrugUseDuration => DrugUseDurationPage::render(DrugUseDurationPage::new(), app.clone()),
-
-                            Route::SettingTemplateDcPlan => SettingTemplateDcPlanPage::render(SettingTemplateDcPlanPage::new(), app.clone()),
-                            Route::SettingTemplateNurseNote => SettingTemplateNurseNotePage::render(SettingTemplateNurseNotePage::new(), app.clone()),
-                            Route::ReportViewer => {
-                                is_fixed_height = true;
-                                let page = ReportViewerPage::new(app.clone());
-                                ReportViewerPage::render(page, app.clone())
-                            }
-                            Route::ReportDesigner => {
-                                is_fixed_height = true;
-                                ReportDesignerPage::render(ReportDesignerPage::new(), app.clone())
-                            }
-                            Route::UserList => UserListPage::render(UserListPage::new(), app.clone()),
-                            Route::PermissionList => PermissionListPage::render(PermissionListPage::new(), app.clone()),
-                            Route::Root | Route::NotFound { .. } | Route::UnAuthorized { .. } | Route::Index | Route::External { .. } => NotFoundPage { path: route.string() }.render(),
-                        }
-                    } else {
-                        UnAuthorizedPage { hash: route.string() }.render()
-                    };
-
-                    html!("main", {
-                        .apply_if(!is_fixed_height, |dom| dom.style("padding-bottom","88px"))
-                        .children([
-                            // GET `EndPoint::UserConfig`
-                            // PATCH `EndPoint::User`
-                            MenuCpn::render(MenuCpn::new(), app.clone()),
-                            content,
-                        ])
-                    })
-                }
-                None => {
-                    // no user, may not happened because token::update_token() will return false
-                    // log::debug!("No User, redirect to index page");
-                    app.sse_end(true);
-                    Route::Index.hard_redirect();
-                    Dom::empty()
                 }
             }
+            // for refresh brower, EventSource will throw Error => sse_ready_state > 1
+            if app.sse_ready_state.get() > 1 {
+                app.sse_end(false);
+                app.sse_ready_state.set(0);
+                App::sse_new(app.clone());
+                app.get_initial_user_alert().await;
+            }
+
+            app.load_theme();
+            let mut is_fixed_height = false;
+
+            let content = if route.has_permission(app.state()) {
+                render_content(route, &mut is_fixed_height, app.clone())
+            } else {
+                UnAuthorizedPage { hash: route.string() }.render()
+            };
+
+            html!("main", {
+                .apply_if(!is_fixed_height, |dom| dom.style("padding-bottom","88px"))
+                .children([
+                    // GET `EndPoint::UserConfig`
+                    // PATCH `EndPoint::User`
+                    MenuCpn::render(MenuCpn::new(), app),
+                    content,
+                ])
+            })
         }
-    // no refresh token, but route to Index
+    // no user or user without refresh token, with Route to Index
     } else if matches!(route, Route::Index) {
         if app.user.lock_ref().is_some() {
             // log::debug!("Go back to index page, clear user if exists");
             app.user.set(None);
-            app.to_local_storage();
         }
         app.sse_end(true);
-        app.route.set_neq(Route::Index);
         IndexPage::render(IndexPage::new(), app.clone())
-    // no refresh token, may not happened
+    // no user or user without refresh token, with Route to any page
     } else {
         // log::debug!("Token invalid, remove user and redirect to index page");
         app.sse_end(true);
         app.route.set_neq(Route::Index);
         app.remove_user_and_go_index();
         Dom::empty()
+    }
+}
+
+fn render_content(route: Route, is_fixed_height: &mut bool, app: Rc<App>) -> Dom {
+    match &route {
+        Route::Image => ImagePage::render(app.clone()),
+        Route::Info => InfoPage::render(InfoPage::new(), app.clone()),
+        Route::IpdAdmissionNoteDr { an } => {
+            let page = IpdAdmissionNoteDrPage::new(an.clone());
+            IpdAdmissionNoteDrPage::render(page, app.clone())
+        }
+        Route::IpdAdmissionNoteNurse { an } => {
+            let page = IpdAdmissionNoteNursePage::new(an.clone(), app.clone());
+            IpdAdmissionNoteNursePage::render(page, app.clone())
+        }
+        Route::Summary { view_by, an } => SummaryPage::render(SummaryPage::new(view_by.clone(), an.clone()), app.clone()),
+        Route::IpdConsultList { view_by } => {
+            let page = IpdConsultListPage::new(view_by.clone());
+            IpdConsultListPage::render(page, app.clone())
+        }
+        Route::IpdIndexPlan => {
+            *is_fixed_height = true;
+            let page = IndexPlanPage::new_ipd();
+            IndexPlanPage::render(page, app.clone())
+        }
+        Route::IpdMain { view_by, an, tab, sub, id } => {
+            let page = IpdMainPage::new(view_by.clone(), an.clone(), Tab::from_string(&tab), sub.to_owned(), *id);
+            IpdMainPage::render(page, app.clone())
+        }
+        Route::IpdMra { an } => {
+            let page = IpdMraPage::new(an.clone());
+            IpdMraPage::render(page, app.clone())
+        }
+        Route::IpdOrderPharmacy => {
+            let page = IpdOrderPharmacyPage::new();
+            IpdOrderPharmacyPage::render(page, app.clone())
+        }
+        Route::IpdPostAdmitList { view_by } => {
+            let page = IpdPostAdmitListPage::new(&view_by);
+            IpdPostAdmitListPage::render(page, app.clone())
+        }
+        Route::IpdPreAdmitList { view_by } => {
+            let page = IpdPreAdmitListPage::new(&view_by);
+            IpdPreAdmitListPage::render(page, app.clone())
+        }
+        Route::IpdPreOrder { view_by, pre_order_master_id } => {
+            let page = IpdPreOrderPage::new(view_by, *pre_order_master_id);
+            IpdPreOrderPage::render(page, app.clone())
+        }
+        Route::IpdPreOrderList { view_by } => {
+            let page = IpdPreOrderListPage::new(&view_by, app.clone());
+            IpdPreOrderListPage::render(page, app.clone())
+        }
+        Route::IpdSearchPatientDr => {
+            let page = IpdSearchPatientDrPage::new();
+            IpdSearchPatientDrPage::render(page, app.clone())
+        }
+        Route::IpdSearchPatientNurse => {
+            let page = IpdSearchPatientNursePage::new();
+            IpdSearchPatientNursePage::render(page, app.clone())
+        }
+        Route::IpdSearchPatientOther => {
+            let page = IpdSearchPatientOtherPage::new();
+            IpdSearchPatientOtherPage::render(page, app.clone())
+        }
+        Route::IpdSearchPatientPharmacist => {
+            let page = IpdSearchPatientPharmacistPage::new();
+            IpdSearchPatientPharmacistPage::render(page, app.clone())
+        }
+        Route::IpdSummaryAudit { an } => {
+            let page = IpdSummaryAuditPage::new(an.clone());
+            IpdSummaryAuditPage::render(page, app.clone())
+        }
+        Route::IpdVitalSign => {
+            *is_fixed_height = true;
+            let page = VitalSignPage::new(true, app.clone());
+            VitalSignPage::render(page, app.clone())
+        }
+        Route::OpdErIndexPlan => {
+            *is_fixed_height = true;
+            let page = IndexPlanPage::new_opd_er();
+            IndexPlanPage::render(page, app.clone())
+        }
+        Route::OpdErMain {
+            view_by,
+            opd_er_order_master_id,
+            tab,
+            id,
+        } => {
+            let page = OpdErMainPage::new(view_by.clone(), *opd_er_order_master_id, Tab::from_string(&tab), *id);
+            OpdErMainPage::render(page, app.clone())
+        }
+        Route::OpdErOrderList { view_by } => {
+            let page = OpdErOrderListPage::new(view_by.clone());
+            OpdErOrderListPage::render(page, app.clone())
+        }
+        Route::OpdErOrderPharmacy => {
+            let page = OpdErOrderPharmacyPage::new();
+            OpdErOrderPharmacyPage::render(page, app.clone())
+        }
+        Route::OpdErVitalSign => {
+            *is_fixed_height = true;
+            let page = VitalSignPage::new(false, app.clone());
+            VitalSignPage::render(page, app.clone())
+        }
+
+        Route::PrescriptionScreen { hn } => {
+            *is_fixed_height = true;
+            PrescriptionScreenPage::render(PrescriptionScreenPage::new(hn.clone()), app.clone())
+        }
+        Route::DrugUseDuration => DrugUseDurationPage::render(DrugUseDurationPage::new(), app.clone()),
+
+        Route::SettingTemplateDcPlan => SettingTemplateDcPlanPage::render(SettingTemplateDcPlanPage::new(), app.clone()),
+        Route::SettingTemplateNurseNote => SettingTemplateNurseNotePage::render(SettingTemplateNurseNotePage::new(), app.clone()),
+        Route::ReportViewer => {
+            *is_fixed_height = true;
+            let page = ReportViewerPage::new(app.clone());
+            ReportViewerPage::render(page, app.clone())
+        }
+        Route::ReportDesigner => {
+            *is_fixed_height = true;
+            ReportDesignerPage::render(ReportDesignerPage::new(), app.clone())
+        }
+        Route::UserList => UserListPage::render(UserListPage::new(), app.clone()),
+        Route::PermissionList => PermissionListPage::render(PermissionListPage::new(), app.clone()),
+        Route::Root | Route::NotFound { .. } | Route::UnAuthorized { .. } | Route::Index | Route::External { .. } => NotFoundPage { path: route.string() }.render(),
     }
 }

@@ -148,7 +148,7 @@ pub fn set_user(token_response: Option<LoginResponse>, app: Rc<AppState>) -> Res
                     earlier_second,
                 };
                 // clear SSE messages and InMemory stuff
-                app.clear_in_memory_except_user();
+                app.clear_in_memory_except_user_and_asset();
                 app.user.set(Some(Rc::new(client.into())));
             }
         }

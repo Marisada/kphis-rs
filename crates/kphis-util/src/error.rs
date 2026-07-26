@@ -4,6 +4,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use serde_derive::{Deserialize, Serialize};
+use serde::{de::{Deserialize, Deserializer}, ser::{Serialize, Serializer}};
 
 #[cfg(not(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none"))))]
 use ulid::Ulid;
@@ -14,7 +15,9 @@ use crate::datetime::js_now;
 pub const CONTACT_ADMIN: &str = "เกิดข้อผิดพลาด! กรุณาติดต่อผู้ดูแลระบบ";
 
 /// Sources of error
-#[derive(Debug, Deserialize, Serialize, PartialEq, utoipa::ToSchema)]
+#[derive(Debug, PartialEq, utoipa::ToSchema)]
+#[cfg_attr(test, derive(strum::EnumIter))]
+#[serde(deserialize_with = "parse_source")]
 #[schema(example = "App")]
 pub enum Source {
     App,
@@ -81,7 +84,7 @@ impl Source {
         match self {
             Self::App => "App",
             Self::Base64 => "Base64",
-            Self::BitCode => "BitCode",
+            Self::BitCode => "ToBinary",
             Self::Cms => "CryptoPdf",
             Self::CmdClient => "CommandClient",
             Self::Decimal => "Decimal",
@@ -101,13 +104,63 @@ impl Source {
             Self::SQLx => "SQLx",
             Self::SystemTime => "SystemTime",
             Self::Time => "Time",
-            Self::Totp => "TOTP",
+            Self::Totp => "2FA",
             Self::Typst => "Typst",
-            Self::UlidDecode => "UlidDecode",
+            Self::UlidDecode => "U128Decode",
             Self::UrlEncoding => "UrlEncoding",
-            Self::X509 => "CryptoPdf",
+            Self::X509 => "CryptoPdfCert",
         }
     }
+
+    pub fn new_from_text(text: &str) -> Self {
+        // everyting about Cipher/Security algorithm use `CryptoXXX` to hide information
+        match text {
+            "Base64" => Self::Base64,
+            "ToBinary" => Self::BitCode,
+            "CryptoPdf" => Self::Cms,
+            "CommandClient" => Self::CmdClient,
+            "Decimal" => Self::Decimal,
+            "Hayro" => Self::Hayro,
+            "IO" => Self::Io,
+            "Image" => Self::Image,
+            "Js" => Self::Js,
+            "CryptoSeal" => Self::Orion,
+            "PACsClient" => Self::PacsClient,
+            "ParseBool" => Self::ParseBool,
+            "ParseFloat" => Self::ParseFloat,
+            "ParseInt" => Self::ParseInt,
+            "CryptoToken" => Self::Pasetors,
+            "PasswordHash" => Self::PasswordHash,
+            "SerdeJson" => Self::SerdeJson, 
+            "SerdeWasm" => Self::SerdeWasm,
+            "SQLx" => Self::SQLx,
+            "SystemTime" => Self::SystemTime,
+            "Time" => Self::Time,
+            "2FA" => Self::Totp,
+            "Typst" => Self::Typst,
+            "U128Decode" => Self::UlidDecode,
+            "UrlEncoding" => Self::UrlEncoding,
+            "CryptoPdfCert" => Self::X509,
+            _ => Self::App,
+        }
+    }
+}
+
+impl Serialize for Source {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(self.string())
+    }
+}
+
+fn parse_source<'de, D>(deserializer: D) -> Result<Source, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let text: String = Deserialize::deserialize(deserializer)?;
+    Ok(Source::new_from_text(&text))
 }
 
 /// Title of error
@@ -141,6 +194,7 @@ pub struct AppError {
     #[schema(example = "01ARZ3NDEKTSV4RRFFQ69G5FAV")]
     pub error_id: String,
     /// Source of error
+    #[serde(deserialize_with = "parse_source")]
     pub source: Source,
     /// Error message for technician
     #[schema(example = "Tea Pot Broken")]
@@ -238,4 +292,20 @@ fn new_eror_id() -> String {
 #[cfg(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none")))]
 fn new_eror_id() -> String {
     js_now().to_string()
+}
+
+#[cfg(test)]
+#[rustfmt::skip]
+pub mod tests {
+
+    use super::*;
+    use strum::IntoEnumIterator;
+
+    #[test]
+    fn test_source_to_string() {
+        for source in Source::iter() {
+            let text = source.string();
+            assert_eq!(source, Source::new_from_text(text));
+        }
+    }
 }

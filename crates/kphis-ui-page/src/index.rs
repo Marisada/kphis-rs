@@ -83,11 +83,14 @@ impl IndexPage {
                                 Ok(None) => {
                                     page.password.set_neq(String::new());
                                     page.token_2fa.set_neq(String::new());
+                                    page.result.set_neq(String::new());
                                     page.wait_2fa.set(true);
                                 }
                                 Err(e) => {
                                     page.token_2fa.set_neq(String::new());
                                     if e.status == 401 {
+                                        page.username.set_neq(String::new());
+                                        page.password.set_neq(String::new());
                                         page.result.set_neq(String::from("ข้อมูลไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง"));
                                     } else {
                                         page.result.set_neq(e.message);
@@ -193,8 +196,7 @@ impl IndexPage {
         html!("main", {
             .future(app.visible.signal().for_each(clone!(app => move |visible| {
                 if !visible {
-                    app.sse_end(false);
-                    app.sse_ready_state.set_neq(2);
+                    app.sse_end(true);
                 }
                 async{}
             })))

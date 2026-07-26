@@ -97,7 +97,7 @@ pub async fn get_blob_from_url(url: &str, mime: &str, app: Rc<AppState>) -> Resu
     }
 }
 
-/// return ((value, is_ok), error), not check token
+/// return ((value, is_ok), error), use user token if exists
 pub async fn fetch_json_api(url: &str, method: &str, body: Option<&JsValue>, app: Rc<AppState>) -> Result<(JsValue, bool), JsValue> {
     let abort = Abort::new()?;
 
@@ -198,7 +198,7 @@ pub async fn fetch_json_api(url: &str, method: &str, body: Option<&JsValue>, app
 //     }
 // }
 
-/// only GET method, return ((value, is_ok), error), not check token
+/// only GET method, return ((value, is_ok), error), use user token if exists
 pub async fn fetch_text_api(url: &str, app: Rc<AppState>) -> Result<(JsValue, bool), JsValue> {
     let abort = Abort::new()?;
 
@@ -236,7 +236,7 @@ pub async fn fetch_text_api(url: &str, app: Rc<AppState>) -> Result<(JsValue, bo
     }
 }
 
-/// only GET method, return ((value, is_ok), error), not check token
+/// only GET method, return ((value, is_ok), error), use user token if exists
 pub async fn fetch_blob_api(url: &str, mime: &str, app: Rc<AppState>) -> Result<(JsValue, bool), JsValue> {
     let abort = Abort::new()?;
 
