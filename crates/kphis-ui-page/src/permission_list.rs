@@ -366,7 +366,7 @@ impl PermissionListPage {
                                                             true,
                                                         ).ok();
                                                         if let Err(e) = element.options().set(0, option.as_ref()) {
-                                                            app.show_jsvalue_message(&e);
+                                                            app.show_jsvalue_message(e);
                                                         }
                                                     }
                                                     let neq = page.role.lock_ref().as_str() != v.as_str();
@@ -745,7 +745,7 @@ impl PermissionListPage {
                                                                             true,
                                                                         ).ok();
                                                                         if let Err(e) = element.options().set(0, option.as_ref()) {
-                                                                            app.show_jsvalue_message(&e);
+                                                                            app.show_jsvalue_message(e);
                                                                         }
                                                                     }
                                                                     let neq = page.modal_parent_role.lock_ref().as_str() != v.as_str();

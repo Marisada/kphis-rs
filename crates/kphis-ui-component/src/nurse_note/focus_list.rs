@@ -423,43 +423,43 @@ impl FocusListCpn {
         if smp_id.is_empty() {
             if let Some(elm) = app.get_id("search_temp_smp").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if focus_id.is_empty() {
             if let Some(elm) = app.get_id("tmp_focus").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if page.goal_ids.lock_ref().is_empty() && goal_text.is_empty() {
             if let Some(elm) = app.get_id("goal_text").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if fclist_stdate.is_empty() {
             if let Some(elm) = app.get_id("fclist_stdate").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if fclist_sttime.is_empty() {
             if let Some(elm) = app.get_id("fclist_sttime").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if is_ended && fclist_enddate.is_empty() {
             if let Some(elm) = app.get_id("fclist_enddate").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if is_ended && fclist_endtime.is_empty() {
             if let Some(elm) = app.get_id("fclist_endtime").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if let Some(saver) = Self::finalized(page.clone()) {
@@ -812,7 +812,7 @@ impl FocusListCpn {
             //     if show {
             //         if let Some(elm) = app.get_id("close_btn").and_then(|elm| elm.dyn_into::<HtmlButtonElement>().ok()) {
             //             if let Err(e) = elm.focus() {
-            //                 app.show_jsvalue_error_message(&e);
+            //                 app.show_jsvalue_error_message(e);
             //             }
             //         }
             //     }

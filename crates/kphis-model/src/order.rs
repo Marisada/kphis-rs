@@ -1,5 +1,4 @@
 use derive_demo::Demo;
-use js_sys::JsString;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     FromRow, MySql, Pool,
@@ -13,7 +12,6 @@ use time::{
     macros::{date, datetime, time},
 };
 use utoipa::{IntoParams, ToSchema};
-use wasm_bindgen::JsCast;
 
 use kphis_util::{
     datetime::{date_8601, date_th, datetime_th, js_now},
@@ -68,7 +66,7 @@ impl OrderDate {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch OrderDate"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -378,7 +376,7 @@ impl Order {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch Order"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -804,7 +802,7 @@ impl OrderItem {
                     let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IpdOrderItem"))?;
                     Err(error)
                 }
-                Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+                Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
             }
         } else {
             Ok(Vec::new())
@@ -821,7 +819,7 @@ impl OrderItem {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch PreviousOrderItem"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
     /// GET `EndPoint::OpdErOrderItem`
@@ -836,7 +834,7 @@ impl OrderItem {
                     let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch OpdErOrderItem"))?;
                     Err(error)
                 }
-                Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+                Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
             }
         } else {
             Ok(Vec::new())
@@ -1161,7 +1159,7 @@ impl MedOrderItem {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch PreviousOneDayOrderItem"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
     /// GET `EndPoint::IpdOrderToHomeMedAn`
@@ -1175,7 +1173,7 @@ impl MedOrderItem {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch MedOrderItem"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -1478,7 +1476,7 @@ impl OrderButtons {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch OrderButtons"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }

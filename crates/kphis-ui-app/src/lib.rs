@@ -6,7 +6,6 @@ use futures_signals::{
     signal::{Mutable, Signal, SignalExt, option},
     signal_vec::{MutableVec, SignalVecExt},
 };
-use js_sys::JsString;
 use std::{
     collections::{HashMap, HashSet},
     future::Future,
@@ -79,9 +78,9 @@ pub struct App {
     /// ready_state mutable for store `sse_new` interval checking result
     /// - 0 = connection
     /// - 1 = open
-    /// - 2 = closed
-    /// - 3 = restart
-    pub sse_ready_state: Mutable<u16>,
+    /// - 2 = hidden, no restart
+    /// - 3 = error, restart
+    pub sse_ready_state: Mutable<u8>,
     /// messages wait for sending
     pub messages: MutableVec<SsePostMessage>,
 }
@@ -116,11 +115,11 @@ impl App {
         self.drg_worker.get_or_init(async { kphis_drg_worker::spawn("/drg_worker_init.js").await }).await
     }
 
-    pub fn async_load<F>(&self, using_token: bool, fut: F)
+    pub fn async_load<F>(&self, check_user_token: bool, fut: F)
     where
         F: Future<Output = ()> + 'static,
     {
-        if using_token {
+        if check_user_token {
             let state = self.state.clone();
             self.loader_load(async move {
                 if token::update_token(state.clone()).await {
@@ -268,7 +267,8 @@ impl App {
     pub async fn alert_error_with_clipboard(&self, title: &str, message: &str) {
         // clipboard
         if let Err(e) = JsFuture::from(self.state.window.with(|w| w.navigator().clipboard().write_text(&message))).await {
-            log::error!("{:?}", e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("Cannot save to Clipboard")));
+            let error = js_sys::Error::from(e);
+            log::error!("{}", error.to_js_string());
         }
         // red alert popup
         self.alert_error_with_closed(title, message).await;
@@ -347,16 +347,36 @@ impl App {
         app.async_load(
             false,
             clone!(app => async move {
-                if token::renew_access_token(app.state()).await {
+                let (is_success, not_online) = token::renew_access_token(app.state()).await;
+                let is_auth = if is_success {
+                    true
+                } else if !not_online {
+                    if let Some(user) = app.user.get_cloned() {
+                        let totp_done = user.user.totp_done.get().unwrap_or_default();
+                        if token::renew_refresh_popup(totp_done, app.state()).await {
+                            true
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    }
+                } else {
+                    false
+                };
+                if is_auth {
                     App::sse_new(app.clone());
-                    if matches!(*app.route.lock_ref(), Route::Index) {
+                    if matches!(app.route.get_cloned(), Route::Index) {
+                        app.route.set(Route::Info);
                         Route::Info.hard_redirect();
                     } else {
                         app.get_initial_user_alert().await;
                     }
                 } else {
                     App::sse_new_anonymous(app.clone());
-                    if !matches!(*app.route.lock_ref(), Route::Index) {
+                    app.user.set(None);
+                    if !matches!(app.route.get_cloned(), Route::Index) {
+                        app.route.set(Route::Index);
                         Route::Index.hard_redirect();
                     }
                 }
@@ -395,6 +415,32 @@ impl App {
                 // event_source.add_event_listener_with_callback("error", error_cs.as_ref().unchecked_ref()).unwrap();
                 error_cs.forget();
             }
+            {
+                // logout message
+                let logout_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                    app.clear_modal_and_popup();
+                    let sse_data = event.data().as_string().unwrap();
+                    if let Some(elm) = app.get_id("alert") {
+                        if let Some(title_elm) = elm.first_element_child() {
+                            title_elm.set_text_content(Some("ระบบ ปิดใช้งานชั่วคราว"));
+                        }
+                        if let Some(message_elm) = elm.last_element_child() {
+                            message_elm.set_text_content(Some(&sse_data));
+                        }
+                        elm.class_list().add_2("show", "danger").unwrap();
+                        let show = Timeout::new(7000, clone!(app => move || {
+                            elm.class_list().remove_2("show", "danger").unwrap();
+                            app.route.set(Route::Index);
+                            app.sse_end(2);
+                            app.user.set(None);
+                            Route::Index.hard_redirect();
+                        }));
+                        show.forget();
+                    }
+                }));
+                event_source.add_event_listener_with_callback("logout", logout_cs.as_ref().unchecked_ref()).unwrap();
+                logout_cs.forget();
+            }
             app.sse.set(Some(Rc::new(event_source.clone())));
 
             app.window.with(|w| {
@@ -411,7 +457,7 @@ impl App {
     pub fn sse_new(app: Rc<Self>) {
         // log::debug!("Try new EventSource with Id");
         if app.sse.get_cloned().is_none() {
-            let event_source = EventSource::new(&["/sse/id/", &app.state_id().unwrap_or_default()].concat()).unwrap();
+            let event_source = EventSource::new(&["/sse/id/", &app.token_sub().unwrap_or_default()].concat()).unwrap();
             {
                 // on Open
                 let open_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |_: Event| {
@@ -442,7 +488,7 @@ impl App {
             {
                 // global message
                 let message_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
-                    let sse_text = event.data().dyn_into::<JsString>().unwrap().as_string().unwrap();
+                    let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::GlobalMsg(sse_data));
                 }));
@@ -453,7 +499,7 @@ impl App {
             {
                 // ward message
                 let ward_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
-                    let sse_text = event.data().dyn_into::<JsString>().unwrap().as_string().unwrap();
+                    let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::WardMsg(sse_data));
                 }));
@@ -463,7 +509,7 @@ impl App {
             {
                 // spclty message
                 let spclty_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
-                    let sse_text = event.data().dyn_into::<JsString>().unwrap().as_string().unwrap();
+                    let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::SpcltyMsg(sse_data));
                 }));
@@ -473,7 +519,7 @@ impl App {
             {
                 // direct message
                 let direct_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
-                    let sse_text = event.data().dyn_into::<JsString>().unwrap().as_string().unwrap();
+                    let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::DirectMsg(sse_data));
                 }));
@@ -483,7 +529,8 @@ impl App {
             {
                 // logout message
                 let logout_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
-                    let sse_data = event.data().dyn_into::<JsString>().unwrap().as_string().unwrap();
+                    app.clear_modal_and_popup();
+                    let sse_data = event.data().as_string().unwrap();
                     if let Some(elm) = app.get_id("alert") {
                         if let Some(title_elm) = elm.first_element_child() {
                             title_elm.set_text_content(Some("บังคับออกจากระบบ"));
@@ -506,6 +553,7 @@ impl App {
             app.window.with(|w| {
                 let cs = Closure::<dyn FnMut(_)>::new(move |_: Event| {
                     event_source.close();
+                    app.sse_ready_state.set(2);
                 });
                 w.set_onbeforeunload(Some(cs.as_ref().unchecked_ref()));
                 cs.forget();
@@ -517,17 +565,14 @@ impl App {
         self.messages.lock_mut().push_cloned(message);
     }
 
-    // with_reconnect will set `sse_ready_state` to 2, so IndexPage will reconnecting EventSource
-    pub fn sse_end(&self, with_reconnect: bool) {
+    pub fn sse_end(&self, with_state: u8) {
         // log::debug!("Try clearing any EventSource");
         // close eventstream
         if let Some(evs) = self.sse.lock_ref().as_ref() {
             evs.close();
         }
         self.sse.set(None);
-        if with_reconnect {
-            self.sse_ready_state.set_neq(2);
-        }
+        self.sse_ready_state.set_neq(with_state);
     }
 
     pub async fn get_initial_user_alert(&self) {
@@ -676,17 +721,17 @@ impl App {
     }
 
     /// DELETE `EndPoint::Sse`<br>
-    /// is_clean will clear localstorage, set server's app_asset_cache_exp == now
+    /// is_clean will clear localstorage
     pub fn logout(app: Rc<Self>, is_clean: bool) {
         app.async_load(
             true,
             clone!(app => async move {
-                if let Err(e) = AppState::call_api_delete_sse_end(app.state()).await {
+                if let Err(e) = AppState::call_api_logout(app.state()).await {
                     log::error!("Error:{}",e.message);
                 }
                 app.user.set(None);
                 app.app_asset.set(None);
-                app.sse_end(true);
+                app.sse_end(2);
                 if is_clean {
                     if let Err(e) = AppAsset::patch_asset(app.state()).await {
                         log::error!("Error:{}",e.message);
@@ -696,11 +741,24 @@ impl App {
                     app.unregister_sw().await;
                 } else {
                     app.to_local_storage();
-                    app.clear_in_memory_except_user();
+                    app.clear_in_memory_except_user_and_asset();
                 }
                 Route::Index.hard_redirect();
             }),
         )
+    }
+
+    pub fn clear_modal_and_popup(&self) {
+        if let Some(parent) = self.query_selector(".modal.show .modal-body") {
+            if let Some(modal) = parent.last_child() {
+                parent.remove_child(&modal).unwrap();
+            }
+        }
+        if let Some(parent) = self.get_id("popup") {
+            if let Some(popup) = parent.last_child() {
+                parent.remove_child(&popup).unwrap();
+            }
+        }
     }
 }
 

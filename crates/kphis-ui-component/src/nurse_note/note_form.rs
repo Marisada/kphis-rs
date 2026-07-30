@@ -270,13 +270,13 @@ impl NurseNoteFormCpn {
         if fcnote_date.is_empty() {
             if let Some(elm) = app.get_id("fcnote_date").and_then(|elm| elm.dyn_into::<HtmlInputElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if fcnote_time.is_empty() {
             if let Some(elm) = app.get_id("fcnote_time").and_then(|elm| elm.dyn_into::<HtmlInputElement>().ok()) {
                 if let Err(e) = elm.focus() {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
             }
         } else if let Some(saver) = Self::finalized(page.clone()) {

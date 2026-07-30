@@ -1,13 +1,11 @@
 use derive_demo::Demo;
-use js_sys::JsString;
 use serde::{Deserialize, Serialize};
 use std::rc::Rc;
 use utoipa::ToSchema;
-use wasm_bindgen::JsCast;
 use web_sys::Url;
 
 use crate::{
-    app::{AppState, WINDOW},
+    app::{AppState, WINDOW, show_jsvalue_error_message_with_document},
     endpoint::EndPoint,
     fetch::Method,
     tab::Tab,
@@ -172,20 +170,15 @@ impl Route {
 
     pub fn hard_redirect(&self) {
         WINDOW.with(|w| {
+            let document = w.document().unwrap();
             if let Self::External { path } = self {
                 if let Err(e) = w.open_with_url_and_target(path, "_blank") {
-                    if let Some(message) = e.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)) {
-                        w.document().unwrap().get_element_by_id("errormessage").unwrap().set_text_content(Some(&message));
-                        log::error!("{}", message);
-                    }
+                    show_jsvalue_error_message_with_document(&document, e);
                 }
             } else {
                 let location = w.location();
                 if let Err(e) = location.assign(&self.string()) {
-                    if let Some(message) = e.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)) {
-                        w.document().unwrap().get_element_by_id("errormessage").unwrap().set_text_content(Some(&message));
-                        log::error!("{}", message);
-                    }
+                    show_jsvalue_error_message_with_document(&document, e);
                 }
             }
         })
@@ -306,159 +299,159 @@ impl Route {
     }
 
     pub fn has_permission(&self, app: Rc<AppState>) -> bool {
-        if app.is_production() {
-            match self {
-                Self::IpdAdmissionNoteDr { an } => {
-                    let is_pre_admit = app.is_pre_admit(an);
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdAdmissionNoteDrAn, is_pre_admit)
-                        && if is_pre_admit {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
-                        } else {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
-                        }
-                }
-                Self::IpdAdmissionNoteNurse { an } => {
-                    let is_pre_admit = app.is_pre_admit(an);
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdAdmissionNoteNurseAn, is_pre_admit)
-                        && if is_pre_admit {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
-                        } else {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
-                        }
-                }
-                Self::IpdConsultList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdConsult, false) && check_permission_view_by(&view_by, app.clone()),
-                Self::IpdIndexPlan => {
-                    app.has_permission(Permission::IpdNurseMainProgramAccess)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarIpd, false)
-                        && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, true) || app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, false))
-                        && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false))
-                }
-                Self::IpdMain { view_by, an, tab, .. } => {
-                    let is_pre_admit = app.is_pre_admit(an);
-                    (if is_pre_admit {
+        if app.is_production() { self.has_permission_inner(app) } else { true }
+    }
+
+    fn has_permission_inner(&self, app: Rc<AppState>) -> bool {
+        match self {
+            Self::IpdAdmissionNoteDr { an } => {
+                let is_pre_admit = app.is_pre_admit(an);
+                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdAdmissionNoteDrAn, is_pre_admit)
+                    && if is_pre_admit {
                         app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
                     } else {
                         app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
-                    }) && check_permission_view_by(&view_by, app.clone())
-                        && check_permission_tab_ipd(&tab, is_pre_admit, app.clone())
-                }
-                Self::IpdMra { an } => {
-                    let is_pre_admit = app.is_pre_admit(an);
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdMra, is_pre_admit)
-                        && if is_pre_admit {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
-                        } else {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
-                        }
-                }
-                Self::IpdOrderPharmacy => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderPharmacy, false),
-                Self::IpdPostAdmitList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPostAdmitList, false) && check_permission_view_by(&view_by, app.clone()),
-                Self::IpdPreAdmitList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreAdmit, false) && check_permission_view_by(&view_by, app.clone()),
-                Self::IpdPreOrder { view_by, .. } => {
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderMaster, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxPatientText, false)
-                        && check_permission_view_by(&view_by, app.clone())
-                }
-                Self::IpdPreOrderList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderMaster, false) && check_permission_view_by(&view_by, app.clone()),
-                Self::IpdSearchPatientDr => {
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::SearchDr, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false)
-                        && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
-                }
-                Self::IpdSearchPatientNurse => {
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::SearchNurse, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false)
-                        && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
-                }
-                Self::IpdSearchPatientOther => app.endpoint_is_allow(&Method::GET, &EndPoint::SearchOther, false),
-                Self::IpdSearchPatientPharmacist => app.endpoint_is_allow(&Method::GET, &EndPoint::SearchPharmacist, false),
-                Self::IpdSummaryAudit { an } => {
-                    let is_pre_admit = app.is_pre_admit(an);
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdSummaryAudit, is_pre_admit)
-                        && if is_pre_admit {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
-                        } else {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
-                        }
-                }
-                Self::IpdVitalSign => {
-                    app.has_permission(Permission::IpdNurseMainProgramAccess)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarIpd, false)
-                        && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true))
-                        && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdVitalSign, true) || app.endpoint_is_allow(&Method::GET, &EndPoint::IpdVitalSign, false))
-                }
-                Self::OpdErIndexPlan => {
-                    app.has_permission(Permission::OpdErNurseProgramAccess)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarOpdEr, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderItem, false)
-                        && (app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainId, false))
-                }
-                Self::OpdErMain { view_by, tab, .. } => {
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderMasterId, false)
-                        && (app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainId, false))
-                        && check_permission_view_by(&view_by, app.clone())
-                        && check_permission_tab_opd_er(&tab, app.clone())
-                }
-                Self::OpdErOrderList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderMaster, false) && check_permission_view_by(&view_by, app.clone()),
-                Self::OpdErOrderPharmacy => app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderPharmacy, false),
-                Self::OpdErVitalSign => {
-                    app.has_permission(Permission::OpdErNurseProgramAccess)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarOpdEr, false)
-                        && (app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainId, false))
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErVitalSign, false)
-                }
-                Self::PermissionList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleRole, false),
-                Self::PrescriptionScreen { .. } => {
-                    (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess))
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
-                }
-                Self::DrugUseDuration => app.endpoint_is_allow(&Method::POST, &EndPoint::DrugUseDuration, false),
-                Self::ReportViewer => {
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::ReportCustom, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarIpd, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarOpdEr, false)
-                }
-                Self::ReportDesigner => {
-                    app.is_production()
-                        && app.endpoint_is_allow(&Method::POST, &EndPoint::ReportRawQuery, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportCustom, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false)
-                }
-                Self::SettingTemplateDcPlan => {
-                    app.has_permission(Permission::NursingProgressnoteTemplateView)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpDx, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpMed, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpEnv, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpTx, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpDiet, false)
-                }
-                Self::SettingTemplateNurseNote => {
-                    app.has_permission(Permission::NursingProgressnoteTemplateView)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpGroup, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpSubgroup, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpFocus, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpGoal, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpIntvt, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpDlc, false)
-                }
-                Self::Summary { view_by, an } => {
-                    let is_pre_admit = app.is_pre_admit(an);
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdSummary, is_pre_admit)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdSummaryNoteId, is_pre_admit)
-                        && if is_pre_admit {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
-                        } else {
-                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
-                        }
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxHospText, false)
-                        && check_permission_view_by(&view_by, app.clone())
-                }
-                Self::UserList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleUser, false),
-                Self::Image | Self::Index | Self::Info | Self::Root | Self::NotFound { .. } | Self::UnAuthorized { .. } | Self::External { .. } => true,
+                    }
             }
-        } else {
-            true
+            Self::IpdAdmissionNoteNurse { an } => {
+                let is_pre_admit = app.is_pre_admit(an);
+                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdAdmissionNoteNurseAn, is_pre_admit)
+                    && if is_pre_admit {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
+                    } else {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
+                    }
+            }
+            Self::IpdConsultList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdConsult, false) && check_permission_view_by(&view_by, app.clone()),
+            Self::IpdIndexPlan => {
+                app.has_permission(Permission::IpdNurseMainProgramAccess)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarIpd, false)
+                    && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, true) || app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, false))
+                    && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false))
+            }
+            Self::IpdMain { view_by, an, tab, .. } => {
+                let is_pre_admit = app.is_pre_admit(an);
+                (if is_pre_admit {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
+                } else {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
+                }) && check_permission_view_by(&view_by, app.clone())
+                    && check_permission_tab_ipd(&tab, is_pre_admit, app.clone())
+            }
+            Self::IpdMra { an } => {
+                let is_pre_admit = app.is_pre_admit(an);
+                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdMra, is_pre_admit)
+                    && if is_pre_admit {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
+                    } else {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
+                    }
+            }
+            Self::IpdOrderPharmacy => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderPharmacy, false),
+            Self::IpdPostAdmitList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPostAdmitList, false) && check_permission_view_by(&view_by, app.clone()),
+            Self::IpdPreAdmitList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreAdmit, false) && check_permission_view_by(&view_by, app.clone()),
+            Self::IpdPreOrder { view_by, .. } => {
+                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderMaster, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxPatientText, false)
+                    && check_permission_view_by(&view_by, app.clone())
+            }
+            Self::IpdPreOrderList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderMaster, false) && check_permission_view_by(&view_by, app.clone()),
+            Self::IpdSearchPatientDr => {
+                app.endpoint_is_allow(&Method::GET, &EndPoint::SearchDr, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false)
+                    && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
+            }
+            Self::IpdSearchPatientNurse => {
+                app.endpoint_is_allow(&Method::GET, &EndPoint::SearchNurse, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false)
+                    && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
+            }
+            Self::IpdSearchPatientOther => app.endpoint_is_allow(&Method::GET, &EndPoint::SearchOther, false),
+            Self::IpdSearchPatientPharmacist => app.endpoint_is_allow(&Method::GET, &EndPoint::SearchPharmacist, false),
+            Self::IpdSummaryAudit { an } => {
+                let is_pre_admit = app.is_pre_admit(an);
+                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdSummaryAudit, is_pre_admit)
+                    && if is_pre_admit {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
+                    } else {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
+                    }
+            }
+            Self::IpdVitalSign => {
+                app.has_permission(Permission::IpdNurseMainProgramAccess)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarIpd, false)
+                    && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true))
+                    && (app.endpoint_is_allow(&Method::GET, &EndPoint::IpdVitalSign, true) || app.endpoint_is_allow(&Method::GET, &EndPoint::IpdVitalSign, false))
+            }
+            Self::OpdErIndexPlan => {
+                app.has_permission(Permission::OpdErNurseProgramAccess)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarOpdEr, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderItem, false)
+                    && (app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainId, false))
+            }
+            Self::OpdErMain { view_by, tab, .. } => {
+                app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderMasterId, false)
+                    && (app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainId, false))
+                    && check_permission_view_by(&view_by, app.clone())
+                    && check_permission_tab_opd_er(&tab, app.clone())
+            }
+            Self::OpdErOrderList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderMaster, false) && check_permission_view_by(&view_by, app.clone()),
+            Self::OpdErOrderPharmacy => app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderPharmacy, false),
+            Self::OpdErVitalSign => {
+                app.has_permission(Permission::OpdErNurseProgramAccess)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarOpdEr, false)
+                    && (app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, false) || app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainId, false))
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErVitalSign, false)
+            }
+            Self::PermissionList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleRole, false),
+            Self::PrescriptionScreen { .. } => {
+                (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess))
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
+            }
+            Self::DrugUseDuration => app.endpoint_is_allow(&Method::POST, &EndPoint::DrugUseDuration, false),
+            Self::ReportViewer => {
+                app.endpoint_is_allow(&Method::GET, &EndPoint::ReportCustom, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarIpd, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::AvatarOpdEr, false)
+            }
+            Self::ReportDesigner => {
+                app.is_production()
+                    && app.endpoint_is_allow(&Method::POST, &EndPoint::ReportRawQuery, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportCustom, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false)
+            }
+            Self::SettingTemplateDcPlan => {
+                app.has_permission(Permission::NursingProgressnoteTemplateView)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpDx, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpMed, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpEnv, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpTx, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDcPlanTmpDiet, false)
+            }
+            Self::SettingTemplateNurseNote => {
+                app.has_permission(Permission::NursingProgressnoteTemplateView)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpGroup, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpSubgroup, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpFocus, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpGoal, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpIntvt, false)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdTmpDlc, false)
+            }
+            Self::Summary { view_by, an } => {
+                let is_pre_admit = app.is_pre_admit(an);
+                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdSummary, is_pre_admit)
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdSummaryNoteId, is_pre_admit)
+                    && if is_pre_admit {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErShowPatientMainVn, true)
+                    } else {
+                        app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
+                    }
+                    && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxHospText, false)
+                    && check_permission_view_by(&view_by, app.clone())
+            }
+            Self::UserList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleUser, false),
+            Self::Image | Self::Index | Self::Info | Self::Root | Self::NotFound { .. } | Self::UnAuthorized { .. } | Self::External { .. } => true,
         }
     }
 }

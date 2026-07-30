@@ -1,6 +1,6 @@
 pub use http::Method;
 
-use js_sys::{Array, ArrayBuffer, JsString, Uint8Array};
+use js_sys::{Array, ArrayBuffer, Uint8Array};
 use serde::{Deserialize, Serialize};
 use sqlx::mysql::MySqlQueryResult;
 use std::rc::Rc;
@@ -68,21 +68,21 @@ pub async fn call_api_get_exists_key_id(key: &str, id: &str, app: Rc<AppState>) 
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch ExistsFromUrl"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
     }
 }
 
 pub async fn get_text_from_url(url: &str, app: Rc<AppState>) -> Result<Option<String>, AppError> {
     match fetch_text_api(url, app).await {
         Ok((response, true)) => {
-            let response = response.dyn_ref::<JsString>().map(|s| s.into());
+            let response = response.as_string();
             Ok(response)
         }
         Ok((app_error, false)) => {
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch TextFromUrl"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Text")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Text")),
     }
 }
 
@@ -93,11 +93,11 @@ pub async fn get_blob_from_url(url: &str, mime: &str, app: Rc<AppState>) -> Resu
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch BlobFromUrl"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Blob")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Blob")),
     }
 }
 
-/// return ((value, is_ok), error), not check token
+/// return ((value, is_ok), error), use user token if exists
 pub async fn fetch_json_api(url: &str, method: &str, body: Option<&JsValue>, app: Rc<AppState>) -> Result<(JsValue, bool), JsValue> {
     let abort = Abort::new()?;
 
@@ -123,7 +123,7 @@ pub async fn fetch_json_api(url: &str, method: &str, body: Option<&JsValue>, app
         w.fetch_with_str_and_init(url, &init)
     });
 
-    let response = JsFuture::from(future).await?.unchecked_into::<Response>();
+    let response = JsFuture::from(future).await?.dyn_into::<Response>()?;
 
     let value = JsFuture::from(response.json()?).await?;
 
@@ -135,70 +135,7 @@ pub async fn fetch_json_api(url: &str, method: &str, body: Option<&JsValue>, app
     if response.ok() { Ok((value, true)) } else { Ok((value, false)) }
 }
 
-// pub async fn fetch_json_api(url: &str, method: &str, body: Option<&JsValue>, app: Rc<AppState>) -> Result<(JsValue, bool), JsValue> {
-//     let abort = Abort::new()?;
-
-//     let headers = Headers::new()?;
-//     headers.set("Accept", "application/json")?;
-//     headers.set("Content-Type", "application/json")?;
-//     if app.no_cache_mode.get() {
-//         headers.set("Cache-Control", "no-cache")?;
-//         headers.set("Pragma", "no-cache")?;
-//     }
-//     if let Some(bearer) = app.token() {
-//         headers.set("Authorization", &["Bearer ", &bearer].concat())?;
-//     }
-
-//     let future = app.window.with(|w| {
-//         let init = RequestInit::new();
-//         init.set_method(method);
-//         init.set_headers(&headers);
-//         if let Some(b) = body {
-//             init.set_body(b);
-//         }
-//         init.set_signal(Some(&abort.signal()));
-//         w.fetch_with_str_and_init(url, &init)
-//     });
-//     let response = JsFuture::from(future).await?.unchecked_into::<Response>();
-//     let value = JsFuture::from(response.json()?).await?;
-
-//     match response.status() {
-//         200 => Ok((value, true)),
-//         401 => {
-//             log::debug!("401 from server, remove user and redirect to index page");
-//             app.remove_user_and_go_index();
-//             Ok((value, false))
-//         }
-//         429 => {
-//             // try again after waiting (once)
-//             TimeoutFuture::new(1000).await;
-//             let future_2 = app.window.with(|w| {
-//                 let init_2 = RequestInit::new();
-//                 init_2.set_method(method);
-//                 init_2.set_headers(&headers);
-//                 if let Some(b) = body {
-//                     init_2.set_body(b);
-//                 }
-//                 init_2.set_signal(Some(&abort.signal()));
-//                 w.fetch_with_str_and_init(url, &init_2)
-//             });
-//             let response_2 = JsFuture::from(future_2).await?.unchecked_into::<Response>();
-//             let value_2 = JsFuture::from(response_2.json()?).await?;
-//             match response.status() {
-//                 200 => Ok((value_2, true)),
-//                 401 => {
-//                     log::debug!("401 from server, remove user and redirect to index page");
-//                     app.remove_user_and_go_index();
-//                     Ok((value_2, false))
-//                 }
-//                 _ => Ok((value_2, false)),
-//             }
-//         }
-//         _ => Ok((value, false)),
-//     }
-// }
-
-/// only GET method, return ((value, is_ok), error), not check token
+/// only GET method, return ((value, is_ok), error), use user token if exists
 pub async fn fetch_text_api(url: &str, app: Rc<AppState>) -> Result<(JsValue, bool), JsValue> {
     let abort = Abort::new()?;
 
@@ -220,7 +157,7 @@ pub async fn fetch_text_api(url: &str, app: Rc<AppState>) -> Result<(JsValue, bo
         w.fetch_with_str_and_init(url, &init)
     });
 
-    let response = JsFuture::from(future).await?.unchecked_into::<Response>();
+    let response = JsFuture::from(future).await?.dyn_into::<Response>()?;
 
     // if response.status() == 401 {
     //     log::debug!("401 from server, remove user and redirect to index page");
@@ -236,7 +173,7 @@ pub async fn fetch_text_api(url: &str, app: Rc<AppState>) -> Result<(JsValue, bo
     }
 }
 
-/// only GET method, return ((value, is_ok), error), not check token
+/// only GET method, return ((value, is_ok), error), use user token if exists
 pub async fn fetch_blob_api(url: &str, mime: &str, app: Rc<AppState>) -> Result<(JsValue, bool), JsValue> {
     let abort = Abort::new()?;
 
@@ -258,7 +195,7 @@ pub async fn fetch_blob_api(url: &str, mime: &str, app: Rc<AppState>) -> Result<
         w.fetch_with_str_and_init(url, &init)
     });
 
-    let response = JsFuture::from(future).await?.unchecked_into::<Response>();
+    let response = JsFuture::from(future).await?.dyn_into::<Response>()?;
 
     // if response.status() == 401 {
     //     log::debug!("401 from server, remove user and redirect to index page");
@@ -292,7 +229,7 @@ pub async fn post_multipart(url: &str, body: &FormData, app: Rc<AppState>) -> Re
         w.fetch_with_str_and_init(url, &init)
     });
 
-    let response = JsFuture::from(future).await?.unchecked_into::<Response>();
+    let response = JsFuture::from(future).await?.dyn_into::<Response>()?;
 
     // if response.status() == 401 {
     //     log::debug!("401 from server, remove user and redirect to index page");
@@ -319,7 +256,7 @@ pub async fn execute_fetch(path: &str, method: &str, body: Option<&JsValue>, app
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Execute Fetch"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
     }
 }
 
@@ -334,7 +271,7 @@ pub async fn execute_fetch_text(path: &str, method: &str, body: Option<&JsValue>
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Execute Fetch"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
     }
 }
 
@@ -349,7 +286,7 @@ pub async fn execute_fetch_vec(path: &str, method: &str, body: Option<&JsValue>,
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Execute FetchVec"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
     }
 }
 
@@ -364,7 +301,7 @@ pub async fn execute_fetch_with_u32(path: &str, method: &str, body: Option<&JsVa
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Execute Fetch+u32"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
     }
 }
 
@@ -379,7 +316,7 @@ pub async fn execute_fetch_vec_with_u32(path: &str, method: &str, body: Option<&
             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Execute FetchVec+u32"))?;
             Err(error)
         }
-        Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+        Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
     }
 }
 

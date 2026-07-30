@@ -489,13 +489,13 @@ impl VitalSignFormCpn {
             if page.vs_date.lock_ref().is_empty() {
                 if let Some(elm) = app.get_id("vs_date").and_then(|elm| elm.dyn_into::<HtmlInputElement>().ok()) {
                     if let Err(e) = elm.focus() {
-                        app.show_jsvalue_message(&e);
+                        app.show_jsvalue_message(e);
                     }
                 }
             } else if page.vs_time.lock_ref().is_empty() {
                 if let Some(elm) = app.get_id("vs_time").and_then(|elm| elm.dyn_into::<HtmlInputElement>().ok()) {
                     if let Err(e) = elm.focus() {
-                        app.show_jsvalue_message(&e);
+                        app.show_jsvalue_message(e);
                     }
                 }
             } else {

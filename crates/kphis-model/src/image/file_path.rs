@@ -1,12 +1,10 @@
 use derive_demo::Demo;
-use js_sys::JsString;
 use serde_derive::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::rc::Rc;
 use strum::EnumIter;
 use time::{PrimitiveDateTime, macros::datetime};
 use utoipa::ToSchema;
-use wasm_bindgen::JsCast;
 use web_sys::{File, FormData};
 
 use kphis_util::error::{AppError, Source};
@@ -347,23 +345,17 @@ impl ImagePath {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch ImageUsage"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
     /// POST `EndPoint::Image`
     pub async fn call_api_post_files_returning(files: &[File], app: Rc<AppState>) -> Result<Vec<Self>, AppError> {
-        let form_data = FormData::new().map_err(|e| {
-            let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-            AppError::new_teapot(&["Error new FromData: ", &message].concat(), "Post File Returning")
-        })?;
+        let form_data = FormData::new().map_err(|e| AppError::new_from_js(e, "Post File Returning"))?;
 
         for (id, file) in files.iter().enumerate() {
             // prepare file
-            let file_bytes = file_to_bytes(&file).await.map_err(|e| {
-                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                AppError::new_teapot(&["Error file_to_bytes (image): ", &message].concat(), "Post File Returning")
-            })?;
+            let file_bytes = file_to_bytes(&file).await.map_err(|e| AppError::new_from_js(e, "Post File Returning"))?;
 
             // create DynamicImage
             let is_pdf = file.type_() == "application/pdf";
@@ -371,25 +363,17 @@ impl ImagePath {
             let (image, thumb) = webp_creator(any_image, is_pdf)?;
 
             // create Blob
-            let image_blob = bytes_to_blob(&image, "image/webp").map_err(|e| {
-                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                AppError::new_teapot(&["Error bytes_to_blob (image): ", &message].concat(), "Post File Returning")
-            })?;
-            let thumb_blob = bytes_to_blob(&thumb, "image/webp").map_err(|e| {
-                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                AppError::new_teapot(&["Error bytes_to_blob (thumb): ", &message].concat(), "Post File Returning")
-            })?;
+            let image_blob = bytes_to_blob(&image, "image/webp").map_err(|e| AppError::new_from_js(e, "Post File Returning"))?;
+            let thumb_blob = bytes_to_blob(&thumb, "image/webp").map_err(|e| AppError::new_from_js(e, "Post File Returning"))?;
 
             // append blob to FormData
             let filename = [&id.to_string(), ".webp"].concat();
-            form_data.append_with_blob_and_filename(PATH_PREFIX_IMAGE, &image_blob, &filename).map_err(|e| {
-                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                AppError::new_teapot(&["Error append_with_blob_and_filename (image): ", &message].concat(), "Post File Returning")
-            })?;
-            form_data.append_with_blob_and_filename(PATH_PREFIX_THUMB, &thumb_blob, &filename).map_err(|e| {
-                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                AppError::new_teapot(&["Error append_with_blob_and_filename (thumb): ", &message].concat(), "Post File Returning")
-            })?;
+            form_data
+                .append_with_blob_and_filename(PATH_PREFIX_IMAGE, &image_blob, &filename)
+                .map_err(|e| AppError::new_from_js(e, "Post File Returning"))?;
+            form_data
+                .append_with_blob_and_filename(PATH_PREFIX_THUMB, &thumb_blob, &filename)
+                .map_err(|e| AppError::new_from_js(e, "Post File Returning"))?;
         }
 
         match post_multipart(&EndPoint::Image.base(), &form_data, app).await {
@@ -401,7 +385,7 @@ impl ImagePath {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Post ImageFile"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -419,7 +403,7 @@ impl ImagePath {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Post ImageUsage"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -437,7 +421,7 @@ impl ImagePath {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Patch Image"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -455,7 +439,7 @@ impl ImagePath {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Delete ImageUsage"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }

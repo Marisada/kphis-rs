@@ -5,13 +5,11 @@ use argon2::{
 use derive_demo::Demo;
 use encoding_rs::WINDOWS_874;
 use futures_signals::{signal::Mutable, signal_vec::MutableVec};
-use js_sys::JsString;
 use md5::{Digest, Md5};
 use serde_derive::{Deserialize, Serialize};
 use sqlx::FromRow;
 use std::rc::Rc;
 use utoipa::ToSchema;
-use wasm_bindgen::JsCast;
 
 use kphis_util::{
     datetime::get_timestamp_wasm,
@@ -366,7 +364,7 @@ impl LoginResponse {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Login"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("DISCONNECTED")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -392,14 +390,14 @@ impl LoginResponse {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Login"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("DISCONNECTED")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
     /// GET `EndPoint::User`<br>
     /// get User with access token (JSON)
     pub async fn call_api_get_access_renew(app: Rc<AppState>) -> Result<Self, AppError> {
-        match fetch_json_api(&EndPoint::User.base(), "GET", None, app).await {
+        match fetch_json_api(&EndPoint::User.base(), "GET", None, app.clone()).await {
             Ok((response, true)) => {
                 let response: Self = serde_wasm_bindgen::from_value(response).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Refresh"))?;
                 Ok(response)
@@ -408,7 +406,10 @@ impl LoginResponse {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Refresh"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("DISCONNECTED")), "Fetch Json")),
+            Err(e) => {
+                app.user.set(None);
+                Err(AppError::new_from_js(e, "Fetch Json"))
+            }
         }
     }
 
@@ -428,7 +429,7 @@ impl LoginResponse {
 
                 let body = serde_wasm_bindgen::to_value(&body_json).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Renew Refresh"))?;
 
-                match fetch_json_api(&EndPoint::User.base(), "PUT", Some(&body), app).await {
+                match fetch_json_api(&EndPoint::User.base(), "PUT", Some(&body), app.clone()).await {
                     Ok((response, true)) => {
                         let response: Self = serde_wasm_bindgen::from_value(response).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Login"))?;
                         Ok(response)
@@ -437,7 +438,10 @@ impl LoginResponse {
                         let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Login"))?;
                         Err(error)
                     }
-                    Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("DISCONNECTED")), "Fetch Json")),
+                    Err(e) => {
+                        app.user.set(None);
+                        Err(AppError::new_from_js(e, "Fetch Json"))
+                    }
                 }
             }
             None => Err(Source::App.to_teapot_error("Token sub not found", "Renew Refresh")),

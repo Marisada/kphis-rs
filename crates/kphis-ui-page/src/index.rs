@@ -48,8 +48,7 @@ impl IndexPage {
                 clone!(app, reconnecting => move || {
                     // log::debug!("Reconnecting EventSource..");
                     app.update_sw();
-                    app.sse_end(false);
-                    app.sse_ready_state.set(0);
+                    app.sse_end(0);
                     App::sse_new_anonymous(app.clone());
                     // Drop TimeOut here
                     reconnecting.set(None);
@@ -83,9 +82,12 @@ impl IndexPage {
                                 Ok(None) => {
                                     page.password.set_neq(String::new());
                                     page.token_2fa.set_neq(String::new());
+                                    page.result.set_neq(String::new());
                                     page.wait_2fa.set(true);
                                 }
                                 Err(e) => {
+                                    page.username.set_neq(String::new());
+                                    page.password.set_neq(String::new());
                                     page.token_2fa.set_neq(String::new());
                                     if e.status == 401 {
                                         page.result.set_neq(String::from("ข้อมูลไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง"));
@@ -134,6 +136,9 @@ impl IndexPage {
                                     page.result.set_neq(["ใช้เวลาบันทึก 2FA เกิน ", &app.handshake_2fa_timeout_second().to_string(), " วินาที กรุณาเข้าสู่ระบบใหม่อีกครั้ง"].concat());
                                 }
                                 _ => {
+                                    page.username.set_neq(String::new());
+                                    page.password.set_neq(String::new());
+                                    page.wait_2fa.set(false);
                                     page.result.set_neq(e.message);
                                 }
                             }
@@ -171,7 +176,7 @@ impl IndexPage {
             }
             // change SSE from anonymous to User specific one
             // remains old sse_ready_state to prevent page re-render
-            app.sse_end(false);
+            app.sse_end(0);
             App::sse_new(app.clone());
             app.get_initial_user_alert().await;
 
@@ -191,42 +196,43 @@ impl IndexPage {
         }
 
         html!("main", {
+            // tab is hidden
             .future(app.visible.signal().for_each(clone!(app => move |visible| {
                 if !visible {
-                    app.sse_end(false);
-                    app.sse_ready_state.set_neq(2);
+                    // log::debug!("hit not-visible");
+                    app.sse_end(2);
                 }
-                async{}
+                async {}
             })))
+            // reconnecting
             .future(app.sse_ready_state.signal().dedupe().for_each(clone!(app, page => move |state| {
+                // log::debug!("sse_ready_state = {}", state);
                 match state {
-                    0 => {}
-                    1 => {
+                    1..3 => {
                         // Clear (if exists) reconnecting TimeOut (prevent reconnect again)
                         if let Some(handle) = page.reconnecting.get() {
                             Timeout::manual_drop(handle);
                             page.reconnecting.set(None);
                         }
                     }
-                    2.. => {
+                    3 => {
                         page.reconnecting(app.clone());
                     }
+                    _ => {}
                 }
                 async {}
             })))
-            // update SW and start SSE after browser tab gaining focus
-            // NOTE: MUST SKIP when logout to prevent renew_token again,
-            // so we check app.user (set user==None before calling sse_end())
+            // update SW and start SSE after browser tab gaining focus again
             .future(map_ref!{
                 let busy = app.loader_is_loading(),
                 let visible = app.visible.signal(),
-                let no_sse = app.sse_ready_state.signal_cloned().map(|state| state == 2) =>
+                let no_sse = app.sse_ready_state.signal().map(|state| state == 2) =>
                 !busy && *visible && *no_sse
             }.for_each(clone!(app => move |ready| {
                 if ready {
+                    // log::debug!("hit visible and renew");
                     app.update_sw();
-                    app.sse_end(false);
-                    app.sse_ready_state.set(0);
+                    app.sse_end(0);
                     App::start_sse_by_renew_token(app.clone());
                 }
                 async{}
@@ -285,8 +291,7 @@ impl IndexPage {
                                     }))
                                     .event(clone!(app, page => move |_: events::Click| {
                                         app.update_sw();
-                                        app.sse_end(false);
-                                        app.sse_ready_state.set(0);
+                                        app.sse_end(0);
                                         App::sse_new_anonymous(app.clone());
                                     }))
                                 }))

@@ -1,5 +1,4 @@
 use derive_demo::Demo;
-use js_sys::JsString;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     FromRow, MySql, Pool,
@@ -13,7 +12,6 @@ use time::{
     macros::{date, datetime, time},
 };
 use utoipa::{IntoParams, ToSchema};
-use wasm_bindgen::JsCast;
 
 use kphis_util::{
     datetime::{JsTime, date_8601, date_th_opt, datetime_from_opt, datetime_th_opt, js_now, time_hm_opt},
@@ -65,7 +63,7 @@ impl IndexPlanDate {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IndexPlanDate"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -396,7 +394,7 @@ impl PartialEq for IndexPlanOnly {
 //                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IpdIndexPlan"))?;
 //                 Err(error)
 //             }
-//             Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+//             Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
 //         }
 //     }
 //     /// GET /opd-er/index-plan
@@ -410,7 +408,7 @@ impl PartialEq for IndexPlanOnly {
 //                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch OpdErIndexPlan"))?;
 //                 Err(error)
 //             }
-//             Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+//             Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
 //         }
 //     }
 // }

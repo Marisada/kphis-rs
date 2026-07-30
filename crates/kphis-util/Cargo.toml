@@ -47,3 +47,6 @@ axum = { version = "0.8", default-features = false, features = [ "json" ] }
 
 [target.'cfg(not(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none"))))'.dependencies]
 ulid = { workspace = true }
+
+[dev-dependencies]
+strum = { workspace = true }

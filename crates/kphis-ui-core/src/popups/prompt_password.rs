@@ -38,7 +38,7 @@ impl PromptPasswordPopup {
     pub fn focus(&self, app: Rc<AppState>) {
         if let Some(elm) = app.get_id("promptPassword").and_then(|elm| elm.dyn_into::<HtmlElement>().ok()) {
             if let Err(e) = elm.focus() {
-                app.show_jsvalue_message(&e);
+                app.show_jsvalue_message(e);
             }
         }
     }

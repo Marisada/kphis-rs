@@ -5,7 +5,7 @@
 - Allow highlight Error tag
 - Added merge
 
-> last check date = 2026-06-20
+> last check date = 2026-07-28
 > cargo fmt --all
 > cargo generate-lockfile
 admin
@@ -54,38 +54,8 @@ add merge function
 ```
 
 add signer to PDfOptions
-:72
+:99
 ```diff
-/// Settings for PDF export.
-#[derive(Debug, Hash)]
-pub struct PdfOptions {
-    /// If not `Smart::Auto`, shall be a string that uniquely and stably
-    /// identifies the document. It should not change between compilations of
-    /// the same document.  **If you cannot provide such a stable identifier,
-    /// just pass `Smart::Auto` rather than trying to come up with one.** The
-    /// CLI, for example, does not have a well-defined notion of a long-lived
-    /// project and as such just passes `Smart::Auto`.
-    ///
-    /// If an `ident` is given, the hash of it will be used to create a PDF
-    /// document identifier (the identifier itself is not leaked). If `ident` is
-    /// `Auto`, a hash of the document's title and author is used instead (which
-    /// is reasonably unique and stable).
-    pub ident: Smart<String>,
-    /// Configures the `/Creator` metadata in the resulting PDF. When set to
-    /// `Smart::Auto`, defaults to `Typst $version`.
-    pub creator: Smart<Option<String>>,
-    /// If not `None`, shall be the creation timestamp of the document. It will
-    /// only be used if `set document(date: ..)` is `auto`.
-    pub timestamp: Option<Timestamp>,
-    /// Specifies which ranges of pages should be exported in the PDF. When
-    /// `None`, all pages should be exported.
-    pub page_ranges: Option<PageRanges>,
-    /// A list of PDF standards that Typst will enforce conformance with.
-    pub standards: PdfStandards,
-    /// By default, even when not producing a `PDF/UA-1` document, a tagged PDF
-    /// document is written to provide a baseline of accessibility. In some
-    /// circumstances, for example when trying to reduce the size of a document,
-    /// it can be desirable to disable tagged PDF.
     pub tagged: bool,
     /// Whether to format the PDF in a human-readable way.
     pub pretty: bool,
@@ -94,7 +64,7 @@ pub struct PdfOptions {
 ```
 
 add signer to PDfOptions's Default impl
-:109
+:119
 ```diff
 impl Default for PdfOptions<'_> {
     fn default() -> Self {

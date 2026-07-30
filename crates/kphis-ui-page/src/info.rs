@@ -4,13 +4,11 @@ use futures_signals::{
     signal::{Mutable, SignalExt},
     signal_vec::{MutableVec, SignalVecExt},
 };
-use js_sys::JsString;
 use serde::{Deserialize, Serialize};
 use std::rc::Rc;
 use time::Date;
-use wasm_bindgen::JsCast;
 
-use kphis_model::{app::AppState, fetch::fetch_json_api, user::his::UserClientMutable};
+use kphis_model::{app::AppState, fetch::fetch_json_api};
 use kphis_ui_app::App;
 use kphis_ui_core::class;
 use kphis_util::{
@@ -38,14 +36,15 @@ impl InfoPage {
                         page.announcements.lock_mut().extend(responses.into_iter().map(Rc::new));
                     }
                     Err(e) => {
-                        app.alert_app_error(&e).await;
+                        // silent error (for off-lined)
+                        log::error!("{}", e.string());
                     }
                 }
             }),
         );
     }
 
-    pub fn render(page: Rc<Self>, user: Rc<UserClientMutable>, app: Rc<App>) -> Dom {
+    pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         app.set_title("KPHIS - Info");
         body().set_class_name("");
 
@@ -64,12 +63,16 @@ impl InfoPage {
             .class(["container","pt-3"])
             .child(html!("article", {
                 .class("jumbotron")
+                .child_signal(app.state().user.signal_cloned().map(|opt| {
+                    opt.map(|user| {
+                        html!("h1", {
+                            .class("display-6")
+                            .text("ยินดีต้อนรับ ")
+                            .text_signal(user.user.name.signal_cloned())
+                        })
+                    })
+                }))
                 .children([
-                    html!("h1", {
-                        .class("display-6")
-                        .text("ยินดีต้อนรับ ")
-                        .text_signal(user.user.name.signal_cloned())
-                    }),
                     html!("p", {
                         .class("lead")
                         .text("กรุณาเลือกการทำงานของคุณจากเมนูด้านบน")
@@ -111,7 +114,7 @@ impl Announcement {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch Announcement"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 

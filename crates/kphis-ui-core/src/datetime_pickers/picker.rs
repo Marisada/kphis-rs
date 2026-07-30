@@ -897,30 +897,3 @@ pub fn create_dialog_title_text(dialog_view_type: &DialogViewType, viewed_date: 
         DialogViewType::Years => format!("{} - {}", year_group_start(viewed_date.year() + 543), year_group_end(viewed_date.year() + 543)),
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use rstest::*;
-    use time_datepicker_core::{
-        utils::from_ymd,
-        viewed_date::{DayNumber, MonthNumber, YearNumber},
-    };
-
-    #[fixture(year = 1990, month = 1, day = 1)]
-    fn create_date(year: YearNumber, month: MonthNumber, day: DayNumber) -> Date {
-        from_ymd(year, month, day)
-    }
-
-    #[rstest(
-        expected,
-        dialog_view_type,
-        viewed_date,
-        case::days_default("มกราคม 2533", DialogViewType::Days, create_date(1990, 1, 1)),
-        case::months("2533", DialogViewType::Months, create_date(1990, 1, 1)),
-        case::years("2520 - 2539", DialogViewType::Years, create_date(1990, 1, 1))
-    )]
-    fn test_create_dialog_title_text(expected: &str, dialog_view_type: DialogViewType, viewed_date: Date) {
-        assert_eq!(expected, create_dialog_title_text(&dialog_view_type, &viewed_date));
-    }
-}

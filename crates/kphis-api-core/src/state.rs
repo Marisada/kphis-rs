@@ -54,13 +54,13 @@ use kphis_model::{
 };
 use kphis_util::{
     datetime::{get_timestamp_server, now},
-    error::{AppError, Source},
+    error::{AppError, ErrorTitle, Source},
     // util::hash_to_base64_string,
 };
 
 use crate::{
     pdf::{core::JsonActorHandle, signer::PdfSigner},
-    token::get_claim_and_verify_public,
+    token::get_claim_public,
 };
 
 pub static BUILD_TIME: LazyLock<PrimitiveDateTime> = LazyLock::new(|| {
@@ -553,11 +553,13 @@ impl ApiState {
             user.user.spclty_ids = sse_group.spclty_ids.to_owned();
         }
     }
-    pub async fn online_remove_by_loginname(&self, loginname: &str, message: &str) {
+    pub async fn online_remove_by_loginname(&self, loginname: &str, message: &str) -> u64 {
         let mut guard = self.online_users.lock().await;
         let mut doctorcodes = Vec::new();
+        let mut result = 0;
         guard.retain(|_, v| {
             if v.user.loginname == loginname {
+                result += 1;
                 if let Some(doctorcode) = v.user.doctorcode.as_ref() {
                     doctorcodes.push(doctorcode.to_owned());
                 }
@@ -569,13 +571,16 @@ impl ApiState {
         if !doctorcodes.is_empty() {
             self.sse_logout_many(&doctorcodes, message).await;
         }
+        result
     }
 
-    pub async fn online_remove_by_role(&self, role: &str, message: &str) {
+    pub async fn online_remove_by_role(&self, role: &str, message: &str) -> u64 {
         let mut guard = self.online_users.lock().await;
         let mut doctorcodes = Vec::new();
+        let mut result = 0;
         guard.retain(|_, v| {
             if v.roles.iter().any(|r| r.role == role) {
+                result += 1;
                 if let Some(doctorcode) = v.user.doctorcode.as_ref() {
                     doctorcodes.push(doctorcode.to_owned());
                 }
@@ -587,6 +592,7 @@ impl ApiState {
         if !doctorcodes.is_empty() {
             self.sse_logout_many(&doctorcodes, message).await;
         }
+        result
     }
 
     pub async fn sse_insert(&self, doctorcode: &str, tx: mpsc::UnboundedSender<SseMessage>) {
@@ -984,12 +990,16 @@ pub struct UserState {
 impl UserState {
     /// May error 401, 500
     pub async fn from_token(token: &str, addr: SocketAddr, app: &ApiState) -> Result<Self, AppError> {
-        let claims = get_claim_and_verify_public(token, &app.paseto.public)?;
+        let claims = get_claim_public(token, &app.paseto.public)?;
+        let now_ts = get_timestamp_server()?;
+        if claims.iat > now_ts || claims.exp < now_ts {
+            return Err(AppError::app_401("Verify Token").with_title(ErrorTitle::Security));
+        }
         let state_id = get_state_id(&claims)?;
         let user_state = app
             .online_get(state_id)
             .await
-            .ok_or_else(|| Source::App.to_error(401, "กรุณาเข้าสู่ระบบใหม่", "Get UserState").with_title(kphis_util::error::ErrorTitle::NoUserState))?;
+            .ok_or_else(|| Source::App.to_error(401, "กรุณาเข้าสู่ระบบใหม่", "Get UserState").with_title(ErrorTitle::NoUserState))?;
 
         if user_state.addr.ip() == addr.ip() {
             Ok(user_state)

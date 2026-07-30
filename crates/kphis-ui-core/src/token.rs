@@ -35,54 +35,64 @@ pub async fn update_token(app: Rc<AppState>) -> bool {
                 // using old access token if old access token not expired
                 // log::debug!("Access Token Valid");
                 true
-            } else if renew_access_token(app.clone()).await {
-                // |   | access expired | X | refresh expired |   |
-                true
             } else {
-                // |   | access expired |   | refresh expired | X |
-                let popup = PromptPasswordPopup::new(user.user.totp_done.get().unwrap_or_default());
-                // bootstrap modal will lock focus only within .modal-content
-                // so we need to append to '.modal.show .modal-body' if exist
-                match app.query_selector(".modal.show .modal-body").or(app.get_id("popup")) {
-                    Some(parent) => {
-                        let handle = append_dom(&parent, PromptPasswordPopup::render(popup.clone(), app.clone()));
-                        popup.focus(app.clone());
-                        match popup.finished().wait_for(true).await {
-                            Some(is_fin) => {
-                                if is_fin {
-                                    let result = popup.result.get_cloned();
-                                    handle.discard();
-                                    match result {
-                                        PopupAuth::Ok(password, token_2fa) => {
-                                            // log::debug!("Renew Refresh Token");
-                                            renew_refresh_token(&password, &token_2fa, app).await
-                                        }
-                                        PopupAuth::Cancel => {
-                                            // log::debug!("Cancel Renew Refresh Token");
-                                            false
-                                        }
-                                    }
-                                } else {
-                                    // log::debug!("wait_for return Some(false)");
-                                    false
-                                }
-                            }
-                            None => {
-                                // log::debug!("wait_for return None");
-                                false
-                            }
-                        }
-                    }
-                    None => {
-                        // log::debug!("no modal or popup element");
-                        false
-                    }
+                let (is_success, not_online) = renew_access_token(app.clone()).await;
+                if is_success {
+                    // |   | access expired | X | refresh expired |   |
+                    true
+                } else if !not_online {
+                    // |   | access expired |   | refresh expired | X |
+                    renew_refresh_popup(user.user.totp_done.get().unwrap_or_default(), app.clone()).await
+                } else {
+                    // log::debug!("no online");
+                    false
                 }
             }
         }
         None => {
             // log::debug!("No user data, try using refresh token");
-            renew_access_token(app.clone()).await
+            renew_access_token(app.clone()).await.0
+        }
+    }
+}
+
+pub async fn renew_refresh_popup(totp_done: bool, app: Rc<AppState>) -> bool {
+    let popup = PromptPasswordPopup::new(totp_done);
+    // bootstrap modal will lock focus only within .modal-content
+    // so we need to append to '.modal.show .modal-body' if exist
+    match app.query_selector(".modal.show .modal-body").or(app.get_id("popup")) {
+        Some(parent) => {
+            let handle = append_dom(&parent, PromptPasswordPopup::render(popup.clone(), app.clone()));
+            popup.focus(app.clone());
+            match popup.finished().wait_for(true).await {
+                Some(is_fin) => {
+                    if is_fin {
+                        let result = popup.result.get_cloned();
+                        handle.discard();
+                        match result {
+                            PopupAuth::Ok(password, token_2fa) => {
+                                // log::debug!("Renew Refresh Token");
+                                renew_refresh_token(&password, &token_2fa, app).await
+                            }
+                            PopupAuth::Cancel => {
+                                // log::debug!("Cancel Renew Refresh Token");
+                                false
+                            }
+                        }
+                    } else {
+                        // log::debug!("wait_for return Some(false)");
+                        false
+                    }
+                }
+                None => {
+                    // log::debug!("wait_for return None");
+                    false
+                }
+            }
+        }
+        None => {
+            // log::debug!("no modal or popup element");
+            false
         }
     }
 }
@@ -148,7 +158,7 @@ pub fn set_user(token_response: Option<LoginResponse>, app: Rc<AppState>) -> Res
                     earlier_second,
                 };
                 // clear SSE messages and InMemory stuff
-                app.clear_in_memory_except_user();
+                app.clear_in_memory_except_user_and_asset();
                 app.user.set(Some(Rc::new(client.into())));
             }
         }
@@ -162,20 +172,21 @@ pub fn set_user(token_response: Option<LoginResponse>, app: Rc<AppState>) -> Res
     }
 }
 
-/// GET `EndPoint::User`
-pub async fn renew_access_token(app: Rc<AppState>) -> bool {
+/// GET `EndPoint::User`<br>
+/// return (is_success, not_online)
+pub async fn renew_access_token(app: Rc<AppState>) -> (bool, bool) {
     match LoginResponse::call_api_get_access_renew(app.clone()).await {
         Ok(token_response) => {
             if let Err(_e) = set_user(Some(token_response.clone()), app.clone()) {
                 // log::error!("Token error: {}", e.message);
-                false
+                (false, false)
             } else {
-                true
+                (true, false)
             }
         }
-        Err(_e) => {
+        Err(e) => {
             // log::warn!("Server return: {}", e.message);
-            false
+            (false, e.status == 404)
         }
     }
 }

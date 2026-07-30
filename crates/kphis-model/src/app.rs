@@ -6,7 +6,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use http::Method;
-use js_sys::{Array, JsString, Promise, Uint8Array};
+use js_sys::{Array, Promise, Uint8Array};
 use serde_derive::{Deserialize, Serialize};
 use std::{cmp::Ordering, collections::HashMap, future::Future, rc::Rc, sync::Arc, thread::LocalKey};
 use time::{Date, Duration, Time, ext::NumericalDuration, macros::time};
@@ -50,15 +50,8 @@ pub struct AppState {
     loader: AsyncLoader,
     pub route: Mutable<Route>,
     pub host: Mutable<String>,
-    pub app_status: Mutable<Option<Rc<AppStatus>>>,
-    pub app_asset: Mutable<Option<Rc<AppAsset>>>,
-    /// will `true` manually or by `new` AppState (when No `app` in localStorage)<br>
-    /// NOTE: localStorage.clear() will called when<br>
-    ///   1. Successfully install Service Worker (called when reload)<br>
-    ///   2. `App::logout(app.clone(), true)`, (now only called when `clear cache`)<br>
-    /// will `false` manually or after get `AppAsset`
-    pub no_cache_mode: Mutable<bool>,
 
+    pub app_status: Mutable<Option<Rc<AppStatus>>>,
     pub ward_select: Mutable<String>,
     pub ward_multiple_select: Mutable<String>, // comma delimited
     pub inverse_ward_select: Mutable<String>,
@@ -68,7 +61,6 @@ pub struct AppState {
     pub dch_doctor_select: Mutable<String>,
     pub spclty_select: Mutable<String>,
 
-    pub use_date_limit: Mutable<bool>,
     pub monitor_refresh_interval: Mutable<String>,
     pub ipd_pharmacy_order_monitor_is_discharged: Mutable<String>,
     pub opd_er_pharmacy_order_monitor_is_discharged: Mutable<String>,
@@ -77,26 +69,33 @@ pub struct AppState {
 
     // // Not to localstorage
     /// for sending edited data from med-reconcile form
+    pub app_asset: Mutable<Option<Rc<AppAsset>>>,
+    pub user: Mutable<Option<Rc<UserClientMutable>>>,
+    /// will `true` manually or by `new` AppState (when No `app` in localStorage)<br>
+    /// NOTE: localStorage.clear() will called when<br>
+    ///   1. Successfully install Service Worker (called when reload)<br>
+    ///   2. `App::logout(app.clone(), true)`, (now only called when `clear cache`)<br>
+    /// will `false` manually or after get `AppAsset`
+    pub no_cache_mode: Mutable<bool>,
+    pub use_date_limit: Mutable<bool>,
     pub edit_order: Mutable<Option<Rc<Order>>>,
     pub report_select: Mutable<String>,
     pub aside_prev_percent: Mutable<f64>,
     pub aside_prev_percent_memoize: Mutable<f64>,
-    pub user: Mutable<Option<Rc<UserClientMutable>>>,
+
     pub msg_private: MutableVec<SseData>,
     pub msg_ward: MutableVec<SseData>,
     pub msg_spclty: MutableVec<SseData>,
     pub msg_global: MutableVec<SseData>,
-    pub clipboard_images: MutableVec<Rc<ImagePath>>,
 
+    pub clipboard_images: MutableVec<Rc<ImagePath>>,
     pub post_admit_count: Mutable<i64>,
     pub ipd_order_as: MutableVec<Rc<Order>>,
     pub opd_er_order_as: MutableVec<Rc<Order>>,
     pub vs_mode: Mutable<VsMode>,
     pub start_dchdate: Mutable<String>,
     pub end_dchdate: Mutable<String>,
-
     pub pharmacist_allow_non_med: Mutable<bool>,
-
     pub drag_start_state: Mutable<Option<DragStartState>>,
 
     scroll_position: Mutable<(f64, f64)>,
@@ -112,10 +111,8 @@ impl AppState {
             loader: AsyncLoader::default(),
             route: Mutable::new(Route::from_url(route_url, &host)),
             host: Mutable::new(host),
-            app_status: Mutable::new(None),
-            app_asset: Mutable::new(None),
-            no_cache_mode: Mutable::new(true),
 
+            app_status: Mutable::new(None),
             ward_select: Mutable::new(String::new()),
             ward_multiple_select: Mutable::new(String::new()),
             inverse_ward_select: Mutable::new(String::new()),
@@ -125,7 +122,6 @@ impl AppState {
             dch_doctor_select: Mutable::new(String::new()),
             spclty_select: Mutable::new(String::new()),
 
-            use_date_limit: Mutable::new(true),
             monitor_refresh_interval: Mutable::new(String::from("60")),
             ipd_pharmacy_order_monitor_is_discharged: Mutable::new(String::from("N")),
             opd_er_pharmacy_order_monitor_is_discharged: Mutable::new(String::from("N")),
@@ -133,26 +129,29 @@ impl AppState {
             uploaded_images: MutableVec::new(),
 
             // InMemory only
+            app_asset: Mutable::new(None),
+            user: Mutable::new(None),
+
+            no_cache_mode: Mutable::new(true),
+            use_date_limit: Mutable::new(true),
             edit_order: Mutable::new(None),
             report_select: Mutable::new(String::new()),
             aside_prev_percent: Mutable::new(100.0),
             aside_prev_percent_memoize: Mutable::new(55.0),
-            user: Mutable::new(None),
+
             msg_private: MutableVec::new(),
             msg_ward: MutableVec::new(),
             msg_spclty: MutableVec::new(),
             msg_global: MutableVec::new(),
-            clipboard_images: MutableVec::new(),
 
+            clipboard_images: MutableVec::new(),
             post_admit_count: Mutable::new(0),
             ipd_order_as: MutableVec::new(),
             opd_er_order_as: MutableVec::new(),
             vs_mode: Mutable::new(VsMode::General),
             start_dchdate: Mutable::new((now - 12.weeks()).to_string()),
             end_dchdate: Mutable::new(now.to_string()),
-
             pharmacist_allow_non_med: Mutable::new(false),
-
             drag_start_state: Mutable::new(None),
 
             scroll_position: Mutable::new((0.0, 0.0)),
@@ -181,10 +180,8 @@ impl AppState {
             loader: AsyncLoader::new(),
             route: Mutable::new(Route::from_url(route_url, &host)),
             host: Mutable::new(host),
-            app_status: Mutable::new(item.app_status.map(Rc::new)),
-            app_asset: Mutable::new(None),
-            no_cache_mode: Mutable::new(false),
 
+            app_status: Mutable::new(item.app_status.map(Rc::new)),
             ward_select: Mutable::new(item.ward_select),
             ward_multiple_select: Mutable::new(item.ward_multiple_select),
             inverse_ward_select: Mutable::new(item.inverse_ward_select),
@@ -194,7 +191,6 @@ impl AppState {
             dch_doctor_select: Mutable::new(item.dch_doctor_select),
             spclty_select: Mutable::new(item.spclty_select),
 
-            use_date_limit: Mutable::new(true),
             monitor_refresh_interval: Mutable::new(item.monitor_refresh_interval),
             ipd_pharmacy_order_monitor_is_discharged: Mutable::new(item.ipd_pharmacy_order_monitor_is_discharged),
             opd_er_pharmacy_order_monitor_is_discharged: Mutable::new(item.opd_er_pharmacy_order_monitor_is_discharged),
@@ -202,26 +198,29 @@ impl AppState {
             uploaded_images: MutableVec::new_with_values(item.uploaded_images.into_iter().map(Rc::new).collect()),
 
             // InMemory only
+            app_asset: Mutable::new(None),
+            user: Mutable::new(None),
+
+            no_cache_mode: Mutable::new(false),
+            use_date_limit: Mutable::new(true),
             edit_order: Mutable::new(None),
             report_select: Mutable::new(String::new()),
             aside_prev_percent: Mutable::new(100.0),
             aside_prev_percent_memoize: Mutable::new(55.0),
-            user: Mutable::new(None),
+
             msg_private: MutableVec::new(),
             msg_ward: MutableVec::new(),
             msg_spclty: MutableVec::new(),
             msg_global: MutableVec::new(),
-            clipboard_images: MutableVec::new(),
 
+            clipboard_images: MutableVec::new(),
             post_admit_count: Mutable::new(0),
             ipd_order_as: MutableVec::new(),
             opd_er_order_as: MutableVec::new(),
             vs_mode: Mutable::new(VsMode::General),
             start_dchdate: Mutable::new((now - 4.weeks()).to_string()),
             end_dchdate: Mutable::new(now.to_string()),
-
             pharmacist_allow_non_med: Mutable::new(false),
-
             drag_start_state: Mutable::new(None),
 
             scroll_position: Mutable::new((0.0, 0.0)),
@@ -233,31 +232,35 @@ impl AppState {
         if let Ok(value) = serde_json::to_string(&app) {
             self.storage.with(|storage| {
                 if let Err(e) = storage.set_item("app", &value) {
-                    self.show_jsvalue_message(&e);
+                    self.show_jsvalue_message(e);
                 }
             })
         }
     }
 
-    pub fn clear_in_memory_except_user(&self) {
+    pub fn clear_in_memory_except_user_and_asset(&self) {
         let now = js_now().date();
+
+        self.no_cache_mode.set(false);
+        self.use_date_limit.set(true);
         self.edit_order.set(None);
+        self.report_select.set(String::new());
         self.aside_prev_percent.set(100.0);
         self.aside_prev_percent_memoize.set(55.0);
+
         self.msg_private.lock_mut().clear();
         self.msg_ward.lock_mut().clear();
         self.msg_spclty.lock_mut().clear();
         self.msg_global.lock_mut().clear();
-        self.clipboard_images.lock_mut().clear();
 
+        self.clipboard_images.lock_mut().clear();
+        self.post_admit_count.set(0);
         self.ipd_order_as.lock_mut().clear();
         self.opd_er_order_as.lock_mut().clear();
         self.vs_mode.set(VsMode::General);
         self.start_dchdate.set((now - 4.weeks()).to_string());
         self.end_dchdate.set(now.to_string());
-
         self.pharmacist_allow_non_med.set(false);
-
         self.drag_start_state.set(None);
 
         self.scroll_position.set((0.0, 0.0));
@@ -266,7 +269,7 @@ impl AppState {
     pub fn clear_local_storage(&self) {
         self.storage.with(|storage| {
             if let Err(e) = storage.clear() {
-                self.show_jsvalue_message(&e);
+                self.show_jsvalue_message(e);
             }
         })
     }
@@ -340,7 +343,7 @@ impl AppState {
             let _ = JsFuture::from(reg.unregister().unwrap()).await.unwrap();
         }
         if let Err(e) = location.reload_with_forceget(true) {
-            self.show_jsvalue_message(&e);
+            self.show_jsvalue_message(e);
         }
     }
     pub async fn delete_caches(&self) {
@@ -355,7 +358,7 @@ impl AppState {
                 let result = Promise::all(&keys.map(&mut delete_key));
                 let _ = JsFuture::from(result).await.unwrap();
             }
-            Err(e) => self.show_jsvalue_message(&e),
+            Err(e) => self.show_jsvalue_message(e),
         }
     }
 
@@ -413,7 +416,7 @@ impl AppState {
     }
 
     /// DELETE `EndPoint::Sse`
-    pub async fn call_api_delete_sse_end(app: Rc<Self>) -> Result<String, AppError> {
+    pub async fn call_api_logout(app: Rc<Self>) -> Result<String, AppError> {
         execute_fetch_text(&EndPoint::Sse.base(), "DELETE", None, app).await
     }
 
@@ -610,13 +613,10 @@ impl AppState {
         result
     }
 
-    pub fn show_jsvalue_message(&self, js_value: &JsValue) {
+    pub fn show_jsvalue_message(&self, js_value: JsValue) {
         self.window.with(|w| show_jsvalue_error_message_with_document(&w.document().unwrap(), js_value))
     }
 
-    pub fn state_id(&self) -> Option<String> {
-        self.user.lock_ref().as_ref().map(|user| user.sub.get_cloned())
-    }
     pub fn user_name(&self) -> Option<String> {
         self.user.lock_ref().as_ref().map(|user| user.user.name.get_cloned())
     }
@@ -894,7 +894,7 @@ impl AppState {
                 //self.window.with(|w| w.open_with_url(&url).unwrap_throw());
                 self.open_with_filename(url, file_name);
             }
-            Err(e) => self.show_jsvalue_message(&e),
+            Err(e) => self.show_jsvalue_message(e),
         }
     }
 
@@ -918,10 +918,10 @@ impl AppState {
 
             let update = Timeout::new(0, move || {
                 if let Err(e) = Url::revoke_object_url(&url) {
-                    show_jsvalue_error_message_with_document(&document, &e);
+                    show_jsvalue_error_message_with_document(&document, e);
                 }
                 if let Err(e) = body.remove_child(&a) {
-                    show_jsvalue_error_message_with_document(&document, &e);
+                    show_jsvalue_error_message_with_document(&document, e);
                 }
             });
             update.forget();
@@ -970,7 +970,7 @@ impl AppState {
     pub fn local_storage_set(&self, key: &str, value: &str) {
         self.storage.with(|x| {
             if let Err(e) = x.set_item(key, value) {
-                self.show_jsvalue_message(&e);
+                self.show_jsvalue_message(e);
             }
         })
     }
@@ -992,10 +992,10 @@ impl AppState {
         self.window.with(|w| w.clear_interval_with_handle(handle_id))
     }
 
-    pub fn show_jsvalue_error_message(&self, js_value: &JsValue) {
-        if let Some(message) = js_value.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)) {
-            self.show_error_message(&message);
-        }
+    pub fn show_jsvalue_error_message(&self, js_value: JsValue) {
+        let error = js_sys::Error::from(js_value);
+        let message: String = error.to_js_string().into();
+        self.show_error_message(&message);
     }
 
     pub fn show_error_message(&self, message: &str) {
@@ -1284,16 +1284,14 @@ impl AppAsset {
         match fetch_blob_api(ASSETS_PREFIX, "GET", app).await {
             Ok((response, true)) => {
                 let blob = response.unchecked_into::<Blob>();
-                let bytes = blob_to_bytes(&blob)
-                    .await
-                    .map_err(|e| Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch AppAsset"))?;
+                let bytes = blob_to_bytes(&blob).await.map_err(|e| AppError::new_from_js(e, "Fetch AppAsset"))?;
                 bitcode::decode(&bytes).map_err(|e| Source::BitCode.to_teapot_error(e, "Fetch AppAsset"))
             }
             Ok((app_error, false)) => {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch AppAsset"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Blob")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Blob")),
         }
     }
 
@@ -1308,7 +1306,7 @@ impl AppAsset {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Patch AppAsset"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -1420,9 +1418,11 @@ impl VisitTypeId {
     }
 }
 
-fn show_jsvalue_error_message_with_document(document: &Document, js_value: &JsValue) {
-    if let Some(message) = js_value.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)) {
-        document.get_element_by_id("errormessage").unwrap().set_text_content(Some(&message));
-        log::error!("{}", message);
+pub fn show_jsvalue_error_message_with_document(document: &Document, js_value: JsValue) {
+    let error = js_sys::Error::from(js_value);
+    let message: String = error.to_js_string().into();
+    if let Some(elm) = document.get_element_by_id("errormessage") {
+        elm.set_text_content(Some(&message));
     }
+    log::error!("{}", message);
 }

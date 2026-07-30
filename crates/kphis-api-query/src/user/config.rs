@@ -149,11 +149,11 @@ mod tests {
 
         // when payload.totp is Some(false), insert/update with totp = NULL, return NONE QR-CODE
         payload.totp = Some(false);
-        let again_without_totp = insert_dup_user_config(&payload,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert!(again_without_totp.0.totp.is_none());
-        assert_eq!(again_without_totp.0.result.rows_affected, 2); // 1 is insert, 2 is update
-        let (_,_,totp_again) = select_user_config("user", &tester.db_pool, &tester.kphis_extra).await;
-        assert!(totp_again.is_none()); 
+        let again_with_totp = insert_dup_user_config(&payload,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
+        assert!(again_with_totp.0.totp.is_none());
+        assert_eq!(again_with_totp.0.result.rows_affected, 2); // 1 is insert, 2 is update
+        let (_,_,totp_last) = select_user_config("user", &tester.db_pool, &tester.kphis_extra).await;
+        assert!(totp_last.is_none()); 
     }
 
     #[tokio::test]

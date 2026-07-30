@@ -12,6 +12,10 @@ name = "wasm_datetime"
 path = "src/datetime.rs"
 
 [[test]]
+name = "wasm_datetime_picker"
+path = "src/datetime_picker.rs"
+
+[[test]]
 name = "wasm_route"
 path = "src/route.rs"
 
@@ -28,6 +32,7 @@ kphis-util = { workspace = true }
 
 futures-signals = { workspace = true }
 time = { workspace = true }
+time-datepicker-core = { workspace = true }
 wasm-bindgen-test = { workspace = true }
 
 # This js feature should only be enabled for binary, test, or benchmark crates.

@@ -4,9 +4,8 @@ use futures_signals::{
     signal::{Mutable, Signal, SignalExt, or},
     signal_vec::{MutableVec, SignalVecExt},
 };
-use js_sys::JsString;
 use std::rc::Rc;
-use wasm_bindgen::{JsCast, JsValue};
+use wasm_bindgen::JsValue;
 use web_sys::{DomParser, EventTarget, HtmlButtonElement, HtmlElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement, SupportedType};
 
 use kphis_model::{
@@ -227,13 +226,13 @@ fn tab_action<T: TextInput>(element: &T) {
         element.set_value(&[left, right].join("    "));
         match element.set_selection_start(Some(start + 4)) {
             Err(e) => {
-                let message = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("cannot set_selection_start"));
-                log::error!("{}", message);
+                let error = js_sys::Error::from(e);
+                log::error!("{}", error.to_js_string());
             }
             Ok(()) => {
                 if let Err(e) = element.set_selection_end(Some(start + 4)) {
-                    let message = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("cannot set_selection_end"));
-                    log::error!("{}", message);
+                    let error = js_sys::Error::from(e);
+                    log::error!("{}", error.to_js_string());
                 }
             }
         }

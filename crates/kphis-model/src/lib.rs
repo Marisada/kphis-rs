@@ -45,8 +45,8 @@ pub const API_PREFIX: &str = "/api";
 pub const SSE_GET_PREFIX: &str = "/sse";
 pub const CUSTOM_REPORT_PREFIX: &str = "/customs";
 pub const SERVER_ENTITY: &'static str = include_str!("../../../ENTITY");
-// pub const SERVER_ENTITY: &'static str = "MY-SERVER";
 pub const IAT_DELAY_ALLOW_MIN: u64 = 9;
+pub const FAILURE_LIMIT: i8 = 99;
 pub const SCREEN_WIDTH_EXTRA: f64 = 1750.0;
 pub const LEFT_PANEL_MIN_WIDTH: &str = "800px";
 
