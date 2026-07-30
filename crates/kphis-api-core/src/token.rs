@@ -53,18 +53,6 @@ pub fn gen_token_public(
     Ok(token)
 }
 
-/// May error 401, 500
-pub fn get_claim_and_verify_public(token: &str, public_key: &AsymmetricPublicKey<V4>) -> Result<Claims, AppError> {
-    let claims = get_claim_public(token, public_key)?;
-
-    let now_ts = get_timestamp_server()?;
-    if claims.iat > now_ts || claims.exp < now_ts {
-        return Err(AppError::app_401("Verify Token").with_title(ErrorTitle::Security));
-    }
-
-    Ok(claims)
-}
-
 pub fn get_claim_public(token: &str, public_key: &AsymmetricPublicKey<V4>) -> Result<Claims, AppError> {
     let untrusted_token = UntrustedToken::<Public, V4>::try_from(token).map_err(|_e| AppError::app_401("Verify Token"))?;
     let trusted_token = PublicToken::verify(public_key, &untrusted_token, None, Some(SERVER_ENTITY.as_bytes())).map_err(|_e| AppError::app_401("Verify Token"))?;

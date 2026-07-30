@@ -54,10 +54,10 @@ async fn api_user() {
     // Try PUT without Refresh Token and username is a random state_id
     user.username = Ulid::generate().to_string();
     let try_put_refresh_random = server.put(&EndPoint::User.base()).json(&user).expect_failure().await;
-    assert_eq!(try_put_refresh_random.status_code(), StatusCode::UNAUTHORIZED);
+    assert_eq!(try_put_refresh_random.status_code(), StatusCode::NOT_FOUND); // 404 instead of 401 for preventing further request
     let try_put_refresh_random_error = try_put_refresh_random.json::<AppError>();
     assert_eq!(try_put_refresh_random_error.source, Source::App);
-    assert_eq!(try_put_refresh_random_error.status, 401);
+    assert_eq!(try_put_refresh_random_error.status, 404); // 404 instead of 401 for preventing further request
 
     // Login with Plain password ("123")
     user.username = String::from("user");
@@ -101,10 +101,10 @@ async fn api_user() {
     // Try PUT with Refresh Token and username is a random state_id
     let mut user = UserRequestFull::demo();
     let try_put_refresh_random_2 = server.put(&EndPoint::User.base()).json(&user).expect_failure().await;
-    assert_eq!(try_put_refresh_random_2.status_code(), StatusCode::UNAUTHORIZED);
+    assert_eq!(try_put_refresh_random_2.status_code(), StatusCode::NOT_FOUND); // 404 instead of 401 for preventing further request
     let try_put_refresh_random_2_error = try_put_refresh_random_2.json::<AppError>();
     assert_eq!(try_put_refresh_random_2_error.source, Source::App);
-    assert_eq!(try_put_refresh_random_2_error.status, 401);
+    assert_eq!(try_put_refresh_random_2_error.status, 404); // 404 instead of 401 for preventing further request
 
     // Use Refresh Token and state_id to renew Refresh Token
     let last_success_response = get_refresh_success.json::<LoginResponse>();
@@ -125,15 +125,15 @@ async fn api_user() {
 
     // Try Use Refresh Token to get Access Token after logout
     let get_refresh_failure = server.get(&EndPoint::User.base()).expect_failure().await;
-    assert_eq!(get_refresh_failure.status_code(), StatusCode::UNAUTHORIZED);
+    assert_eq!(get_refresh_failure.status_code(), StatusCode::NOT_FOUND); // 404 instead of 401 for preventing further request
     let get_refresh_failure_error = get_refresh_failure.json::<AppError>();
     assert_eq!(get_refresh_failure_error.source, Source::App);
-    assert_eq!(get_refresh_failure_error.status, 401);
+    assert_eq!(get_refresh_failure_error.status, 404); // 404 instead of 401 for preventing further request
 
     // Try PUT with Refresh Token and state_id after logout
     let put_refresh_failure = server.put(&EndPoint::User.base()).json(&user).expect_failure().await;
-    assert_eq!(put_refresh_failure.status_code(), StatusCode::UNAUTHORIZED);
+    assert_eq!(put_refresh_failure.status_code(), StatusCode::NOT_FOUND); // 404 instead of 401 for preventing further request
     let put_refresh_failure_error = put_refresh_failure.json::<AppError>();
     assert_eq!(put_refresh_failure_error.source, Source::App);
-    assert_eq!(put_refresh_failure_error.status, 401);
+    assert_eq!(put_refresh_failure_error.status, 404); // 404 instead of 401 for preventing further request
 }

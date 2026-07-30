@@ -35,6 +35,12 @@
     }).join(linebreak())
   } else {linebreak()}
 }
+#let mech_ven(s) = if s == none {none} else {
+  ((s == "1","INVASIVE มากกว่า 96 ชม."),
+    (s == "2","INVASIVE น้อยกว่า 96 ชม."),
+    (s == "3","NON-INVASIVE"),
+    (true, "")).find(t => t.at(0)).at(1)
+}
 #let doctors(dr, ty) = {
   v(5pt) + text(fill:black, dr.filter(d => d.ty == ty).map(d => [
     #linebreak()#d.doctor_name #d.licenseno
@@ -132,7 +138,7 @@
     table.cell(align:center + horizon, [20]),
     table.cell(colspan:9,[IMPORTANT NON OPERATING ROOM PROCEDURES\
     1.\u{00A0}(#check(summary.tracheostomy)) TRACHEOSTOMY\
-    2.\u{00A0}(#check_not_none(summary.mechanical_ventilation)) MECHANICAL VENTILATION \u{00A0} (#check_eq(summary.mechanical_ventilation, "1")) INVASIVE มากกว่า 96 ชม. \u{00A0} (#check_eq(summary.mechanical_ventilation, "2")) INVASIVE น้อยกว่า 96 ชม. \u{00A0} (#check_eq(summary.mechanical_ventilation, "3")) NON-INVASIVE\
+    2.\u{00A0}(#check_not_none(summary.mechanical_ventilation)) MECHANICAL VENTILATION #input(mech_ven(summary.mechanical_ventilation))\
     3.\u{00A0}(#check(summary.packed_redcells)) PACKED RED CELLS \u{00A0} (#check(summary.fresh_frozen_plasma)) FRESH FROZEN PLASMA \u{00A0} (#check(summary.platelets)) PLATELETS  \u{00A0} (#check(summary.cryoprecipitate)) CRYOPRECIPITATE \u{00A0} (#check(summary.whole_blood)) WHOLE BLOOD\
     4.\u{00A0}(#check(summary.chemotherapy)) CHEMOTHERAPY\
     5.\u{00A0}(#check(summary.hemodialysis)) HEMODIALYSIS\

@@ -21,28 +21,3 @@ pub struct SelectOption {
     pub key: String,
     pub value: String,
 }
-
-// use std::sync::Rc;
-
-// use crate::{
-//     fetch::fetch_json_api,
-//     app::App,
-//     error::{AppError, Source},
-// };
-
-// /// `GET` api, return multiple SelectOption
-// pub async fn fetch_select_options(path: &str, app: Rc<App>) -> Result<Vec<SelectOption>, AppError> {
-//     match fetch_json_api(path, "GET", None, app).await {
-//         Ok((response, true)) => {
-//             let response: Vec<SelectOption> = serde_wasm_bindgen::from_value(response).map_err(|e| Source::SerdeWasm.to_error(500, e))?;
-//             Ok(response)
-//         }
-//         Ok((app_error, false)) => {
-//             let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_error(500, e))?;
-//             Err(error)
-//         }
-//         Err(e) => {
-//             Err(Source::Js.to_error(500, e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error"))))
-//         }
-//     }
-// }

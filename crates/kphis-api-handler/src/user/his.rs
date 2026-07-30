@@ -17,10 +17,11 @@ use ulid::Ulid;
 use kphis_api_core::{
     open_api::{DocOne, DocOpt},
     state::{ApiState, UserState, get_state_id},
-    token::{TokenType, gen_token_public, get_claim_and_verify_public},
+    token::{TokenType, gen_token_public, get_claim_public},
 };
 use kphis_api_query::user::{config, login, totp};
 use kphis_model::{
+    FAILURE_LIMIT,
     app::AppStatus,
     user::{
         his::{CurrentUserRole, LoginResponse, UserDb, UserRequest, UserRequest2fa, UserRequestFull},
@@ -33,7 +34,6 @@ use kphis_util::{
 };
 
 pub const COOKIE_TOKEN_NAME: &str = "REFRESH";
-const FAILURE_LIMIT: i8 = 99;
 
 // from SessionManager.php::checklogin() plus access token and refresh token cookie
 // return 401 Unauthorized when user not found and failed password checking
@@ -61,7 +61,7 @@ pub async fn check_login(
 
     // lock with failed limit
     if user.failed.unwrap_or_default() >= FAILURE_LIMIT {
-        return Err(Source::App.to_error(403, "Locked", "Check Login").with_title(ErrorTitle::Security));
+        return Err(Source::App.to_error(403, "Locked. Please contact admin to unlock.", "Check Login").with_title(ErrorTitle::Security));
     }
 
     if user.doctorcode.is_none() {
@@ -123,9 +123,9 @@ pub async fn check_login(
 ///
 /// Tries to Log-In with TOTP
 /// - Not `is_sub` success: return single Login Response (Access Token insided) and new Refersh Token in Secure Cookies
+/// - Not `is_sub` wrong: 401, locked or no doctorcode: return 403
 /// - `is_sub` success: return NULL
-/// - Not `is_sub` wrong: 401
-/// - `is_sub` wrong: return 409
+/// - `is_sub` wrong: return 409, timeout: return 408, locked or no doctorcode: return 403
 #[utoipa::path(
     patch,
     path = "/user",
@@ -159,7 +159,7 @@ pub async fn check_totp(
 
     // lock with failed limit
     if user.failed.unwrap_or_default() >= FAILURE_LIMIT {
-        return Err(Source::App.to_error(403, "Locked", "Check TOTP").with_title(ErrorTitle::Security));
+        return Err(Source::App.to_error(403, "Locked. Please contact admin to unlock.", "Check TOTP").with_title(ErrorTitle::Security));
     }
 
     if user.doctorcode.is_none() {
@@ -170,7 +170,26 @@ pub async fn check_totp(
     if let (Some(totp_pk), Some(ts), Ok(now)) = (&user.totp, user.ts, get_timestamp_server()) {
         // check TS
         if ts.saturating_add(app.app_config.handshake_2fa_timeout_second) > now {
-            if !totp::verify_totp_encoded_key(&user.loginname, &payload.token_2fa, totp_pk, "KPHIS")? {
+            if totp::verify_totp_encoded_key(&user.loginname, &payload.token_2fa, totp_pk, "KPHIS")? {
+                // reset failed to 0
+                if user.failed.unwrap_or_default() > 0 {
+                    if config::insert_dup_failed(0, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
+                        return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
+                    }
+                }
+                // set totp_done (is_sub only)
+                if payload.is_sub {
+                    if config::update_totp_done(&user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() > 0 {
+                        // update online user's totp_done
+                        let Ulid(state_id) = Ulid::from_string(&payload.username).map_err(|e| Source::UlidDecode.to_error(401, e, "Check TOTP"))?;
+                        let mut guard = app.online_users.lock().await;
+                        if let Some(online_mut) = guard.get_mut(&state_id) {
+                            online_mut.user.totp_done = Some(true);
+                        }
+                    }
+                }
+            // not verified
+            } else {
                 tracing::warn!("user {} failed to login with wrong TOTP", user.name);
                 // bump failed +1
                 if config::insert_dup_failed(user.failed.unwrap_or_default() + 1, &user.loginname, &app.db_pool, &app.kphis_extra())
@@ -182,28 +201,12 @@ pub async fn check_totp(
                 }
                 if payload.is_sub {
                     // we avoid 401 to prevent user dropped in client
-                    return Err(Source::App.to_error(409, "Try Again", "Check TOTP").with_title(ErrorTitle::Security));
+                    return Err(Source::App.to_error(409, "Try again..", "Check TOTP").with_title(ErrorTitle::Security));
                 } else {
                     return Err(AppError::app_401("Check TOTP").with_title(ErrorTitle::Security));
                 }
-            } else {
-                // reset failed tp 0
-                if user.failed.unwrap_or_default() > 0 {
-                    if config::insert_dup_failed(0, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
-                        return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
-                    }
-                }
-                if payload.is_sub {
-                    if config::update_totp_done(&user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() > 0 {
-                        // update online user's totp_done
-                        let Ulid(state_id) = Ulid::from_string(&payload.username).map_err(|e| Source::UlidDecode.to_error(401, e, "Check TOTP"))?;
-                        let mut guard = app.online_users.lock().await;
-                        if let Some(online_mut) = guard.get_mut(&state_id) {
-                            online_mut.user.totp_done = Some(true);
-                        }
-                    }
-                }
             }
+        // timeout
         } else {
             tracing::warn!("user {} timeout for login with TOTP", user.name);
             return Err(Source::App.to_error(408, "TOTP TimeOut", "Check TOTP").with_title(ErrorTitle::Security));
@@ -309,6 +312,7 @@ pub fn verify_password(password: &str, hash: &str) -> Result<(), AppError> {
 ///
 /// Get Access token by Refresh token in Cookie, return single Login Response (new Access Token insided)<br>
 /// and new Refersh Token in Secure Cookies
+// return 404 to tell client that "not calling PUT /user for a new refresh token later"
 #[utoipa::path(
     get,
     path = "/user",
@@ -316,17 +320,19 @@ pub fn verify_password(password: &str, hash: &str) -> Result<(), AppError> {
 )]
 pub async fn refresh_token(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, headers: HeaderMap, State(app): State<ApiState>, cookies: Cookies) -> Result<Json<LoginResponse>, AppError> {
     let cookie = cookies.get(COOKIE_TOKEN_NAME).ok_or_else(|| AppError::app_401("Get Token").with_title(ErrorTitle::Security))?;
-
-    let claims = get_claim_and_verify_public(cookie.value(), &app.paseto.public)?;
+    let claims = get_claim_public(cookie.value(), &app.paseto.public)?;
     if claims.act != "refresh" {
         return Err(AppError::app_401("Get Token").with_title(ErrorTitle::Security));
     }
-
     let state_id = get_state_id(&claims)?;
-
     // get user, roles from backend users state
     match app.online_get(state_id).await {
         Some(UserState { user, roles, permissions, addr, .. }) => {
+            // check expiration after check online-user
+            let now_ts = get_timestamp_server()?;
+            if claims.iat > now_ts || claims.exp < now_ts {
+                return Err(AppError::app_401("Get Token").with_title(ErrorTitle::Security));
+            }
             // check IP address
             let real_addr = app
                 .app_config
@@ -346,7 +352,7 @@ pub async fn refresh_token(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, he
 
             Ok(Json(response))
         }
-        None => Err(AppError::app_401("Get Token").with_title(ErrorTitle::Security)),
+        None => Err(AppError::app_404("Get Token").with_title(ErrorTitle::Security)),
     }
 }
 
@@ -439,7 +445,7 @@ pub async fn refresh_cookie(
 
             Ok(Json(response))
         }
-        None => Err(AppError::app_401("Get Token").with_title(ErrorTitle::Security)),
+        None => Err(AppError::app_404("Get Token").with_title(ErrorTitle::Security)),
     }
 }
 

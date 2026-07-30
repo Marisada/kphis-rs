@@ -7,7 +7,6 @@ use futures_signals::{
     signal::{Mutable, Signal, SignalExt, not},
     signal_vec::{MutableVec, SignalVecExt},
 };
-use js_sys::JsString;
 use std::rc::Rc;
 use strum::IntoEnumIterator;
 use wasm_bindgen::JsCast;
@@ -1626,7 +1625,7 @@ fn create_range(node: Node, target_position: u32, app: Rc<App>) -> Range {
     let range = app.create_range();
     match range.select_node(&node) {
         Err(e) => {
-            app.show_jsvalue_message(&e);
+            app.show_jsvalue_message(e);
             range
         }
         Ok(()) => {
@@ -1637,11 +1636,11 @@ fn create_range(node: Node, target_position: u32, app: Rc<App>) -> Range {
                     let node_offset = node.child_nodes().length();
                     match range.set_start(&node, node_offset) {
                         Err(e) => {
-                            app.show_jsvalue_message(&e);
+                            app.show_jsvalue_message(e);
                         }
                         Ok(()) => {
                             if let Err(e) = range.set_end(&node, node_offset) {
-                                app.show_jsvalue_message(&e);
+                                app.show_jsvalue_message(e);
                             }
                         }
                     }
@@ -1661,13 +1660,13 @@ fn new_range(current: &Node, target_position: u32, pos: &mut u32, range: &Range)
             let offset = target_position.saturating_sub(*pos);
             match range.set_start(current, offset) {
                 Err(e) => {
-                    let message = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("cannot set_start"));
-                    log::error!("{}", message);
+                    let error = js_sys::Error::from(e);
+                    log::error!("{}", error.to_js_string());
                 }
                 Ok(()) => {
                     if let Err(e) = range.set_end(current, offset) {
-                        let message = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("cannot set_end"));
-                        log::error!("{}", message);
+                        let error = js_sys::Error::from(e);
+                        log::error!("{}", error.to_js_string());
                     }
                 }
             }
@@ -1759,9 +1758,9 @@ fn editor<F: Fn(&str) -> HighLighted + 'static>(
                         let new_range = create_range(element.clone().into(), pos, app.clone());
                         if let Some(new_selection) = app.get_selection() {
                             match new_selection.remove_all_ranges() {
-                                Err(e) => app.show_jsvalue_message(&e),
+                                Err(e) => app.show_jsvalue_message(e),
                                 Ok(()) => if let Err(e) = new_selection.add_range(&new_range) {
-                                    app.show_jsvalue_message(&e);
+                                    app.show_jsvalue_message(e);
                                 }
                             }
                         }
@@ -1784,11 +1783,11 @@ fn editor<F: Fn(&str) -> HighLighted + 'static>(
                     if let Ok(range) = old_selection.get_range_at(0) {
                         let range_cloned = range.clone_range();
                         if let Err(e) = range_cloned.select_node_contents(&element) {
-                            app.show_jsvalue_message(&e);
+                            app.show_jsvalue_message(e);
                             None
                         } else if let (Ok(end_node), Ok(end_offset)) = (range.end_container(), range.end_offset()) {
                             if let Err(e) = range_cloned.set_end(&end_node, end_offset) {
-                                app.show_jsvalue_message(&e);
+                                app.show_jsvalue_message(e);
                                 None
                             } else {
                                 Some(range_cloned.to_string().length())
@@ -1851,23 +1850,23 @@ fn add_text(text: &str, app: &Rc<App>) {
             let tab_node = app.create_text_node(text);
             match range.insert_node(&tab_node) {
                 Err(e) => {
-                    app.show_jsvalue_message(&e);
+                    app.show_jsvalue_message(e);
                 }
                 Ok(()) => match range.set_start_after(&tab_node) {
                     Err(e) => {
-                        app.show_jsvalue_message(&e);
+                        app.show_jsvalue_message(e);
                     }
                     Ok(()) => match range.set_end_after(&tab_node) {
                         Err(e) => {
-                            app.show_jsvalue_message(&e);
+                            app.show_jsvalue_message(e);
                         }
                         Ok(()) => match selection.remove_all_ranges() {
                             Err(e) => {
-                                app.show_jsvalue_message(&e);
+                                app.show_jsvalue_message(e);
                             }
                             Ok(()) => {
                                 if let Err(e) = selection.add_range(&range) {
-                                    app.show_jsvalue_message(&e);
+                                    app.show_jsvalue_message(e);
                                 }
                             }
                         },

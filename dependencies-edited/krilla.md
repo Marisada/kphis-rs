@@ -1,17 +1,20 @@
 [krilla](https://github.com/LaurenzV/krilla)
-> last check date = 2026-06-20
+> last check date = 2026-07-28
 
 open shell
-> docker pull vallaris/sitro-backends
+> docker pull vallaris/sitro-backends:latest
+> sudo apt-get update && sudo apt-get install -y ghostscript libfontconfig1-dev
+
 > git clone https://github.com/LaurenzV/krilla.git
 > git clone https://github.com/Marisada/krilla.git
 run on both git
-> cargo test -p krilla-tests --features visreg -- --nocapture
+> cargo test --features visreg -- --nocapture
 expected the same failures on both git:
 failures:
     font::colr::font_noto_color_emoji_colr_visreg_poppler
     font::svg::font_noto_color_emoji_svg_visreg_mupdf
     font::svg::font_noto_color_emoji_svg_visreg_poppler
+    pattern::shading::pattern_sweep_gradient_repeat_visreg_mupdf
     svg::custom_integration_matplotlib_stairs_visreg_pdfium
     svg::resvg_masking_clip_rule_clip_rule_evenodd_visreg_poppler
 
@@ -38,7 +41,7 @@ add: 26
     use crate::interchange::outline::Outline;
 ```
 
-add to pub(crate) struct SerializeContext : 275
+add to pub(crate) struct SerializeContext : 287
 ```diff
 
     /// The current location, if set.

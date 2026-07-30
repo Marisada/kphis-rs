@@ -1,4 +1,4 @@
-mod picker;
+pub mod picker;
 
 use dominator::{Dom, DomBuilder, EventOptions, clone, events, html, with_node};
 use futures_signals::signal::{Broadcaster, Mutable, Signal, SignalExt, not};

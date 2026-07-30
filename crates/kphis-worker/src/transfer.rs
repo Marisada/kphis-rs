@@ -1,4 +1,4 @@
-use js_sys::{Array, JsString, Uint8Array};
+use js_sys::{Array, Uint8Array};
 use std::borrow::Borrow;
 use wasm_bindgen::{JsCast, JsValue};
 
@@ -98,7 +98,7 @@ impl MessageSend for String {
 
 impl MessageReturn for String {
     fn from_js(value: &JsValue) -> Self {
-        value.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default()
+        value.as_string().unwrap_or_default()
     }
 }
 
@@ -115,7 +115,7 @@ impl MessageSend for Option<String> {
 
 impl MessageReturn for Option<String> {
     fn from_js(value: &JsValue) -> Self {
-        value.dyn_ref::<JsString>().map(|s| s.into())
+        value.as_string()
     }
 }
 

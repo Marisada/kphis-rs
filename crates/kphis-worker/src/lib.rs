@@ -6,7 +6,7 @@ use futures_core::stream::Stream;
 use futures_signals::signal::SignalExt;
 use futures_util::stream::StreamExt;
 use gloo_events::EventListener;
-use js_sys::{Array, JsString, Object, global};
+use js_sys::{Array, Object, global};
 use std::{
     fmt::Debug,
     future::Future,
@@ -190,7 +190,8 @@ impl<'a> WorkerCall<'a> {
                     let window = window().unwrap();
                     // save to clipboard
                     if let Err(e) = JsFuture::from(window.navigator().clipboard().write_text(&message)).await {
-                        log::error!("{:?}", e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("Cannot save to Clipboard")));
+                        let error = js_sys::Error::from(e);
+                        log::error!("{}", error.to_js_string());
                     }
 
                     // red alert box

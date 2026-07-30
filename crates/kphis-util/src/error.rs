@@ -3,11 +3,15 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use serde::{
+    de::{Deserialize, Deserializer},
+    ser::{Serialize, Serializer},
+};
 use serde_derive::{Deserialize, Serialize};
-use serde::{de::{Deserialize, Deserializer}, ser::{Serialize, Serializer}};
 
 #[cfg(not(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none"))))]
 use ulid::Ulid;
+use wasm_bindgen::JsValue;
 
 #[cfg(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none")))]
 use crate::datetime::js_now;
@@ -131,7 +135,7 @@ impl Source {
             "ParseInt" => Self::ParseInt,
             "CryptoToken" => Self::Pasetors,
             "PasswordHash" => Self::PasswordHash,
-            "SerdeJson" => Self::SerdeJson, 
+            "SerdeJson" => Self::SerdeJson,
             "SerdeWasm" => Self::SerdeWasm,
             "SQLx" => Self::SQLx,
             "SystemTime" => Self::SystemTime,
@@ -228,6 +232,18 @@ impl AppError {
             error_id: new_eror_id(),
             source: Source::App,
             message: message.to_owned(),
+            action: action.to_owned(),
+            title: ErrorTitle::ContactAdmin,
+        }
+    }
+    /// convert JsValue as js_sys::Error
+    pub fn new_from_js(js_value: JsValue, action: &str) -> Self {
+        let e = js_sys::Error::from(js_value);
+        Self {
+            status: StatusCode::IM_A_TEAPOT.as_u16(),
+            error_id: new_eror_id(),
+            source: Source::Js,
+            message: e.to_js_string().into(),
             action: action.to_owned(),
             title: ErrorTitle::ContactAdmin,
         }

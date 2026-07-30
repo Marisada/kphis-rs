@@ -6,7 +6,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use http::Method;
-use js_sys::{Array, JsString, Promise, Uint8Array};
+use js_sys::{Array, Promise, Uint8Array};
 use serde_derive::{Deserialize, Serialize};
 use std::{cmp::Ordering, collections::HashMap, future::Future, rc::Rc, sync::Arc, thread::LocalKey};
 use time::{Date, Duration, Time, ext::NumericalDuration, macros::time};
@@ -82,7 +82,7 @@ pub struct AppState {
     pub report_select: Mutable<String>,
     pub aside_prev_percent: Mutable<f64>,
     pub aside_prev_percent_memoize: Mutable<f64>,
-    
+
     pub msg_private: MutableVec<SseData>,
     pub msg_ward: MutableVec<SseData>,
     pub msg_spclty: MutableVec<SseData>,
@@ -207,7 +207,7 @@ impl AppState {
             report_select: Mutable::new(String::new()),
             aside_prev_percent: Mutable::new(100.0),
             aside_prev_percent_memoize: Mutable::new(55.0),
-            
+
             msg_private: MutableVec::new(),
             msg_ward: MutableVec::new(),
             msg_spclty: MutableVec::new(),
@@ -232,7 +232,7 @@ impl AppState {
         if let Ok(value) = serde_json::to_string(&app) {
             self.storage.with(|storage| {
                 if let Err(e) = storage.set_item("app", &value) {
-                    self.show_jsvalue_message(&e);
+                    self.show_jsvalue_message(e);
                 }
             })
         }
@@ -269,7 +269,7 @@ impl AppState {
     pub fn clear_local_storage(&self) {
         self.storage.with(|storage| {
             if let Err(e) = storage.clear() {
-                self.show_jsvalue_message(&e);
+                self.show_jsvalue_message(e);
             }
         })
     }
@@ -343,7 +343,7 @@ impl AppState {
             let _ = JsFuture::from(reg.unregister().unwrap()).await.unwrap();
         }
         if let Err(e) = location.reload_with_forceget(true) {
-            self.show_jsvalue_message(&e);
+            self.show_jsvalue_message(e);
         }
     }
     pub async fn delete_caches(&self) {
@@ -358,7 +358,7 @@ impl AppState {
                 let result = Promise::all(&keys.map(&mut delete_key));
                 let _ = JsFuture::from(result).await.unwrap();
             }
-            Err(e) => self.show_jsvalue_message(&e),
+            Err(e) => self.show_jsvalue_message(e),
         }
     }
 
@@ -416,7 +416,7 @@ impl AppState {
     }
 
     /// DELETE `EndPoint::Sse`
-    pub async fn call_api_delete_sse_end(app: Rc<Self>) -> Result<String, AppError> {
+    pub async fn call_api_logout(app: Rc<Self>) -> Result<String, AppError> {
         execute_fetch_text(&EndPoint::Sse.base(), "DELETE", None, app).await
     }
 
@@ -613,13 +613,10 @@ impl AppState {
         result
     }
 
-    pub fn show_jsvalue_message(&self, js_value: &JsValue) {
+    pub fn show_jsvalue_message(&self, js_value: JsValue) {
         self.window.with(|w| show_jsvalue_error_message_with_document(&w.document().unwrap(), js_value))
     }
 
-    pub fn state_id(&self) -> Option<String> {
-        self.user.lock_ref().as_ref().map(|user| user.sub.get_cloned())
-    }
     pub fn user_name(&self) -> Option<String> {
         self.user.lock_ref().as_ref().map(|user| user.user.name.get_cloned())
     }
@@ -897,7 +894,7 @@ impl AppState {
                 //self.window.with(|w| w.open_with_url(&url).unwrap_throw());
                 self.open_with_filename(url, file_name);
             }
-            Err(e) => self.show_jsvalue_message(&e),
+            Err(e) => self.show_jsvalue_message(e),
         }
     }
 
@@ -921,10 +918,10 @@ impl AppState {
 
             let update = Timeout::new(0, move || {
                 if let Err(e) = Url::revoke_object_url(&url) {
-                    show_jsvalue_error_message_with_document(&document, &e);
+                    show_jsvalue_error_message_with_document(&document, e);
                 }
                 if let Err(e) = body.remove_child(&a) {
-                    show_jsvalue_error_message_with_document(&document, &e);
+                    show_jsvalue_error_message_with_document(&document, e);
                 }
             });
             update.forget();
@@ -973,7 +970,7 @@ impl AppState {
     pub fn local_storage_set(&self, key: &str, value: &str) {
         self.storage.with(|x| {
             if let Err(e) = x.set_item(key, value) {
-                self.show_jsvalue_message(&e);
+                self.show_jsvalue_message(e);
             }
         })
     }
@@ -995,10 +992,10 @@ impl AppState {
         self.window.with(|w| w.clear_interval_with_handle(handle_id))
     }
 
-    pub fn show_jsvalue_error_message(&self, js_value: &JsValue) {
-        if let Some(message) = js_value.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)) {
-            self.show_error_message(&message);
-        }
+    pub fn show_jsvalue_error_message(&self, js_value: JsValue) {
+        let error = js_sys::Error::from(js_value);
+        let message: String = error.to_js_string().into();
+        self.show_error_message(&message);
     }
 
     pub fn show_error_message(&self, message: &str) {
@@ -1287,16 +1284,14 @@ impl AppAsset {
         match fetch_blob_api(ASSETS_PREFIX, "GET", app).await {
             Ok((response, true)) => {
                 let blob = response.unchecked_into::<Blob>();
-                let bytes = blob_to_bytes(&blob)
-                    .await
-                    .map_err(|e| Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch AppAsset"))?;
+                let bytes = blob_to_bytes(&blob).await.map_err(|e| AppError::new_from_js(e, "Fetch AppAsset"))?;
                 bitcode::decode(&bytes).map_err(|e| Source::BitCode.to_teapot_error(e, "Fetch AppAsset"))
             }
             Ok((app_error, false)) => {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch AppAsset"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Blob")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Blob")),
         }
     }
 
@@ -1311,7 +1306,7 @@ impl AppAsset {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Patch AppAsset"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -1423,9 +1418,11 @@ impl VisitTypeId {
     }
 }
 
-fn show_jsvalue_error_message_with_document(document: &Document, js_value: &JsValue) {
-    if let Some(message) = js_value.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)) {
-        document.get_element_by_id("errormessage").unwrap().set_text_content(Some(&message));
-        log::error!("{}", message);
+pub fn show_jsvalue_error_message_with_document(document: &Document, js_value: JsValue) {
+    let error = js_sys::Error::from(js_value);
+    let message: String = error.to_js_string().into();
+    if let Some(elm) = document.get_element_by_id("errormessage") {
+        elm.set_text_content(Some(&message));
     }
+    log::error!("{}", message);
 }

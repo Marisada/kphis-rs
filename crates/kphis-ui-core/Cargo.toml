@@ -50,6 +50,3 @@ web-sys = { workspace = true, features = [
     "HtmlTextAreaElement",
     "SupportedType",
 ]}
-
-[dev-dependencies]
-rstest = { workspace = true }

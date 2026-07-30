@@ -4687,10 +4687,10 @@ impl InsertTextAreaButton {
                     let new_pos = (text_pos as u32 + inserted_len as u32).saturating_sub(button.minus_from_end);
                     let focus = Timeout::new(0, move || {
                         if let Err(e) = textarea.set_selection_range(new_pos, new_pos) {
-                            app.show_jsvalue_error_message(&e);
+                            app.show_jsvalue_error_message(e);
                         }
                         if let Err(e) = textarea.focus() {
-                            app.show_jsvalue_error_message(&e);
+                            app.show_jsvalue_error_message(e);
                         }
                     });
                     focus.forget();

@@ -1,5 +1,4 @@
 use derive_demo::Demo;
-use js_sys::JsString;
 use rust_decimal::Decimal;
 use serde_derive::{Deserialize, Serialize};
 use sqlx::FromRow;
@@ -7,7 +6,6 @@ use std::{collections::HashMap, rc::Rc, sync::Arc};
 use strum::EnumIter;
 use time::{PrimitiveDateTime, macros::datetime};
 use utoipa::{IntoParams, ToSchema};
-use wasm_bindgen::JsCast;
 
 use kphis_util::{
     datetime::{date_8601, datetime_8601, time_8601},
@@ -65,7 +63,7 @@ impl TypstRaw {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch PdfRaw"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -974,7 +972,7 @@ impl CustomReport {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch CustomReport"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch CustomReport")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 

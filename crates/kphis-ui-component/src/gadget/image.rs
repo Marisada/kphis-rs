@@ -4,7 +4,7 @@ use futures_signals::{
     signal::{Mutable, Signal, SignalExt, not},
     signal_vec::{MutableVec, SignalVecExt},
 };
-use js_sys::{Array, JsString};
+use js_sys::Array;
 use std::{
     rc::Rc,
     sync::atomic::{AtomicUsize, Ordering},
@@ -770,16 +770,16 @@ impl ImageCpn {
                                                             Timeout::new(0, clone!(elm, title_len => move || {
                                                                 if let Some(input) = elm.dyn_into::<HtmlInputElement>().ok() {
                                                                     if let Err(e) = input.focus() {
-                                                                        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                                                                        log::error!("Error focus element: {}", message);
+                                                                        let error = js_sys::Error::from(e);
+                                                                        log::error!("Error focus element: {}", error.to_js_string());
                                                                     }
                                                                     if let Err(e) = input.set_selection_start(Some(title_len)) {
-                                                                        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                                                                        log::error!("Error set_selection_start: {}", message);
+                                                                        let error = js_sys::Error::from(e);
+                                                                        log::error!("Error set_selection_start: {}", error.to_js_string());
                                                                     }
                                                                     if let Err(e) = input.set_selection_end(Some(title_len)) {
-                                                                        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                                                                        log::error!("Error set_selection_end: {}", message);
+                                                                        let error = js_sys::Error::from(e);
+                                                                        log::error!("Error set_selection_end: {}", error.to_js_string());
                                                                     }
                                                                 }
                                                             })).forget();
@@ -1017,19 +1017,22 @@ impl ImageCpn {
                                                         }
                                                     }
                                                     Err(e) => {
-                                                        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                        let error = js_sys::Error::from(e);
+                                                        let message: String = error.to_js_string().into();
                                                         app.alert_error_with_closed("Error await numerate_devices: ", &message).await;
                                                     }
                                                 }
                                             }
                                             Err(e) => {
-                                                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                let error = js_sys::Error::from(e);
+                                                let message: String = error.to_js_string().into();
                                                 app.alert_error_with_closed("Error numerate_devices", &message).await;
                                             }
                                         }
                                     }
                                     Err(e) => {
-                                        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                        let error = js_sys::Error::from(e);
+                                        let message: String = error.to_js_string().into();
                                         app.alert_error_with_closed("Error media_devices", &message).await;
                                     }
                                 }
@@ -1050,12 +1053,14 @@ impl ImageCpn {
                                                         match video_elm.play() {
                                                             Ok(promise) => {
                                                                 if let Err(e) = JsFuture::from(promise).await {
-                                                                    let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                                    let error = js_sys::Error::from(e);
+                                                                    let message: String = error.to_js_string().into();
                                                                     app.alert_error_with_closed("Error await play video", &message).await;
                                                                 }
                                                             }
                                                             Err(e) => {
-                                                                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                                let error = js_sys::Error::from(e);
+                                                                let message: String = error.to_js_string().into();
                                                                 app.alert_error_with_closed("Error play video", &message).await;
                                                             }
                                                         }
@@ -1065,12 +1070,14 @@ impl ImageCpn {
                                                     }
                                                 }
                                             } else if let Err(e) = stop_video(video_elm) {
-                                                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                let error = js_sys::Error::from(e);
+                                                let message: String = error.to_js_string().into();
                                                 app.alert_error_with_closed("Error stop_video", &message).await;
                                             }
                                         }
                                         Err(e) => {
-                                            let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                            let error = js_sys::Error::from(e);
+                                            let message: String = error.to_js_string().into();
                                             app.alert_error_with_closed("Error media_devices", &message).await;
                                         }
                                     }
@@ -1148,7 +1155,8 @@ impl ImageCpn {
                                                     // MacOS Safari in Guest mode will prevent writing video to canvas, result in zero-size image in both
                                                     // elm.toDataURL() and elm.toBlob() method below without any error
                                                     if let Err(e) = ctx.draw_image_with_html_video_element_and_dw_and_dh(&video_elm, 0.0, 0.0, width as f64, height as f64) {
-                                                        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                        let error = js_sys::Error::from(e);
+                                                        let message: String = error.to_js_string().into();
                                                         app.alert_error("ไม่สามารถจับภาพได้", &message);
                                                     }
 
@@ -1176,13 +1184,15 @@ impl ImageCpn {
                                                     //                                         page.file_list.lock_mut().push(file);
                                                     //                                     }
                                                     //                                     Err(e) => {
-                                                    //                                         let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                    //                                         let error = js_sys::Error::from(e);
+                                                    //                                         let message: String = error.to_js_string().into();
                                                     //                                         app.alert_error("Error create file from blob", &message);
                                                     //                                     }
                                                     //                                 }
                                                     //                             }
                                                     //                             Err(e) => {
-                                                    //                                 let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                    //                                 let error = js_sys::Error::from(e);
+                                                    //                                 let message: String = error.to_js_string().into();
                                                     //                                 app.alert_error("Error bytes_to_blob", &message);
                                                     //                             }
                                                     //                         }
@@ -1198,7 +1208,8 @@ impl ImageCpn {
                                                     //         }
                                                     //     }
                                                     //     Err(e) => {
-                                                    //         let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                    //         let error = js_sys::Error::from(e);
+                                                    //         let message: String = error.to_js_string().into();
                                                     //         app.alert_error("Error to_data_url_with_type: ", &message);
                                                     //     }
                                                     // }
@@ -1216,21 +1227,24 @@ impl ImageCpn {
                                                                 page.file_list.lock_mut().push(file);
                                                             }
                                                             Err(e) => {
-                                                                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                                let error = js_sys::Error::from(e);
+                                                                let message: String = error.to_js_string().into();
                                                                 app.alert_error("Error create file from blob", &message);
                                                             }
                                                         }
                                                     }));
                                                     // log::debug!("Canvas element size: {}x{}", canvas_elm.width(), canvas_elm.height());
                                                     if let Err(e) = canvas_elm.to_blob_with_type(&upload_cs.as_ref().unchecked_ref(), "image/png") {
-                                                        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                        let error = js_sys::Error::from(e);
+                                                        let message: String = error.to_js_string().into();
                                                         app.alert_error("Error canvas to blob", &message);
                                                     }
                                                     upload_cs.forget();
                                                 }
                                             }
                                             if let Err(e) = stop_video(video_elm) {
-                                                let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                                let error = js_sys::Error::from(e);
+                                                let message: String = error.to_js_string().into();
                                                 app.alert_error("Error stop_video", &message);
                                             }
                                             page.show_capture_modal.set_neq(false);
@@ -1251,7 +1265,8 @@ impl ImageCpn {
                         .event(clone!(page => move |_:events::Click| {
                             if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
                                 if let Err(e) = stop_video(video_elm) {
-                                    let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+                                    let error = js_sys::Error::from(e);
+                                    let message: String = error.to_js_string().into();
                                     app.alert_error("Error stop_video", &message);
                                 }
                             }
@@ -1371,14 +1386,14 @@ async fn init_media_user(media_devices: &MediaDevices) {
                     });
                 }
                 Err(e) => {
-                    let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-                    log::error!("Error resolve init_media_user's promise: {}", message);
+                    let error = js_sys::Error::from(e);
+                    log::error!("Error resolve init_media_user's promise: {}", error.to_js_string());
                 }
             }
         }
         Err(e) => {
-            let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
-            log::error!("Error init_media_user's get_user_media_with_constraints: {}", message);
+            let error = js_sys::Error::from(e);
+            log::error!("Error init_media_user's get_user_media_with_constraints: {}", error.to_js_string());
         }
     }
 }
@@ -1394,11 +1409,13 @@ async fn get_stream(media_info: MediaDeviceInfo, media_devices: MediaDevices) ->
     constraints.set_audio(&JsValue::from(false));
 
     let promise = media_devices.get_user_media_with_constraints(&constraints).map_err(|e| {
-        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+        let error = js_sys::Error::from(e);
+        let message: String = error.to_js_string().into();
         ["Error get_user_media_with_constraints: ", &message].concat()
     })?;
     JsFuture::from(promise).await.map(|stream| MediaStream::from(stream)).map_err(|e| {
-        let message: String = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or_default();
+        let error = js_sys::Error::from(e);
+        let message: String = error.to_js_string().into();
         ["Error await get_user_media_with_constraints: ", &message].concat()
     })
 }

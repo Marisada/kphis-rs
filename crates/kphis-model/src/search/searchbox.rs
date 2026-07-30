@@ -1,6 +1,5 @@
 use bitcode::{Decode, Encode};
 use derive_demo::Demo;
-use js_sys::JsString;
 use serde_derive::{Deserialize, Serialize};
 use sqlx::{
     FromRow,
@@ -12,7 +11,6 @@ use sqlx::{
 use std::rc::Rc;
 use time::macros::{date, time};
 use utoipa::{IntoParams, ToSchema};
-use wasm_bindgen::JsCast;
 
 use kphis_util::{
     error::{AppError, Source},
@@ -52,7 +50,7 @@ impl LabSearchbox {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch LabSearchbox"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -81,7 +79,7 @@ impl XraySearchbox {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch XraySearchbox"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -110,7 +108,7 @@ impl IvfluidSearchbox {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IvfluidSearchbox"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -165,7 +163,7 @@ impl MedSearchbox {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch MedSearchbox"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -240,7 +238,7 @@ impl DrugDuplicateCheck {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch DrugDuplicateCheck"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -273,7 +271,7 @@ impl DrugInteractionCheck {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch DrugInteractionCheck"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -310,7 +308,7 @@ impl PatientSearchbox {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch PatientSearchbox"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -360,7 +358,7 @@ impl OpdVisitSearchbox {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch OpdVisitSearchbox"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -604,7 +602,7 @@ impl HospSearchBox {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch HospSearchbox"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }

@@ -859,7 +859,7 @@ fn test_handler_fetch_match(endpoint: EndPoint) {
         }
         EndPoint::Sse => {
             // kphis_api_handler::sse::get_sse, NEW EventSource
-            check_rj(kphis_api_handler::sse::logout, app::AppState::call_api_delete_sse_end);
+            check_rj(kphis_api_handler::sse::logout, app::AppState::call_api_logout);
         }
         EndPoint::SseGroup => {
             check_payload_rj(kphis_api_handler::sse::post_sse_group, sse::SseGroup::call_api_post);

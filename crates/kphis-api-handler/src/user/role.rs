@@ -61,11 +61,17 @@ pub async fn post_user_role(ctx: RequestState, Json(payload): Json<UserRoleSave>
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
     let loginname = payload.loginname.clone();
-    let response = role::post_user_role(payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
+    let mut responses = role::post_user_role(payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
-    ctx.api_state.online_remove_by_loginname(&loginname, "มีการเปลี่ยนแปลงสิทธิ์ กรุณาเข้าสู่ระบบใหม่").await;
+    let rows_affected = ctx.api_state.online_remove_by_loginname(&loginname, "มีการเปลี่ยนแปลงสิทธิ์ กรุณาเข้าสู่ระบบใหม่").await;
+    responses.push(ExecuteResponse {
+        last_insert_id: 0,
+        rows_affected,
+        error: None,
+        action: Some(String::from("LogOut")),
+    });
 
-    Ok(Json(response))
+    Ok(Json(responses))
 }
 
 /// /api/user-role/role
@@ -100,15 +106,21 @@ pub async fn post_role_permission(ctx: RequestState, Json(payload): Json<RolePer
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
     let role_prev_opt = payload.role_prev.as_ref().map(|r| r.to_owned());
-    let response = role::post_role_permission(payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
+    let mut responses = role::post_role_permission(payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
     ctx.api_state.update_role_permission().await?;
 
     if let Some(role) = role_prev_opt {
-        ctx.api_state.online_remove_by_role(&role, "มีการเปลี่ยนแปลงสิทธิ์ กรุณาเข้าสู่ระบบใหม่").await;
+        let rows_affected = ctx.api_state.online_remove_by_role(&role, "มีการเปลี่ยนแปลงสิทธิ์ กรุณาเข้าสู่ระบบใหม่").await;
+        responses.push(ExecuteResponse {
+            last_insert_id: 0,
+            rows_affected,
+            error: None,
+            action: Some(String::from("LogOut")),
+        });
     }
 
-    Ok(Json(response))
+    Ok(Json(responses))
 }
 
 /// /api/user-role/role
@@ -125,12 +137,18 @@ pub async fn delete_role_permission(Query(params): Query<UserRoleParams>, ctx: R
     ctx.authorize_and_access_log(&Method::DELETE, false).await?;
 
     let role_opt = params.role.as_ref().map(|r| r.to_owned());
-    let response = role::delete_role_permission(params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
+    let mut responses = role::delete_role_permission(params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
     if let Some(role) = role_opt {
         ctx.api_state.update_role_permission().await?;
-        ctx.api_state.online_remove_by_role(&role, "มีการเปลี่ยนแปลงสิทธิ์ กรุณาเข้าสู่ระบบใหม่").await;
+        let rows_affected = ctx.api_state.online_remove_by_role(&role, "มีการเปลี่ยนแปลงสิทธิ์ กรุณาเข้าสู่ระบบใหม่").await;
+        responses.push(ExecuteResponse {
+            last_insert_id: 0,
+            rows_affected,
+            error: None,
+            action: Some(String::from("LogOut")),
+        });
     }
 
-    Ok(Json(response))
+    Ok(Json(responses))
 }

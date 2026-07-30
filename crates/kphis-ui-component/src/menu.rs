@@ -250,8 +250,8 @@ impl MenuCpn {
         html!("nav", {
             .future(app.visible.signal().for_each(clone!(app => move |visible| {
                 if !visible {
-                    app.sse_end(false);
-                    app.sse_ready_state.set_neq(2);
+                    // log::debug!("hit info not-visible");
+                    app.sse_end(2);
                 }
                 async{}
             })))
@@ -259,17 +259,24 @@ impl MenuCpn {
             .future(map_ref!{
                 let busy = app.loader_is_loading(),
                 let visible = app.visible.signal(),
-                let no_sse = app.sse_ready_state.signal_cloned().map(|state| state == 2),
-                let has_user = app.user.signal_cloned().map(|opt| opt.is_some()) =>
-                (!busy && *visible && *has_user && *no_sse)
+                let no_sse = app.sse_ready_state.signal().map(|state| state == 2) =>
+                !busy && *visible && *no_sse
             }.for_each(clone!(app, menu => move |ready| {
                 if ready {
+                    // log::debug!("hit info ready 2 and renew");
                     app.update_sw();
-                    app.sse_end(false);
-                    app.sse_ready_state.set(0);
+                    app.sse_end(0);
                     App::start_sse_by_renew_token(app.clone());
                 }
                 async{}
+            })))
+            // for sse error
+            .future(app.sse_ready_state.signal().for_each(clone!(app => move |state| {
+                if state == 3 {
+                    app.sse_end(0);
+                    Route::Index.hard_redirect();
+                }
+                async {}
             })))
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -524,7 +531,8 @@ impl MenuCpn {
                                 match ready_state {
                                     0 => "gold",
                                     1 => "lime",
-                                    2.. => "red",
+                                    2 => "gray",
+                                    3.. => "red",
                                 }
                             }))
                             .child(html!("i", {
@@ -2270,8 +2278,8 @@ fn theme_btn(theme: &'static str, app: Rc<App>) -> Dom {
         .child(html!("i", {.class(icon)}))
         .text(label)
         .apply(mixins::click_with_loader_checked(clone!(app => move || {
-            post_user_config(None, None, app.clone());
             app.set_theme(theme);
+            post_user_config(None, None, app.clone());
         }), app.state()))
     })
 }
@@ -2295,8 +2303,8 @@ fn wide_screen_btn(wide_screen_mode: &'static str, app: Rc<App>) -> Dom {
         .child(html!("i", {.class(icon)}))
         .text(label)
         .apply(mixins::click_with_loader_checked(clone!(app => move || {
-            post_user_config(None, None, app.clone());
             app.set_wide_screen_mode(wide_screen_mode);
+            post_user_config(None, None, app.clone());
         }), app.state()))
     })
 }

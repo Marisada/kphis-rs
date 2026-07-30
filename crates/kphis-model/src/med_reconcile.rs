@@ -1,5 +1,4 @@
 use derive_demo::Demo;
-use js_sys::JsString;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     FromRow,
@@ -11,7 +10,6 @@ use sqlx::{
 use std::rc::Rc;
 use time::macros::{date, datetime, time};
 use utoipa::{IntoParams, ToSchema};
-use wasm_bindgen::JsCast;
 
 use kphis_util::{
     datetime::{date_th, datetime_th},
@@ -49,7 +47,7 @@ impl MedReconciliationHeader {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch MedReconcileHead"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -157,7 +155,7 @@ impl MedReconciliation {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch MedReconciliation"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -368,7 +366,7 @@ impl MedReconciliationDetail {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IndexPlan"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -395,7 +393,7 @@ impl AdmissionNoteLastDose {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IndexPlan"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -424,7 +422,7 @@ impl MedReconciliationNote {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch MedReconcileNote"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -439,7 +437,7 @@ impl MedReconciliationNote {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch MedReconcileNote"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 
@@ -492,7 +490,7 @@ impl ReMedVisit {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IndexPlan"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }
@@ -549,7 +547,7 @@ impl ReMedMedication {
                 let error: AppError = serde_wasm_bindgen::from_value(app_error).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch IndexPlan"))?;
                 Err(error)
             }
-            Err(e) => Err(Source::Js.to_teapot_error(e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("fetch error")), "Fetch Json")),
+            Err(e) => Err(AppError::new_from_js(e, "Fetch Json")),
         }
     }
 }

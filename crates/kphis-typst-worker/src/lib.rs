@@ -4,7 +4,7 @@ mod runtime;
 use runtime::SystemWorld;
 
 use gloo_events::EventListener;
-use js_sys::{Array, JsString, Object, global};
+use js_sys::{Array, Object, global};
 use std::{path::PathBuf, sync::mpsc};
 use typst_layout::PagedDocument;
 use typst_library::diag::{EcoString, FileError};
@@ -87,16 +87,16 @@ fn compile(template: String, data: String, token: Option<String>) -> Result<Page
 
 fn load_file(path: PathBuf, token: &Option<String>) -> Result<Vec<u8>, FileError> {
     if let Some(url) = path.to_str() {
-        let (status, body) = xhr(url, token).map_err(|e| FileError::Other(e.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)).map(EcoString::from)))?;
+        let (status, body) = xhr(url, token).map_err(|e| FileError::Other(eco_string_from_js(e)))?;
         match status {
             200 => Ok(body),
             // Unauthorized, get refresh token
             401 => {
-                let (token_status, token_body) = xhr(&EndPoint::User.base(), &None).map_err(|e| FileError::Other(e.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)).map(EcoString::from)))?;
+                let (token_status, token_body) = xhr(&EndPoint::User.base(), &None).map_err(|e| FileError::Other(eco_string_from_js(e)))?;
                 if token_status == 200 {
                     // retry only once
                     let res = serde_json::from_slice::<LoginResponse>(&token_body).map_err(|e| FileError::Other(Some(EcoString::from(&e.to_string()))))?;
-                    let (last_status, last_body) = xhr(url, &Some(res.token)).map_err(|e| FileError::Other(e.dyn_ref::<JsString>().map(|s| Into::<String>::into(s)).map(EcoString::from)))?;
+                    let (last_status, last_body) = xhr(url, &Some(res.token)).map_err(|e| FileError::Other(eco_string_from_js(e)))?;
                     if last_status == 200 {
                         Ok(last_body)
                     } else {
@@ -150,6 +150,13 @@ fn xhr(url: &str, token: &Option<String>) -> Result<(u16, Vec<u8>), JsValue> {
     }
 }
 
+fn eco_string_from_js(js_value: JsValue) -> Option<EcoString> {
+    js_sys::Error::try_from(js_value).ok().map(|error| {
+        let message: String = error.to_js_string().into();
+        EcoString::from(message)
+    })
+}
+
 // see kphis-worker/src/lib.rs:181
 /// 'log.debug' with 'alert' side effect
 fn console_log(msg: &str) {
@@ -159,7 +166,7 @@ fn console_log(msg: &str) {
     message.set_id(0);
     message.set_value(&value);
     if let Err(e) = worker.post_message(&message) {
-        let message = e.dyn_ref::<JsString>().map(|s| s.into()).unwrap_or(String::from("Cannot post_message"));
-        log::error!("{}", message);
+        let error = js_sys::Error::from(e);
+        log::error!("{}", error.to_js_string());
     }
 }

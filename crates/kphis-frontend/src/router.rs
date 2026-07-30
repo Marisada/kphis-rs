@@ -79,16 +79,26 @@ async fn render_inner(route: Route, app: Rc<App>) -> Dom {
         // app.sse_end(true);
         app.route.set_neq(route.clone());
         return UnAuthorizedPage { hash: hash.to_owned() }.render();
-    // may has user, update user token or get user from refresh token (true = has user)
+    // may has user, update user token or get user from refresh token
     } else if token::update_token(app.state()).await {
+        let has_user = app.user.lock_ref().is_some();
+        let has_asset = app.app_asset.lock_ref().is_some();
+
+        // clean user after update_token
+        if !has_user {
+            // log::debug!("No User, redirect to index page");
+            app.sse_end(2);
+            Route::Index.hard_redirect();
+            Dom::empty()
         // redirect authorized user from `root`/`index` to `info`
-        if matches!(route, Route::Root | Route::Index) {
+        } else if matches!(route, Route::Root | Route::Index) {
             Route::Info.hard_redirect();
             Dom::empty()
         } else {
             app.route.set_neq(route.clone());
+
             // app_assets not in local-storage, we use CACHE_CONTROL header and cache in service-worker
-            if app.app_asset.lock_ref().is_none() {
+            if !has_asset {
                 match AppAsset::get_asset(app.state()).await {
                     Ok(asset) => {
                         app.app_asset.set_neq(Some(Rc::new(asset)));
@@ -101,8 +111,7 @@ async fn render_inner(route: Route, app: Rc<App>) -> Dom {
             }
             // for refresh brower, EventSource will throw Error => sse_ready_state > 1
             if app.sse_ready_state.get() > 1 {
-                app.sse_end(false);
-                app.sse_ready_state.set(0);
+                app.sse_end(0);
                 App::sse_new(app.clone());
                 app.get_initial_user_alert().await;
             }
@@ -128,16 +137,16 @@ async fn render_inner(route: Route, app: Rc<App>) -> Dom {
         }
     // no user or user without refresh token, with Route to Index
     } else if matches!(route, Route::Index) {
+        // log::debug!("Go back to index page, clear user if exists");
         if app.user.lock_ref().is_some() {
-            // log::debug!("Go back to index page, clear user if exists");
             app.user.set(None);
         }
-        app.sse_end(true);
+        app.sse_end(2);
         IndexPage::render(IndexPage::new(), app.clone())
     // no user or user without refresh token, with Route to any page
     } else {
         // log::debug!("Token invalid, remove user and redirect to index page");
-        app.sse_end(true);
+        app.sse_end(2);
         app.route.set_neq(Route::Index);
         app.remove_user_and_go_index();
         Dom::empty()
