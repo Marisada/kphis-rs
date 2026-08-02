@@ -577,9 +577,7 @@ impl App {
 
     pub async fn get_initial_user_alert(&self) {
         self.get_initial_message().await;
-        if self.has_permission(Permission::IpdOrderCheck)
-            && (self.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderOrder, true) || self.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderOrder, false))
-        {
+        if self.has_permission(Permission::IpdOrderCheck) && (self.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderOrder, true) || self.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderOrder, false)) {
             self.get_ipd_order_as().await;
         }
         if self.has_permission(Permission::OpdErOrderCheck) && self.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderOrder, false) {

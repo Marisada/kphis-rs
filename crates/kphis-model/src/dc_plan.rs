@@ -280,23 +280,11 @@ impl DischargePlan {
 
     /// DELETE `EndPoint::OpdErDcPlanId`
     pub async fn call_api_delete_opd_er(opd_er_order_master_id: u32, params: &DischargePlanParams, app: Rc<AppState>) -> Result<Vec<ExecuteResponse>, AppError> {
-        execute_fetch_vec(
-            &[EndPoint::OpdErDcPlanId.base(), opd_er_order_master_id.to_string(), params.query_string()].concat(),
-            "DELETE",
-            None,
-            app,
-        )
-        .await
+        execute_fetch_vec(&[EndPoint::OpdErDcPlanId.base(), opd_er_order_master_id.to_string(), params.query_string()].concat(), "DELETE", None, app).await
     }
 
     pub fn is_all_signed(&self) -> bool {
-        self.dx_doctor.is_some()
-            && self.med_doctor.is_some()
-            && self.env_doctor.is_some()
-            && self.tx_doctor.is_some()
-            && self.health_doctor.is_some()
-            && self.out_doctor.is_some()
-            && self.diet_doctor.is_some()
+        self.dx_doctor.is_some() && self.med_doctor.is_some() && self.env_doctor.is_some() && self.tx_doctor.is_some() && self.health_doctor.is_some() && self.out_doctor.is_some() && self.diet_doctor.is_some()
     }
 }
 

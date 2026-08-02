@@ -195,15 +195,9 @@ impl IpdSearchPatientNursePage {
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         app.set_title("KPHIS - Search Patient");
 
-        let (ward_select_option, doctor_select_option) = app
-            .app_asset
-            .lock_ref()
-            .as_ref()
-            .map(|asset| (asset.ward_select_option.clone(), asset.doctor_select_option.clone()))
-            .unwrap_or_default();
+        let (ward_select_option, doctor_select_option) = app.app_asset.lock_ref().as_ref().map(|asset| (asset.ward_select_option.clone(), asset.doctor_select_option.clone())).unwrap_or_default();
 
-        let allow_passcode =
-            app.can_change_ward_passcode() && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false);
+        let allow_passcode = app.can_change_ward_passcode() && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false);
 
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {

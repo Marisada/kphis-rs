@@ -55,28 +55,18 @@ async fn main() {
 
 async fn update_stored_procedures(pool: &Pool<MySql>, kphis: &str, kphis_extra: &str) {
     println!("Update KPHIS Stored Procedure : proc_count_all_an");
-    let _ = trigger::add_any_an_exists_procedure(pool, kphis, kphis_extra)
-        .await
-        .expect("Failed to create Stored Procedure `proc_count_all_an`");
+    let _ = trigger::add_any_an_exists_procedure(pool, kphis, kphis_extra).await.expect("Failed to create Stored Procedure `proc_count_all_an`");
     println!("Update KPHIS Stored Procedure : proc_update_all_an");
-    let _ = trigger::add_update_all_an_procedure(pool, kphis, kphis_extra)
-        .await
-        .expect("Failed to create Stored Procedure `proc_update_all_an`");
+    let _ = trigger::add_update_all_an_procedure(pool, kphis, kphis_extra).await.expect("Failed to create Stored Procedure `proc_update_all_an`");
 }
 
 async fn update_triggers(pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_log: &str) {
     println!("Update KPHIS Trigger : trg_ipt_log_insert");
-    let _ = trigger::add_ipt_log_insert_trigger(pool, kphis, kphis_log)
-        .await
-        .expect("Failed to create Trigger on ipt_log INSERT `trg_ipt_log_insert`");
+    let _ = trigger::add_ipt_log_insert_trigger(pool, kphis, kphis_log).await.expect("Failed to create Trigger on ipt_log INSERT `trg_ipt_log_insert`");
     println!("Update HOSxP Trigger : trg_kphis_ipt_log_insert");
-    let _ = trigger::add_ipt_insert_trigger(pool, hosxp, kphis_log)
-        .await
-        .expect("Failed to create Trigger on HOSxP's ipt `trg_kphis_ipt_log_insert`");
+    let _ = trigger::add_ipt_insert_trigger(pool, hosxp, kphis_log).await.expect("Failed to create Trigger on HOSxP's ipt `trg_kphis_ipt_log_insert`");
     println!("Update HOSxP Trigger : trg_kphis_ipt_log_delete");
-    let _ = trigger::add_ipt_delete_trigger(pool, hosxp, kphis_log)
-        .await
-        .expect("Failed to create Trigger on HOSxP's ipt `trg_kphis_ipt_log_delete`");
+    let _ = trigger::add_ipt_delete_trigger(pool, hosxp, kphis_log).await.expect("Failed to create Trigger on HOSxP's ipt `trg_kphis_ipt_log_delete`");
 }
 
 async fn update_schemas(pool: &Pool<MySql>, kphis: &str, kphis_log: &str, kphis_extra: &str) {

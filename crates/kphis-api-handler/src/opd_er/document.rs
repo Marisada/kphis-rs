@@ -27,15 +27,7 @@ pub async fn get_opd_er_document_list(Path((vn, opd_er_order_master_id)): Path<(
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = document::get_opd_er_document_list(
-        &vn,
-        opd_er_order_master_id,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-        &ctx.api_state.kphis_extra(),
-    )
-    .await?;
+    let response = document::get_opd_er_document_list(&vn, opd_er_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
     Ok(Json(response))
 }
@@ -76,14 +68,7 @@ pub async fn post_opd_er_document_type(Path(opd_er_order_master_id): Path<u32>, 
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
-    let result = document::post_opd_er_document_type(
-        opd_er_order_master_id,
-        payload as u8,
-        &ctx.user_state.user.loginname,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.kphis_extra(),
-    )
-    .await?;
+    let result = document::post_opd_er_document_type(opd_er_order_master_id, payload as u8, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
     Ok(Json(result))
 }

@@ -57,14 +57,7 @@ pub async fn post_ipd_admission_note_dr(ctx: RequestState, Json(payload): Json<I
     ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
-    check_an_can_execute(
-        &payload.admission_note.an,
-        ctx.api_state.hosxp_an_len(),
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    check_an_can_execute(&payload.admission_note.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     let mut result = Vec::with_capacity(2);
     let note_result = admission_note_dr::post_ipd_admission_note_dr(&payload.admission_note, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -105,14 +98,7 @@ pub async fn put_ipd_admission_note_dr(ctx: RequestState, Json(payload): Json<Ip
     ctx.authorize_and_access_log(&Method::PUT, is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
-    check_an_can_execute(
-        &payload.admission_note.an,
-        ctx.api_state.hosxp_an_len(),
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    check_an_can_execute(&payload.admission_note.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     let mut result = Vec::with_capacity(3);
     let note_result = admission_note_dr::put_ipd_admission_note_dr(&payload.admission_note, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;

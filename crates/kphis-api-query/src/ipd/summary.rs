@@ -2,9 +2,7 @@ use sqlx::{AssertSqlSafe, FromRow, MySql, Pool, Row, mysql::MySqlQueryResult};
 
 use kphis_model::{
     fetch::ExecuteResponse,
-    ipd::summary::{
-        DchData, DoctorData, DxData, LabAlertData, Summary, SummaryCodeSave, SummaryData, SummaryDataSave, SummaryNote, SummaryNoteSave, SummaryParams, SummarySave, SummaryStatus, XRayData,
-    },
+    ipd::summary::{DchData, DoctorData, DxData, LabAlertData, Summary, SummaryCodeSave, SummaryData, SummaryDataSave, SummaryNote, SummaryNoteSave, SummaryParams, SummarySave, SummaryStatus, XRayData},
 };
 use kphis_sql::ipd::summary;
 use kphis_util::{
@@ -45,11 +43,7 @@ pub async fn get_ipd_summary(
         // 3.3 get or_data: Vec<OrData>,
         let or_result = super::his::get_operation_admit(an, operation_success, pool, hosxp).await?;
         // 3.4 get lab_alert_data: Vec<LabAlertData>,
-        let lab_alert_result = if !alerts.is_empty() {
-            select_lab_alert(an, alerts, doctorcode, groupname, pool, hosxp).await?
-        } else {
-            Vec::new()
-        };
+        let lab_alert_result = if !alerts.is_empty() { select_lab_alert(an, alerts, doctorcode, groupname, pool, hosxp).await? } else { Vec::new() };
         // 3.5 get problem_list_data: Vec<String>,
         let problem_list_result = select_problem_list(an, pool, kphis).await?;
         (xray_result, dch_result, or_result, lab_alert_result, problem_list_result)
@@ -179,14 +173,7 @@ async fn select_hosxp_dch(an: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<O
         .map_err(|e| Source::SQLx.to_error(500, e, "Select IpdSummaryDchData"))
 }
 
-async fn select_lab_alert(
-    an: &str,
-    alerts: &[(String, Vec<u64>, String)],
-    doctorcode: &Option<String>,
-    groupname: &Option<String>,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-) -> Result<Vec<LabAlertData>, AppError> {
+async fn select_lab_alert(an: &str, alerts: &[(String, Vec<u64>, String)], doctorcode: &Option<String>, groupname: &Option<String>, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<LabAlertData>, AppError> {
     let lab_alert_sql = summary::select_lab_alert(alerts, hosxp);
     sqlx::query(AssertSqlSafe(lab_alert_sql))
         .bind(doctorcode)
@@ -434,42 +421,28 @@ async fn insert_summary2(is_doctor: bool, save: &SummarySave, user: &str, pool: 
 
 async fn insert_attending_doctor(summary_id: u32, doctorcode: &str, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_attending_sql = summary::insert_attending_doctor(kphis);
-    sqlx::query(AssertSqlSafe(insert_attending_sql))
-        .bind(summary_id)
-        .bind(doctorcode)
-        .bind(user)
-        .bind(user)
-        .execute(pool)
-        .await
-        .map_err(|e| {
-            if let sqlx::error::Error::Database(err) = &e
-                && err.code().map(|c| c == "23000").unwrap_or_default()
-            {
-                AppError::app_403_duplicate("Insert IpdSummaryAttendingDoctor")
-            } else {
-                Source::SQLx.to_error(500, e, "Insert IpdSummaryAttendingDoctor")
-            }
-        })
+    sqlx::query(AssertSqlSafe(insert_attending_sql)).bind(summary_id).bind(doctorcode).bind(user).bind(user).execute(pool).await.map_err(|e| {
+        if let sqlx::error::Error::Database(err) = &e
+            && err.code().map(|c| c == "23000").unwrap_or_default()
+        {
+            AppError::app_403_duplicate("Insert IpdSummaryAttendingDoctor")
+        } else {
+            Source::SQLx.to_error(500, e, "Insert IpdSummaryAttendingDoctor")
+        }
+    })
 }
 
 async fn insert_approve_doctor(summary_id: u32, doctorcode: &str, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_approve_sql = summary::insert_approve_doctor(kphis);
-    sqlx::query(AssertSqlSafe(insert_approve_sql))
-        .bind(summary_id)
-        .bind(doctorcode)
-        .bind(user)
-        .bind(user)
-        .execute(pool)
-        .await
-        .map_err(|e| {
-            if let sqlx::error::Error::Database(err) = &e
-                && err.code().map(|c| c == "23000").unwrap_or_default()
-            {
-                AppError::app_403_duplicate("Insert IpdSummaryApproveDoctor")
-            } else {
-                Source::SQLx.to_error(500, e, "Insert IpdSummaryApproveDoctor")
-            }
-        })
+    sqlx::query(AssertSqlSafe(insert_approve_sql)).bind(summary_id).bind(doctorcode).bind(user).bind(user).execute(pool).await.map_err(|e| {
+        if let sqlx::error::Error::Database(err) = &e
+            && err.code().map(|c| c == "23000").unwrap_or_default()
+        {
+            AppError::app_403_duplicate("Insert IpdSummaryApproveDoctor")
+        } else {
+            Source::SQLx.to_error(500, e, "Insert IpdSummaryApproveDoctor")
+        }
+    })
 }
 
 async fn insert_pre_admission_comorbidity(summary_id: u32, dx_data: &[DxData], user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {

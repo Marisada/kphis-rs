@@ -145,15 +145,7 @@ impl News {
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn scoring(
-        score_bt: Option<u32>,
-        score_pr: Option<u32>,
-        score_rr: Option<u32>,
-        score_sat: Option<u32>,
-        score_breathing: Option<u32>,
-        score_avpu: Option<u32>,
-        score_gut_feeling: Option<u32>,
-    ) -> Option<u32> {
+    fn scoring(score_bt: Option<u32>, score_pr: Option<u32>, score_rr: Option<u32>, score_sat: Option<u32>, score_breathing: Option<u32>, score_avpu: Option<u32>, score_gut_feeling: Option<u32>) -> Option<u32> {
         if let (Some(bt), Some(pr), Some(rr), Some(sat), Some(avpu), Some(breathing), Some(gut_feeling)) = (score_bt, score_pr, score_rr, score_sat, score_breathing, score_avpu, score_gut_feeling) {
             Some(bt + pr + rr + sat + avpu + breathing + gut_feeling)
         } else {
@@ -162,15 +154,7 @@ impl News {
     }
 
     fn rescore(&mut self) {
-        self.score = Self::scoring(
-            self.score_bt,
-            self.score_pr,
-            self.score_rr,
-            self.score_sat,
-            self.score_breathing,
-            self.score_avpu,
-            self.score_gut_feeling,
-        );
+        self.score = Self::scoring(self.score_bt, self.score_pr, self.score_rr, self.score_sat, self.score_breathing, self.score_avpu, self.score_gut_feeling);
     }
 }
 

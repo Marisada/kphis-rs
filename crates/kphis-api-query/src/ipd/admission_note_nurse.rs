@@ -90,17 +90,15 @@ fn cc_hpi_from_row(row: &MySqlRow) -> sqlx::Result<(Option<String>, Option<Strin
 
 // ipd-nurse-admission-note-save.php
 pub async fn post_ipd_admission_note_nurse(form: &IpdNurseAdmissionNote, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
-    form.insert(Some("nurse_admission_note_id"), None, TABLE_CREATE_COLUMNS, TABLE_CREATE_PREPARED, &[user, user], pool, kphis)
-        .await
-        .map_err(|e| {
-            if let sqlx::error::Error::Database(err) = &e
-                && err.code().map(|c| c == "23000").unwrap_or_default()
-            {
-                AppError::app_403_duplicate("Insert IpdNurseAdmissionNote")
-            } else {
-                Source::SQLx.to_error(500, e, "Insert IpdNurseAdmissionNote")
-            }
-        })
+    form.insert(Some("nurse_admission_note_id"), None, TABLE_CREATE_COLUMNS, TABLE_CREATE_PREPARED, &[user, user], pool, kphis).await.map_err(|e| {
+        if let sqlx::error::Error::Database(err) = &e
+            && err.code().map(|c| c == "23000").unwrap_or_default()
+        {
+            AppError::app_403_duplicate("Insert IpdNurseAdmissionNote")
+        } else {
+            Source::SQLx.to_error(500, e, "Insert IpdNurseAdmissionNote")
+        }
+    })
 }
 
 // ipd-nurse-admission-note-update.php

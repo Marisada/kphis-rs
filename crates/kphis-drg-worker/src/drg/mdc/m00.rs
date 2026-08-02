@@ -86,11 +86,7 @@ fn process_3rd(grouper: &Grouper, input: &GrouperInput) -> MdcResult {
         });
         sdx_site.insert(pdx_trauma);
         let proc_site = grouper.proc_sites(&input.procs);
-        if sdx_site.len() > 1 || proc_site.len() > 1 {
-            MdcResult::Mdc(Mdc::M24)
-        } else {
-            process_4th(grouper, input)
-        }
+        if sdx_site.len() > 1 || proc_site.len() > 1 { MdcResult::Mdc(Mdc::M24) } else { process_4th(grouper, input) }
     } else {
         process_4th(grouper, input)
     }

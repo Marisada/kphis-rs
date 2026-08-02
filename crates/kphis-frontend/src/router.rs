@@ -9,14 +9,12 @@ use kphis_ui_app::App;
 use kphis_ui_component::menu::MenuCpn;
 use kphis_ui_core::token;
 use kphis_ui_page::{
-    drug_use_duration::DrugUseDurationPage, image::ImagePage, index::IndexPage, index_plan::IndexPlanPage, info::InfoPage, ipd_admission_note_dr::IpdAdmissionNoteDrPage,
-    ipd_admission_note_nurse::IpdAdmissionNoteNursePage, ipd_consult_list::IpdConsultListPage, ipd_main::IpdMainPage, ipd_mra::IpdMraPage, ipd_order_pharmacy::IpdOrderPharmacyPage,
-    ipd_post_admit_list::IpdPostAdmitListPage, ipd_pre_admit_list::IpdPreAdmitListPage, ipd_pre_order_list::IpdPreOrderListPage, ipd_pre_order_main::IpdPreOrderPage,
-    ipd_search_patient_dr::IpdSearchPatientDrPage, ipd_search_patient_nurse::IpdSearchPatientNursePage, ipd_search_patient_other::IpdSearchPatientOtherPage,
+    drug_use_duration::DrugUseDurationPage, image::ImagePage, index::IndexPage, index_plan::IndexPlanPage, info::InfoPage, ipd_admission_note_dr::IpdAdmissionNoteDrPage, ipd_admission_note_nurse::IpdAdmissionNoteNursePage,
+    ipd_consult_list::IpdConsultListPage, ipd_main::IpdMainPage, ipd_mra::IpdMraPage, ipd_order_pharmacy::IpdOrderPharmacyPage, ipd_post_admit_list::IpdPostAdmitListPage, ipd_pre_admit_list::IpdPreAdmitListPage,
+    ipd_pre_order_list::IpdPreOrderListPage, ipd_pre_order_main::IpdPreOrderPage, ipd_search_patient_dr::IpdSearchPatientDrPage, ipd_search_patient_nurse::IpdSearchPatientNursePage, ipd_search_patient_other::IpdSearchPatientOtherPage,
     ipd_search_patient_pharmacist::IpdSearchPatientPharmacistPage, ipd_summary_audit::IpdSummaryAuditPage, not_found::NotFoundPage, opd_er_main::OpdErMainPage, opd_er_order_list::OpdErOrderListPage,
-    opd_er_order_pharmacy::OpdErOrderPharmacyPage, permission_list::PermissionListPage, prescription_screen::PrescriptionScreenPage, report_designer::ReportDesignerPage,
-    report_viewer::ReportViewerPage, setting_template_dc_plan::SettingTemplateDcPlanPage, setting_template_nurse_note::SettingTemplateNurseNotePage, summary::SummaryPage,
-    unauthorized::UnAuthorizedPage, user_list::UserListPage, vital_sign::VitalSignPage,
+    opd_er_order_pharmacy::OpdErOrderPharmacyPage, permission_list::PermissionListPage, prescription_screen::PrescriptionScreenPage, report_designer::ReportDesignerPage, report_viewer::ReportViewerPage,
+    setting_template_dc_plan::SettingTemplateDcPlanPage, setting_template_nurse_note::SettingTemplateNurseNotePage, summary::SummaryPage, unauthorized::UnAuthorizedPage, user_list::UserListPage, vital_sign::VitalSignPage,
 };
 
 pub fn render(app: Rc<App>) -> Dom {
@@ -233,12 +231,7 @@ fn render_content(route: Route, is_fixed_height: &mut bool, app: Rc<App>) -> Dom
             let page = IndexPlanPage::new_opd_er();
             IndexPlanPage::render(page, app.clone())
         }
-        Route::OpdErMain {
-            view_by,
-            opd_er_order_master_id,
-            tab,
-            id,
-        } => {
+        Route::OpdErMain { view_by, opd_er_order_master_id, tab, id } => {
             let page = OpdErMainPage::new(view_by.clone(), *opd_er_order_master_id, Tab::from_string(&tab), *id);
             OpdErMainPage::render(page, app.clone())
         }

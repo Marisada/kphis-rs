@@ -255,24 +255,16 @@ impl Drop for MySqlMocker {
             rt.block_on(async move {
                 let mut conn = MySqlConnection::connect(TEST_URL).await.expect("Error while connecting to database");
                 if has_hosxp {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", HOSXP_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", HOSXP_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
                 if has_kphis {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
                 if has_kphis_log {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_LOG_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_LOG_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
                 if has_kphis_extra {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_EXTRA_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_EXTRA_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
             });
         })
@@ -543,24 +535,16 @@ impl Drop for MySqlTester {
             rt.block_on(async move {
                 let mut conn = MySqlConnection::connect(TEST_URL).await.expect("Error while connecting to database");
                 if has_hosxp {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", HOSXP_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", HOSXP_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
                 if has_kphis {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
                 if has_kphis_log {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_LOG_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_LOG_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
                 if has_kphis_extra {
-                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_EXTRA_TEST, ";"].concat()))
-                        .await
-                        .expect("Error while querying the drop database");
+                    conn.execute(AssertSqlSafe(["DROP DATABASE ", KPHIS_EXTRA_TEST, ";"].concat())).await.expect("Error while querying the drop database");
                 }
             });
         })
@@ -574,9 +558,7 @@ async fn create_pool(has_hosxp: bool, has_kphis: bool, has_kphis_log: bool, has_
     // let pool = PoolOptions::new().test_before_acquire(false).connect(TEST_URL).await.expect("Error while connecting to database");
     let pool = Pool::connect(TEST_URL).await.expect("Error while connecting to database");
     if has_kphis {
-        pool.execute(AssertSqlSafe(["CREATE DATABASE ", KPHIS_TEST, ";"].concat()))
-            .await
-            .expect("Error while querying the create database");
+        pool.execute(AssertSqlSafe(["CREATE DATABASE ", KPHIS_TEST, ";"].concat())).await.expect("Error while querying the create database");
     }
     if has_hosxp {
         pool.execute(AssertSqlSafe(["CREATE DATABASE ", HOSXP_TEST, " CHARACTER SET = 'tis620' COLLATE = 'tis620_thai_ci';"].concat()))
@@ -584,14 +566,10 @@ async fn create_pool(has_hosxp: bool, has_kphis: bool, has_kphis_log: bool, has_
             .expect("Error while querying the create database");
     }
     if has_kphis_log {
-        pool.execute(AssertSqlSafe(["CREATE DATABASE ", KPHIS_LOG_TEST, ";"].concat()))
-            .await
-            .expect("Error while querying the create database");
+        pool.execute(AssertSqlSafe(["CREATE DATABASE ", KPHIS_LOG_TEST, ";"].concat())).await.expect("Error while querying the create database");
     }
     if has_kphis_extra {
-        pool.execute(AssertSqlSafe(["CREATE DATABASE ", KPHIS_EXTRA_TEST, ";"].concat()))
-            .await
-            .expect("Error while querying the create database");
+        pool.execute(AssertSqlSafe(["CREATE DATABASE ", KPHIS_EXTRA_TEST, ";"].concat())).await.expect("Error while querying the create database");
     }
     pool
 }
@@ -599,19 +577,14 @@ async fn create_pool(has_hosxp: bool, has_kphis: bool, has_kphis_log: bool, has_
 // for demonstrate test
 #[allow(dead_code)]
 async fn insert_user(pool: &Pool<MySql>, title: &str, kphis_log: &str) -> sqlx::Result<()> {
-    sqlx::query(AssertSqlSafe(["INSERT INTO ", kphis_log, ".todos (title) VALUES (?)"].concat()))
-        .bind(title)
-        .execute(pool)
-        .await?;
+    sqlx::query(AssertSqlSafe(["INSERT INTO ", kphis_log, ".todos (title) VALUES (?)"].concat())).bind(title).execute(pool).await?;
     Ok(())
 }
 
 // for demonstrate test
 #[allow(dead_code)]
 async fn get_user(pool: &Pool<MySql>, kphis_log: &str) -> sqlx::Result<(u32, String)> {
-    sqlx::query_as::<_, (u32, String)>(AssertSqlSafe(["SELECT id, title FROM ", kphis_log, ".todos;"].concat()))
-        .fetch_one(pool)
-        .await
+    sqlx::query_as::<_, (u32, String)>(AssertSqlSafe(["SELECT id, title FROM ", kphis_log, ".todos;"].concat())).fetch_one(pool).await
 }
 
 #[cfg(test)]

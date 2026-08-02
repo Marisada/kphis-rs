@@ -9,9 +9,7 @@ use time_datepicker_core::config::{
 };
 use web_sys::{HtmlElement, HtmlInputElement, window};
 
-use kphis_util::datetime::{
-    JsTime, date_8601, date_from_pat, date_pat, date_str_th, datetime_8601, datetime_from_pat, datetime_pat, datetime_str_th, js_now, time_8601, time_from_pat, time_pat, time_str_hm,
-};
+use kphis_util::datetime::{JsTime, date_8601, date_from_pat, date_pat, date_str_th, datetime_8601, datetime_from_pat, datetime_pat, datetime_str_th, js_now, time_8601, time_from_pat, time_pat, time_str_hm};
 
 use crate::{class, doms};
 

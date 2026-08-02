@@ -31,16 +31,13 @@ fn dcl_recursion(grouper: &Grouper, dc: &str, pdx: &str, sdxs: &HashSet<String>,
         let (head_code, head_dcl) = code_dcl[pos];
         if head_dcl > 0 {
             let (_, tail_with_zero) = code_dcl.split_at_mut(pos + 1);
-            tail_with_zero
-                .iter_mut()
-                .filter_map(|(cur_code, cur_dcl)| (*cur_dcl > 0).then(|| (cur_code, cur_dcl)))
-                .for_each(|(cur_code, cur_dcl)| {
-                    if let Some(main_cc) = grouper.i10(cur_code, gender).and_then(|i10| i10.main_cc.as_ref()) {
-                        if grouper.has_ccex(main_cc, head_code) {
-                            *cur_dcl = 0;
-                        }
+            tail_with_zero.iter_mut().filter_map(|(cur_code, cur_dcl)| (*cur_dcl > 0).then(|| (cur_code, cur_dcl))).for_each(|(cur_code, cur_dcl)| {
+                if let Some(main_cc) = grouper.i10(cur_code, gender).and_then(|i10| i10.main_cc.as_ref()) {
+                    if grouper.has_ccex(main_cc, head_code) {
+                        *cur_dcl = 0;
                     }
-                });
+                }
+            });
         }
         pos = pos + 1;
     }
@@ -69,10 +66,7 @@ pub mod tests {
                 &GROUPER,
                 "0553",
                 "I213",
-                &["E119", "I10", "N182", "I092", "K250", "I209", "A419", "E875", "E876"]
-                    .into_iter()
-                    .map(|s| s.to_owned())
-                    .collect::<HashSet<String>>(),
+                &["E119", "I10", "N182", "I092", "K250", "I209", "A419", "E875", "E876"].into_iter().map(|s| s.to_owned()).collect::<HashSet<String>>(),
                 &None,
             ),
             // as (4.) result in Book 1 page 171
@@ -82,10 +76,7 @@ pub mod tests {
 
     #[test]
     fn test_dcl_recursion_debug() {
-        assert_eq!(
-            dcl_recursion(&GROUPER, "0459", "J205", &["J441"].into_iter().map(|s| s.to_owned()).collect::<HashSet<String>>(), &None,),
-            vec![2]
-        );
+        assert_eq!(dcl_recursion(&GROUPER, "0459", "J205", &["J441"].into_iter().map(|s| s.to_owned()).collect::<HashSet<String>>(), &None,), vec![2]);
         assert_eq!(
             dcl_recursion(&GROUPER, "0351", "R42", &["E875", "I10", "E119"].into_iter().map(|s| s.to_owned()).collect::<HashSet<String>>(), &None,),
             vec![2, 1, 1]

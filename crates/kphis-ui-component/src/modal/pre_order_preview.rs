@@ -197,14 +197,7 @@ impl PreOrderPreview {
         )
     }
 
-    pub fn render(
-        page: Rc<Self>,
-        app: Rc<App>,
-        select_redraw: Mutable<bool>,
-        close_mutable: Mutable<Option<u32>>,
-        parent_date_loaded: Option<Mutable<bool>>,
-        parent_count_loaded: Option<Mutable<bool>>,
-    ) -> Dom {
+    pub fn render(page: Rc<Self>, app: Rc<App>, select_redraw: Mutable<bool>, close_mutable: Mutable<Option<u32>>, parent_date_loaded: Option<Mutable<bool>>, parent_count_loaded: Option<Mutable<bool>>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),

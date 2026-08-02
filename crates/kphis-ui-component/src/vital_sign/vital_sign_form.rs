@@ -34,8 +34,8 @@ use crate::modal::{
     blank_modal,
     lab_wbc::LabWbc,
     scoring::{
-        aggression_oas::AggressionOAS, alcohol_aws::AlcoholAws, alcohol_ciwa_ar::AlcoholCiwaAr, amphetamine_awq::AmphetamineAwqV2, barthel_index::BarthelIndex, braden::Braden, depress_2q::Depress2Q,
-        depress_9q::Depress9Q, motor_activity_maas::MotorActivityMaas, suicide_8q::Suicide8Q,
+        aggression_oas::AggressionOAS, alcohol_aws::AlcoholAws, alcohol_ciwa_ar::AlcoholCiwaAr, amphetamine_awq::AmphetamineAwqV2, barthel_index::BarthelIndex, braden::Braden, depress_2q::Depress2Q, depress_9q::Depress9Q,
+        motor_activity_maas::MotorActivityMaas, suicide_8q::Suicide8Q,
     },
 };
 
@@ -345,9 +345,7 @@ impl VitalSignFormCpn {
     // }
 
     fn is_ipd_and_is_pre_admit(&self) -> impl Signal<Item = (bool, bool)> + use<> {
-        self.patient
-            .signal_cloned()
-            .map(|opt| opt.as_ref().map(|pt| pt.visit_type.is_ipd_and_is_pre_admit()).unwrap_or_default())
+        self.patient.signal_cloned().map(|opt| opt.as_ref().map(|pt| pt.visit_type.is_ipd_and_is_pre_admit()).unwrap_or_default())
     }
 
     fn is_scorable(&self, item: &'static str) -> impl Signal<Item = bool> + use<> {
@@ -1026,16 +1024,7 @@ impl VitalSignFormCpn {
     }
 
     fn render_tab_vs(page: Rc<Self>, app: Rc<App>) -> Dom {
-        let (
-            breathing_select_option,
-            avpu_select_option,
-            gut_feeling_select_option,
-            pops_other_select_option,
-            o2_select_option,
-            conscious_select_option,
-            urine_amount_select_option,
-            urine_duration_select_option,
-        ) = app
+        let (breathing_select_option, avpu_select_option, gut_feeling_select_option, pops_other_select_option, o2_select_option, conscious_select_option, urine_amount_select_option, urine_duration_select_option) = app
             .app_asset
             .lock_ref()
             .as_ref()
@@ -2214,12 +2203,7 @@ impl VitalSignFormCpn {
     }
 
     fn render_tab_o2(page: Rc<Self>, app: Rc<App>) -> Dom {
-        let (o2_select_option, tube_select_option) = app
-            .app_asset
-            .lock_ref()
-            .as_ref()
-            .map(|a| (a.o2_select_option.clone(), a.tube_select_option.clone()))
-            .unwrap_or_default();
+        let (o2_select_option, tube_select_option) = app.app_asset.lock_ref().as_ref().map(|a| (a.o2_select_option.clone(), a.tube_select_option.clone())).unwrap_or_default();
 
         html!("div", {
             // .class(class::TAB_FADE)
@@ -2385,14 +2369,7 @@ impl VitalSignFormCpn {
             .app_asset
             .lock_ref()
             .as_ref()
-            .map(|a| {
-                (
-                    a.lr_sta_select_option.clone(),
-                    a.lr_mem_select_option.clone(),
-                    a.lr_moulding_select_option.clone(),
-                    a.dipstick_select_option.clone(),
-                )
-            })
+            .map(|a| (a.lr_sta_select_option.clone(), a.lr_mem_select_option.clone(), a.lr_moulding_select_option.clone(), a.dipstick_select_option.clone()))
             .unwrap_or_default();
 
         html!("div", {
@@ -2750,16 +2727,7 @@ fn input_text(id: &str, text: Mutable<String>, changed: Mutable<bool>, max_len: 
     })
 }
 
-fn input_number(
-    id: &str,
-    text: Mutable<String>,
-    changed: Mutable<bool>,
-    decimal: u8,
-    min: Option<&str>,
-    max: Option<&str>,
-    ending: Option<&str>,
-    with_scores_item: Option<(Mutable<Option<Scores>>, &'static str)>,
-) -> Dom {
+fn input_number(id: &str, text: Mutable<String>, changed: Mutable<bool>, decimal: u8, min: Option<&str>, max: Option<&str>, ending: Option<&str>, with_scores_item: Option<(Mutable<Option<Scores>>, &'static str)>) -> Dom {
     let has_ending = ending.is_some();
     let step = match decimal {
         1 => "0.1",

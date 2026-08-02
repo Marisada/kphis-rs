@@ -147,11 +147,7 @@ pub async fn insert_index_action_only(plan_id: u32, an: &str, only: &mut IndexAc
 // ipd-nurse-index-plan-action-delete.php
 pub async fn delete_index_action(action_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = index_action::delete_index_action(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(action_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexAction"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(action_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexAction"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete IndexAction"))
 }

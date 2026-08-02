@@ -98,11 +98,7 @@ impl IpdConsultListPage {
                 SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
                 SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
                 SortBy::ConsultDateTime => items.sort_by(|a, b| datetime_from_opt(b.consult_date, b.consult_time).cmp(&datetime_from_opt(a.consult_date, a.consult_time))),
-                SortBy::ReplyDateTime => items.sort_by(|a, b| {
-                    b.consult_datetime_update_reply
-                        .or(b.consult_datetime_create_reply)
-                        .cmp(&a.consult_datetime_update_reply.or(a.consult_datetime_create_reply))
-                }),
+                SortBy::ReplyDateTime => items.sort_by(|a, b| b.consult_datetime_update_reply.or(b.consult_datetime_create_reply).cmp(&a.consult_datetime_update_reply.or(a.consult_datetime_create_reply))),
             }
         } else {
             match self.sorted_by.get_cloned() {
@@ -111,11 +107,7 @@ impl IpdConsultListPage {
                 SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
                 SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
                 SortBy::ConsultDateTime => items.sort_by(|a, b| datetime_from_opt(a.consult_date, a.consult_time).cmp(&datetime_from_opt(b.consult_date, b.consult_time))),
-                SortBy::ReplyDateTime => items.sort_by(|a, b| {
-                    a.consult_datetime_update_reply
-                        .or(a.consult_datetime_create_reply)
-                        .cmp(&b.consult_datetime_update_reply.or(b.consult_datetime_create_reply))
-                }),
+                SortBy::ReplyDateTime => items.sort_by(|a, b| a.consult_datetime_update_reply.or(a.consult_datetime_create_reply).cmp(&b.consult_datetime_update_reply.or(b.consult_datetime_create_reply))),
             }
         }
         self.search_result.lock_mut().replace_cloned(items);

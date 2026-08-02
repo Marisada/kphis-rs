@@ -53,16 +53,9 @@ pub fn render_lr_result(row: Rc<VitalSign>, vs_id: Mutable<u32>, form_rendered: 
     let af = row.lr_af.clone();
 
     let had_name = row.had_name.clone().map(|had_name| [&had_name, " rate ", &row.had_drop.clone().unwrap_or_default()].concat());
-    let oxytocin = row.lr_oxytocin_unit.map(|u| {
-        [
-            "Oxytocin ",
-            &u.to_string(),
-            " U/L rate ",
-            &row.lr_oxytocin_rate.map(|u| u.to_string()).unwrap_or_default(),
-            " drops/min",
-        ]
-        .concat()
-    });
+    let oxytocin = row
+        .lr_oxytocin_unit
+        .map(|u| ["Oxytocin ", &u.to_string(), " U/L rate ", &row.lr_oxytocin_rate.map(|u| u.to_string()).unwrap_or_default(), " drops/min"].concat());
     let had_sep = if had_name.is_some() && oxytocin.is_some() { ", " } else { "" };
 
     html!("tr", {

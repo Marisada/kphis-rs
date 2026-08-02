@@ -64,18 +64,9 @@ pub fn new_router(state: &ApiState) -> Router {
         .fallback_service(root_dir)
         // some router already set CACHE_CONTROL, so we use `if_not_present` to fill the rest with `no-store`
         .layer(SetResponseHeaderLayer::if_not_present(header::CACHE_CONTROL, HeaderValue::from_static("no-store")))
-        .layer(SetResponseHeaderLayer::if_not_present(
-            HeaderName::from_static("cross-origin-resource-policy"),
-            HeaderValue::from_static("same-origin"),
-        ))
-        .layer(SetResponseHeaderLayer::if_not_present(
-            HeaderName::from_static("x-frame-options"),
-            HeaderValue::from_static("SAMEORIGIN"),
-        ))
-        .layer(SetResponseHeaderLayer::if_not_present(
-            HeaderName::from_static("x-content-type-options"),
-            HeaderValue::from_static("nosniff"),
-        ))
+        .layer(SetResponseHeaderLayer::if_not_present(HeaderName::from_static("cross-origin-resource-policy"), HeaderValue::from_static("same-origin")))
+        .layer(SetResponseHeaderLayer::if_not_present(HeaderName::from_static("x-frame-options"), HeaderValue::from_static("SAMEORIGIN")))
+        .layer(SetResponseHeaderLayer::if_not_present(HeaderName::from_static("x-content-type-options"), HeaderValue::from_static("nosniff")))
         .layer(prometheus_layer)
 }
 

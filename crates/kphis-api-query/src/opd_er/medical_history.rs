@@ -2,9 +2,7 @@ use sqlx::{AssertSqlSafe, FromRow, MySql, Pool, Row, mysql::MySqlQueryResult};
 
 use kphis_model::{
     fetch::ExecuteResponse,
-    opd_er::medical_history::{
-        AllergyHistory, ConsultHistory, NurseScreeningHistory, OpdErMedicalHistory, OpdErMedicalHistoryParams, OpdScreenHistory, ScanHistory, SetFtHistory, TraumaHistory, VitalSignHistory,
-    },
+    opd_er::medical_history::{AllergyHistory, ConsultHistory, NurseScreeningHistory, OpdErMedicalHistory, OpdErMedicalHistoryParams, OpdScreenHistory, ScanHistory, SetFtHistory, TraumaHistory, VitalSignHistory},
 };
 use kphis_sql::{
     data_history_utils::{KeyValue, SourceTable},
@@ -243,16 +241,7 @@ pub async fn get_allergy_history(opd_er_order_master_id: u32, pool: &Pool<MySql>
 // opd-er-allergy-history-save.php
 // POST /opd-er/medical-history-allergy
 #[allow(clippy::too_many_arguments)]
-pub async fn post_allergy_history(
-    saves: &[AllergyHistory],
-    opd_er_order_master_id: u32,
-    version: i32,
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+pub async fn post_allergy_history(saves: &[AllergyHistory], opd_er_order_master_id: u32, version: i32, doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut result = Vec::with_capacity(3);
     let mut be_insert = true;
     if version > 0 {
@@ -269,16 +258,7 @@ pub async fn post_allergy_history(
 
         if is_insert {
             let flag = if version > 0 { "U" } else { "I" };
-            let insert_history_result = insert_history_log(
-                SourceTable::OpdErAllergyHistory,
-                flag,
-                user,
-                &[KeyValue("opd_er_order_master_id", opd_er_order_master_id.to_string())],
-                kphis,
-                kphis_log,
-                pool,
-            )
-            .await?;
+            let insert_history_result = insert_history_log(SourceTable::OpdErAllergyHistory, flag, user, &[KeyValue("opd_er_order_master_id", opd_er_order_master_id.to_string())], kphis, kphis_log, pool).await?;
             result.push(ExecuteResponse::from_query_result(insert_history_result, "Insert AllergyHistory History"));
         }
 
@@ -298,15 +278,7 @@ async fn delete_allergy_history(opd_er_order_master_id: u32, version: i32, pool:
         .map_err(|e| Source::SQLx.to_error(500, e, "Update AllergyHistory"))
 }
 
-async fn insert_allergy_history(
-    opd_er_order_master_id: u32,
-    saves: &[AllergyHistory],
-    version: i32,
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+async fn insert_allergy_history(opd_er_order_master_id: u32, saves: &[AllergyHistory], version: i32, doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_sql = medical_history::insert_allergy_history(saves.len(), kphis);
     let mut insert_query = sqlx::query(AssertSqlSafe(insert_sql));
     for save in saves {
@@ -341,15 +313,7 @@ pub async fn get_screen_history(opd_er_order_master_id: u32, pool: &Pool<MySql>,
 // opd-er-medical-history-nurse-save.php
 // opd-er-medical-history-nurse-update.php
 // POST /opd-er/medical-history-screen
-pub async fn post_screen_history(
-    save: &NurseScreeningHistory,
-    view_by: &str,
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
+pub async fn post_screen_history(save: &NurseScreeningHistory, view_by: &str, doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
     let id;
     let mut result = Vec::with_capacity(2);
     if save.opd_er_screening_id > 0 {
@@ -444,16 +408,7 @@ pub async fn get_consult_history(opd_er_order_master_id: u32, pool: &Pool<MySql>
 // opd-er-consult-dr-save.php
 // POST /opd-er/medical-history-consult
 #[allow(clippy::too_many_arguments)]
-pub async fn post_consult_history(
-    saves: &[ConsultHistory],
-    opd_er_order_master_id: u32,
-    version: i32,
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+pub async fn post_consult_history(saves: &[ConsultHistory], opd_er_order_master_id: u32, version: i32, doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut result = Vec::with_capacity(3);
     let mut be_insert = true;
     if version > 0 {
@@ -470,16 +425,7 @@ pub async fn post_consult_history(
 
         if is_insert {
             let flag = if version > 0 { "U" } else { "I" };
-            let insert_history_result = insert_history_log(
-                SourceTable::OpdErConsult,
-                flag,
-                user,
-                &[KeyValue("opd_er_order_master_id", opd_er_order_master_id.to_string())],
-                kphis,
-                kphis_log,
-                pool,
-            )
-            .await?;
+            let insert_history_result = insert_history_log(SourceTable::OpdErConsult, flag, user, &[KeyValue("opd_er_order_master_id", opd_er_order_master_id.to_string())], kphis, kphis_log, pool).await?;
             result.push(ExecuteResponse::from_query_result(insert_history_result, "Insert ConsultHistory History"));
         }
 
@@ -499,15 +445,7 @@ async fn delete_consult_history(opd_er_order_master_id: u32, version: i32, pool:
         .map_err(|e| Source::SQLx.to_error(500, e, "Update ConsultHistory"))
 }
 
-async fn insert_consult_history(
-    opd_er_order_master_id: u32,
-    saves: &[ConsultHistory],
-    version: i32,
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+async fn insert_consult_history(opd_er_order_master_id: u32, saves: &[ConsultHistory], version: i32, doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_sql = medical_history::insert_consult_history(saves.len(), kphis);
     let mut insert_query = sqlx::query(AssertSqlSafe(insert_sql));
     for save in saves {
@@ -557,16 +495,7 @@ pub async fn post_scan_history(save: &ScanHistory, doctor_code: &Option<String>,
         result.push(ExecuteResponse::from_query_result(update_result, "Update ScanHistory"));
 
         if is_update {
-            let update_history_result = insert_history_log(
-                SourceTable::OpdErDocumentScan,
-                "U",
-                user,
-                &[KeyValue("opd_er_document_scan_id", id.to_string())],
-                kphis,
-                kphis_log,
-                pool,
-            )
-            .await?;
+            let update_history_result = insert_history_log(SourceTable::OpdErDocumentScan, "U", user, &[KeyValue("opd_er_document_scan_id", id.to_string())], kphis, kphis_log, pool).await?;
             result.push(ExecuteResponse::from_query_result(update_history_result, "Update ScanHistory History"));
         }
     } else {
@@ -577,16 +506,7 @@ pub async fn post_scan_history(save: &ScanHistory, doctor_code: &Option<String>,
         result.push(ExecuteResponse::from_query_result(insert_result, "Insert ScanHistory"));
 
         if is_insert {
-            let insert_history_result = insert_history_log(
-                SourceTable::OpdErDocumentScan,
-                "I",
-                user,
-                &[KeyValue("opd_er_document_scan_id", id.to_string())],
-                kphis,
-                kphis_log,
-                pool,
-            )
-            .await?;
+            let insert_history_result = insert_history_log(SourceTable::OpdErDocumentScan, "I", user, &[KeyValue("opd_er_document_scan_id", id.to_string())], kphis, kphis_log, pool).await?;
             result.push(ExecuteResponse::from_query_result(insert_history_result, "Insert ScanHistory History"));
         }
     }

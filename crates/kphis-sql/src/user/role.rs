@@ -66,13 +66,13 @@ pub fn select_users_role_list(params: &UserRoleParams, hosxp: &str, kphis: &str,
     }).unwrap_or_default();
 
     [
-        "SELECT opduser.loginname,GROUP_CONCAT(CONCAT(r.role,'^',r.role_desc) ORDER BY r.role SEPARATOR '|') AS role,opduser.name,opduser.groupname AS hosxp_group,opduser.account_disable,IF(c.totp IS NULL,0,1) AS has_totp \
+        "SELECT opduser.loginname,GROUP_CONCAT(CONCAT(r.role,'^',r.role_desc) ORDER BY r.role SEPARATOR '|') AS role,opduser.name,opduser.groupname AS hosxp_group,opduser.account_disable,c.failed,c.totp_done \
         FROM ",hosxp,".opduser \
             LEFT JOIN ",kphis,".system_ac_role_user ru ON ru.loginname=opduser.loginname \
             LEFT JOIN ",kphis,".system_ac_role r ON ru.role=r.role \
             LEFT JOIN ",kphis_extra,".user_config c ON c.loginname=opduser.loginname \
         WHERE 1=1 ",loginname,name,role,hosxp_group,account_disable,
-        "GROUP BY opduser.loginname ORDER BY opduser.loginname,ru.role;"
+        "GROUP BY opduser.loginname ORDER BY c.failed DESC,opduser.loginname,ru.role;"
     ].concat()
 }
 

@@ -110,19 +110,12 @@ async fn insert_index_monitor(save: &IndexMonitor, doctorcode: &str, user: &str,
 
 pub async fn insert_index_monitors_only(action_id: u32, an: &str, index_monitors_only: &[IndexMonitorOnly], pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_monitors_sql = index_monitor::insert_index_monitors_only(action_id, an, index_monitors_only, kphis_extra);
-    sqlx::query(AssertSqlSafe(insert_monitors_sql))
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Insert IndexMonitorOnly"))
+    sqlx::query(AssertSqlSafe(insert_monitors_sql)).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Insert IndexMonitorOnly"))
 }
 
 pub async fn delete_index_monitor(monitor_id: u32, pool: &Pool<MySql>, kphis_extra: &str) -> Result<ExecuteResponse, AppError> {
     let sql = index_monitor::delete_index_monitor(kphis_extra);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(monitor_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexMonitor"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(monitor_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexMonitor"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete IndexMonitor"))
 }

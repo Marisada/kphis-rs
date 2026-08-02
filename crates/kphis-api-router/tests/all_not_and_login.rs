@@ -15,8 +15,7 @@ use kphis_model::{
     app::VisitTypeId,
     dc_plan, drug_use_duration,
     endpoint::{EndPoint, QueryString},
-    focus_list, focus_note, image, index_action, index_monitor, index_plan, ipd, med_reconcile, opd_er, order, pre_admit, pre_order, prescription, progress_note, refer_note, refer_out, report, sse,
-    user, vital_sign,
+    focus_list, focus_note, image, index_action, index_monitor, index_plan, ipd, med_reconcile, opd_er, order, pre_admit, pre_order, prescription, progress_note, refer_note, refer_out, report, sse, user, vital_sign,
 };
 use kphis_sqlx_tester::MySqlMocker;
 

@@ -1,8 +1,8 @@
 // ipd-nurse-lab-history.php
 
 use chart_js_rs::{
-    ChartExt, ChartInteraction, ChartOptions, ChartPlugins, ChartScale, Dataset, DatasetDataExt, DatasetIterExt, DisplayFormats, FnWithArgs, Grid, LegendLabel, PluginLegend, PluginZoom,
-    ScaleAdapters, ScaleAdaptersDate, ScaleTicks, ScaleTime, TooltipCallbacks, TooltipPlugin, XYDataset, ZoomPan, ZoomPinchOptions, ZoomWheelOptions, ZoomZoom, scatter::Scatter,
+    ChartExt, ChartInteraction, ChartOptions, ChartPlugins, ChartScale, Dataset, DatasetDataExt, DatasetIterExt, DisplayFormats, FnWithArgs, Grid, LegendLabel, PluginLegend, PluginZoom, ScaleAdapters, ScaleAdaptersDate, ScaleTicks,
+    ScaleTime, TooltipCallbacks, TooltipPlugin, XYDataset, ZoomPan, ZoomPinchOptions, ZoomWheelOptions, ZoomZoom, scatter::Scatter,
 };
 use dominator::{Dom, clone, events, html};
 use futures_signals::{
@@ -338,8 +338,7 @@ fn render_chart(data: &[Rc<LabItem>], lab_items_name_ref: &str, lab_items_unit: 
                     if let Some(report_date) = lab.report_date {
                         Some((datetime_ts(&PrimitiveDateTime::new(report_date, lab.report_time.unwrap_or(Time::MIDNIGHT))), y))
                     } else {
-                        lab.receive_date
-                            .map(|receive_date| (datetime_ts(&PrimitiveDateTime::new(receive_date, lab.receive_time.unwrap_or(Time::MIDNIGHT))), y))
+                        lab.receive_date.map(|receive_date| (datetime_ts(&PrimitiveDateTime::new(receive_date, lab.receive_time.unwrap_or(Time::MIDNIGHT))), y))
                     }
                 })
         })
@@ -372,12 +371,9 @@ fn render_chart(data: &[Rc<LabItem>], lab_items_name_ref: &str, lab_items_unit: 
                         .callbacks(TooltipCallbacks::new().title(FnWithArgs::new().args(["tooltipItems"]).rust_closure(|_ctx| "รายการ: (วันที่รายงานผล, ผล)".into()))),
                 )
                 .zoom(
-                    PluginZoom::new().pan(ZoomPan::new().enabled(true).mode("xy")).zoom(
-                        ZoomZoom::new()
-                            .mode("xy")
-                            .wheel(ZoomWheelOptions::new().enabled(true).speed(0.1))
-                            .pinch(ZoomPinchOptions::new().enabled(true)),
-                    ),
+                    PluginZoom::new()
+                        .pan(ZoomPan::new().enabled(true).mode("xy"))
+                        .zoom(ZoomZoom::new().mode("xy").wheel(ZoomWheelOptions::new().enabled(true).speed(0.1)).pinch(ZoomPinchOptions::new().enabled(true))),
                 ),
         )
         .scales(scales);

@@ -109,11 +109,7 @@ pub fn set_user(token_response: Option<LoginResponse>, app: Rc<AppState>) -> Res
     }) = token_response
     {
         let now = get_timestamp_wasm();
-        let earlier_second = if timestamp < now {
-            -(now.saturating_sub(timestamp) as i64)
-        } else {
-            timestamp.saturating_sub(now) as i64
-        };
+        let earlier_second = if timestamp < now { -(now.saturating_sub(timestamp) as i64) } else { timestamp.saturating_sub(now) as i64 };
         // log::debug!("Client time is {} seconds earlier than server", earlier_second);
         let claim = get_claim_and_verify(&token, &public, earlier_second)?;
         match app.user.get_cloned() {

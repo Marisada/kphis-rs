@@ -19,12 +19,7 @@ pub(crate) fn process(grouper: &Grouper, input: &GrouperInput) -> MdcResult {
 
 fn process_proc(grouper: &Grouper, procs: &HashSet<String>) -> MdcResult {
     let proc_sites = grouper.proc_sites(procs);
-    if proc_sites.contains(&"E".to_owned())
-        && ![String::from("A"), String::from("D"), String::from("G"), String::from("H")]
-            .iter()
-            .collect::<HashSet<&String>>()
-            .is_disjoint(&proc_sites)
-    {
+    if proc_sites.contains(&"E".to_owned()) && ![String::from("A"), String::from("D"), String::from("G"), String::from("H")].iter().collect::<HashSet<&String>>().is_disjoint(&proc_sites) {
         MdcResult::Dc(String::from("2405"))
     } else if (proc_sites.contains(&"A".to_owned()) && ![String::from("D"), String::from("G"), String::from("H")].iter().collect::<HashSet<&String>>().is_disjoint(&proc_sites))
         || (proc_sites.contains(&"D".to_owned()) && proc_sites.contains(&"G".to_owned()))

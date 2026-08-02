@@ -138,12 +138,7 @@ impl<T: Clone + Default + 'static> Dragable<T> {
     pub fn drag_over(new_group: &Rc<Group<T>>, new_draggable: &Rc<Self>, drag_state: Mutable<Option<DragState<T>>>) {
         let mut dragging = drag_state.lock_mut();
 
-        if let Some(DragState::Dragging {
-            ref mut group,
-            ref mut draggable_index,
-            ..
-        }) = *dragging
-        {
+        if let Some(DragState::Dragging { ref mut group, ref mut draggable_index, .. }) = *dragging {
             new_draggable.overing.set(true);
 
             let draggables = new_group.draggables.lock_ref();
@@ -400,12 +395,7 @@ impl<T: Clone + Default + 'static> Group<T> {
             new_group.overing.set_neq(true);
         }
 
-        if let Some(DragState::Dragging {
-            ref mut group,
-            ref mut draggable_index,
-            ..
-        }) = *dragging
-        {
+        if let Some(DragState::Dragging { ref mut group, ref mut draggable_index, .. }) = *dragging {
             if new_group.id != group.id {
                 *group = new_group.clone();
                 *draggable_index = Some(0);

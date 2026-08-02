@@ -46,15 +46,7 @@ pub async fn get_opd_er_order(Query(params): Query<OrderParams>, ctx: RequestSta
     Ok(Json(orders))
 }
 
-pub async fn get_opd_er_order_bundle(
-    params: &OrderParams,
-    doctorcode: &Option<String>,
-    intern_roles: &[String],
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-    kphis_extra: &str,
-) -> Result<Vec<Order>, AppError> {
+pub async fn get_opd_er_order_bundle(params: &OrderParams, doctorcode: &Option<String>, intern_roles: &[String], pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_extra: &str) -> Result<Vec<Order>, AppError> {
     let view_by = params.view_by.clone().unwrap_or_default();
     let mut orders = order::get_order(params, doctorcode, intern_roles, pool, hosxp, kphis).await?;
     let ids = orders.iter().map(|op| op.order_id).collect::<Vec<u32>>();
@@ -135,10 +127,7 @@ pub async fn get_opd_er_order_item_bundle(params: &OrderParams, pool: &Pool<MySq
         for plan in plans.iter_mut() {
             plan.actions = index_action::get_index_action(plan.plan_id, pool, hosxp, kphis, kphis_extra).await?;
         }
-        let order_item = OrderItem {
-            index_plans: plans,
-            ..Default::default()
-        };
+        let order_item = OrderItem { index_plans: plans, ..Default::default() };
 
         Ok(vec![order_item])
     } else {
@@ -194,14 +183,7 @@ pub async fn patch_opd_er_order(ctx: RequestState, Json(payload): Json<OrderPatc
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::PATCH, false).await?;
 
-    let responses = order::patch_order(
-        &payload,
-        &ctx.user_state.user.doctorcode,
-        &ctx.user_state.user.loginname,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let responses = order::patch_order(&payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
     Ok(Json(responses))
 }
@@ -264,15 +246,7 @@ pub async fn get_opd_er_order_pharmacy(Query(params): Query<OpdErOrderPharmacyPa
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let order_monitor = order::get_pharmacy_order(
-        &params,
-        ctx.api_state.hosxp_hn_len(),
-        ctx.api_state.hosxp_vn_len(),
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let order_monitor = order::get_pharmacy_order(&params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_vn_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(order_monitor))
 }

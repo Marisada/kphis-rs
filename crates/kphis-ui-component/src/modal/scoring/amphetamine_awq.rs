@@ -104,9 +104,7 @@ impl AmphetamineAwqV2 {
         score_9: &Option<u8>,
         score_10: &Option<u8>,
     ) -> Option<u8> {
-        if let (Some(s1), Some(s2), Some(s3), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8), Some(s9), Some(s10)) =
-            (score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10)
-        {
+        if let (Some(s1), Some(s2), Some(s3), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8), Some(s9), Some(s10)) = (score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10) {
             Some(s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10)
         } else {
             None
@@ -123,11 +121,7 @@ impl AmphetamineAwqV2 {
     }
 
     fn cal_hyperarousal(score_1: &Option<u8>, score_6: &Option<u8>, score_9: &Option<u8>) -> Option<u8> {
-        if let (Some(s1), Some(s6), Some(s9)) = (score_1, score_6, score_9) {
-            Some(s1 + s6 + s9)
-        } else {
-            None
-        }
+        if let (Some(s1), Some(s6), Some(s9)) = (score_1, score_6, score_9) { Some(s1 + s6 + s9) } else { None }
     }
 
     fn anxiety_score_signal(&self) -> impl Signal<Item = Option<u8>> + use<> {
@@ -140,11 +134,7 @@ impl AmphetamineAwqV2 {
     }
 
     fn cal_anxiety(score_3: &Option<u8>, score_4: &Option<u8>, score_5: &Option<u8>) -> Option<u8> {
-        if let (Some(s3), Some(s4), Some(s5)) = (score_3, score_4, score_5) {
-            Some(s3 + s4 + s5)
-        } else {
-            None
-        }
+        if let (Some(s3), Some(s4), Some(s5)) = (score_3, score_4, score_5) { Some(s3 + s4 + s5) } else { None }
     }
 
     fn rev_vegetative_score_signal(&self) -> impl Signal<Item = Option<u8>> + use<> {
@@ -157,11 +147,7 @@ impl AmphetamineAwqV2 {
     }
 
     fn cal_rev_vegetative(score_7: &Option<u8>, score_8: &Option<u8>, score_10: &Option<u8>) -> Option<u8> {
-        if let (Some(s7), Some(s8), Some(s10)) = (score_7, score_8, score_10) {
-            Some(s7 + s8 + s10)
-        } else {
-            None
-        }
+        if let (Some(s7), Some(s8), Some(s10)) = (score_7, score_8, score_10) { Some(s7 + s8 + s10) } else { None }
     }
 
     pub fn render(modal: Rc<Self>) -> Dom {

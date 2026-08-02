@@ -5,15 +5,7 @@ use kphis_util::error::{AppError, Source};
 
 use super::execute3;
 
-pub async fn insert_history_log(
-    source_table: data_history_utils::SourceTable,
-    history_type: &str,
-    user: &str,
-    kvs: &[data_history_utils::KeyValue],
-    kphis: &str,
-    kphis_log: &str,
-    pool: &Pool<MySql>,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_history_log(source_table: data_history_utils::SourceTable, history_type: &str, user: &str, kvs: &[data_history_utils::KeyValue], kphis: &str, kphis_log: &str, pool: &Pool<MySql>) -> Result<MySqlQueryResult, AppError> {
     sqlx::query(AssertSqlSafe(data_history_utils::insert_history_log(&source_table, history_type, user, kvs, kphis, kphis_log)))
         .execute(pool)
         .await
@@ -27,29 +19,17 @@ pub async fn insert_access_log(user: &str, address: &str, access_detail: &str, p
 
 pub async fn delete_expired_access_log(days: i64, pool: &Pool<MySql>, kphis_log: &str) -> Result<MySqlQueryResult, AppError> {
     let access_sql = log::delete_expired_access_log(kphis_log);
-    sqlx::query(AssertSqlSafe(access_sql))
-        .bind(days)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete AccessLog"))
+    sqlx::query(AssertSqlSafe(access_sql)).bind(days).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete AccessLog"))
 }
 
 pub async fn delete_expired_history_log(days: i64, pool: &Pool<MySql>, kphis_log: &str) -> Result<MySqlQueryResult, AppError> {
     let history_sql = log::delete_expired_history_log(kphis_log);
-    sqlx::query(AssertSqlSafe(history_sql))
-        .bind(days)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete HistoryLog"))
+    sqlx::query(AssertSqlSafe(history_sql)).bind(days).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete HistoryLog"))
 }
 
 pub async fn delete_expired_message(days: i64, pool: &Pool<MySql>, kphis_log: &str) -> Result<MySqlQueryResult, AppError> {
     let message_sql = log::delete_expired_message(kphis_log);
-    sqlx::query(AssertSqlSafe(message_sql))
-        .bind(days)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete Message"))
+    sqlx::query(AssertSqlSafe(message_sql)).bind(days).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete Message"))
 }
 
 #[cfg(test)]

@@ -21,10 +21,7 @@ pub async fn post_user_config(ctx: RequestState, Json(payload): Json<UserConfig>
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
-    let (response, pk) = config::insert_dup_user_config(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
-    // we update online_user here because `GET /api/user` getting user from state's online_user, not from database
-    // read more at kphis-api-handler::user::token::refresh_token
-    ctx.api_state.online_update_user_config(ctx.user_state.state_id, &payload.theme, &payload.wide_screen, &pk).await;
+    let response = config::insert_dup_user_config(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
     Ok(Json(response))
 }
@@ -44,6 +41,7 @@ pub async fn patch_user_config(ctx: RequestState, Json(payload): Json<UserConfig
 
     let response = match payload {
         UserConfigCommand::Clear2fa(target_loginname) => config::remove_totp(&target_loginname, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?,
+        UserConfigCommand::ClearFailed(target_loginname) => config::clear_failed(&target_loginname, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?,
     };
 
     Ok(Json(response))

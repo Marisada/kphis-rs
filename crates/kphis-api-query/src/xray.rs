@@ -36,11 +36,7 @@ pub async fn post_xray_read(xn: i32, loginname: &str, pool: &Pool<MySql>, kphis:
 // DELETE /xray/read-id/{xn}
 pub async fn delete_xray_read(xn: i32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = xray::delete_xray_read(kphis);
-    let result = sqlx::query(AssertSqlSafe(sql))
-        .bind(xn)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete XrayRead"))?;
+    let result = sqlx::query(AssertSqlSafe(sql)).bind(xn).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete XrayRead"))?;
 
     Ok(ExecuteResponse::from_query_result(result, "Delete XrayRead"))
 }

@@ -1,7 +1,6 @@
 use chart_js_rs::{
-    Annotation, Annotations, ChartExt, ChartInteraction, ChartOptions, ChartPlugins, ChartScale, Dataset, DatasetDataExt, DatasetIterExt, DisplayFormats, FnWithArgs, Grid, LabelAnnotation,
-    LegendLabel, LineAnnotation, LineAnnotationType, PluginLegend, PluginZoom, ScaleAdapters, ScaleAdaptersDate, ScaleTicks, ScaleTime, Title, TooltipCallbacks, TooltipPlugin, XYDataset, ZoomPan,
-    ZoomPinchOptions, ZoomWheelOptions, ZoomZoom, scatter::Scatter,
+    Annotation, Annotations, ChartExt, ChartInteraction, ChartOptions, ChartPlugins, ChartScale, Dataset, DatasetDataExt, DatasetIterExt, DisplayFormats, FnWithArgs, Grid, LabelAnnotation, LegendLabel, LineAnnotation, LineAnnotationType,
+    PluginLegend, PluginZoom, ScaleAdapters, ScaleAdaptersDate, ScaleTicks, ScaleTime, Title, TooltipCallbacks, TooltipPlugin, XYDataset, ZoomPan, ZoomPinchOptions, ZoomWheelOptions, ZoomZoom, scatter::Scatter,
 };
 use dominator::{Dom, html};
 use std::{collections::HashMap, rc::Rc};
@@ -32,12 +31,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
 
     let data = Dataset::new().datasets([
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.bt.map(|bt| (datetime_ts(&vs.vs_datetime), bt)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.bt.map(|bt| (datetime_ts(&vs.vs_datetime), bt))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y1")
             .label("BT")
             .background_color("dodgerblue")
@@ -47,12 +41,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(is_lr || is_psy),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.pr.map(|pr| (datetime_ts(&vs.vs_datetime), pr)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.pr.map(|pr| (datetime_ts(&vs.vs_datetime), pr))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y2")
             .label("PR")
             .background_color("red")
@@ -62,12 +51,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(is_lr || is_psy),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.rr.map(|rr| (datetime_ts(&vs.vs_datetime), rr)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.rr.map(|rr| (datetime_ts(&vs.vs_datetime), rr))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y3")
             .label("RR")
             .background_color("green")
@@ -78,12 +62,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(true),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.sbp.map(|sbp| (datetime_ts(&vs.vs_datetime), sbp)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.sbp.map(|sbp| (datetime_ts(&vs.vs_datetime), sbp))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y2")
             .label("SBP")
             .background_color("white")
@@ -97,12 +76,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(true),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.map.map(|map| (datetime_ts(&vs.vs_datetime), map)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.map.map(|map| (datetime_ts(&vs.vs_datetime), map))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y2")
             .label("MAP")
             .border_color("deeppink")
@@ -114,12 +88,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(true),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.dbp.map(|dbp| (datetime_ts(&vs.vs_datetime), dbp)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.dbp.map(|dbp| (datetime_ts(&vs.vs_datetime), dbp))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y2")
             .label("DBP")
             .background_color("white")
@@ -132,12 +101,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(true),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.sat.map(|sat| (datetime_ts(&vs.vs_datetime), sat)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.sat.map(|sat| (datetime_ts(&vs.vs_datetime), sat))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y3")
             .label("O\u{2082} Sat")
             .background_color("orange")
@@ -164,12 +128,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(!is_lr || is_psy),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.lr_eff.map(|lr_eff| (datetime_ts(&vs.vs_datetime), lr_eff)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.lr_eff.map(|lr_eff| (datetime_ts(&vs.vs_datetime), lr_eff))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y3")
             .label("Effacement")
             .background_color("#81F7D8")
@@ -195,12 +154,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(!is_lr || is_psy),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.lr_fsh.map(|lr_fsh| (datetime_ts(&vs.vs_datetime), lr_fsh)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.lr_fsh.map(|lr_fsh| (datetime_ts(&vs.vs_datetime), lr_fsh))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y2")
             .label("FHS")
             .background_color("red")
@@ -322,12 +276,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(!is_psy || is_lr),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.motivation_scale.map(|mot| (datetime_ts(&vs.vs_datetime), mot)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.motivation_scale.map(|mot| (datetime_ts(&vs.vs_datetime), mot))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y5")
             .label("Motivation")
             .background_color("white")
@@ -338,12 +287,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
             .show_line(true)
             .hidden(!is_psy || is_lr),
         XYDataset::new()
-            .data(
-                data.iter()
-                    .filter_map(|vs| vs.craving_scale.map(|crav| (datetime_ts(&vs.vs_datetime), crav)))
-                    .into_data_iter()
-                    .unsorted_to_dataset_data(),
-            )
+            .data(data.iter().filter_map(|vs| vs.craving_scale.map(|crav| (datetime_ts(&vs.vs_datetime), crav))).into_data_iter().unsorted_to_dataset_data())
             .y_axis_id("y5")
             .label("Craving")
             .background_color("white")
@@ -380,12 +324,9 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
         .annotation(Annotations::new().annotations(annotation));
     if zoomable {
         plugins = plugins.zoom(
-            PluginZoom::new().pan(ZoomPan::new().enabled(true).mode("xy")).zoom(
-                ZoomZoom::new()
-                    .mode("xy")
-                    .wheel(ZoomWheelOptions::new().enabled(true).speed(0.1))
-                    .pinch(ZoomPinchOptions::new().enabled(true)),
-            ),
+            PluginZoom::new()
+                .pan(ZoomPan::new().enabled(true).mode("xy"))
+                .zoom(ZoomZoom::new().mode("xy").wheel(ZoomWheelOptions::new().enabled(true).speed(0.1)).pinch(ZoomPinchOptions::new().enabled(true))),
         );
     }
 
@@ -435,12 +376,7 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
         ),
         (
             String::from("y4"),
-            ChartScale::new()
-                .title(Title::new().display(true).text("Station"))
-                .position("right")
-                .suggested_min(-2)
-                .suggested_max(2)
-                .reverse(true),
+            ChartScale::new().title(Title::new().display(true).text("Station")).position("right").suggested_min(-2).suggested_max(2).reverse(true),
         ),
         (
             String::from("y5"),

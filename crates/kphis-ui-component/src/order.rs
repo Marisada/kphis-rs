@@ -197,15 +197,7 @@ pub struct OrderCpn {
 }
 
 impl OrderCpn {
-    pub fn new(
-        is_ipd: bool,
-        patient: Mutable<Option<Rc<PatientInfo>>>,
-        view_by: Mutable<String>,
-        is_readonly_yn: Mutable<String>,
-        date_path: Mutable<String>,
-        focused_id: Mutable<u32>,
-        app: Rc<App>,
-    ) -> Rc<Self> {
+    pub fn new(is_ipd: bool, patient: Mutable<Option<Rc<PatientInfo>>>, view_by: Mutable<String>, is_readonly_yn: Mutable<String>, date_path: Mutable<String>, focused_id: Mutable<u32>, app: Rc<App>) -> Rc<Self> {
         let edit_order = app.edit_order.replace(None);
         let show_oneday_input = Mutable::new(false);
         let show_continuous_input = Mutable::new(false);
@@ -280,8 +272,7 @@ impl OrderCpn {
     }
 
     fn set_checker(&self) {
-        self.checker
-            .set_neq(!(self.oneday.lock_ref().is_empty() && self.continuous.lock_ref().is_empty() && self.progress_note.lock_ref().is_empty()));
+        self.checker.set_neq(!(self.oneday.lock_ref().is_empty() && self.continuous.lock_ref().is_empty() && self.progress_note.lock_ref().is_empty()));
     }
 
     fn current_is_order_date(&self, order_date: Rc<OrderDate>) -> impl Signal<Item = bool> + use<> {
@@ -560,9 +551,7 @@ impl OrderCpn {
                 // GET `EndPoint::IpdOrderPrevious`
                 match OrderItem::call_api_get_ipd_previous(&params, app.state()).await {
                     Ok(order_items) => {
-                        let (med_inj, non_med): (Vec<OrderItem>, Vec<OrderItem>) = order_items
-                            .into_iter()
-                            .partition(|item| ["med", "injection"].contains(&item.order_item_type.clone().unwrap_or_default().as_str()));
+                        let (med_inj, non_med): (Vec<OrderItem>, Vec<OrderItem>) = order_items.into_iter().partition(|item| ["med", "injection"].contains(&item.order_item_type.clone().unwrap_or_default().as_str()));
                         let (injection, med): (Vec<OrderItem>, Vec<OrderItem>) = med_inj.into_iter().partition(|item| item.order_item_type.clone().unwrap_or_default().as_str() == "injection");
                         page.previous_continuous_non_med.lock_mut().extend(non_med.into_iter().map(Rc::new));
                         page.previous_continuous_med.lock_mut().extend(med.into_iter().map(Rc::new));
@@ -711,12 +700,10 @@ impl OrderCpn {
         // prepared variables
         let used_mrd_rec = self.used_med_rec.lock_ref();
         let continuous = self.continuous.lock_ref();
-        let confirmed_cont = continuous.iter().filter(|order| order.is_confirm()).flat_map(|order| {
-            order
-                .order_item_types
-                .iter()
-                .flat_map(|oit| oit.order_items.iter().filter(|oi| oi.icode.is_some()).cloned().map(Rc::new))
-        });
+        let confirmed_cont = continuous
+            .iter()
+            .filter(|order| order.is_confirm())
+            .flat_map(|order| order.order_item_types.iter().flat_map(|oit| oit.order_items.iter().filter(|oi| oi.icode.is_some()).cloned().map(Rc::new)));
         let prev_med = self.previous_continuous_med.lock_ref().to_vec();
         let prev_inj = self.previous_continuous_injection.lock_ref().to_vec();
         // partition in-hos / out-hos
@@ -729,14 +716,10 @@ impl OrderCpn {
             .partition(|item| med_rec_icode.as_ref().zip(item.icode.as_ref()).map(|(a, b)| a == b).unwrap_or_default());
         // calculate in-hos items
         let in_hos_icodes = in_hos_oi.iter().filter_map(|item| item.icode.clone()).collect::<HashSet<String>>();
-        let in_hos_missed = in_hos_used
-            .into_iter()
-            .filter(|item| item.icode.as_ref().map(|icode| !in_hos_icodes.contains(icode)).unwrap_or_default());
+        let in_hos_missed = in_hos_used.into_iter().filter(|item| item.icode.as_ref().map(|icode| !in_hos_icodes.contains(icode)).unwrap_or_default());
         // calculate out-hos items
         let out_hos_mednames = out_hos_oi.iter().filter_map(|item| item.med_name.clone()).collect::<HashSet<String>>();
-        let out_hos_missed = out_hos_used
-            .into_iter()
-            .filter(|item| item.custom_med_name.as_ref().map(|cmed_name| !out_hos_mednames.contains(cmed_name)).unwrap_or_default());
+        let out_hos_missed = out_hos_used.into_iter().filter(|item| item.custom_med_name.as_ref().map(|cmed_name| !out_hos_mednames.contains(cmed_name)).unwrap_or_default());
         // set
         self.missed_med_rec.lock_mut().extend(in_hos_missed.chain(out_hos_missed).cloned());
     }
@@ -1052,11 +1035,7 @@ impl OrderCpn {
         } else {
             app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErOrderOrder, false)
         };
-        let allow_order_add = if is_ipd {
-            app.has_permission(Permission::IpdOrderAdd)
-        } else {
-            app.has_permission(Permission::OpdErOrderAdd)
-        };
+        let allow_order_add = if is_ipd { app.has_permission(Permission::IpdOrderAdd) } else { app.has_permission(Permission::OpdErOrderAdd) };
         let allow_progress_form = if is_ipd {
             app.endpoint_is_allow(&Method::POST, &EndPoint::IpdOrderProgressNote, is_pre_admit)
         } else {
@@ -2920,23 +2899,10 @@ impl OrderCpn {
         })
     }
 
-    fn render_order_item(
-        cpn_id: &'static str,
-        order_item: Rc<OrderItem>,
-        order: Rc<Order>,
-        is_oneday: bool,
-        due_mutables: Rc<DueMutables>,
-        flags: Rc<OrderFlags>,
-        page: Rc<Self>,
-        app: Rc<App>,
-    ) -> Dom {
+    fn render_order_item(cpn_id: &'static str, order_item: Rc<OrderItem>, order: Rc<Order>, is_oneday: bool, due_mutables: Rc<DueMutables>, flags: Rc<OrderFlags>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_due = order_item.due_status.as_ref().map(|due_status| due_status == "Y").unwrap_or_default();
         let has_info = order_item.info_status.as_ref().map(|info_status| info_status == "Y").unwrap_or_default();
-        let will_blue = if is_oneday {
-            vec!["med", "home-medication", "injection", "ivfluid"]
-        } else {
-            vec!["med", "injection", "ivfluid"]
-        };
+        let will_blue = if is_oneday { vec!["med", "home-medication", "injection", "ivfluid"] } else { vec!["med", "injection", "ivfluid"] };
 
         html!("li", {
             .class("clearfix")
@@ -3483,11 +3449,7 @@ impl OrderCpn {
         let is_pre_admit = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type.is_pre_admit()).unwrap_or_default();
         let is_today = page.is_today();
         let is_oneday = order_item.order_type.clone().unwrap_or_default().as_str() == "oneday";
-        let will_blue = if is_oneday {
-            vec!["med", "home-medication", "injection", "ivfluid"]
-        } else {
-            vec!["med", "injection", "ivfluid"]
-        };
+        let will_blue = if is_oneday { vec!["med", "home-medication", "injection", "ivfluid"] } else { vec!["med", "injection", "ivfluid"] };
 
         let view_by = page.view_by.get_cloned();
         let is_doctor = view_by.as_str() == "doctor" && app.has_permission(Permission::DataTypeDoctorUse);
@@ -3499,11 +3461,7 @@ impl OrderCpn {
         } else {
             app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErOrderOrder, false)
         };
-        let allow_order_edit = if page.is_ipd {
-            app.has_permission(Permission::IpdOrderEdit)
-        } else {
-            app.has_permission(Permission::OpdErOrderEdit)
-        };
+        let allow_order_edit = if page.is_ipd { app.has_permission(Permission::IpdOrderEdit) } else { app.has_permission(Permission::OpdErOrderEdit) };
 
         html!("li", {
             .class("clearfix")
@@ -3832,15 +3790,9 @@ impl OrderCpn {
         }
 
         let (display_datetime, display_date) = if is_by_auditor {
-            (
-                datetime_th_opt(&progress_note.progress_note_enter_datetime),
-                progress_note.progress_note_enter_datetime.map(|dt| dt.date()),
-            )
+            (datetime_th_opt(&progress_note.progress_note_enter_datetime), progress_note.progress_note_enter_datetime.map(|dt| dt.date()))
         } else {
-            (
-                [date_th(&progress_note.progress_note_date), time_hm(&progress_note.progress_note_time)].join(" "),
-                Some(progress_note.progress_note_date),
-            )
+            ([date_th(&progress_note.progress_note_date), time_hm(&progress_note.progress_note_time)].join(" "), Some(progress_note.progress_note_date))
         };
 
         let is_discharged = match (page.patient.lock_ref().as_ref().and_then(|pt| pt.lastdate()), display_date) {
@@ -4003,16 +3955,7 @@ impl OrderCpn {
     }
 
     // SAME AS OPD-ER
-    fn render_index_plan_badge(
-        cpn_id: &'static str,
-        plan: &IndexPlan,
-        order_item: &OrderItem,
-        current_date: Option<Date>,
-        order_type: OrderType,
-        show_actions: bool,
-        editable: bool,
-        page: Rc<Self>,
-    ) -> Option<Dom> {
+    fn render_index_plan_badge(cpn_id: &'static str, plan: &IndexPlan, order_item: &OrderItem, current_date: Option<Date>, order_type: OrderType, show_actions: bool, editable: bool, page: Rc<Self>) -> Option<Dom> {
         plan.is_plan_visible(current_date).then(|| {
             // let plan_id = plan.plan_id;
             let order_item_id = plan.order_item_id;
@@ -4377,10 +4320,7 @@ impl OrderItemMutable {
 
     pub fn med_rec_info(&self) -> String {
         let (old_usage, now_title) = if self.is_med_rec_change_usage() {
-            (
-                self.old_drugusage.lock_ref().as_ref().map(|s| ["วิธีใช้เดิม: ", s, "\n"].concat()).unwrap_or_default(),
-                String::from("วิธีใช้ใหม่: "),
-            )
+            (self.old_drugusage.lock_ref().as_ref().map(|s| ["วิธีใช้เดิม: ", s, "\n"].concat()).unwrap_or_default(), String::from("วิธีใช้ใหม่: "))
         } else {
             (String::new(), String::from("วิธีใช้: "))
         };
@@ -4408,11 +4348,7 @@ impl OrderItemMutable {
 
 impl From<OrderItem> for OrderItemMutable {
     fn from(item: OrderItem) -> Self {
-        let first_qty = item
-            .first_qty
-            .map(|i| i.to_string())
-            .or(item.med_reconciliation_item_id.is_some().then(|| String::from("0")))
-            .unwrap_or_default();
+        let first_qty = item.first_qty.map(|i| i.to_string()).or(item.med_reconciliation_item_id.is_some().then(|| String::from("0"))).unwrap_or_default();
         OrderItemMutable {
             id: NEXT_ID.fetch_add(1, Ordering::SeqCst),
             order_item_type: Mutable::new(item.order_item_type.unwrap_or_default()),
@@ -4777,12 +4713,9 @@ impl DueMutables {
 
     fn is_pharm_just_noted_signal(&self) -> impl Signal<Item = bool> + use<> {
         let items = self.items.clone();
-        self.changed.signal().map(move |changed| {
-            changed
-                && items
-                    .iter()
-                    .any(|item| item.due_pharm.lock_ref().as_ref().map(|s| s != "Y").unwrap_or_default() && item.due_pharm_note.lock_ref().is_some())
-        })
+        self.changed
+            .signal()
+            .map(move |changed| changed && items.iter().any(|item| item.due_pharm.lock_ref().as_ref().map(|s| s != "Y").unwrap_or_default() && item.due_pharm_note.lock_ref().is_some()))
     }
 }
 
@@ -4982,12 +4915,7 @@ impl OrderFlags {
         } else {
             app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErOrderOrder, false)
         };
-        let allow_order_edit = !is_readonly
-            && if page.is_ipd {
-                app.has_permission(Permission::IpdOrderEdit)
-            } else {
-                app.has_permission(Permission::OpdErOrderEdit)
-            };
+        let allow_order_edit = !is_readonly && if page.is_ipd { app.has_permission(Permission::IpdOrderEdit) } else { app.has_permission(Permission::OpdErOrderEdit) };
         let allow_order_patch = !is_readonly
             && if page.is_ipd {
                 app.endpoint_is_allow(&Method::PATCH, &EndPoint::IpdOrderOrder, is_pre_admit)

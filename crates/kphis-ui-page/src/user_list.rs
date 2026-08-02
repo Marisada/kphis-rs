@@ -54,6 +54,7 @@ pub struct UserListPage {
     modal_account_disable: Mutable<String>,
     modal_user_permissions: MutableBTreeMap<Permission, Vec<String>>,
     modal_has_totp: Mutable<bool>,
+    modal_failed: Mutable<i8>,
 }
 
 impl UserListPage {
@@ -199,6 +200,25 @@ impl UserListPage {
         );
     }
 
+    fn clear_failed(target_loginname: String, page: Rc<Self>, app: Rc<App>) {
+        app.async_load(
+            true,
+            clone!(app, page => async move {
+                // PATCH `EndPoint::UserConfig`
+                match UserConfigCommand::ClearFailed(target_loginname).call_api_patch(app.state()).await {
+                    Ok(response) => {
+                        if response.rows_affected > 0 {
+                            page.changed.set_neq(true);
+                        }
+                    }
+                    Err(e) => {
+                        app.alert_app_error(&e).await;
+                    }
+                }
+            }),
+        );
+    }
+
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         app.set_title("KPHIS - Permission List");
 
@@ -322,14 +342,17 @@ impl UserListPage {
                                 .class("text-center")
                                 .children([
                                     html!("th", {.attr("scope","col").text("#")}),
-                                    html!("th", {.attr("scope","col").text("loginname")}),
+                                    html!("th", {.attr("scope","col").text("Loginname")}),
                                     html!("th", {.attr("scope","col").text("ชื่อ - นามสกุล")}),
                                     html!("th", {.attr("scope","col").text("Role")}),
                                     html!("th", {.attr("scope","col").text("HOSxP Group")}),
                                     html!("th", {.class("text-nowrap").attr("scope","col").text("ปิดใช้งาน")}),
                                 ])
                                 .apply_if(app.has_permission(Permission::SystemAcRoleUserEdit), |dom| { dom
-                                    .child(html!("th", {.class("text-nowrap").attr("scope","col").text("2FA")}))
+                                    .children([
+                                        html!("th", {.attr("scope","col").text("2FA")}),
+                                        html!("th", {.attr("scope","col").text("Failed")}),
+                                    ])
                                 })
                             }))
                         }),
@@ -377,35 +400,36 @@ impl UserListPage {
                                             .children([
                                                 html!("label", {
                                                     .attr("for", "modal_loginname")
-                                                    .class(class::BOLD)
+                                                    .class("me-1")
                                                     .text("Login Name:")
                                                 }),
                                                 html!("span", {
                                                     .attr("id", "modal_loginname")
-                                                    .class("pe-2")
+                                                    .class(class::BOLD)
                                                     .text_signal(page.modal_loginname.signal_cloned())
                                                 }),
                                                 html!("label", {
                                                     .attr("for", "modal_name")
-                                                    .class(class::BOLD)
+                                                    .class("me-1")
                                                     .text("ชื่อ-นามสกุล:")
                                                 }),
                                                 html!("span", {
                                                     .attr("id", "modal_name")
-                                                    .class("pe-2")
+                                                    .class(class::BOLD)
                                                     .text_signal(page.modal_name.signal_cloned())
                                                 }),
                                                 html!("label", {
                                                     .attr("for", "modal_hosxp_group")
-                                                    .class(class::BOLD)
+                                                    .class("me-1")
                                                     .text("HOSxP Group:")
                                                 }),
                                                 html!("span", {
                                                     .attr("id", "modal_hosxp_group")
-                                                    .class("pe-2")
+                                                    .class(class::BOLD)
                                                     .text_signal(page.modal_hosxp_group.signal_cloned())
                                                 }),
                                                 html!("span", {
+                                                    .class("me-1")
                                                     //.attr("id", "modal_account_disable")
                                                     .child(html!("span", {
                                                         .class("badge")
@@ -414,8 +438,31 @@ impl UserListPage {
                                                         .text_signal(page.modal_account_disable.signal_cloned().map(|d| if d == "Y" {"ปิดใช้งาน"} else {"เปิดใช้งาน"}))
                                                     }))
                                                 }),
+                                                html!("label", {
+                                                    .attr("for", "modal_failed")
+                                                    .class("me-1")
+                                                    .text("Failed:")
+                                                }),
+                                                html!("span", {
+                                                    .attr("id", "modal_failed")
+                                                    .class(class::BOLD)
+                                                    .text_signal(page.modal_failed.signal().map(|i| i.to_string()))
+                                                }),
                                             ])
                                             .apply_if(app.endpoint_is_allow(&Method::PATCH, &EndPoint::UserConfig, false), |dom| { dom
+                                                .child_signal(page.modal_failed.signal().map(clone!(app, page => move |failed| {
+                                                    (failed > 0).then(|| {
+                                                        html!("button" => HtmlButtonElement, {
+                                                            .attr("type","button")
+                                                            .class(class::BTN_SM_R_REDO)
+                                                            .text("ตั้ง Failed เป็น 0")
+                                                            .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                                                Self::clear_failed(page.modal_loginname.get_cloned(), page.clone(), app.clone());
+                                                                page.modal_failed.set(0);
+                                                            }), app.state()))
+                                                        })
+                                                    })
+                                                })))
                                                 .child_signal(page.modal_has_totp.signal_cloned().map(clone!(app, page => move |has_totp| {
                                                     has_totp.then(|| {
                                                         html!("button" => HtmlButtonElement, {
@@ -616,6 +663,7 @@ impl UserListPage {
                 }),
                 html!("td", {.text(&row.hosxp_group.clone().unwrap_or_default())}),
                 html!("td", {
+                    .class("text-center")
                     .apply_if(is_disable, |dom| {
                         dom.child(html!("span", {
                             .class(class::BADGE_RED)
@@ -626,12 +674,21 @@ impl UserListPage {
                 }),
             ])
             .apply_if(app.has_permission(Permission::SystemAcRoleUserEdit), |dom| { dom
-                .child(html!("td", {
-                    .class(class::TXT_C_P1)
-                    .apply_if(row.has_totp, |d| { d
-                        .child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN).style("font-size","30px")}))
-                    })
-                }))
+                .children([
+                    html!("td", {
+                        .class(class::TXT_C_P1)
+                        .apply_if(row.totp_done.unwrap_or_default(), |d| { d
+                            .child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN).style("font-size","30px")}))
+                        })
+                    }),
+                    html!("td", {
+                        .class(class::TXT_C_P1)
+                        .apply_if(row.failed.unwrap_or_default() > 0, |dom| dom
+                            .class(class::BOLD_RED)
+                        )
+                        .text(&row.failed.unwrap_or_default().to_string())
+                    }),
+                ])
             })
             .event(move |_:events::Click| {
                 page.modal_loginname.set_neq(row.loginname.clone());
@@ -644,7 +701,8 @@ impl UserListPage {
                 }
                 let permissions = page.role_permission();
                 page.modal_user_permissions.lock_mut().replace_cloned(permissions);
-                page.modal_has_totp.set_neq(row.has_totp);
+                page.modal_has_totp.set_neq(row.totp_done.unwrap_or_default());
+                page.modal_failed.set_neq(row.failed.unwrap_or_default());
                 page.modal_changed.set_neq(false);
             })
         })

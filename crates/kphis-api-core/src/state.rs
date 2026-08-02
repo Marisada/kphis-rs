@@ -111,9 +111,7 @@ impl ApiState {
         let all_roles = get_all_role(&db_pool, &kphis_dbname).await.expect("Failed Select AllRoles");
         let roles = role_with_parent(&all_roles);
 
-        let role_permission_list = get_role_permission_list(UserRoleParams::default(), &db_pool, &kphis_dbname)
-            .await
-            .expect("Failed get AllRolesPermissions");
+        let role_permission_list = get_role_permission_list(UserRoleParams::default(), &db_pool, &kphis_dbname).await.expect("Failed get AllRolesPermissions");
         let roles_permissions = Arc::new(Mutex::new(roles_permissions(&role_permission_list)));
 
         let request_body_limited_mb = config.get_int("request-body-limited-mb").ok().and_then(|max| u8::try_from(max).ok()).unwrap_or(2);
@@ -151,12 +149,7 @@ impl ApiState {
                 contact_info,
             };
 
-            Some(Arc::new(PdfSigner {
-                signing_certificate,
-                signing_key,
-                tsa,
-                sig,
-            }))
+            Some(Arc::new(PdfSigner { signing_certificate, signing_key, tsa, sig }))
         } else {
             None
         };
@@ -247,9 +240,7 @@ impl ApiState {
             hospital_info: config.get_string("hospital-info").unwrap_or_default(),
             hospital_address: config.get_string("hospital-address").unwrap_or_default(),
             drug_notify_use: config.get_string("drug-notify-use").expect("'drug-notify-use' not found in config file"),
-            drug_notify_start_end_marker_use: config
-                .get_string("drug-notify-start-end-marker-use")
-                .expect("'drug-notify-start-end-marker-use' not found in config file"),
+            drug_notify_start_end_marker_use: config.get_string("drug-notify-start-end-marker-use").expect("'drug-notify-start-end-marker-use' not found in config file"),
             drug_notify_start_marker: config.get_string("drug-notify-start-marker").expect("'drug-notify-start-marker' not found in config file"),
             drug_notify_end_marker: config.get_string("drug-notify-end-marker").expect("'drug-notify-end-marker' not found in config file"),
 
@@ -530,22 +521,12 @@ impl ApiState {
             },
         );
     }
+
     pub async fn online_get(&self, state_id: u128) -> Option<UserState> {
         let guard = self.online_users.lock().await;
         guard.get(&state_id).cloned()
     }
-    /// if changed_totp is Some then change user in online_user as not-done/no TOTP
-    pub async fn online_update_user_config(&self, state_id: u128, theme: &Option<String>, wide_screen: &Option<String>, changed_totp: &Option<Option<String>>) {
-        let mut guard = self.online_users.lock().await;
-        if let Some(user) = guard.get_mut(&state_id) {
-            user.user.theme = theme.to_owned();
-            user.user.wide_screen = wide_screen.to_owned();
-            if let Some(topt) = changed_totp {
-                user.user.totp = topt.to_owned();
-                user.user.totp_done = None;
-            }
-        }
-    }
+
     pub async fn online_update_msg_group(&self, state_id: u128, sse_group: &SseGroup) {
         let mut guard = self.online_users.lock().await;
         if let Some(user) = guard.get_mut(&state_id) {
@@ -553,6 +534,7 @@ impl ApiState {
             user.user.spclty_ids = sse_group.spclty_ids.to_owned();
         }
     }
+
     pub async fn online_remove_by_loginname(&self, loginname: &str, message: &str) -> u64 {
         let mut guard = self.online_users.lock().await;
         let mut doctorcodes = Vec::new();
@@ -911,14 +893,7 @@ impl RequestState {
         if accepted || !self.api_state.access_log_only_authorized() {
             let access_detail = access_detail(method, &self.path_query, accepted);
 
-            let result = log::insert_access_log(
-                &self.user_state.user.loginname,
-                &self.user_state.addr.to_string(),
-                &access_detail,
-                &self.api_state.db_pool,
-                &self.api_state.kphis_log(),
-            )
-            .await?;
+            let result = log::insert_access_log(&self.user_state.user.loginname, &self.user_state.addr.to_string(), &access_detail, &self.api_state.db_pool, &self.api_state.kphis_log()).await?;
             if result.rows_affected() == 0 {
                 return Err(Source::App.to_error(500, "Failed Insert AccessLog", "Insert AccessLog"));
             }
@@ -945,18 +920,10 @@ where
     type Rejection = AppError;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let ConnectInfo(addr): ConnectInfo<SocketAddr> = ConnectInfo::from_request_parts(parts, state)
-            .await
-            .map_err(|_| Source::App.to_error(500, "SocketAddr Not Found", "ExtractUser"))?;
-        let matched_path = MatchedPath::from_request_parts(parts, state)
-            .await
-            .map_err(|_| Source::App.to_error(500, "MatchedPath Not Found", "ExtractUser"))?;
-        let State(api_state): State<ApiState> = State::from_request_parts(parts, state)
-            .await
-            .map_err(|_| Source::App.to_error(500, "ApiState Not Found", "ExtractUser"))?;
-        let TypedHeader(Authorization(bearer)): TypedHeader<Authorization<Bearer>> = TypedHeader::from_request_parts(parts, state)
-            .await
-            .map_err(|_| Source::App.to_error(400, "Token Not Found", "ExtractUser"))?;
+        let ConnectInfo(addr): ConnectInfo<SocketAddr> = ConnectInfo::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "SocketAddr Not Found", "ExtractUser"))?;
+        let matched_path = MatchedPath::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "MatchedPath Not Found", "ExtractUser"))?;
+        let State(api_state): State<ApiState> = State::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "ApiState Not Found", "ExtractUser"))?;
+        let TypedHeader(Authorization(bearer)): TypedHeader<Authorization<Bearer>> = TypedHeader::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(400, "Token Not Found", "ExtractUser"))?;
         let path_query = parts.uri.path_and_query().cloned();
         let real_addr = api_state
             .app_config

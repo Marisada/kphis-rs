@@ -39,10 +39,7 @@ pub async fn get_select_option(sql: &str, pool: &Pool<MySql>) -> Result<Vec<Sele
 pub async fn get_select_option_i8_key(sql: &str, pool: &Pool<MySql>) -> Result<Vec<SelectOption>, AppError> {
     let options = query_all(sql, pool, "Select Select Options-i8").await?;
 
-    options
-        .iter()
-        .map(|row| select_option_from_row_i8_key(row).map_err(|e| Source::SQLx.to_error(500, e, "Select Select Options-i8")))
-        .collect()
+    options.iter().map(|row| select_option_from_row_i8_key(row).map_err(|e| Source::SQLx.to_error(500, e, "Select Select Options-i8"))).collect()
 }
 fn select_option_from_row_i8_key(row: &MySqlRow) -> Result<SelectOption, Error> {
     let key: i8 = row.try_get("key")?;
@@ -55,10 +52,7 @@ fn select_option_from_row_i8_key(row: &MySqlRow) -> Result<SelectOption, Error> 
 pub async fn get_select_option_i32_key(sql: &str, pool: &Pool<MySql>) -> Result<Vec<SelectOption>, AppError> {
     let options = query_all(sql, pool, "Select Select Options-i32").await?;
 
-    options
-        .iter()
-        .map(|row| select_option_from_row_i32_key(row).map_err(|e| Source::SQLx.to_error(500, e, "Select Select Options-i32")))
-        .collect()
+    options.iter().map(|row| select_option_from_row_i32_key(row).map_err(|e| Source::SQLx.to_error(500, e, "Select Select Options-i32"))).collect()
 }
 fn select_option_from_row_i32_key(row: &MySqlRow) -> Result<SelectOption, Error> {
     let key: i32 = row.try_get("key")?;
@@ -71,10 +65,7 @@ fn select_option_from_row_i32_key(row: &MySqlRow) -> Result<SelectOption, Error>
 pub async fn get_select_option_u32_key(sql: &str, pool: &Pool<MySql>) -> Result<Vec<SelectOption>, AppError> {
     let options = query_all(sql, pool, "Select Select Options-u32").await?;
 
-    options
-        .iter()
-        .map(|row| select_option_from_row_u32_key(row).map_err(|e| Source::SQLx.to_error(500, e, "Select Select Options-u32")))
-        .collect()
+    options.iter().map(|row| select_option_from_row_u32_key(row).map_err(|e| Source::SQLx.to_error(500, e, "Select Select Options-u32"))).collect()
 }
 fn select_option_from_row_u32_key(row: &MySqlRow) -> Result<SelectOption, Error> {
     let key: u32 = row.try_get("key")?;

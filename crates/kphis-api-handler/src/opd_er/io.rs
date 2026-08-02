@@ -111,15 +111,7 @@ pub async fn delete_opd_er_io_shift(Query(params): Query<IoParams>, ctx: Request
     ctx.authorize_and_access_log(&Method::DELETE, false).await?;
 
     if let (Some(opd_er_io_id), Some(version)) = (params.io_id, params.version) {
-        let response = io::delete_io_shift(
-            opd_er_io_id,
-            version,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_log(),
-        )
-        .await?;
+        let response = io::delete_io_shift(opd_er_io_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(response))
     } else {

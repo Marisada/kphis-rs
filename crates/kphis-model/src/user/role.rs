@@ -80,8 +80,10 @@ pub struct UserRole {
     pub hosxp_group: Option<String>,
     #[Demo(value = r#"Some(String::from("N"))"#)]
     pub account_disable: Option<String>,
-    #[Demo(value = "true")]
-    pub has_totp: bool,
+    #[Demo(value = "Some(99)")]
+    pub failed: Option<i8>,
+    #[Demo(value = "Some(true)")]
+    pub totp_done: Option<bool>,
 }
 
 /// List of User Roles

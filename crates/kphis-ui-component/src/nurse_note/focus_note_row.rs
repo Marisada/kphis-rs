@@ -18,24 +18,12 @@ use kphis_util::{
 
 use crate::gadget::image::ImageCpn;
 
-pub fn render(
-    i: usize,
-    note_tuple: Rc<(VisitTypeId, Rc<FocusNote>)>,
-    parent_focus_note: Option<Mutable<Option<Rc<FocusNote>>>>,
-    focus_list: MutableVec<Rc<FocusList>>,
-    can_edit: bool,
-    app: Rc<App>,
-) -> Dom {
+pub fn render(i: usize, note_tuple: Rc<(VisitTypeId, Rc<FocusNote>)>, parent_focus_note: Option<Mutable<Option<Rc<FocusNote>>>>, focus_list: MutableVec<Rc<FocusList>>, can_edit: bool, app: Rc<App>) -> Dom {
     let is_ipd = note_tuple.0.is_ipd();
     let note = note_tuple.1.clone();
 
     let type_color = match (app.app_asset.lock_ref().as_ref(), &note.fcnote_patient_type) {
-        (Some(asset), Some(note_pt_type)) => asset
-            .fcnote_patient_type_select_options
-            .iter()
-            .find(|op| op.key.as_str() == note_pt_type)
-            .map(|op| op.color.clone())
-            .unwrap_or_default(),
+        (Some(asset), Some(note_pt_type)) => asset.fcnote_patient_type_select_options.iter().find(|op| op.key.as_str() == note_pt_type).map(|op| op.color.clone()).unwrap_or_default(),
         _ => String::new(),
     };
 

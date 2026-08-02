@@ -70,11 +70,7 @@ pub async fn post_ipd_ward_passcode(ctx: RequestState, Json(payload): Json<Passc
         PasscodeGenRequestMode::Remove => {
             let response = passcode::delete_ward_passcode(&payload.ward, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
-            Ok(Json(if response > 0 {
-                PasscodeGenResponse::new(Some(String::from("Removed")))
-            } else {
-                PasscodeGenResponse::new(None)
-            }))
+            Ok(Json(if response > 0 { PasscodeGenResponse::new(Some(String::from("Removed"))) } else { PasscodeGenResponse::new(None) }))
         }
     }
 }

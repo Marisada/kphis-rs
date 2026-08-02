@@ -49,18 +49,7 @@ impl BrokerClient {
             .client
             .request(
                 Method::GET,
-                &[
-                    &config.pacs_host,
-                    "/thumbnail?file_path=",
-                    file_path,
-                    "&study_uid=",
-                    study_uid,
-                    "&series_uid=",
-                    series_uid,
-                    "&object_uid=",
-                    object_uid,
-                ]
-                .concat(),
+                &[&config.pacs_host, "/thumbnail?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
             )
             .header(header::CONTENT_TYPE, "image/jpeg")
             .send()
@@ -86,18 +75,7 @@ impl BrokerClient {
             .client
             .request(
                 Method::GET,
-                &[
-                    &config.pacs_host,
-                    "/image?file_path=",
-                    file_path,
-                    "&study_uid=",
-                    study_uid,
-                    "&series_uid=",
-                    series_uid,
-                    "&object_uid=",
-                    object_uid,
-                ]
-                .concat(),
+                &[&config.pacs_host, "/image?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
             )
             .header(header::CONTENT_TYPE, "image/jpeg")
             .send()

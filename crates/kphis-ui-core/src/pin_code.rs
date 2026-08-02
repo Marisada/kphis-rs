@@ -65,9 +65,7 @@ impl PinCode {
     }
 
     fn set_parent(&self) {
-        if let (Some(num_1), Some(num_2), Some(num_3), Some(num_4), Some(num_5), Some(num_6)) =
-            (self.num_1.get(), self.num_2.get(), self.num_3.get(), self.num_4.get(), self.num_5.get(), self.num_6.get())
-        {
+        if let (Some(num_1), Some(num_2), Some(num_3), Some(num_4), Some(num_5), Some(num_6)) = (self.num_1.get(), self.num_2.get(), self.num_3.get(), self.num_4.get(), self.num_5.get(), self.num_6.get()) {
             let result = [num_1.to_string(), num_2.to_string(), num_3.to_string(), num_4.to_string(), num_5.to_string(), num_6.to_string()].concat();
             let is_neq = self.parent_input.lock_ref().as_str() != result.as_str();
             if is_neq {

@@ -281,11 +281,7 @@ fn remove_tag(text: &str) -> String {
 fn split_start_with_icd9cm_dot(line: &str) -> (Option<String>, String) {
     let split = line.split(' ').collect::<Vec<&str>>();
     if split.len() > 1 {
-        if is_icd9_with_dot(split[0]) {
-            (Some(split[0].to_owned()), split[1..].join(" "))
-        } else {
-            (None, line.to_owned())
-        }
+        if is_icd9_with_dot(split[0]) { (Some(split[0].to_owned()), split[1..].join(" ")) } else { (None, line.to_owned()) }
     } else {
         (None, line.to_owned())
     }

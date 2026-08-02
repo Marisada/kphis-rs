@@ -57,15 +57,7 @@ pub async fn get_lab_head(Query(params): Query<LabHeadParams>, ctx: RequestState
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = lab::get_lab_head(
-        &params,
-        &ctx.user_state.user.doctorcode,
-        &ctx.user_state.user.groupname,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = lab::get_lab_head(&params, &ctx.user_state.user.doctorcode, &ctx.user_state.user.groupname, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }

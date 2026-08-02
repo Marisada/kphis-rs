@@ -211,14 +211,7 @@ pub async fn insert_progress_note_only(opd_er_order_master_id: u32, only: &Progr
         .map_err(|e| Source::SQLx.to_error(500, e, "Insert ProgressNoteOnly"))
 }
 
-async fn insert_progress_note_item(
-    opd_er_order_master_id: u32,
-    progress_note_id: u32,
-    progress_note_item: &ProgressNoteItemSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+async fn insert_progress_note_item(opd_er_order_master_id: u32, progress_note_id: u32, progress_note_item: &ProgressNoteItemSave, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_progress_note_item_sql = progress_note::insert_progress_note_item(kphis);
     sqlx::query(AssertSqlSafe(insert_progress_note_item_sql))
         .bind(progress_note_id)
@@ -233,13 +226,7 @@ async fn insert_progress_note_item(
         .map_err(|e| Source::SQLx.to_error(500, e, "Insert ProgressNoteItem"))
 }
 
-pub async fn insert_progress_note_items_only(
-    progress_note_id: u32,
-    opd_er_order_master_id: u32,
-    progress_note_items: &[ProgressNoteItemOnly],
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_progress_note_items_only(progress_note_id: u32, opd_er_order_master_id: u32, progress_note_items: &[ProgressNoteItemOnly], pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_progress_note_item_sql = progress_note::insert_progress_note_items_only(progress_note_id, opd_er_order_master_id, progress_note_items, kphis);
     sqlx::query(AssertSqlSafe(insert_progress_note_item_sql))
         .execute(pool)
@@ -253,22 +240,13 @@ async fn update_progress_note_id(opd_er_order_master_id: u32, save: &ProgressNot
     if let Some(past_time) = save.progress_note_for_past_time {
         query = query.bind(past_time);
     }
-    query
-        .bind(user)
-        .bind(save.progress_note_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Update ProgressNoteSave"))
+    query.bind(user).bind(save.progress_note_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Update ProgressNoteSave"))
 }
 
 // opd-er-order-progress-note-delete.php
 pub async fn delete_progress_note(progress_note_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = progress_note::delete_progress_note(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(progress_note_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete ProgressNote"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(progress_note_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete ProgressNote"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete ProgressNote"))
 }

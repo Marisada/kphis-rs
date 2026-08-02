@@ -22,11 +22,7 @@ fn process_dx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, dch_type: &s
     } else if grouper.has_mdc_ax_pdx_or_sdxs("25CX", pdx, sdxs) {
         MdcResult::Dc(String::from("2551"))
     } else if grouper.has_mdc_ax_pdx_or_sdxs("25DX", pdx, sdxs) {
-        if dch_type == "04" {
-            MdcResult::Dc(String::from("2554"))
-        } else {
-            MdcResult::Dc(String::from("2552"))
-        }
+        if dch_type == "04" { MdcResult::Dc(String::from("2554")) } else { MdcResult::Dc(String::from("2552")) }
     } else {
         MdcResult::Dc(String::from("2553"))
     }

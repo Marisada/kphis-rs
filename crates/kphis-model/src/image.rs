@@ -128,9 +128,7 @@ pub fn image_from_raw_image(raw_data: &[u8], file_name: &str) -> Result<DynamicI
         };
     }
 
-    image_reader
-        .decode()
-        .map_err(|e| Source::Image.to_teapot_error(&["Error decode image: ", &e.to_string()].concat(), "Parse Image"))
+    image_reader.decode().map_err(|e| Source::Image.to_teapot_error(&["Error decode image: ", &e.to_string()].concat(), "Parse Image"))
 }
 
 /// return (full, thumbnail) bytes of WebP file<br>

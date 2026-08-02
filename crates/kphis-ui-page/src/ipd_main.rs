@@ -17,8 +17,7 @@ use kphis_model::{
 use kphis_ui_app::App;
 use kphis_ui_component::{
     doctor_in_charge::DoctorInChargeCpn, document::DocumentCpn, emr::EmrCpn, gadget::aside_resizer::AsideResizerCpn, index_plan::IndexPlanCpn, io::IoCpn, ipd_consult::IpdConsultCpn, lab::LabCpn,
-    med_reconcile::med_reconcile_main::MedReconcileCpn, nurse_note::nurse_note_main::NurseNoteCpn, order::OrderCpn, refer_out::ReferOutCpn, show_patient_main::ShowPatientMainCpn,
-    vital_sign::vital_sign_main::VitalSignCpn, xray::XrayCpn,
+    med_reconcile::med_reconcile_main::MedReconcileCpn, nurse_note::nurse_note_main::NurseNoteCpn, order::OrderCpn, refer_out::ReferOutCpn, show_patient_main::ShowPatientMainCpn, vital_sign::vital_sign_main::VitalSignCpn, xray::XrayCpn,
 };
 use kphis_ui_core::{class, doms};
 use kphis_util::util::str_some;
@@ -87,11 +86,7 @@ impl IpdMainPage {
     }
 
     fn hn(&self) -> impl Signal<Item = String> + use<> {
-        self.patient
-            .signal_cloned()
-            .map(|pt| pt.patient.signal_cloned())
-            .flatten()
-            .map(|opt| opt.as_ref().and_then(|pt| pt.hn()).unwrap_or_default())
+        self.patient.signal_cloned().map(|pt| pt.patient.signal_cloned()).flatten().map(|opt| opt.as_ref().and_then(|pt| pt.hn()).unwrap_or_default())
     }
 
     fn load_antibiograms(page: Rc<Self>, app: Rc<App>) {

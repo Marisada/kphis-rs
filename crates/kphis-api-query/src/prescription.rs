@@ -4,10 +4,7 @@ use time::Date;
 
 use kphis_model::{
     fetch::ExecuteResponse,
-    prescription::{
-        DrugInteraction, Lab, Medicine, NextAppointment, PostalPatch, PrescriptionInfo, PrescriptionScreen, PrescriptionScreenParams, PrescriptionScreenPatch, PrescriptionVn, PtNote, TelemedPatch,
-        VisitDate,
-    },
+    prescription::{DrugInteraction, Lab, Medicine, NextAppointment, PostalPatch, PrescriptionInfo, PrescriptionScreen, PrescriptionScreenParams, PrescriptionScreenPatch, PrescriptionVn, PtNote, TelemedPatch, VisitDate},
 };
 use kphis_sql::prescription;
 use kphis_util::{
@@ -325,15 +322,7 @@ pub async fn post_prescription_screen(vn: &str, doctorcode: &str, user: &str, po
     Ok(ExecuteResponse::from_query_result(result, "Insert PrescriptionScreen"))
 }
 
-pub async fn patch_prescription_screen(
-    vn: &str,
-    action: &str,
-    payload: &PrescriptionScreenPatch,
-    doctorcode: &str,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis_extra: &str,
-) -> Result<ExecuteResponse, AppError> {
+pub async fn patch_prescription_screen(vn: &str, action: &str, payload: &PrescriptionScreenPatch, doctorcode: &str, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<ExecuteResponse, AppError> {
     match action {
         "check" => update_check_prescription_screen(vn, doctorcode, user, pool, kphis_extra).await,
         "done" => update_done_prescription_screen(vn, doctorcode, user, pool, kphis_extra).await,

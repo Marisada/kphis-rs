@@ -50,14 +50,7 @@ pub async fn get_opd_er_order_master_list(Query(params): Query<OpdErOrderMasterP
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = order_master::get_order_master_list(
-        &params,
-        &ctx.api_state.app_config.doctor_intern_roles,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = order_master::get_order_master_list(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }
@@ -78,14 +71,7 @@ pub async fn get_opd_er_order_master(Path(opd_er_order_master_id): Path<u32>, ct
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = order_master::get_order_master(
-        opd_er_order_master_id,
-        &ctx.api_state.app_config.doctor_intern_roles,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = order_master::get_order_master(opd_er_order_master_id, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }
@@ -104,14 +90,7 @@ pub async fn post_opd_er_order_master(ctx: RequestState, Json(payload): Json<Opd
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
-    let response = order_master::post_order_master(
-        &payload,
-        &ctx.user_state.user.loginname,
-        &ctx.user_state.user.doctorcode,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = order_master::post_order_master(&payload, &ctx.user_state.user.loginname, &ctx.user_state.user.doctorcode, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }

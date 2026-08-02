@@ -19,11 +19,7 @@ pub(crate) fn process(grouper: &Grouper, input: &GrouperInput) -> MdcResult {
 fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, dch_type: &str, age_y: &u8) -> MdcResult {
     if grouper.is_pdx_pdc(Mdc::M18, "18A", pdx) {
         if *age_y > 14 {
-            if dch_type == "04" {
-                MdcResult::Dc(String::from("1872"))
-            } else {
-                MdcResult::Dc(String::from("1850"))
-            }
+            if dch_type == "04" { MdcResult::Dc(String::from("1872")) } else { MdcResult::Dc(String::from("1850")) }
         } else {
             MdcResult::Dc(String::from("1851"))
         }

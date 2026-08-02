@@ -16,18 +16,7 @@ pub async fn pdf_data(report: &TypstReport, ids: &str, app: &ApiState, user: &Us
             if let Some(custom) = custom_opt {
                 if let (Some(statement), Some(statement_params)) = (&custom.statement, &custom.statement_params) {
                     // has Query
-                    select_raw_query_to_json_string(
-                        statement,
-                        statement_params,
-                        ids,
-                        &app.app_asset_cache,
-                        &app.db_pool,
-                        &app.hosxp(),
-                        &app.kphis(),
-                        &app.kphis_extra(),
-                        &app.kphis_log(),
-                    )
-                    .await?
+                    select_raw_query_to_json_string(statement, statement_params, ids, &app.app_asset_cache, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra(), &app.kphis_log()).await?
                 } else {
                     // without Query, default to system
                     system_pdf_data(system, ids, app, user).await?
@@ -87,18 +76,7 @@ async fn system_pdf_data(system: &SystemReport, id: &str, app: &ApiState, user: 
 async fn custom_pdf_data(custom: &CustomReport, ids: &str, app: &ApiState) -> Result<String, AppError> {
     let result = if let (Some(statement), Some(statement_params)) = (&custom.statement, &custom.statement_params) {
         // has Query
-        select_raw_query_to_json_string(
-            statement,
-            statement_params,
-            ids,
-            &app.app_asset_cache,
-            &app.db_pool,
-            &app.hosxp(),
-            &app.kphis(),
-            &app.kphis_extra(),
-            &app.kphis_log(),
-        )
-        .await?
+        select_raw_query_to_json_string(statement, statement_params, ids, &app.app_asset_cache, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra(), &app.kphis_log()).await?
     } else if let Some(statement_params) = &custom.statement_params {
         // without Query
         params_and_ids_to_json(statement_params, ids)
@@ -279,15 +257,7 @@ async fn ipd_discharge_plan(an: &str, app: &ApiState) -> Result<String, AppError
 async fn ipd_document(an: &str, app: &ApiState) -> Result<String, AppError> {
     let data = if an.len() == app.hosxp_an_len() {
         let patient = kphis_api_query::ipd::show_patient_main::get_show_patient_main(an, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
-        let count = kphis_api_query::ipd::document::get_ipd_document_list(
-            &patient.as_ref().and_then(|pt| pt.vn.clone()).unwrap_or_default(),
-            an,
-            &app.db_pool,
-            &app.hosxp(),
-            &app.kphis(),
-            &app.kphis_extra(),
-        )
-        .await?;
+        let count = kphis_api_query::ipd::document::get_ipd_document_list(&patient.as_ref().and_then(|pt| pt.vn.clone()).unwrap_or_default(), an, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
         serde_json::json!({
             "id": an,
             "patient": patient,
@@ -296,15 +266,7 @@ async fn ipd_document(an: &str, app: &ApiState) -> Result<String, AppError> {
         .to_string()
     } else {
         let patient = kphis_api_query::opd_er::show_patient_main::get_show_patient_main_vn(an, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
-        let count = kphis_api_query::ipd::document::get_ipd_document_list(
-            &patient.as_ref().and_then(|pt| pt.vn.clone()).unwrap_or_default(),
-            an,
-            &app.db_pool,
-            &app.hosxp(),
-            &app.kphis(),
-            &app.kphis_extra(),
-        )
-        .await?;
+        let count = kphis_api_query::ipd::document::get_ipd_document_list(&patient.as_ref().and_then(|pt| pt.vn.clone()).unwrap_or_default(), an, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
         serde_json::json!({
             "id": an,
             "patient": patient,
@@ -322,23 +284,13 @@ async fn ipd_event_log(an: &str, app: &ApiState, user: &UserState) -> Result<Str
         view_by: Some(String::from("doctor")),
         ..Default::default()
     };
-    let order = kphis_api_handler::ipd::order::get_ipd_order_bundle(
-        &order_params,
-        &user.user.doctorcode,
-        &app.app_config.doctor_intern_roles,
-        &app.db_pool,
-        &app.hosxp(),
-        &app.kphis(),
-        &app.kphis_extra(),
-    )
-    .await?;
+    let order = kphis_api_handler::ipd::order::get_ipd_order_bundle(&order_params, &user.user.doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
     let note_params = kphis_model::progress_note::ProgressNoteParams {
         an: str_some(an.to_owned()),
         ..Default::default()
     };
-    let note =
-        kphis_api_handler::ipd::progress_note::get_ipd_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
+    let note = kphis_api_handler::ipd::progress_note::get_ipd_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
     let consults = kphis_api_query::ipd::consult::get_ipd_consult_by_an(an, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
@@ -630,38 +582,19 @@ async fn ipd_order(an: &str, doctorcode: &Option<String>, app: &ApiState) -> Res
         view_by: Some(String::from("doctor")),
         ..Default::default()
     };
-    let oneday = kphis_api_handler::ipd::order::get_ipd_order_bundle(
-        &oneday_params,
-        doctorcode,
-        &app.app_config.doctor_intern_roles,
-        &app.db_pool,
-        &app.hosxp(),
-        &app.kphis(),
-        &app.kphis_extra(),
-    )
-    .await?;
+    let oneday = kphis_api_handler::ipd::order::get_ipd_order_bundle(&oneday_params, doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
     let cont_params = kphis_model::order::OrderParams {
         an: str_some(an.to_owned()),
         order_type: Some(String::from("continuous")),
         view_by: Some(String::from("doctor")),
         ..Default::default()
     };
-    let cont = kphis_api_handler::ipd::order::get_ipd_order_bundle(
-        &cont_params,
-        doctorcode,
-        &app.app_config.doctor_intern_roles,
-        &app.db_pool,
-        &app.hosxp(),
-        &app.kphis(),
-        &app.kphis_extra(),
-    )
-    .await?;
+    let cont = kphis_api_handler::ipd::order::get_ipd_order_bundle(&cont_params, doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
     let note_params = kphis_model::progress_note::ProgressNoteParams {
         an: str_some(an.to_owned()),
         ..Default::default()
     };
-    let note =
-        kphis_api_handler::ipd::progress_note::get_ipd_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
+    let note = kphis_api_handler::ipd::progress_note::get_ipd_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
     let doctor = kphis_api_query::ipd::doctor_in_charge::get_doctor_in_charge(an, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
 
     let data = if an.len() == app.hosxp_an_len() {
@@ -958,24 +891,13 @@ async fn opd_er_event_log(vn: &str, app: &ApiState, user: &UserState) -> Result<
             view_by: Some(String::from("doctor")),
             ..Default::default()
         };
-        let order = kphis_api_handler::opd_er::order::get_opd_er_order_bundle(
-            &order_params,
-            &user.user.doctorcode,
-            &app.app_config.doctor_intern_roles,
-            &app.db_pool,
-            &app.hosxp(),
-            &app.kphis(),
-            &app.kphis_extra(),
-        )
-        .await?;
+        let order = kphis_api_handler::opd_er::order::get_opd_er_order_bundle(&order_params, &user.user.doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
         let note_params = kphis_model::progress_note::ProgressNoteParams {
             opd_er_order_master_id,
             ..Default::default()
         };
-        let note =
-            kphis_api_handler::opd_er::progress_note::get_opd_er_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
-                .await?;
+        let note = kphis_api_handler::opd_er::progress_note::get_opd_er_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
         let vs_params = kphis_model::vital_sign::VitalSignParams {
             opd_er_order_master_id: Some(id),
@@ -1192,39 +1114,19 @@ async fn opd_er_order(vn: &str, doctorcode: &Option<String>, app: &ApiState) -> 
             view_by: Some(String::from("doctor")),
             ..Default::default()
         };
-        let oneday = kphis_api_handler::opd_er::order::get_opd_er_order_bundle(
-            &oneday_params,
-            doctorcode,
-            &app.app_config.doctor_intern_roles,
-            &app.db_pool,
-            &app.hosxp(),
-            &app.kphis(),
-            &app.kphis_extra(),
-        )
-        .await?;
+        let oneday = kphis_api_handler::opd_er::order::get_opd_er_order_bundle(&oneday_params, doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
         let cont_params = kphis_model::order::OrderParams {
             opd_er_order_master_id: zero_none(opd_er_order_master_id),
             order_type: Some(String::from("continuous")),
             view_by: Some(String::from("doctor")),
             ..Default::default()
         };
-        let cont = kphis_api_handler::opd_er::order::get_opd_er_order_bundle(
-            &cont_params,
-            doctorcode,
-            &app.app_config.doctor_intern_roles,
-            &app.db_pool,
-            &app.hosxp(),
-            &app.kphis(),
-            &app.kphis_extra(),
-        )
-        .await?;
+        let cont = kphis_api_handler::opd_er::order::get_opd_er_order_bundle(&cont_params, doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
         let note_params = kphis_model::progress_note::ProgressNoteParams {
             opd_er_order_master_id: zero_none(opd_er_order_master_id),
             ..Default::default()
         };
-        let note =
-            kphis_api_handler::opd_er::progress_note::get_opd_er_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
-                .await?;
+        let note = kphis_api_handler::opd_er::progress_note::get_opd_er_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
         serde_json::json!({
             "id": vn,

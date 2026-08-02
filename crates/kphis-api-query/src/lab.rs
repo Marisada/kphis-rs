@@ -94,28 +94,11 @@ pub async fn get_lab_item(params: &LabItemParams, doctorcode: &Option<String>, g
     select_lab_items(None, None, true, params, doctorcode, groupname, pool, hosxp).await
 }
 
-pub async fn get_lab_item_group(
-    lab_order_number: i32,
-    only_group: bool,
-    doctorcode: &Option<String>,
-    groupname: &Option<String>,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-) -> Result<Vec<LabItemsGroup>, AppError> {
+pub async fn get_lab_item_group(lab_order_number: i32, only_group: bool, doctorcode: &Option<String>, groupname: &Option<String>, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<LabItemsGroup>, AppError> {
     let mut group_result = select_lab_detail_group(lab_order_number, pool, hosxp).await?;
     if !only_group && !group_result.is_empty() {
         for group in group_result.iter_mut() {
-            let items_result = select_lab_items(
-                Some(lab_order_number),
-                Some(group.lab_items_group),
-                false,
-                &LabItemParams::default(),
-                doctorcode,
-                groupname,
-                pool,
-                hosxp,
-            )
-            .await?;
+            let items_result = select_lab_items(Some(lab_order_number), Some(group.lab_items_group), false, &LabItemParams::default(), doctorcode, groupname, pool, hosxp).await?;
             group.lab_items = items_result;
         }
     }
@@ -200,11 +183,7 @@ pub async fn post_lab_read(lab_order_number: i32, loginname: &str, pool: &Pool<M
 // DELETE /lab/read-id/{lab_order_number}
 pub async fn delete_lab_read(lab_order_number: i32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = lab::delete_lab_read(kphis);
-    let result = sqlx::query(AssertSqlSafe(sql))
-        .bind(lab_order_number)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete LabRead"))?;
+    let result = sqlx::query(AssertSqlSafe(sql)).bind(lab_order_number).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete LabRead"))?;
 
     Ok(ExecuteResponse::from_query_result(result, "Delete LabRead"))
 }

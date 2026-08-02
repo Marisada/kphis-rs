@@ -4,9 +4,7 @@ use utoipa::{
 };
 
 use kphis_api_core::open_api::Binary;
-use kphis_api_handler::{
-    app, avatar, drug_use_duration, emr, image, ipd, lab, med_reconciliation, opd_er, post_admit, pre_admit, pre_order, prescription, refer_note, refer_out, report, search, sse, user, xray,
-};
+use kphis_api_handler::{app, avatar, drug_use_duration, emr, image, ipd, lab, med_reconciliation, opd_er, post_admit, pre_admit, pre_order, prescription, refer_note, refer_out, report, search, sse, user, xray};
 use kphis_api_pdf::handler as pdf;
 use kphis_util::error;
 

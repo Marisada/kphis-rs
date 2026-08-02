@@ -129,10 +129,7 @@ pub struct IpdSummaryAuditPage {
 
 impl IpdSummaryAuditPage {
     pub fn new(an: String) -> Rc<Self> {
-        Rc::new(Self {
-            an: Mutable::new(an),
-            ..Default::default()
-        })
+        Rc::new(Self { an: Mutable::new(an), ..Default::default() })
     }
 
     fn load_list(page: Rc<Self>, app: Rc<App>) {
@@ -441,13 +438,7 @@ impl IpdSummaryAuditPage {
             // Add SDx
             for i in 0..sdxs_max_len {
                 let dx = coder_sdxs.get(i).cloned();
-                let matched_his = dx.as_ref().and_then(|c| {
-                    if let Some(pos) = his_sdxs.iter().position(|i| i == c) {
-                        Some(his_sdxs.swap_remove(pos))
-                    } else {
-                        None
-                    }
-                });
+                let matched_his = dx.as_ref().and_then(|c| if let Some(pos) = his_sdxs.iter().position(|i| i == c) { Some(his_sdxs.swap_remove(pos)) } else { None });
                 results.push(SummaryAuditItem::new("SDx", summary_id, &doctor_sdxs.get(i).cloned(), &dx, &matched_his));
             }
             for dx in his_sdxs {
@@ -457,13 +448,7 @@ impl IpdSummaryAuditPage {
             // Add ODx
             for i in 0..odxs_max_len {
                 let dx = coder_odxs.get(i).cloned();
-                let matched_his = dx.as_ref().and_then(|c| {
-                    if let Some(pos) = his_odxs.iter().position(|i| i == c) {
-                        Some(his_odxs.swap_remove(pos))
-                    } else {
-                        None
-                    }
-                });
+                let matched_his = dx.as_ref().and_then(|c| if let Some(pos) = his_odxs.iter().position(|i| i == c) { Some(his_odxs.swap_remove(pos)) } else { None });
                 results.push(SummaryAuditItem::new("ODx", summary_id, &doctor_odxs.get(i).cloned(), &dx, &matched_his));
             }
             for dx in his_odxs {
@@ -477,18 +462,8 @@ impl IpdSummaryAuditPage {
                 } else {
                     None
                 };
-                let matched_his = if let Some(pos) = his_ops.iter().position(|s| *s == sum_proc) {
-                    Some(his_ops.swap_remove(pos))
-                } else {
-                    None
-                };
-                results.push(SummaryAuditItem::new(
-                    "Op",
-                    summary_id,
-                    &matched_or_data.and_then(|tuple| tuple.detail.clone()),
-                    &Some(sum_proc),
-                    &matched_his,
-                ));
+                let matched_his = if let Some(pos) = his_ops.iter().position(|s| *s == sum_proc) { Some(his_ops.swap_remove(pos)) } else { None };
+                results.push(SummaryAuditItem::new("Op", summary_id, &matched_or_data.and_then(|tuple| tuple.detail.clone()), &Some(sum_proc), &matched_his));
             }
             for op_data in doctor_ops {
                 let matched_his = if let Some(pos) = his_ops.iter().position(|s| op_data.icd.as_ref().map(|op| op == s).unwrap_or_default()) {
@@ -2520,11 +2495,7 @@ fn select_sa(ty: &str, mutable: Mutable<String>, changed: Mutable<bool>) -> Dom 
             ("3c", "SA3c : สรุป Op ไม่เฉพาะเจาะจง"),
             ("3d", "SA3d : สรุป Op โดยไม่มีหลักฐานในเวชระเบียน"),
         ],
-        _ => vec![
-            ("0", "SA0 : ความเห็นเกี่ยวกับการสรุป สอดคล้องกัน"),
-            ("5", "SA5 : ไม่มีการสรุปเวชระเบียน"),
-            ("6", "SA6 : ปัญหาอื่น ใช้คำย่อ คำกำกวม อ่านไม่ออก"),
-        ],
+        _ => vec![("0", "SA0 : ความเห็นเกี่ยวกับการสรุป สอดคล้องกัน"), ("5", "SA5 : ไม่มีการสรุปเวชระเบียน"), ("6", "SA6 : ปัญหาอื่น ใช้คำย่อ คำกำกวม อ่านไม่ออก")],
     };
     html!("select" => HtmlSelectElement, {
         .class(class::FORM_SELECT_SM)
@@ -2561,10 +2532,7 @@ fn select_ca(ty: &str, mutable: Mutable<String>, changed: Mutable<bool>) -> Dom 
             ("3c", "CA3c : ให้รหัส Op ไม่เฉพาะเจาะจงตามมาตรฐานการให้รหัส"),
             ("3d", "CA3d : เพิ่มรหัส Op ไม่ตรงตามมาตรฐานการให้รหัส"),
         ],
-        _ => vec![
-            ("0", "CA0 : ความเห็นเกี่ยวกับการให้รหัส สอดคล้องกัน"),
-            ("6", "CA6 : ปัญหาอื่น ซึ่งอาจทำให้การวินิจฉัยหรือหัตถการของ Doctor และ Coder ต่างกัน"),
-        ],
+        _ => vec![("0", "CA0 : ความเห็นเกี่ยวกับการให้รหัส สอดคล้องกัน"), ("6", "CA6 : ปัญหาอื่น ซึ่งอาจทำให้การวินิจฉัยหรือหัตถการของ Doctor และ Coder ต่างกัน")],
     };
     html!("select" => HtmlSelectElement, {
         .class(class::FORM_SELECT_SM)
@@ -2625,13 +2593,7 @@ fn dagger_aster_badges(opt: Option<Arc<I10vx>>, aster: Arc<I10vx>) -> Dom {
 
 /// - source and this has the same `ty`, it will `swap` the value between source `mutable` with this `mutable` (if source is NOT a INPUT element, it will `copy` textContent to this `mutable`)
 /// - source and this has different `ty`, source value/textContent will `copy` to this mutable
-fn drag_and_drop(
-    ty: &'static str,
-    mutable: Mutable<String>,
-    find_dx_op_mutable: Option<(bool, Mutable<Option<bool>>)>,
-    changed: Mutable<bool>,
-    app: Rc<App>,
-) -> impl FnOnce(DomBuilder<HtmlInputElement>) -> DomBuilder<HtmlInputElement> {
+fn drag_and_drop(ty: &'static str, mutable: Mutable<String>, find_dx_op_mutable: Option<(bool, Mutable<Option<bool>>)>, changed: Mutable<bool>, app: Rc<App>) -> impl FnOnce(DomBuilder<HtmlInputElement>) -> DomBuilder<HtmlInputElement> {
     #[inline]
     move |dom| {
         with_node!(dom, element => {

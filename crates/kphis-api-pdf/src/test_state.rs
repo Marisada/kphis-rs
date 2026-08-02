@@ -7,10 +7,7 @@ use crate::actor;
 
 pub async fn new_test_state(db_pool: Pool<MySql>, shutdown_sender: broadcast::Sender<()>) -> ApiState {
     // load config
-    let config = config::Config::builder()
-        .add_source(config::File::with_name("../../volume/config/test.toml"))
-        .build()
-        .expect("Error create config from file");
+    let config = config::Config::builder().add_source(config::File::with_name("../../volume/config/test.toml")).build().expect("Error create config from file");
     // spawn JsonActorHandle
     let json_handle = Arc::new(RwLock::new(JsonActorHandle::new(actor::run_api_actor)));
     // create ApiState

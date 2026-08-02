@@ -151,11 +151,7 @@ pub async fn insert_index_plan_only(order_item_id: u32, an: &str, only: &mut Ind
 /// delete plan and action
 pub async fn delete_index_plan(plan_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = index_plan::delete_index_plan(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(plan_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexPlan"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(plan_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexPlan"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete IndexPlan"))
 }

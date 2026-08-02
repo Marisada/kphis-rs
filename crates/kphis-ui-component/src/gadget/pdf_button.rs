@@ -39,13 +39,7 @@ where
 {
     /// enable when `checker` is true and `changed` is false
     pub fn new(report: TypstReport, id: Mutable<T>, checker: Mutable<C>, changed: Mutable<bool>, json_fn: F) -> Rc<Self> {
-        Rc::new(Self {
-            report,
-            id,
-            checker,
-            changed,
-            json_fn,
-        })
+        Rc::new(Self { report, id, checker, changed, json_fn })
     }
 
     pub fn buttons(handle: Rc<Self>, label: &str, label_all: Option<&str>, app: Rc<App>) -> Vec<Dom> {

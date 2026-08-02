@@ -55,14 +55,7 @@ pub async fn get_opd_er_trauma_history(Query(params): Query<OpdErMedicalHistoryP
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
     if let Some(opd_er_order_master_id) = params.opd_er_order_master_id {
-        let response = medical_history::get_trauma_history(
-            opd_er_order_master_id,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.hosxp(),
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_extra(),
-        )
-        .await?;
+        let response = medical_history::get_trauma_history(opd_er_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
         Ok(Json(response))
     } else {
@@ -205,11 +198,7 @@ pub async fn get_opd_er_screen_history(Query(params): Query<OpdErMedicalHistoryP
     responses(DocVecU32<ExecuteResponse>),
     params(OpdErMedicalHistoryParams),
 )]
-pub async fn post_opd_er_screen_history(
-    Query(params): Query<OpdErMedicalHistoryParams>,
-    ctx: RequestState,
-    Json(payload): Json<NurseScreeningHistory>,
-) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
+pub async fn post_opd_er_screen_history(Query(params): Query<OpdErMedicalHistoryParams>, ctx: RequestState, Json(payload): Json<NurseScreeningHistory>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 

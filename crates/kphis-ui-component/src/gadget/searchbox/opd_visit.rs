@@ -80,8 +80,7 @@ impl OpdVisitSearchboxCpn {
 
     pub fn render(page: Rc<Self>, display_mutable: Mutable<bool>, new_vn: Mutable<String>, new_opd_visit_detail: Mutable<String>, anchor_rect: DomRect, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         doms::under_box(anchor_rect, 900.0, super::BOX_HEIGHT, app.window_scroll_y(), move |bx| {
-            bx
-            .child(html!("div", {
+            bx.child(html!("div", {
                 .future(map_ref!{
                     let busy = app.loader_is_loading(),
                     let load = page.load_mut.signal() =>

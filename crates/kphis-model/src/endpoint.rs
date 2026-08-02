@@ -535,12 +535,7 @@ impl EndPoint {
             Self::HisReferOutVnan => match *method {
                 Method::GET => permissions.contains(&Permission::IpdOrderView) || permissions.contains(&Permission::OpdErOrderView),
                 // TODO PUT
-                Method::POST => {
-                    permissions.contains(&Permission::IpdOrderAdd)
-                        || permissions.contains(&Permission::IpdOrderEdit)
-                        || permissions.contains(&Permission::OpdErOrderAdd)
-                        || permissions.contains(&Permission::OpdErOrderEdit)
-                }
+                Method::POST => permissions.contains(&Permission::IpdOrderAdd) || permissions.contains(&Permission::IpdOrderEdit) || permissions.contains(&Permission::OpdErOrderAdd) || permissions.contains(&Permission::OpdErOrderEdit),
                 _ => false,
             },
             Self::Image => matches!(method, &Method::POST | &Method::PUT | &Method::DELETE),
@@ -694,11 +689,7 @@ impl EndPoint {
                 // EmrView for TPR report
                 Method::GET => permissions.contains(&Permission::EmrView) || permissions.contains(&Permission::IoView) || (is_pre_admit && permissions.contains(&Permission::OpdErIoView)),
                 // TODO PUT
-                Method::POST => {
-                    permissions.contains(&Permission::IoAdd)
-                        || permissions.contains(&Permission::IoEdit)
-                        || (is_pre_admit && (permissions.contains(&Permission::OpdErIoAdd) || permissions.contains(&Permission::OpdErIoEdit)))
-                }
+                Method::POST => permissions.contains(&Permission::IoAdd) || permissions.contains(&Permission::IoEdit) || (is_pre_admit && (permissions.contains(&Permission::OpdErIoAdd) || permissions.contains(&Permission::OpdErIoEdit))),
                 Method::DELETE => permissions.contains(&Permission::IoRemove) || (is_pre_admit && permissions.contains(&Permission::OpdErIoRemove)),
                 _ => false,
             },
@@ -793,12 +784,7 @@ impl EndPoint {
             Self::IpdPreAdmit => match *method {
                 Method::GET => permissions.contains(&Permission::OpdErOrderView) || permissions.contains(&Permission::IpdOrderView),
                 // TODO PUT
-                Method::POST => {
-                    permissions.contains(&Permission::OpdErOrderAdd)
-                        || permissions.contains(&Permission::OpdErOrderEdit)
-                        || permissions.contains(&Permission::IpdOrderAdd)
-                        || permissions.contains(&Permission::IpdOrderEdit)
-                }
+                Method::POST => permissions.contains(&Permission::OpdErOrderAdd) || permissions.contains(&Permission::OpdErOrderEdit) || permissions.contains(&Permission::IpdOrderAdd) || permissions.contains(&Permission::IpdOrderEdit),
                 Method::PATCH => permissions.contains(&Permission::OpdErOrderEdit) || permissions.contains(&Permission::IpdOrderEdit),
                 // Method::DELETE => permissions.contains(&Permission::OpdErOrderRemove) || permissions.contains(&Permission::IpdOrderRemove),
                 _ => false,
@@ -810,22 +796,12 @@ impl EndPoint {
             Self::IpdPreOrderMaster => match *method {
                 Method::GET => permissions.contains(&Permission::OpdErOrderView) || permissions.contains(&Permission::IpdOrderView),
                 // TODO PUT
-                Method::POST => {
-                    permissions.contains(&Permission::OpdErOrderAdd)
-                        || permissions.contains(&Permission::OpdErOrderEdit)
-                        || permissions.contains(&Permission::IpdOrderAdd)
-                        || permissions.contains(&Permission::IpdOrderEdit)
-                }
+                Method::POST => permissions.contains(&Permission::OpdErOrderAdd) || permissions.contains(&Permission::OpdErOrderEdit) || permissions.contains(&Permission::IpdOrderAdd) || permissions.contains(&Permission::IpdOrderEdit),
                 _ => false,
             },
             Self::IpdPreOrderInto => match *method {
                 // TODO PUT
-                Method::POST => {
-                    permissions.contains(&Permission::OpdErOrderAdd)
-                        || permissions.contains(&Permission::OpdErOrderEdit)
-                        || permissions.contains(&Permission::IpdOrderAdd)
-                        || permissions.contains(&Permission::IpdOrderEdit)
-                }
+                Method::POST => permissions.contains(&Permission::OpdErOrderAdd) || permissions.contains(&Permission::OpdErOrderEdit) || permissions.contains(&Permission::IpdOrderAdd) || permissions.contains(&Permission::IpdOrderEdit),
                 _ => false,
             },
             Self::IpdPreOrderOrderId => match *method {
@@ -835,12 +811,7 @@ impl EndPoint {
             Self::IpdPreOrderOrder => match *method {
                 Method::GET => permissions.contains(&Permission::OpdErOrderView) || permissions.contains(&Permission::IpdOrderView),
                 // TODO PUT
-                Method::POST => {
-                    permissions.contains(&Permission::OpdErOrderAdd)
-                        || permissions.contains(&Permission::OpdErOrderEdit)
-                        || permissions.contains(&Permission::IpdOrderAdd)
-                        || permissions.contains(&Permission::IpdOrderEdit)
-                }
+                Method::POST => permissions.contains(&Permission::OpdErOrderAdd) || permissions.contains(&Permission::OpdErOrderEdit) || permissions.contains(&Permission::IpdOrderAdd) || permissions.contains(&Permission::IpdOrderEdit),
                 _ => false,
             },
             Self::IpdPreOrderProgressNoteId => match *method {
@@ -876,9 +847,7 @@ impl EndPoint {
                 match *method {
                     Method::GET => permissions.contains(&Permission::IpdDischargeSummaryView) || permissions.contains(&Permission::DataTypeAuditorUse),
                     // TODO PUT
-                    Method::POST | Method::PATCH => {
-                        permissions.contains(&Permission::IpdDischargeSummaryAdd) || permissions.contains(&Permission::IpdDischargeSummaryEdit) || permissions.contains(&Permission::DataTypeAuditorUse)
-                    }
+                    Method::POST | Method::PATCH => permissions.contains(&Permission::IpdDischargeSummaryAdd) || permissions.contains(&Permission::IpdDischargeSummaryEdit) || permissions.contains(&Permission::DataTypeAuditorUse),
                     Method::DELETE => permissions.contains(&Permission::IpdDischargeSummaryRemove) || permissions.contains(&Permission::DataTypeAuditorUse),
                     _ => false,
                 }
@@ -1011,10 +980,7 @@ impl EndPoint {
                 // TODO PUT
                 Method::POST => permissions.contains(&Permission::OpdErOrderAdd) || permissions.contains(&Permission::OpdErOrderEdit),
                 Method::PATCH => {
-                    permissions.contains(&Permission::OpdErOrderConfirm)
-                        || permissions.contains(&Permission::OpdErOrderCheck)
-                        || permissions.contains(&Permission::OpdErOrderAccept)
-                        || permissions.contains(&Permission::OpdErOrderDone)
+                    permissions.contains(&Permission::OpdErOrderConfirm) || permissions.contains(&Permission::OpdErOrderCheck) || permissions.contains(&Permission::OpdErOrderAccept) || permissions.contains(&Permission::OpdErOrderDone)
                 }
                 _ => false,
             },
@@ -1053,12 +1019,7 @@ impl EndPoint {
             Self::ReferNoteVnan => match *method {
                 Method::GET => permissions.contains(&Permission::IpdOrderView) || permissions.contains(&Permission::OpdErOrderView),
                 // TODO PUT
-                Method::POST => {
-                    permissions.contains(&Permission::IpdOrderAdd)
-                        || permissions.contains(&Permission::IpdOrderEdit)
-                        || permissions.contains(&Permission::OpdErOrderAdd)
-                        || permissions.contains(&Permission::OpdErOrderEdit)
-                }
+                Method::POST => permissions.contains(&Permission::IpdOrderAdd) || permissions.contains(&Permission::IpdOrderEdit) || permissions.contains(&Permission::OpdErOrderAdd) || permissions.contains(&Permission::OpdErOrderEdit),
                 _ => false,
             },
             Self::ReportCustom => match *method {

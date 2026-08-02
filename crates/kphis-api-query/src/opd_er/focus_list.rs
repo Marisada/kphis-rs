@@ -74,15 +74,7 @@ async fn get_focus_list_goal_item_only(fclist_id: u32, pool: &Pool<MySql>, kphis
 }
 
 // opd-er-nurse-focus-list-save.php OR opd-er-nurse-focus-list-update.php
-pub async fn post_focus_list(
-    opd_er_order_master_id: u32,
-    save: &FocusListSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
+pub async fn post_focus_list(opd_er_order_master_id: u32, save: &FocusListSave, user: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_log: &str) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
     if let Some(fclist_id) = save.fclist_id {
         let results = update_focus_list_bundle(fclist_id, opd_er_order_master_id, save, user, pool, hosxp, kphis, kphis_log).await?;
 
@@ -92,16 +84,7 @@ pub async fn post_focus_list(
     }
 }
 
-async fn update_focus_list_bundle(
-    fclist_id: u32,
-    opd_er_order_master_id: u32,
-    save: &FocusListSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+async fn update_focus_list_bundle(fclist_id: u32, opd_er_order_master_id: u32, save: &FocusListSave, user: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_log: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::with_capacity(5);
     // 0. Check fclist_id is used in focus_note
     let used = get_exists("opd-er-focus-list-used", &fclist_id.to_string(), pool, hosxp, kphis).await?;
@@ -143,14 +126,7 @@ async fn update_focus_list_bundle(
     Ok(results)
 }
 
-pub async fn insert_focus_list_bundle(
-    opd_er_order_master_id: u32,
-    save: &FocusListSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
+pub async fn insert_focus_list_bundle(opd_er_order_master_id: u32, save: &FocusListSave, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
     let mut results = Vec::with_capacity(4);
     // 1. Insert focus_list
     let insert_focus_list_result = insert_focus_list(opd_er_order_master_id, save, user, pool, kphis).await?;
@@ -185,16 +161,7 @@ pub async fn insert_focus_list_only_bundle(opd_er_order_master_id: u32, only: &F
         let insert_goal_item_result = insert_goal_items_only(fclist_id, &only.focus_list_goal_items, pool, kphis).await?;
         results.push(ExecuteResponse::from_query_result(insert_goal_item_result, "Insert GoalItemOnly"));
         // 4. Insert history goal_item
-        let insert_history_goal_result = insert_history_log(
-            SourceTable::OpdErFocusListGoalItem,
-            "I",
-            "system",
-            &[KeyValue("fclist_id", fclist_id.to_string())],
-            kphis,
-            kphis_log,
-            pool,
-        )
-        .await?;
+        let insert_history_goal_result = insert_history_log(SourceTable::OpdErFocusListGoalItem, "I", "system", &[KeyValue("fclist_id", fclist_id.to_string())], kphis, kphis_log, pool).await?;
         results.push(ExecuteResponse::from_query_result(insert_history_goal_result, "Insert GoalItemOnly History"));
     }
 

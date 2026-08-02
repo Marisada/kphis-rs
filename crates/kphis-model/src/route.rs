@@ -144,12 +144,7 @@ impl Route {
             Self::IpdPreOrderList { view_by } => ["#/ipd-pre-order-list/", view_by].concat(),
             Self::IpdSummaryAudit { an } => ["#/ipd-summary-audit/", an].concat(),
 
-            Self::OpdErMain {
-                view_by,
-                opd_er_order_master_id,
-                tab,
-                id,
-            } => ["#/opd-er-main", view_by, &opd_er_order_master_id.to_string(), tab, &id.to_string()].join("/"),
+            Self::OpdErMain { view_by, opd_er_order_master_id, tab, id } => ["#/opd-er-main", view_by, &opd_er_order_master_id.to_string(), tab, &id.to_string()].join("/"),
             Self::OpdErOrderList { view_by } => ["#/opd-er-order-list/", view_by].concat(),
 
             Self::PrescriptionScreen { hn } => ["#/prescription-screen/", hn].concat(),
@@ -351,20 +346,14 @@ impl Route {
             Self::IpdPostAdmitList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPostAdmitList, false) && check_permission_view_by(&view_by, app.clone()),
             Self::IpdPreAdmitList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreAdmit, false) && check_permission_view_by(&view_by, app.clone()),
             Self::IpdPreOrder { view_by, .. } => {
-                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderMaster, false)
-                    && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxPatientText, false)
-                    && check_permission_view_by(&view_by, app.clone())
+                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderMaster, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxPatientText, false) && check_permission_view_by(&view_by, app.clone())
             }
             Self::IpdPreOrderList { view_by } => app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderMaster, false) && check_permission_view_by(&view_by, app.clone()),
             Self::IpdSearchPatientDr => {
-                app.endpoint_is_allow(&Method::GET, &EndPoint::SearchDr, false)
-                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false)
-                    && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
+                app.endpoint_is_allow(&Method::GET, &EndPoint::SearchDr, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
             }
             Self::IpdSearchPatientNurse => {
-                app.endpoint_is_allow(&Method::GET, &EndPoint::SearchNurse, false)
-                    && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false)
-                    && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
+                app.endpoint_is_allow(&Method::GET, &EndPoint::SearchNurse, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false)
             }
             Self::IpdSearchPatientOther => app.endpoint_is_allow(&Method::GET, &EndPoint::SearchOther, false),
             Self::IpdSearchPatientPharmacist => app.endpoint_is_allow(&Method::GET, &EndPoint::SearchPharmacist, false),
@@ -405,8 +394,7 @@ impl Route {
             }
             Self::PermissionList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleRole, false),
             Self::PrescriptionScreen { .. } => {
-                (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess))
-                    && app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
+                (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess)) && app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
             }
             Self::DrugUseDuration => app.endpoint_is_allow(&Method::POST, &EndPoint::DrugUseDuration, false),
             Self::ReportViewer => {

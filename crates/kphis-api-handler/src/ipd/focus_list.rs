@@ -53,12 +53,7 @@ pub async fn get_ipd_focus_list(Path(an): Path<String>, Query(params): Query<Foc
         FocusListSaveParams,
     ),
 )]
-pub async fn post_ipd_focus_list(
-    Path(an): Path<String>,
-    Query(params): Query<FocusListSaveParams>,
-    ctx: RequestState,
-    Json(payload): Json<FocusListSave>,
-) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
+pub async fn post_ipd_focus_list(Path(an): Path<String>, Query(params): Query<FocusListSaveParams>, ctx: RequestState, Json(payload): Json<FocusListSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
     ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
     ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;

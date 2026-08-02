@@ -132,14 +132,7 @@ async fn insert_pre_order_progress_note(pre_order_master_id: u32, save: &PreProg
         .map_err(|e| Source::SQLx.to_error(500, e, "Insert ProgressNote"))
 }
 
-pub async fn insert_many_pre_order_progress_notes(
-    notes: &[PreProgressNoteSave],
-    pre_order_master_id: u32,
-    loginname: &str,
-    doctorcode: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<u64>, AppError> {
+pub async fn insert_many_pre_order_progress_notes(notes: &[PreProgressNoteSave], pre_order_master_id: u32, loginname: &str, doctorcode: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<u64>, AppError> {
     let insert_note_sql = pre_order::progress_note::insert_many_progress_notes(notes, pre_order_master_id, loginname, doctorcode, kphis);
     let res = pool
         .execute_many(AssertSqlSafe(insert_note_sql))
@@ -154,14 +147,7 @@ pub async fn insert_many_pre_order_progress_notes(
     Ok(res)
 }
 
-async fn insert_pre_order_progress_note_item(
-    progress_note_id: u32,
-    pre_order_master_id: u32,
-    progress_note_item: &ProgressNoteItemSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+async fn insert_pre_order_progress_note_item(progress_note_id: u32, pre_order_master_id: u32, progress_note_item: &ProgressNoteItemSave, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_progress_note_item_sql = pre_order::progress_note::insert_progress_note_item(kphis);
     sqlx::query(AssertSqlSafe(insert_progress_note_item_sql))
         .bind(progress_note_id)
@@ -176,14 +162,7 @@ async fn insert_pre_order_progress_note_item(
         .map_err(|e| Source::SQLx.to_error(500, e, "Insert ProgressNoteItem"))
 }
 
-pub async fn insert_pre_order_progress_note_items(
-    note_items: &[PreProgressNoteItem],
-    note_id_map: &HashMap<u32, u64>,
-    pre_order_master_id: u32,
-    loginname: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_pre_order_progress_note_items(note_items: &[PreProgressNoteItem], note_id_map: &HashMap<u32, u64>, pre_order_master_id: u32, loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_note_item_sql = pre_order::progress_note::insert_progress_note_items(note_items, note_id_map, pre_order_master_id, loginname, kphis);
     sqlx::query(AssertSqlSafe(insert_note_item_sql))
         .execute(pool)
@@ -221,14 +200,7 @@ pub async fn insert_many_progress_notes_from_template(notes: &[PreProgressNoteSa
     Ok(res)
 }
 
-pub async fn insert_ipd_progress_note_items(
-    note_items: &[PreProgressNoteItem],
-    note_id_map: &HashMap<u32, u64>,
-    an: &str,
-    loginname: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_ipd_progress_note_items(note_items: &[PreProgressNoteItem], note_id_map: &HashMap<u32, u64>, an: &str, loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_note_item_sql = progress_note::insert_progress_note_items(note_items, note_id_map, an, loginname, kphis);
     sqlx::query(AssertSqlSafe(insert_note_item_sql))
         .execute(pool)
@@ -236,14 +208,7 @@ pub async fn insert_ipd_progress_note_items(
         .map_err(|e| Source::SQLx.to_error(500, e, "Insert PreProgressNoteItem to ProgressNoteItem"))
 }
 
-pub async fn insert_many_opd_er_progress_notes(
-    notes: &[PreProgressNoteSave],
-    opd_er_order_master_id: u32,
-    loginname: &str,
-    doctorcode: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<u64>, AppError> {
+pub async fn insert_many_opd_er_progress_notes(notes: &[PreProgressNoteSave], opd_er_order_master_id: u32, loginname: &str, doctorcode: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<u64>, AppError> {
     let insert_note_sql = opd_er::progress_note::insert_many_progress_notes(notes, opd_er_order_master_id, loginname, doctorcode, kphis);
     let res = pool
         .execute_many(AssertSqlSafe(insert_note_sql))
@@ -258,19 +223,9 @@ pub async fn insert_many_opd_er_progress_notes(
     Ok(res)
 }
 
-pub async fn insert_opd_er_progress_note_items(
-    note_items: &[PreProgressNoteItem],
-    note_id_map: &HashMap<u32, u64>,
-    opd_er_order_master_id: u32,
-    loginname: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_opd_er_progress_note_items(note_items: &[PreProgressNoteItem], note_id_map: &HashMap<u32, u64>, opd_er_order_master_id: u32, loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_note_item_sql = opd_er::progress_note::insert_progress_note_items(note_items, note_id_map, opd_er_order_master_id, loginname, kphis);
-    sqlx::query(AssertSqlSafe(insert_note_item_sql))
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Insert OpdEr ProgresNoteItems"))
+    sqlx::query(AssertSqlSafe(insert_note_item_sql)).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Insert OpdEr ProgresNoteItems"))
 }
 
 async fn update_progress_note_id(progress_note_id: u32, pre_order_master_id: u32, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
@@ -288,11 +243,7 @@ async fn update_progress_note_id(progress_note_id: u32, pre_order_master_id: u32
 /// delete ipd_pre_order_progress_note and ipd_pre_order_progress_note_item
 pub async fn delete_progress_note(progress_note_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = pre_order::progress_note::delete_progress_note(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(progress_note_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete ProgressNote"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(progress_note_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete ProgressNote"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete ProgressNote"))
 }

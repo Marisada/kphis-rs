@@ -239,11 +239,7 @@ impl IndexPlanPage {
     }
 
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
-        app.set_title(if page.is_ipd {
-            "KPHIS - Search IPD Nurse Planning Action"
-        } else {
-            "KPHIS - Search OPD-ER Nurse Planning Action"
-        });
+        app.set_title(if page.is_ipd { "KPHIS - Search IPD Nurse Planning Action" } else { "KPHIS - Search OPD-ER Nurse Planning Action" });
 
         let ward_select_option = if page.is_ipd {
             app.app_asset.lock_ref().as_ref().map(|asset| asset.ward_select_option.clone()).unwrap_or_default()

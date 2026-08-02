@@ -40,10 +40,7 @@ fn process_uorp_2nd(mdc: Mdc, grouper: &Grouper, sdxs: &HashSet<String>, max_pro
     }
 
     let mut o_mdc_procs = HashMap::new();
-    for (o_mdcs, proc) in max_procs
-        .iter()
-        .map(|p| (p.o_mdcs.as_ref().map(|os| os.split(',').collect::<Vec<&str>>()).unwrap_or_default(), &p.proc))
-    {
+    for (o_mdcs, proc) in max_procs.iter().map(|p| (p.o_mdcs.as_ref().map(|os| os.split(',').collect::<Vec<&str>>()).unwrap_or_default(), &p.proc)) {
         for o_mdc in o_mdcs {
             o_mdc_procs.entry(o_mdc.to_owned()).or_insert(HashSet::new()).insert(proc);
         }
@@ -126,10 +123,7 @@ fn process_uorp_2nd(mdc: Mdc, grouper: &Grouper, sdxs: &HashSet<String>, max_pro
 
 // #3 DC from MosProc
 fn process_uorp_3rd(mdc: Mdc, max_procs: &[&Arc<Proc>], los: u32) -> Option<MdcResult> {
-    let mut tuples = max_procs
-        .iter()
-        .filter_map(|proc| proc.mos_dc.as_ref().map(|dc| (dc, proc.mos_hierar.unwrap_or_default())))
-        .collect::<Vec<(&String, u8)>>();
+    let mut tuples = max_procs.iter().filter_map(|proc| proc.mos_dc.as_ref().map(|dc| (dc, proc.mos_hierar.unwrap_or_default()))).collect::<Vec<(&String, u8)>>();
     tuples.sort_by(|(_, a), (_, b)| a.cmp(&b));
     if let Some((dc, _)) = tuples.first() {
         Some(MdcResult::Dc(dc.to_string()))

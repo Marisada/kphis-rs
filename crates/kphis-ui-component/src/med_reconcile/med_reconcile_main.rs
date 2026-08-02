@@ -35,9 +35,7 @@ use crate::{
     order::{MedSearchable, OrderItemMutable},
 };
 
-use super::{
-    ipd_med_reconcile_hosxp::IpdMedReconcileHosXpCpn, ipd_med_reconcile_last_dose::IpdMedReconcileLastDoseCpn, med_reconcile_form::MedReconForm, med_reconcile_history::MedReconcileHistoryCpn,
-};
+use super::{ipd_med_reconcile_hosxp::IpdMedReconcileHosXpCpn, ipd_med_reconcile_last_dose::IpdMedReconcileLastDoseCpn, med_reconcile_form::MedReconForm, med_reconcile_history::MedReconcileHistoryCpn};
 
 /// - GET `EndPoint::IpdMedReconcile`
 /// - GET `EndPoint::OpdErMedReconcile`
@@ -127,13 +125,7 @@ impl MedSearchable for MedReconcileCpn {
 }
 
 impl MedReconcileCpn {
-    pub fn new(
-        view_by: Mutable<String>,
-        patient: Mutable<Option<Rc<PatientInfo>>>,
-        active_tab: Mutable<Tab>,
-        loaded_med_reconciliation_count_spinner: Mutable<bool>,
-        loaded_med_reconciliation_has_data: Mutable<bool>,
-    ) -> Rc<Self> {
+    pub fn new(view_by: Mutable<String>, patient: Mutable<Option<Rc<PatientInfo>>>, active_tab: Mutable<Tab>, loaded_med_reconciliation_count_spinner: Mutable<bool>, loaded_med_reconciliation_has_data: Mutable<bool>) -> Rc<Self> {
         Rc::new(Self {
             view_by,
             patient,

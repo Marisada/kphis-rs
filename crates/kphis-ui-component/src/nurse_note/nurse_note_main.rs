@@ -40,11 +40,7 @@ pub struct NurseNoteCpn {
 
 impl NurseNoteCpn {
     pub fn new(patient: Mutable<Option<Rc<PatientInfo>>>, view_by: Mutable<String>) -> Rc<Self> {
-        Rc::new(Self {
-            patient,
-            view_by,
-            ..Default::default()
-        })
+        Rc::new(Self { patient, view_by, ..Default::default() })
     }
 
     fn is_ipd_and_is_pre_admit(&self) -> impl Signal<Item = (bool, bool)> + use<> {

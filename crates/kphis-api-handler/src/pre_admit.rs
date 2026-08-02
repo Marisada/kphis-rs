@@ -23,15 +23,7 @@ pub async fn get_ipd_pre_admit_list(Query(params): Query<PreAdmitParams>, ctx: R
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = pre_admit::get_pre_admit_list(
-        &params,
-        ctx.api_state.hosxp_hn_len(),
-        ctx.api_state.hosxp_an_len(),
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = pre_admit::get_pre_admit_list(&params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }
@@ -67,15 +59,7 @@ pub async fn patch_ipd_pre_admit(ctx: RequestState, Json(payload): Json<PreAdmit
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::PATCH, false).await?;
 
-    let response = pre_admit::patch_pre_admit(
-        &payload,
-        &ctx.user_state.user.loginname,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-        &ctx.api_state.kphis_extra(),
-    )
-    .await?;
+    let response = pre_admit::patch_pre_admit(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
     Ok(Json(response))
 }

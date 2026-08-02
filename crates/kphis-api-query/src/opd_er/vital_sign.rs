@@ -66,17 +66,9 @@ pub async fn post_vital_sign(opd_er_order_master_id: u32, form: &VitalSignSave, 
 }
 
 pub async fn insert_vital_sign_only(opd_er_order_master_id: u32, only: &VitalSignOnly, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
-    only.insert(
-        Some("vs_id"),
-        Some("opd_er_vs_vital_sign"),
-        ",opd_er_order_master_id",
-        ",?",
-        &[&opd_er_order_master_id.to_string()],
-        pool,
-        kphis,
-    )
-    .await
-    .map_err(|e| Source::SQLx.to_error(500, e, "Insert VitalSignOnly"))
+    only.insert(Some("vs_id"), Some("opd_er_vs_vital_sign"), ",opd_er_order_master_id", ",?", &[&opd_er_order_master_id.to_string()], pool, kphis)
+        .await
+        .map_err(|e| Source::SQLx.to_error(500, e, "Insert VitalSignOnly"))
 }
 
 // opd-er-vital-sign-save.php
@@ -96,11 +88,7 @@ pub async fn put_vital_sign(opd_er_order_master_id: u32, form: &VitalSignSave, u
 // opd-er-vital-sign-save.php
 pub async fn delete_vital_sign(vs_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = vital_sign::delete_vital_sign(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(vs_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete VitalSign"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(vs_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete VitalSign"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete VitalSign"))
 }

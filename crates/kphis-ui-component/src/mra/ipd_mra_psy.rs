@@ -69,15 +69,11 @@ pub static IPD_MRA_PSY_SD: LazyLock<MraDoc> = LazyLock::new(|| {
                 vec![
                     MraDoc::div_ol(
                         "1. แบบบันทึกสรุปการจำหน่าย (Discharge summary) ที่มีการบันทึกด้วยลายมือแพทย์ผู้รับผิดชอบในการรักษา",
-                        vec![MraDoc::li(
-                            "- กรณีเวชระเบียนในระบบอิเล็กทรอนิกส์ ต้องสามารถสืบค้นในระบบ log in ได้ว่าแพทย์ผู้ใดเป็นผู้สรุปการรักษาพยาบาลในใบ discharge summary",
-                        )],
+                        vec![MraDoc::li("- กรณีเวชระเบียนในระบบอิเล็กทรอนิกส์ ต้องสามารถสืบค้นในระบบ log in ได้ว่าแพทย์ผู้ใดเป็นผู้สรุปการรักษาพยาบาลในใบ discharge summary")],
                     ),
                     MraDoc::div_ol(
                         "2. แบบบันทึกสรุปการจำหน่าย (Discharge summary) จะไม่นำมาใช้ในการประเมิน ให้ผู้ตรวจประเมินระบุ No ในกรณีดังนี้",
-                        vec![MraDoc::li(
-                            "- กรณีที่สรุปโดยผู้ที่ไม่มีใบอนุญาตประกอบวิชาชีพเวชกรรม ต้องมีแพทย์ลงนามรับรอง (approval) หากไม่มีการลงนามรับรอง ถือว่าไม่มีการสรุปการรักษาพยาบาล",
-                        )],
+                        vec![MraDoc::li("- กรณีที่สรุปโดยผู้ที่ไม่มีใบอนุญาตประกอบวิชาชีพเวชกรรม ต้องมีแพทย์ลงนามรับรอง (approval) หากไม่มีการลงนามรับรอง ถือว่าไม่มีการสรุปการรักษาพยาบาล")],
                     ),
                     MraDoc::div("3. กรณีที่สรุปด้วยดินสอ หรือสรุปด้วยรหัส (ICD) หรือมีการแก้ไขโดยไม่ลงนามกำกับ จะไม่นำข้อความนั้นมาใช้ในการประเมิน", Vec::new()),
                     MraDoc::div("4. กรณีมีการสรุปหลายลายมือ หรือแก้ไขโดยไม่มีการลงลายมือชื่อกำกับ ณ ตำแหน่งที่แก้ไข จะไม่นำข้อความนั้นมาใช้ในการประเมิน", Vec::new()),
@@ -93,9 +89,7 @@ pub static IPD_MRA_PSY_SD_1: LazyLock<MraDoc> = LazyLock::new(|| {
         "เกณฑ์ข้อที่ 1",
         "สรุปการวินิจฉัยโรคในส่วนการวินิจฉัยโรคหลัก (principal diagnosis) ดังนี้",
         vec![
-            MraDoc::li(
-                "(1) สรุปเป็นคำวินิจฉัยโรค (clinical term) ไม่สรุปเป็นคำวินิจฉัยตามการให้รหัส ICD-10 (ตัวอย่างคำวินิจฉัยตามการให้รหัสICD-10 : “F20.8 Other schizophrenia” “F31.9 Bipolar affective disorder, unspecified” เป็นต้น) เพียงอย่างเดียว และ",
-            ),
+            MraDoc::li("(1) สรุปเป็นคำวินิจฉัยโรค (clinical term) ไม่สรุปเป็นคำวินิจฉัยตามการให้รหัส ICD-10 (ตัวอย่างคำวินิจฉัยตามการให้รหัสICD-10 : “F20.8 Other schizophrenia” “F31.9 Bipolar affective disorder, unspecified” เป็นต้น) เพียงอย่างเดียว และ"),
             MraDoc::li("(2) สรุปการวินิจฉัยโรคในส่วน principal diagnosis สอดคล้องกับข้อมูลในเวชระเบียน และมีเพียงโรคเดียว"),
         ],
     )
@@ -154,8 +148,7 @@ pub static IPD_MRA_PSY_SD_6: LazyLock<MraDoc> = LazyLock::new(|| {
     )
 });
 
-pub static IPD_MRA_PSY_SD_7: LazyLock<MraDoc> =
-    LazyLock::new(|| MraDoc::div_head_tail_ul("เกณฑ์ข้อที่ 7", "สรุปสาเหตุการตายให้สอดคล้องกับข้อมูลในเวชระเบียน", vec![MraDoc::li_red("กรณีที่ผู้ป่วยไม่เสียชีวิต ให้ผู้ตรวจประเมินระบุ NA")]));
+pub static IPD_MRA_PSY_SD_7: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail_ul("เกณฑ์ข้อที่ 7", "สรุปสาเหตุการตายให้สอดคล้องกับข้อมูลในเวชระเบียน", vec![MraDoc::li_red("กรณีที่ผู้ป่วยไม่เสียชีวิต ให้ผู้ตรวจประเมินระบุ NA")]));
 
 pub static IPD_MRA_PSY_SD_8: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tail(
@@ -169,9 +162,7 @@ pub static IPD_MRA_PSY_SD_9: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tail_ul(
         "เกณฑ์ข้อที่ 9",
         "มีการลงลายมอื แพทยผ์ ้รู ับผิดชอบในการรักษา หรือแพทยผ์ ้สู รุป โดยตอ้ งระบุชื่อ นามสกุล และเลขที่ใบประกอบวิชาชีพเวชกรรม",
-        vec![MraDoc::li(
-            "กรณีเวชระเบียนในระบบอิเล็กทรอนิกส์ต้องสามารถสืบค้นในระบบ log in ได้ว่าแพทย์ผู้ใดเป็นผู้สรุปการรักษาพยาบาลในใบ discharge summary",
-        )],
+        vec![MraDoc::li("กรณีเวชระเบียนในระบบอิเล็กทรอนิกส์ต้องสามารถสืบค้นในระบบ log in ได้ว่าแพทย์ผู้ใดเป็นผู้สรุปการรักษาพยาบาลในใบ discharge summary")],
     )
 });
 
@@ -186,15 +177,11 @@ pub static IPD_MRA_PSY_SO: LazyLock<MraDoc> = LazyLock::new(|| {
                 vec![
                     MraDoc::div_ul(
                         "1. แบบบันทึกสรุปการจำหน่าย (Discharge summary) ที่มีการบันทึกด้วยลายมือแพทย์ผู้รับผิดชอบในการรักษา",
-                        vec![MraDoc::li(
-                            "กรณีเวชระเบียนในระบบอิเล็กทรอนิกส์ต้องสามารถสืบค้นในระบบ log in ได้ว่าแพทย์ผู้ใดเป็นผู้สรุปการรักษาพยาบาลในใบ discharge summary",
-                        )],
+                        vec![MraDoc::li("กรณีเวชระเบียนในระบบอิเล็กทรอนิกส์ต้องสามารถสืบค้นในระบบ log in ได้ว่าแพทย์ผู้ใดเป็นผู้สรุปการรักษาพยาบาลในใบ discharge summary")],
                     ),
                     MraDoc::div_ul(
                         "2. แบบบันทึกสรุปการจำหน่าย (Discharge summary) จะไม่นำมาใช้ในการประเมิน ให้ผู้ตรวจประเมินระบุ No ในกรณีดังนี้",
-                        vec![MraDoc::li(
-                            "กรณีที่สรุปโดยผู้ที่ไม่มีใบอนุญาตประกอบวิชาชีพเวชกรรมลง ต้องมีแพทย์ลงนามรับรอง (approval) หากไม่มีการลงนามรับรอง ถือว่าไม่มีการสรุปการรักษาพยาบาล",
-                        )],
+                        vec![MraDoc::li("กรณีที่สรุปโดยผู้ที่ไม่มีใบอนุญาตประกอบวิชาชีพเวชกรรมลง ต้องมีแพทย์ลงนามรับรอง (approval) หากไม่มีการลงนามรับรอง ถือว่าไม่มีการสรุปการรักษาพยาบาล")],
                     ),
                     MraDoc::li("3. กรณีที่สรุปด้วยดินสอ หรือสรุปด้วยรหัส (ICD) หรือมีการแก้ไขโดยไม่ลงนามกำกับ จะไม่นำข้อความนั้นมาใช้ในการประเมิน"),
                     MraDoc::li("4. กรณีมีการสรุปหลายลายมือ หรือแก้ไขโดยไม่มีการลงลายมือชื่อกำกับ ณ ตำแหน่งที่แก้ไข จะไม่นำข้อความนั้นมาใช้ในการประเมิน"),
@@ -243,8 +230,7 @@ pub static IPD_MRA_PSY_SO_3: LazyLock<MraDoc> = LazyLock::new(|| {
 
 pub static IPD_MRA_PSY_SO_4: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 4", "มีข้อมูลชื่อโรงพยาบาล HN และ AN ถูกต้องตรงกับข้อมูลที่ปรากฏทุกแห่งในเวชระเบียน", Vec::new()));
 
-pub static IPD_MRA_PSY_SO_5: LazyLock<MraDoc> =
-    LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 5", "มีข้อมูลวัน เดือน ปี และเวลาที่ admit วัน เดือน ปี และเวลาที่ discharge ถูกต้องตรงกับข้อมูลในเวชระเบียน", Vec::new()));
+pub static IPD_MRA_PSY_SO_5: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 5", "มีข้อมูลวัน เดือน ปี และเวลาที่ admit วัน เดือน ปี และเวลาที่ discharge ถูกต้องตรงกับข้อมูลในเวชระเบียน", Vec::new()));
 
 pub static IPD_MRA_PSY_SO_6: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tail(
@@ -286,13 +272,7 @@ pub static IPD_MRA_PSY_IC: LazyLock<MraDoc> = LazyLock::new(|| {
 
 pub static IPD_MRA_PSY_IC_1: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 1", "มีการบันทึกชื่อ และนามสกุล ผู้ป่วยถูกต้องชัดเจน", Vec::new()));
 
-pub static IPD_MRA_PSY_IC_2: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "เกณฑ์ข้อที่ 2",
-        "มีลายมือชื่อผู้ให้คำอธิบาย (โดยระบุชื่อ นามสกุล และตำแหน่ง) เกี่ยวกับการรักษาพยาบาลก่อนการลงลายมือชื่อยินยอมรับการรักษา หรือปฏิเสธการรักษา",
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_IC_2: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 2", "มีลายมือชื่อผู้ให้คำอธิบาย (โดยระบุชื่อ นามสกุล และตำแหน่ง) เกี่ยวกับการรักษาพยาบาลก่อนการลงลายมือชื่อยินยอมรับการรักษา หรือปฏิเสธการรักษา", Vec::new()));
 
 pub static IPD_MRA_PSY_IC_3: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tail_ul(
@@ -337,10 +317,7 @@ pub static IPD_MRA_PSY_IC_6: LazyLock<MraDoc> = LazyLock::new(|| {
 pub static IPD_MRA_PSY_IC_7: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tails(
         "เกณฑ์ข้อที่ 7",
-        vec![
-            MraInline::N("มีข้อมูลรายละเอียดเกี่ยวกับทางเลือก ข้อดี ข้อเสียของทางเลือกในการรักษาที่แจ้งแก่ผู้ป่วยและญาติรับทราบ"),
-            MraInline::Np("(สอดคล้องกับเกณฑ์ข้อที่ 6)"),
-        ],
+        vec![MraInline::N("มีข้อมูลรายละเอียดเกี่ยวกับทางเลือก ข้อดี ข้อเสียของทางเลือกในการรักษาที่แจ้งแก่ผู้ป่วยและญาติรับทราบ"), MraInline::Np("(สอดคล้องกับเกณฑ์ข้อที่ 6)")],
         Vec::new(),
     )
 });
@@ -356,13 +333,7 @@ pub static IPD_MRA_PSY_IC_8: LazyLock<MraDoc> = LazyLock::new(|| {
     )
 });
 
-pub static IPD_MRA_PSY_IC_9: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tails(
-        "เกณฑ์ข้อที่ 9",
-        vec![MraInline::N("มีการบันทึกระบุวันเดือนปี"), MraInline::Np("และเวลา"), MraInline::N("ที่รับทราบและยินยอมให้ทำการรักษา")],
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_IC_9: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tails("เกณฑ์ข้อที่ 9", vec![MraInline::N("มีการบันทึกระบุวันเดือนปี"), MraInline::Np("และเวลา"), MraInline::N("ที่รับทราบและยินยอมให้ทำการรักษา")], Vec::new()));
 
 pub static IPD_MRA_PSY_HX: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_bbn(
@@ -416,10 +387,7 @@ pub static IPD_MRA_PSY_HX_4: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tail_ul(
         "เกณฑ์ข้อที่ 4",
         "บันทึก past illness ที่สำคัญและเกี่ยวข้องกับปัญหาที่มา หรือสอดคล้องกับปัญหาที่สงสัย",
-        vec![
-            MraDoc::li("กรณีไม่มี past illness ต้องระบุว่าไม่มี"),
-            MraDoc::li("กรณีผู้ป่วย “ไม่รู้สึกตัว” หรือ “ไม่สามารถซักประวัติได้” ต้องมีบันทึกว่า “ไม่รู้สึกตัว” หรือ “ซักประวัติไม่ได้”"),
-        ],
+        vec![MraDoc::li("กรณีไม่มี past illness ต้องระบุว่าไม่มี"), MraDoc::li("กรณีผู้ป่วย “ไม่รู้สึกตัว” หรือ “ไม่สามารถซักประวัติได้” ต้องมีบันทึกว่า “ไม่รู้สึกตัว” หรือ “ซักประวัติไม่ได้”")],
     )
 });
 
@@ -460,13 +428,7 @@ pub static IPD_MRA_PSY_HX_8: LazyLock<MraDoc> = LazyLock::new(|| {
     )
 });
 
-pub static IPD_MRA_PSY_HX_9: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "เกณฑ์ข้อที่ 9",
-        "ระบุแหล่งที่มาของข้อมูล เช่น ประวัติได้จากตัวผู้ป่วยเองหรือญาติ หรือประวัติเก่าจากเอกสารในเวชระเบียนหรือเอกสารใบส่งต่อ",
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_HX_9: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 9", "ระบุแหล่งที่มาของข้อมูล เช่น ประวัติได้จากตัวผู้ป่วยเองหรือญาติ หรือประวัติเก่าจากเอกสารในเวชระเบียนหรือเอกสารใบส่งต่อ", Vec::new()));
 
 pub static IPD_MRA_PSY_PE: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_bbn(
@@ -517,13 +479,7 @@ pub static IPD_MRA_PSY_PE_2: LazyLock<MraDoc> = LazyLock::new(|| {
     )
 });
 
-pub static IPD_MRA_PSY_PE_3: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "เกณฑ์ข้อที่ 3",
-        "มีการบันทึกการตรวจร่างกายจากการ ดู คลำ เคาะ ฟัง ทุกระบบที่เกี่ยวข้องกับประวัติการเจ็บป่วย หรือเกี่ยวข้องกับการใช้ยาทางจิตเวช",
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_PE_3: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 3", "มีการบันทึกการตรวจร่างกายจากการ ดู คลำ เคาะ ฟัง ทุกระบบที่เกี่ยวข้องกับประวัติการเจ็บป่วย หรือเกี่ยวข้องกับการใช้ยาทางจิตเวช", Vec::new()));
 
 pub static IPD_MRA_PSY_PE_4: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tails_ol(
@@ -554,13 +510,7 @@ pub static IPD_MRA_PSY_PE_6: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_hea
 
 pub static IPD_MRA_PSY_PE_7: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 7", "มีการสรุปวินิจฉัยขั้นต้น (provisional diagnosis) ที่สอดคล้องกับประวัติ และ หรือผลการตรวจร่างกาย", Vec::new()));
 
-pub static IPD_MRA_PSY_PE_8: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail_ul(
-        "เกณฑ์ข้อที่ 8",
-        "มีการบันทึกรายละเอียดแผนการรักษาในการ admit ครั้งนี้",
-        vec![MraDoc::li_red("กรณีบันทึกว่า admit ถือว่าไม่ผ่านเกณฑ์การตรวจประเมิน")],
-    )
-});
+pub static IPD_MRA_PSY_PE_8: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail_ul("เกณฑ์ข้อที่ 8", "มีการบันทึกรายละเอียดแผนการรักษาในการ admit ครั้งนี้", vec![MraDoc::li_red("กรณีบันทึกว่า admit ถือว่าไม่ผ่านเกณฑ์การตรวจประเมิน")]));
 
 pub static IPD_MRA_PSY_PE_9: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tails_ul(
@@ -613,29 +563,11 @@ pub static IPD_MRA_PSY_PN_2: LazyLock<MraDoc> = LazyLock::new(|| {
 
 pub static IPD_MRA_PSY_PN_3: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 3", "มีการบันทึกเนื้อหาครอบคลุม S O A P (subjective, objective, assessment, plan) ใน 3 วันแรก", Vec::new()));
 
-pub static IPD_MRA_PSY_PN_4: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "เกณฑ์ข้อที่ 4",
-        "มีการบันทึกทุกครั้งที่มีการเปลี่ยนแปลงอาการ หรือ การรักษา หรือ ให้ยา หรือ มีการทำ invasive procedure หรือเปลี่ยนแปลงแพทย์ผู้ดูแล",
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_PN_4: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 4", "มีการบันทึกทุกครั้งที่มีการเปลี่ยนแปลงอาการ หรือ การรักษา หรือ ให้ยา หรือ มีการทำ invasive procedure หรือเปลี่ยนแปลงแพทย์ผู้ดูแล", Vec::new()));
 
-pub static IPD_MRA_PSY_PN_5: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "เกณฑ์ข้อที่ 5",
-        "บันทึกเนื้อหาครอบคลุม S O A P ทุกครั้งที่มีการเปลี่ยนแปลงอาการ หรือการรักษา หรือให้ยาหรือมีการทำ invasive procedure หรือเปลี่ยนแปลงแพทย์ผู้ดูแล",
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_PN_5: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 5", "บันทึกเนื้อหาครอบคลุม S O A P ทุกครั้งที่มีการเปลี่ยนแปลงอาการ หรือการรักษา หรือให้ยาหรือมีการทำ invasive procedure หรือเปลี่ยนแปลงแพทย์ผู้ดูแล", Vec::new()));
 
-pub static IPD_MRA_PSY_PN_6: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "เกณฑ์ข้อที่ 6",
-        "มีการบันทึกการแปลผล investigation ที่สำคัญ และมีการวินิจฉัยร่วมกับการวางแผนการรักษาเมื่อผล investigation ผิดปกติ",
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_PN_6: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 6", "มีการบันทึกการแปลผล investigation ที่สำคัญ และมีการวินิจฉัยร่วมกับการวางแผนการรักษาเมื่อผล investigation ผิดปกติ", Vec::new()));
 
 pub static IPD_MRA_PSY_PN_7: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 7", "มีการบันทึก progress note ลงตรงตำแหน่งที่หน่วยบริการกำหนดให้บันทึก", Vec::new()));
 
@@ -738,30 +670,15 @@ pub static IPD_MRA_PSY_AR: LazyLock<MraDoc> = LazyLock::new(|| {
 
 pub static IPD_MRA_PSY_AR_1: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 1", "มีการบันทึก status ผู้ป่วยก่อนให้ยาระงับความรู้สึก และวิธีให้ยาระงับความรู้สึก", Vec::new()));
 
-pub static IPD_MRA_PSY_AR_2: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tails(
-        "เกณฑ์ข้อที่ 2",
-        vec![MraInline::N("มีบันทึก โรคก่อนผ่าตัด ซึ่งต้องสอดคล้องกับการวินิจฉัยของแพทย์"), MraInline::Np("หากข้อมูลขัดแย้งกัน ถือว่าไม่ผ่านเกณฑ์")],
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_AR_2: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tails("เกณฑ์ข้อที่ 2", vec![MraInline::N("มีบันทึก โรคก่อนผ่าตัด ซึ่งต้องสอดคล้องกับการวินิจฉัยของแพทย์"), MraInline::Np("หากข้อมูลขัดแย้งกัน ถือว่าไม่ผ่านเกณฑ์")], Vec::new()));
 
-pub static IPD_MRA_PSY_AR_3: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tails(
-        "เกณฑ์ข้อที่ 3",
-        vec![MraInline::N("มีบันทึกชนิดและชื่อการผ่าตัด ซึ่งต้องสอดคล้องกับการผ่าตัดของแพทย์"), MraInline::Np("หากข้อมูลขัดแย้งกัน ถือว่าไม่ผ่านเกณฑ์")],
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_AR_3: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tails("เกณฑ์ข้อที่ 3", vec![MraInline::N("มีบันทึกชนิดและชื่อการผ่าตัด ซึ่งต้องสอดคล้องกับการผ่าตัดของแพทย์"), MraInline::Np("หากข้อมูลขัดแย้งกัน ถือว่าไม่ผ่านเกณฑ์")], Vec::new()));
 
 pub static IPD_MRA_PSY_AR_4: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_tail_ol(
         "เกณฑ์ข้อที่ 4",
         "มีบันทึกก่อนการผ่าตัด (pre anesthetic evaluation) โดยทีมวิสัญญี มีการระบุประวัติการได้รับยาระงับความรู้สึกก่อนหน้า (ถ้ามี) ยกเว้น",
-        vec![
-            MraDoc::li("(1) กรณีที่ผู้ป่วยเข้า admit ในวันเดียวกับวันที่เข้ารับการผ่าตัด"),
-            MraDoc::li("(2) กรณีที่ผู้ป่วยฉุกเฉิน สามารถบันทึกการตรวจเยี่ยมวันเดียวกับวันที่ผ่าตัดได้"),
-        ],
+        vec![MraDoc::li("(1) กรณีที่ผู้ป่วยเข้า admit ในวันเดียวกับวันที่เข้ารับการผ่าตัด"), MraDoc::li("(2) กรณีที่ผู้ป่วยฉุกเฉิน สามารถบันทึกการตรวจเยี่ยมวันเดียวกับวันที่ผ่าตัดได้")],
     )
 });
 
@@ -802,10 +719,7 @@ pub static IPD_MRA_PSY_ON: LazyLock<MraDoc> = LazyLock::new(|| {
         vec![
             MraDoc::div_bbp_ul(
                 "ประกอบด้วย",
-                vec![
-                    MraDoc::li_bbp("การรักษาด้วยไฟฟ้า (Electroconvulsive therapy: ECT)"),
-                    MraDoc::li_bbp("การบำบัดทางจิตสังคม (Psychosocial intervention)"),
-                ],
+                vec![MraDoc::li_bbp("การรักษาด้วยไฟฟ้า (Electroconvulsive therapy: ECT)"), MraDoc::li_bbp("การบำบัดทางจิตสังคม (Psychosocial intervention)")],
             ),
             MraDoc::br(),
             MraDoc::div_bbp(
@@ -841,15 +755,9 @@ pub static IPD_MRA_PSY_ON: LazyLock<MraDoc> = LazyLock::new(|| {
                 vec![MraDoc::div_bbp(
                     "เอกสารที่ใช้ประเมิน",
                     vec![
-                        MraDoc::div(
-                            "1. เอกสารบันทึกการบำบัดทางจิตสังคม โดยแพทย์ พยาบาล นักจิตวิทยาหรือนักจิตวิทยาคลินิก นักกิจกรรมบำบัด นักสังคมสงเคราะห์ ผู้ทำการบำบัดนั้น",
-                            Vec::new(),
-                        ),
+                        MraDoc::div("1. เอกสารบันทึกการบำบัดทางจิตสังคม โดยแพทย์ พยาบาล นักจิตวิทยาหรือนักจิตวิทยาคลินิก นักกิจกรรมบำบัด นักสังคมสงเคราะห์ ผู้ทำการบำบัดนั้น", Vec::new()),
                         MraDoc::divs(
-                            vec![
-                                MraInline::N("2. ในกรณีที่บันทึกหลายใบ หากพบว่ามีความสมบูรณ์ของการบันทึกต่างกัน การประเมินให้ใช้คะแนนจากบันทึกที่มีความสมบูรณ์"),
-                                MraInline::B("น้อยที่สุด"),
-                            ],
+                            vec![MraInline::N("2. ในกรณีที่บันทึกหลายใบ หากพบว่ามีความสมบูรณ์ของการบันทึกต่างกัน การประเมินให้ใช้คะแนนจากบันทึกที่มีความสมบูรณ์"), MraInline::B("น้อยที่สุด")],
                             Vec::new(),
                         ),
                         MraDoc::div(
@@ -889,19 +797,11 @@ pub static IPD_MRA_PSY_ON_2: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::con_div(vec![
         MraDoc::div_bp(
             "9.1 การรักษาด้วยไฟฟ้า (Electroconvulsive therapy: ECT)",
-            vec![MraDoc::div_head_tail(
-                "เกณฑ์ข้อที่ 2",
-                "มีบันทึกการวินิจฉัยโรคก่อนทำการรักษาด้วยไฟฟ้า (หากจะใช้ตัวย่อใช้ได้เฉพาะที่ปรากฏในหนังสือ ICD-10 และ DSM-5 เท่านั้น)",
-                Vec::new(),
-            )],
+            vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 2", "มีบันทึกการวินิจฉัยโรคก่อนทำการรักษาด้วยไฟฟ้า (หากจะใช้ตัวย่อใช้ได้เฉพาะที่ปรากฏในหนังสือ ICD-10 และ DSM-5 เท่านั้น)", Vec::new())],
         ),
         MraDoc::div_bp(
             "9.2 การบำบัดทางจิตสังคม (Psychosocial intervention)",
-            vec![MraDoc::div_head_tail(
-                "เกณฑ์ข้อที่ 2",
-                "มีบันทึกการวินิจฉัยโรค (หากจะใช้ตัวย่อใช้ได้เฉพาะที่ปรากฏในหนังสือ ICD-10 และ DSM-5 เท่านั้น)",
-                Vec::new(),
-            )],
+            vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 2", "มีบันทึกการวินิจฉัยโรค (หากจะใช้ตัวย่อใช้ได้เฉพาะที่ปรากฏในหนังสือ ICD-10 และ DSM-5 เท่านั้น)", Vec::new())],
         ),
     ])
 });
@@ -913,16 +813,10 @@ pub static IPD_MRA_PSY_ON_3: LazyLock<MraDoc> = LazyLock::new(|| {
             vec![MraDoc::div_head_tail_ol(
                 "เกณฑ์ข้อที่ 3",
                 "มีการบันทึกดังนี้",
-                vec![
-                    MraDoc::li("(1) ข้อบ่งชี้และข้อควรระวังของการรักษาด้วยไฟฟ้า หากไม่มีข้อควรระวัง มีระบุว่า “ไม่มี”"),
-                    MraDoc::li("(2) ชนิดและจำนวนครั้งของการรักษาด้วยไฟฟ้า"),
-                ],
+                vec![MraDoc::li("(1) ข้อบ่งชี้และข้อควรระวังของการรักษาด้วยไฟฟ้า หากไม่มีข้อควรระวัง มีระบุว่า “ไม่มี”"), MraDoc::li("(2) ชนิดและจำนวนครั้งของการรักษาด้วยไฟฟ้า")],
             )],
         ),
-        MraDoc::div_bp(
-            "9.2 การบำบัดทางจิตสังคม (Psychosocial intervention)",
-            vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 3", "มีบันทึกอาการสำคัญ หรือข้อบ่งชี้ที่ส่งมาบำบัด", Vec::new())],
-        ),
+        MraDoc::div_bp("9.2 การบำบัดทางจิตสังคม (Psychosocial intervention)", vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 3", "มีบันทึกอาการสำคัญ หรือข้อบ่งชี้ที่ส่งมาบำบัด", Vec::new())]),
     ])
 });
 
@@ -936,10 +830,7 @@ pub static IPD_MRA_PSY_ON_4: LazyLock<MraDoc> = LazyLock::new(|| {
                 vec![MraDoc::li_red("ยกเว้นกรณีทำ unmodified ECT ให้ผู้ตรวจประเมินระบุ NA")],
             )],
         ),
-        MraDoc::div_bp(
-            "9.2 การบำบัดทางจิตสังคม (Psychosocial intervention)",
-            vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 4", "มีบันทึกเทคนิค หรือวิธีการบำบัด", Vec::new())],
-        ),
+        MraDoc::div_bp("9.2 การบำบัดทางจิตสังคม (Psychosocial intervention)", vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 4", "มีบันทึกเทคนิค หรือวิธีการบำบัด", Vec::new())]),
     ])
 });
 
@@ -968,11 +859,7 @@ pub static IPD_MRA_PSY_ON_6: LazyLock<MraDoc> = LazyLock::new(|| {
         ),
         MraDoc::div_bp(
             "9.2 การบำบัดทางจิตสังคม (Psychosocial intervention)",
-            vec![MraDoc::div_head_tail(
-                "เกณฑ์ข้อที่ 6",
-                "มีบันทึกกระบวนการบำบัดทางจิตสังคม การประเมินผลหลังสิ้นสุดการบำบัด และมีบันทึกการวางแผนการบำบัดรักษา",
-                Vec::new(),
-            )],
+            vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 6", "มีบันทึกกระบวนการบำบัดทางจิตสังคม การประเมินผลหลังสิ้นสุดการบำบัด และมีบันทึกการวางแผนการบำบัดรักษา", Vec::new())],
         ),
     ])
 });
@@ -997,19 +884,12 @@ pub static IPD_MRA_PSY_ON_8: LazyLock<MraDoc> = LazyLock::new(|| {
             vec![MraDoc::div_head_tail_ol(
                 "เกณฑ์ข้อที่ 8",
                 "มีบันทึก ดังนี้",
-                vec![
-                    MraDoc::li("(1) ชื่อ-นามสกุล คณะผู้ร่วมทำการรักษาด้วยไฟฟ้า ได้แก่ แพทย์ พยาบาล วิสัญญีพยาบาล และ"),
-                    MraDoc::li("(2) วิธีการให้ยาระงับความรู้สึก"),
-                ],
+                vec![MraDoc::li("(1) ชื่อ-นามสกุล คณะผู้ร่วมทำการรักษาด้วยไฟฟ้า ได้แก่ แพทย์ พยาบาล วิสัญญีพยาบาล และ"), MraDoc::li("(2) วิธีการให้ยาระงับความรู้สึก")],
             )],
         ),
         MraDoc::div_bp(
             "9.2 การบำบัดทางจิตสังคม (Psychosocial intervention)",
-            vec![MraDoc::div_head_tail(
-                "เกณฑ์ข้อที่ 8",
-                "มีบันทึกชื่อ สกุล ของผู้บำบัด เช่น แพทย์ พยาบาลวิชาชีพ นักจิตวิทยา หรือนักจิตวิทยาคลินิก นักกิจกรรมบำบัด นักสังคมสงเคราะห์",
-                Vec::new(),
-            )],
+            vec![MraDoc::div_head_tail("เกณฑ์ข้อที่ 8", "มีบันทึกชื่อ สกุล ของผู้บำบัด เช่น แพทย์ พยาบาลวิชาชีพ นักจิตวิทยา หรือนักจิตวิทยาคลินิก นักกิจกรรมบำบัด นักสังคมสงเคราะห์", Vec::new())],
         ),
     ])
 });
@@ -1060,10 +940,7 @@ pub static IPD_MRA_PSY_RR: LazyLock<MraDoc> = LazyLock::new(|| {
                             MraDoc::li("การฟื้นฟูสมรรถภาพทางสังคม (Social rehabilitation)"),
                         ],
                     ),
-                    MraDoc::divs(
-                        vec![MraInline::N("กรณีที่มีหลายใบหากพบว่ามีความสมบูรณ์ของการบันทึกต่างกัน ให้เลือกประเมินเอกสารทีมีความละเอียด"), MraInline::B("น้อยที่สุด")],
-                        Vec::new(),
-                    ),
+                    MraDoc::divs(vec![MraInline::N("กรณีที่มีหลายใบหากพบว่ามีความสมบูรณ์ของการบันทึกต่างกัน ให้เลือกประเมินเอกสารทีมีความละเอียด"), MraInline::B("น้อยที่สุด")], Vec::new()),
                 ],
             ),
         ],
@@ -1088,21 +965,9 @@ pub static IPD_MRA_PSY_RR_3: LazyLock<MraDoc> = LazyLock::new(|| {
     )
 });
 
-pub static IPD_MRA_PSY_RR_4: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "เกณฑ์ข้อที่ 4",
-        "มีบันทึกเป้าหมายในการฟื้นฟูสมรรถภาพ การวางแผนในการฟื้นฟูสมรรถภาพ ชนิดของการบำบัดหรือหัตถการ ข้อห้ามและข้อควรระวัง",
-        Vec::new(),
-    )
-});
+pub static IPD_MRA_PSY_RR_4: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 4", "มีบันทึกเป้าหมายในการฟื้นฟูสมรรถภาพ การวางแผนในการฟื้นฟูสมรรถภาพ ชนิดของการบำบัดหรือหัตถการ ข้อห้ามและข้อควรระวัง", Vec::new()));
 
-pub static IPD_MRA_PSY_RR_5: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail_ul(
-        "เกณฑ์ข้อที่ 5",
-        "มีบันทึกการรักษา หรือการฟื้นฟูสมรรถภาพที่ให้ในแต่ละครั้ง โดยระบุระยะเวลาที่ใช้",
-        vec![MraDoc::li("กรณีกายภาพบำบัด ต้องระบุอวัยวะหรือตำแหน่งที่ทำการบำบัดด้วย")],
-    )
-});
+pub static IPD_MRA_PSY_RR_5: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail_ul("เกณฑ์ข้อที่ 5", "มีบันทึกการรักษา หรือการฟื้นฟูสมรรถภาพที่ให้ในแต่ละครั้ง โดยระบุระยะเวลาที่ใช้", vec![MraDoc::li("กรณีกายภาพบำบัด ต้องระบุอวัยวะหรือตำแหน่งที่ทำการบำบัดด้วย")]));
 
 pub static IPD_MRA_PSY_RR_6: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("เกณฑ์ข้อที่ 6", "มีบันทึกการประเมินผลการให้บริการ และความก้าวหน้าของการฟื้นฟูสมรรถภาพตามเป้าหมายที่ได้ตั้งไว้", Vec::new()));
 
@@ -1149,15 +1014,10 @@ pub static IPD_MRA_PSY_NN: LazyLock<MraDoc> = LazyLock::new(|| {
                                 MraDoc::li("(4) ใบบันทึกสัญญาณชีพ ฟอร์มปรอท (graphic sheet) เป็นต้น"),
                             ],
                         ),
-                        MraDoc::li(
-                            "2.2 ใบบันทึกของสหวิชาชีพ เช่น ใบคำสั่งการรักษาของแพทย์ ใบ progress note เวชระเบียนผู้ป่วยนอก (OPD card) ผลการตรวจทางห้องปฏิบัติการ ใบประเมิน/ประเมินซ้ำ เช่น search out severity score (SOS score) เป็นต้น",
-                        ),
+                        MraDoc::li("2.2 ใบบันทึกของสหวิชาชีพ เช่น ใบคำสั่งการรักษาของแพทย์ ใบ progress note เวชระเบียนผู้ป่วยนอก (OPD card) ผลการตรวจทางห้องปฏิบัติการ ใบประเมิน/ประเมินซ้ำ เช่น search out severity score (SOS score) เป็นต้น"),
                     ],
                 ),
-                MraDoc::div(
-                    "3. บันทึกที่เขียนโดยนักศึกษาพยาบาลไม่สามารถใช้เป็นข้อมูลในการประเมิน ยกเว้นพยาบาลวิชาชีพได้ลงลายมือชื่อกำกับการบันทึกนั้น และต้องสามารถระบุได้ว่าเป็นผู้ใด",
-                    Vec::new(),
-                ),
+                MraDoc::div("3. บันทึกที่เขียนโดยนักศึกษาพยาบาลไม่สามารถใช้เป็นข้อมูลในการประเมิน ยกเว้นพยาบาลวิชาชีพได้ลงลายมือชื่อกำกับการบันทึกนั้น และต้องสามารถระบุได้ว่าเป็นผู้ใด", Vec::new()),
                 MraDoc::div("4. กรณีเวชระเบียนในระบบอิเล็กทรอนิกส์ต้องสามารถสืบค้นในระบบ log in ได้ว่าชื่อพยาบาลผู้ใดเป็นผู้บันทึก", Vec::new()),
             ],
         )],
@@ -1181,9 +1041,7 @@ pub static IPD_MRA_PSY_NN_2: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_btail_ol(
         "เกณฑ์ข้อที่ 2",
         "การระบุปัญหาทางการพยาบาล",
-        vec![MraDoc::li(
-            "2.1 มีการระบุปัญหาทางการพยาบาล ที่สำคัญสอดคล้องกับอาการ อาการแสดงด้านร่างกาย ด้านจิตใจ อารมณ์ และสังคม และ/หรือ จิตวิญญาณ ตั้งแต่แรกรับ จนกระทั่งจำหน่าย",
-        )],
+        vec![MraDoc::li("2.1 มีการระบุปัญหาทางการพยาบาล ที่สำคัญสอดคล้องกับอาการ อาการแสดงด้านร่างกาย ด้านจิตใจ อารมณ์ และสังคม และ/หรือ จิตวิญญาณ ตั้งแต่แรกรับ จนกระทั่งจำหน่าย")],
     )
 });
 
@@ -1216,9 +1074,7 @@ pub static IPD_MRA_PSY_NN_5: LazyLock<MraDoc> = LazyLock::new(|| {
     MraDoc::div_head_btail_ol(
         "เกณฑ์ข้อที่ 5",
         "การให้ข้อมูลระหว่างการักษาพยาบาล",
-        vec![MraDoc::li(
-            "5.1 มีบันทึกการให้ข้อมูลที่จำเป็น และการช่วยเหลือด้านร่างกาย และ/หรือ ด้านอารมณ์ จิตใจ และคำปรึกษาที่เหมาะสมสอดคล้องกับปัญหา ความต้องการของผู้ป่วย/ครอบครัว",
-        )],
+        vec![MraDoc::li("5.1 มีบันทึกการให้ข้อมูลที่จำเป็น และการช่วยเหลือด้านร่างกาย และ/หรือ ด้านอารมณ์ จิตใจ และคำปรึกษาที่เหมาะสมสอดคล้องกับปัญหา ความต้องการของผู้ป่วย/ครอบครัว")],
     )
 });
 
@@ -1231,9 +1087,7 @@ pub static IPD_MRA_PSY_NN_6: LazyLock<MraDoc> = LazyLock::new(|| {
             MraDoc::li_ul(
                 "6.2 มีการบันทึก",
                 vec![
-                    MraDoc::li(
-                        "6.2.1 การให้ข้อมูลที่จำเป็นและการช่วยเหลือให้เกิดการเรียนรู้ สำหรับการดูแลตนเอง ให้มีพฤติกรรมสุขภาพที่เอื้อต่อการมีสุขภาพดี และ/หรือ อาจมีการจัดกิจกรรมเสริมทักษะที่จำเป็น ให้แก่ ผู้ป่วย/ครอบครัว สามารถปฏิบัติได้ด้วยตนเอง",
-                    ),
+                    MraDoc::li("6.2.1 การให้ข้อมูลที่จำเป็นและการช่วยเหลือให้เกิดการเรียนรู้ สำหรับการดูแลตนเอง ให้มีพฤติกรรมสุขภาพที่เอื้อต่อการมีสุขภาพดี และ/หรือ อาจมีการจัดกิจกรรมเสริมทักษะที่จำเป็น ให้แก่ ผู้ป่วย/ครอบครัว สามารถปฏิบัติได้ด้วยตนเอง"),
                     MraDoc::li("6.2.2 มีการระบุข้อมูล ที่สะท้อนความก้าวหน้าในการเรียนรู้ และ/หรือ ฝึกทักษะของผู้ป่วย/ครอบครัว"),
                 ],
             ),
@@ -1288,9 +1142,7 @@ pub static IPD_MRA_PSY_NN_9: LazyLock<MraDoc> = LazyLock::new(|| {
                 "9.2 การบันทึกและลงลายมือชื่อ",
                 vec![
                     MraDoc::li("9.2.1 บันทึกด้วยลายมือที่อ่านออกได้"),
-                    MraDoc::li(
-                        "9.2.2 มีการลงลายมือชื่อ และนามสกุล ของพยาบาลผู้บันทึกทุกครั้ง โดยสามารถระบุได้ว่าเป็นผู้ใด ยกเว้น ใบบันทึกการให้ยา (medication administration record) ที่ให้ลงเฉพาะชื่อ ไม่ต้องระบุนามสกุลได้ โดยอนุโลมให้ผ่านเกณฑ์ เนื่องจากมีข้อจำกัดของพื้นที่ในการบันทึก",
-                    ),
+                    MraDoc::li("9.2.2 มีการลงลายมือชื่อ และนามสกุล ของพยาบาลผู้บันทึกทุกครั้ง โดยสามารถระบุได้ว่าเป็นผู้ใด ยกเว้น ใบบันทึกการให้ยา (medication administration record) ที่ให้ลงเฉพาะชื่อ ไม่ต้องระบุนามสกุลได้ โดยอนุโลมให้ผ่านเกณฑ์ เนื่องจากมีข้อจำกัดของพื้นที่ในการบันทึก"),
                 ],
             ),
         ],
@@ -1327,11 +1179,7 @@ pub static IPD_MRA_PSY_SCORE: LazyLock<MraDoc> = LazyLock::new(|| {
                             "หมายถึง เวชระเบียนฉบับนั้นไม่จำเป็นต้องมีบันทึกเกี่ยวกับหัวข้อเรื่องนั้นๆ (Consultation record, anesthetic record, Electroconvulsive therapy(ECT), Psychosocial intervention, labour record, rehabilitation record) เนื่องจากไม่มีส่วนเกี่ยวข้องกับการให้บริการ ให้กากบาทช่อง NA",
                         ),
                     ]),
-                    MraDoc::lis(vec![
-                        MraInline::N("3."),
-                        MraInline::Bp("No"),
-                        MraInline::N("หมายถึง มีเอกสารที่เกียวข้องให้ประเมิน แต่ไม่มีการบันทึก ให้กากบาทลงในช่อง No"),
-                    ]),
+                    MraDoc::lis(vec![MraInline::N("3."), MraInline::Bp("No"), MraInline::N("หมายถึง มีเอกสารที่เกียวข้องให้ประเมิน แต่ไม่มีการบันทึก ให้กากบาทลงในช่อง No")]),
                     MraDoc::li_ol(
                         "4. การบันทึกคะแนน",
                         vec![
@@ -1410,11 +1258,7 @@ pub static IPD_MRA_PSY_SCORE: LazyLock<MraDoc> = LazyLock::new(|| {
                                             MraDoc::li("5) บันทึกอื่นๆ ที่เกี่ยวข้องกับการพยาบาล"),
                                         ],
                                     ),
-                                    MraDoc::div_head_tail_ol(
-                                        "ส่วนที่ 5",
-                                        "Discharge/death section:",
-                                        vec![MraDoc::li("1) Discharge’s form"), MraDoc::li("2) Autopsy report and consent for autopsy")],
-                                    ),
+                                    MraDoc::div_head_tail_ol("ส่วนที่ 5", "Discharge/death section:", vec![MraDoc::li("1) Discharge’s form"), MraDoc::li("2) Autopsy report and consent for autopsy")]),
                                     MraDoc::div_head_tail("ส่วนที่ 6", "เอกสารอื่น เช่น หลักฐานค่าใช้จ่าย (ถ้ามี) เอกสารแสดงสิทธิ์ (ถ้ามี)", Vec::new()),
                                 ],
                             ),
@@ -1432,9 +1276,7 @@ pub static IPD_MRA_PSY_SCORE: LazyLock<MraDoc> = LazyLock::new(|| {
                     MraDoc::lis(vec![
                         MraInline::N("1."),
                         MraInline::Bp("Full score"),
-                        MraInline::N(
-                            "ได้จากการรวมคะแนนสูงสุด ในแต่ละหัวข้อเรื่อง (content) ของเวชระเบียนส่วนที่คาดว่าจะต้องมีการบันทึก ยกเว้นหัวข้อเรื่องที่ผู้ประเมินเห็นว่าไม่จำเป็นต้องบันทึก โดยได้กากบาทในช่อง NA ดังนั้น เวชระเบียนแต่ละเล่มจะมีคะแนนรวม (full score) ไม่เท่ากัน",
-                        ),
+                        MraInline::N("ได้จากการรวมคะแนนสูงสุด ในแต่ละหัวข้อเรื่อง (content) ของเวชระเบียนส่วนที่คาดว่าจะต้องมีการบันทึก ยกเว้นหัวข้อเรื่องที่ผู้ประเมินเห็นว่าไม่จำเป็นต้องบันทึก โดยได้กากบาทในช่อง NA ดังนั้น เวชระเบียนแต่ละเล่มจะมีคะแนนรวม (full score) ไม่เท่ากัน"),
                         MraInline::Np("แต่จะต้องไม่น้อยกว่า 57 คะแนน"),
                     ]),
                     MraDoc::lis(vec![

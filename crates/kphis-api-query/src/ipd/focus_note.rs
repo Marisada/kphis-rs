@@ -98,16 +98,7 @@ pub async fn post_focus_note(an: &str, hn: &str, ward: &str, save: &FocusNoteSav
 }
 
 #[allow(clippy::too_many_arguments)]
-pub async fn update_focus_note_bundle(
-    fcnote_id: u32,
-    an: &str,
-    hn: &str,
-    save: &FocusNoteSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+pub async fn update_focus_note_bundle(fcnote_id: u32, an: &str, hn: &str, save: &FocusNoteSave, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::with_capacity(8);
     // 1. Update focus_note
     let update_focus_note_result = update_focus_note(fcnote_id, an, hn, save, user, pool, kphis).await?;
@@ -155,16 +146,7 @@ pub async fn update_focus_note_bundle(
 }
 
 #[allow(clippy::too_many_arguments)]
-pub async fn insert_focus_note_bundle(
-    an: &str,
-    hn: &str,
-    ward: &str,
-    save: &FocusNoteSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
+pub async fn insert_focus_note_bundle(an: &str, hn: &str, ward: &str, save: &FocusNoteSave, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
     let mut results = Vec::with_capacity(6);
     // 1. Insert focus_note
     let insert_focus_note_result = insert_focus_note(an, hn, ward, save, user, pool, kphis).await?;
@@ -209,16 +191,7 @@ pub async fn insert_focus_note_only_bundle(an: &str, hn: &str, ward: &str, only:
         let insert_intvt_item_result = insert_intvt_items_only(fcnote_id, &only.focus_note_intvt_items, pool, kphis).await?;
         results.push(ExecuteResponse::from_query_result(insert_intvt_item_result, "Insert FocusNoteIntvtItemOnly"));
         // 4. Insert history intvt_item
-        let insert_history_intvt_result = insert_history_log(
-            SourceTable::IpdFocusNoteIntvtItem,
-            "I",
-            "system",
-            &[KeyValue("fcnote_id", fcnote_id.to_string())],
-            kphis,
-            kphis_log,
-            pool,
-        )
-        .await?;
+        let insert_history_intvt_result = insert_history_log(SourceTable::IpdFocusNoteIntvtItem, "I", "system", &[KeyValue("fcnote_id", fcnote_id.to_string())], kphis, kphis_log, pool).await?;
         results.push(ExecuteResponse::from_query_result(insert_history_intvt_result, "Insert FocusNoteIntvtItemOnly History"));
     }
     if !only.focus_note_dlc_items.is_empty() {

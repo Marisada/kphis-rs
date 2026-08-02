@@ -118,11 +118,7 @@ pub fn u64_to_base64(value: u64) -> String {
 }
 
 pub fn add_u64_with_i64(u: u64, i: i64) -> u64 {
-    if i.is_negative() {
-        u.saturating_sub(i.unsigned_abs())
-    } else {
-        u.saturating_add(i.unsigned_abs())
-    }
+    if i.is_negative() { u.saturating_sub(i.unsigned_abs()) } else { u.saturating_add(i.unsigned_abs()) }
 }
 
 /// if < 0.5 then floor, else ceil

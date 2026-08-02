@@ -342,14 +342,7 @@ pub struct OpdVisitSearchbox {
 impl OpdVisitSearchbox {
     /// GET `EndPoint::SearchBoxOpdVisitModeText`
     pub async fn call_api_get(search_text: &str, mode: &str, app: Rc<AppState>) -> Result<Vec<Self>, AppError> {
-        match fetch_json_api(
-            &[&EndPoint::SearchBoxOpdVisitModeText.base(), mode, "/", urlencoding::encode(search_text).as_ref()].concat(),
-            "GET",
-            None,
-            app,
-        )
-        .await
-        {
+        match fetch_json_api(&[&EndPoint::SearchBoxOpdVisitModeText.base(), mode, "/", urlencoding::encode(search_text).as_ref()].concat(), "GET", None, app).await {
             Ok((response, true)) => {
                 let response: Vec<Self> = serde_wasm_bindgen::from_value(response).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch OpdVisitSearchbox"))?;
                 Ok(response)

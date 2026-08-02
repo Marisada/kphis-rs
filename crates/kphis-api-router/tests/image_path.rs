@@ -79,10 +79,6 @@ async fn api_image_path() {
     assert_eq!(delete_empty_usage.json::<ExecuteResponse>().rows_affected, 0);
 
     // DELETE image_id
-    let delete_usage_success = server
-        .delete(&EndPoint::ImageUsage.base())
-        .json(&vec![post_usage_success_result.last_insert_id as u32])
-        .expect_success()
-        .await;
+    let delete_usage_success = server.delete(&EndPoint::ImageUsage.base()).json(&vec![post_usage_success_result.last_insert_id as u32]).expect_success().await;
     assert_eq!(delete_usage_success.json::<ExecuteResponse>().rows_affected, 1);
 }

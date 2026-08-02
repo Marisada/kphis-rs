@@ -418,13 +418,7 @@ impl OpdErMainPage {
             .app_asset
             .lock_ref()
             .as_ref()
-            .map(|asset| {
-                (
-                    asset.er_bed_select_options.clone(),
-                    asset.er_patient_status_select_options.clone(),
-                    asset.er_dch_type_select_options.clone(),
-                )
-            })
+            .map(|asset| (asset.er_bed_select_options.clone(), asset.er_patient_status_select_options.clone(), asset.er_dch_type_select_options.clone()))
             .unwrap_or_default();
 
         let allow_medrec = app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErMedReconcile, false);

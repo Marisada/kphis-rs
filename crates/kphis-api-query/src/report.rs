@@ -126,24 +126,10 @@ fn custom_report_compact_from_row(row: &MySqlRow) -> sqlx::Result<CustomReport> 
 /// Array type will duplicate `?` amount as in `ids` separated by `,` ex. `IN (?)` to `IN (?,?)`<br>
 /// Return JSON string as<br>
 /// `{ "param1": "id1", "param2": ["id2a","id2b"], .., "data": [sql results]}`
-pub async fn select_raw_query_to_json_string(
-    statement: &str,
-    params: &str,
-    ids: &str,
-    assets: &Arc<Mutex<AppAsset>>,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-    kphis_extra: &str,
-    kphis_log: &str,
-) -> Result<String, AppError> {
+pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids: &str, assets: &Arc<Mutex<AppAsset>>, pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_extra: &str, kphis_log: &str) -> Result<String, AppError> {
     if statement.starts_with("SELECT ") {
         let mut obj = serde_json::Map::new();
-        let raw_sql = statement
-            .replace("__HOSXP__", hosxp)
-            .replace("__KPHIS__", kphis)
-            .replace("__KPHIS_EXTRA__", kphis_extra)
-            .replace("__KPHIS_LOG__", kphis_log);
+        let raw_sql = statement.replace("__HOSXP__", hosxp).replace("__KPHIS__", kphis).replace("__KPHIS_EXTRA__", kphis_extra).replace("__KPHIS_LOG__", kphis_log);
         let sql_split = raw_sql.split('?').collect::<Vec<&str>>();
         // sql_split.len() always not below 1
         let (sql_split_body, sql_split_tail) = sql_split.split_at(sql_split.len() - 1);
@@ -157,13 +143,7 @@ pub async fn select_raw_query_to_json_string(
         // process `?` in array type
         let ids_split_inner = ids_vec.iter().map(|s| s.split(',').map(str::trim).collect::<Vec<&str>>());
         let question_marks = ids_split_inner.clone().map(|values| vec!["?"; values.len()].join(","));
-        let sql = sql_split_body
-            .into_iter()
-            .zip(question_marks)
-            .flat_map(|(s, q)| [s.to_string(), q])
-            .chain([sql_tail])
-            .collect::<Vec<String>>()
-            .concat();
+        let sql = sql_split_body.into_iter().zip(question_marks).flat_map(|(s, q)| [s.to_string(), q]).chain([sql_tail]).collect::<Vec<String>>().concat();
         // process query
         let mut query = sqlx::query(AssertSqlSafe(sql));
         // NOTE: `id_vec.len()` always not below 1, so `Some(v) = values.first()` below always get v
@@ -188,10 +168,7 @@ pub async fn select_raw_query_to_json_string(
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Bool(v)).collect()
                         };
@@ -207,20 +184,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Int8 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<i8>())
-                        .collect::<Result<Vec<i8>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<i8>()).collect::<Result<Vec<i8>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -236,20 +206,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Int16 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<i16>())
-                        .collect::<Result<Vec<i16>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<i16>()).collect::<Result<Vec<i16>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -265,20 +228,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Int32 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<i32>())
-                        .collect::<Result<Vec<i32>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<i32>()).collect::<Result<Vec<i32>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -294,20 +250,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Int64 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<i64>())
-                        .collect::<Result<Vec<i64>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<i64>()).collect::<Result<Vec<i64>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -323,20 +272,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Uint8 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<u8>())
-                        .collect::<Result<Vec<u8>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<u8>()).collect::<Result<Vec<u8>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -352,20 +294,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Uint16 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<u16>())
-                        .collect::<Result<Vec<u16>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<u16>()).collect::<Result<Vec<u16>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -381,20 +316,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Uint32 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<u32>())
-                        .collect::<Result<Vec<u32>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<u32>()).collect::<Result<Vec<u32>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -410,20 +338,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Uint64 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<u64>())
-                        .collect::<Result<Vec<u64>, _>>()
-                        .map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<u64>()).collect::<Result<Vec<u64>, _>>().map_err(|e| Source::ParseInt.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -439,20 +360,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Float32 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<f32>())
-                        .collect::<Result<Vec<f32>, _>>()
-                        .map_err(|e| Source::ParseFloat.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<f32>()).collect::<Result<Vec<f32>, _>>().map_err(|e| Source::ParseFloat.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values
                                 .into_iter()
@@ -473,20 +387,13 @@ pub async fn select_raw_query_to_json_string(
                     }
                 }
                 BasicType::Float64 => {
-                    let values = id_vec
-                        .iter()
-                        .map(|id| id.parse::<f64>())
-                        .collect::<Result<Vec<f64>, _>>()
-                        .map_err(|e| Source::ParseFloat.to_error(400, e, "Select RawQuery"))?;
+                    let values = id_vec.iter().map(|id| id.parse::<f64>()).collect::<Result<Vec<f64>, _>>().map_err(|e| Source::ParseFloat.to_error(400, e, "Select RawQuery"))?;
                     if param.is_array() {
                         for v in values.iter() {
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values
                                 .into_iter()
@@ -517,10 +424,7 @@ pub async fn select_raw_query_to_json_string(
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values
                                 .into_iter()
@@ -551,10 +455,7 @@ pub async fn select_raw_query_to_json_string(
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::String(v.to_string())).collect()
                         };
@@ -580,10 +481,7 @@ pub async fn select_raw_query_to_json_string(
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::String(v.js_string())).collect()
                         };
@@ -609,10 +507,7 @@ pub async fn select_raw_query_to_json_string(
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::String(v.js_string())).collect()
                         };
@@ -633,10 +528,7 @@ pub async fn select_raw_query_to_json_string(
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             id_vec.into_iter().map(|v| Value::String(v.to_string())).collect()
                         };
@@ -654,10 +546,7 @@ pub async fn select_raw_query_to_json_string(
                 BasicType::Value => {
                     if param.is_array() {
                         let json_values = if is_list {
-                            key_labels
-                                .iter()
-                                .filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned())))
-                                .collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             id_vec.into_iter().map(|v| Value::String(v.to_string())).collect()
                         };
@@ -698,19 +587,11 @@ fn row_to_json(row: &MySqlRow) -> sqlx::Result<Value> {
             // List from `fn name()`` in https://github.com/launchbadge/sqlx/blob/main/sqlx-mysql/src/protocol/text/column.rs
             "NULL" => Some(Value::Null),
             "BOOLEAN" => row.try_get::<Option<bool>, usize>(col.ordinal())?.map(|b| Value::Bool(b)),
-            "TINYINT UNSIGNED" | "SMALLINT UNSIGNED" | "INT UNSIGNED" | "MEDIUMINT UNSIGNED" | "BIGINT UNSIGNED" => {
-                row.try_get::<Option<u64>, usize>(col.ordinal())?.map(|u| Value::Number(Number::from(u)))
-            }
+            "TINYINT UNSIGNED" | "SMALLINT UNSIGNED" | "INT UNSIGNED" | "MEDIUMINT UNSIGNED" | "BIGINT UNSIGNED" => row.try_get::<Option<u64>, usize>(col.ordinal())?.map(|u| Value::Number(Number::from(u))),
             "TINYINT" | "SMALLINT" | "INT" | "MEDIUMINT" | "BIGINT" | "TIMESTAMP" => row.try_get::<Option<i64>, usize>(col.ordinal())?.map(|i| Value::Number(Number::from(i))),
             "FLOAT" | "DOUBLE" => row.try_get::<Option<f64>, usize>(col.ordinal())?.and_then(|f| Number::from_f64(f)).map(|n| Value::Number(n)),
-            "DECIMAL" => row
-                .try_get::<Option<Decimal>, usize>(col.ordinal())?
-                .and_then(|d| d.to_f64())
-                .and_then(|f| Number::from_f64(f))
-                .map(|n| Value::Number(n)),
-            "BINARY" | "VARBINARY" | "TINYBLOB" | "BLOB" | "MEDIUMBLOB" | "LONGBLOB" => {
-                row.try_get::<Option<Vec<u8>>, usize>(col.ordinal())?.map(|b| Value::String(general_purpose::URL_SAFE_NO_PAD.encode(b)))
-            }
+            "DECIMAL" => row.try_get::<Option<Decimal>, usize>(col.ordinal())?.and_then(|d| d.to_f64()).and_then(|f| Number::from_f64(f)).map(|n| Value::Number(n)),
+            "BINARY" | "VARBINARY" | "TINYBLOB" | "BLOB" | "MEDIUMBLOB" | "LONGBLOB" => row.try_get::<Option<Vec<u8>>, usize>(col.ordinal())?.map(|b| Value::String(general_purpose::URL_SAFE_NO_PAD.encode(b))),
             "DATE" => row.try_get::<Option<Date>, usize>(col.ordinal())?.map(|d| Value::String(d.to_string())),
             "TIME" => row.try_get::<Option<Time>, usize>(col.ordinal())?.map(|t| Value::String(t.to_string())),
             "DATETIME" => row.try_get::<Option<PrimitiveDateTime>, usize>(col.ordinal())?.map(|dt| Value::String(dt.to_string())),

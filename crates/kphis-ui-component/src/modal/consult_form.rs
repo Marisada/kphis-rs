@@ -291,21 +291,20 @@ impl ConsultForm {
     pub fn render(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         let is_new = modal.consult_id.get() == 0;
 
-        let (all_doctor_select_option, doctor_select_option, spclty_kphis_select_option, emergency_select_option, ward_select_option, consult_type_select_option) =
-            match app.app_asset.lock_ref().as_ref() {
-                Some(assets_arc) => {
-                    let asset = assets_arc.as_ref().to_owned();
-                    (
-                        asset.all_doctor_select_option,
-                        asset.doctor_select_option,
-                        asset.spclty_kphis_select_option,
-                        asset.emergency_select_option,
-                        asset.ward_select_option,
-                        asset.consult_type_select_option,
-                    )
-                }
-                None => (Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new()),
-            };
+        let (all_doctor_select_option, doctor_select_option, spclty_kphis_select_option, emergency_select_option, ward_select_option, consult_type_select_option) = match app.app_asset.lock_ref().as_ref() {
+            Some(assets_arc) => {
+                let asset = assets_arc.as_ref().to_owned();
+                (
+                    asset.all_doctor_select_option,
+                    asset.doctor_select_option,
+                    asset.spclty_kphis_select_option,
+                    asset.emergency_select_option,
+                    asset.ward_select_option,
+                    asset.consult_type_select_option,
+                )
+            }
+            None => (Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new()),
+        };
 
         html!("div", {
             .future(map_ref!(

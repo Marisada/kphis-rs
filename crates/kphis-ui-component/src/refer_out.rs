@@ -809,11 +809,7 @@ impl ReferOutCpn {
 
     fn set_new_not_refernote(&self) {
         let now = js_now();
-        let department = if self.patient.lock_ref().as_ref().map(|pt| pt.is_admited()).unwrap_or_default() {
-            "IPD"
-        } else {
-            "OPD"
-        };
+        let department = if self.patient.lock_ref().as_ref().map(|pt| pt.is_admited()).unwrap_or_default() { "IPD" } else { "OPD" };
 
         self.referout_id.set_neq(0);
         self.refernote_id.set_neq(0);
@@ -1757,11 +1753,7 @@ impl ReferOutCpn {
             .get_cloned()
             .map(|pt| pt.visit_type.is_ipd_and_is_pre_admit())
             .map(|(is_ipd, is_pre_admit)| {
-                let allow_admission_note = if is_ipd {
-                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdAdmissionNoteDrAn, is_pre_admit)
-                } else {
-                    false
-                };
+                let allow_admission_note = if is_ipd { app.endpoint_is_allow(&Method::GET, &EndPoint::IpdAdmissionNoteDrAn, is_pre_admit) } else { false };
                 let allow_med_rec = if is_ipd {
                     app.endpoint_is_allow(&Method::GET, &EndPoint::IpdMedReconcile, is_pre_admit)
                 } else {

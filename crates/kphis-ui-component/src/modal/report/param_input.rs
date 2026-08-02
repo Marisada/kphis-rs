@@ -21,11 +21,7 @@ pub struct ReportParamInput {
 
 impl ReportParamInput {
     pub fn new(param: &ReportParam) -> Rc<Self> {
-        let ids = if param.ty.is_array() {
-            MutableVec::new_with_values(vec![Mutable::new(String::new())])
-        } else {
-            MutableVec::new()
-        };
+        let ids = if param.ty.is_array() { MutableVec::new_with_values(vec![Mutable::new(String::new())]) } else { MutableVec::new() };
         Rc::new(Self {
             title: param.title.to_owned(),
             ty: param.ty.to_owned(),

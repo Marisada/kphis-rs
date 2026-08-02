@@ -96,9 +96,7 @@ impl BarthelIndex {
         score_9: &Option<u8>,
         score_10: &Option<u8>,
     ) -> Option<u8> {
-        if let (Some(s1), Some(s2), Some(s3), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8), Some(s9), Some(s10)) =
-            (score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10)
-        {
+        if let (Some(s1), Some(s2), Some(s3), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8), Some(s9), Some(s10)) = (score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10) {
             Some(s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10)
         } else {
             None

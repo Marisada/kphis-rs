@@ -39,10 +39,7 @@ impl VitalSignCpn {
 
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         let can_use_form = page.view_by.lock_ref().as_str() == "nurse"
-            && (app.has_permission(Permission::VitalSignAdd)
-                || app.has_permission(Permission::VitalSignEdit)
-                || app.has_permission(Permission::OpdErVitalSignAdd)
-                || app.has_permission(Permission::OpdErVitalSignEdit));
+            && (app.has_permission(Permission::VitalSignAdd) || app.has_permission(Permission::VitalSignEdit) || app.has_permission(Permission::OpdErVitalSignAdd) || app.has_permission(Permission::OpdErVitalSignEdit));
 
         html!("div", {
             .future(page.patient_loaded.signal().for_each(clone!(page => move |loaded| {

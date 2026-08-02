@@ -142,11 +142,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, dch_type: &str) -> MdcResult {
     } else if grouper.is_pdx_pdc(Mdc::M05, "5E", pdx) {
         MdcResult::Dc(String::from("0557"))
     } else if grouper.is_pdx_pdc(Mdc::M05, "5F", pdx) {
-        if dch_type == "04" {
-            MdcResult::Dc(String::from("0570"))
-        } else {
-            MdcResult::Dc(String::from("0558"))
-        }
+        if dch_type == "04" { MdcResult::Dc(String::from("0570")) } else { MdcResult::Dc(String::from("0558")) }
     } else if grouper.is_pdx_pdc(Mdc::M05, "5G", pdx) {
         MdcResult::Dc(String::from("0559"))
     } else if grouper.is_pdx_pdc(Mdc::M05, "5H", pdx) {
@@ -176,13 +172,7 @@ pub mod tests {
 
     #[test]
     fn test_process_pdx_5a() {
-        let p5pex_cx = process_pdx_5a(
-            &GROUPER,
-            "I210",
-            &HashSet::new(),
-            &["3553", "0066"].into_iter().map(|s| s.to_owned()).collect::<HashSet<String>>(),
-            "01",
-        );
+        let p5pex_cx = process_pdx_5a(&GROUPER, "I210", &HashSet::new(), &["3553", "0066"].into_iter().map(|s| s.to_owned()).collect::<HashSet<String>>(), "01");
         assert_eq!(p5pex_cx, MdcResult::Dc(String::from("0525")));
         let p5pex = process_pdx_5a(&GROUPER, "I210", &HashSet::new(), &["3553"].into_iter().map(|s| s.to_owned()).collect::<HashSet<String>>(), "01");
         assert_eq!(p5pex, MdcResult::Dc(String::from("0526")));

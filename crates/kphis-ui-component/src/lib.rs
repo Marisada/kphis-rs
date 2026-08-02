@@ -8,6 +8,7 @@ pub mod io;
 pub mod ipd_consult;
 pub mod ipd_pre_order;
 pub mod lab;
+pub mod login;
 pub mod med_reconcile;
 pub mod menu;
 pub mod modal;

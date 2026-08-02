@@ -53,13 +53,7 @@ pub async fn get_avatar_ipd(params: &AvatarParams, hlen: usize, alen: usize, poo
             }
         }
     }
-    query
-        .fetch_all(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Select AvatarIpd"))?
-        .iter()
-        .map(avatar_ipd_row)
-        .collect()
+    query.fetch_all(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Select AvatarIpd"))?.iter().map(avatar_ipd_row).collect()
 }
 fn avatar_ipd_row(row: &MySqlRow) -> Result<AvatarWard, AppError> {
     Ok(AvatarWard {

@@ -43,10 +43,7 @@ impl IndexPlanDate {
     pub fn from_string(value: &str) -> Option<Self> {
         let tuple = value.split('|').collect::<Vec<&str>>();
         if tuple.len() == 2 {
-            Date::parse(tuple[0], &Iso8601::DEFAULT).ok().map(|date| Self {
-                plan_date: date,
-                is_today: tuple[1] == "1",
-            })
+            Date::parse(tuple[0], &Iso8601::DEFAULT).ok().map(|date| Self { plan_date: date, is_today: tuple[1] == "1" })
         } else {
             None
         }

@@ -695,11 +695,7 @@ pub struct OffMedPlanMutable {
 
 impl OffMedPlanMutable {
     pub fn new_with_off(medplan: HisMedPlanIpd, is_off: bool) -> Rc<Self> {
-        Rc::new(Self {
-            medplan,
-            is_off,
-            off: Mutable::new(is_off),
-        })
+        Rc::new(Self { medplan, is_off, off: Mutable::new(is_off) })
     }
     pub fn off_med_plan_number(&self) -> Option<i32> {
         self.off.get().then(|| self.medplan.med_plan_number)

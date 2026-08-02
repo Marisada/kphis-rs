@@ -109,14 +109,7 @@ impl MedSearchable for ContinuousForm {
 }
 
 impl ContinuousForm {
-    pub fn new(
-        order_opt: Option<Rc<Order>>,
-        patient: Mutable<Option<Rc<PatientInfo>>>,
-        pre_order_master_id: Option<u32>,
-        order_doctor: String,
-        view_by: Mutable<String>,
-        offs_by_parent: MutableVec<Rc<OrderItemMutable>>,
-    ) -> Rc<Self> {
+    pub fn new(order_opt: Option<Rc<Order>>, patient: Mutable<Option<Rc<PatientInfo>>>, pre_order_master_id: Option<u32>, order_doctor: String, view_by: Mutable<String>, offs_by_parent: MutableVec<Rc<OrderItemMutable>>) -> Rc<Self> {
         let order_form = Rc::new(Self {
             view_by,
             patient,

@@ -184,11 +184,7 @@ impl ReportPreview {
     async fn render_pdf(&self, app: Rc<App>) {
         if let (Some(template), Some(data_json)) = (self.template.get_cloned(), self.data_json.get_cloned()) {
             let ids = self.ids.clone();
-            let file_name = if let Some(report) = self.report.clone() {
-                report.download_file_name(&ids)
-            } else {
-                String::from("CUSTOM")
-            };
+            let file_name = if let Some(report) = self.report.clone() { report.download_file_name(&ids) } else { String::from("CUSTOM") };
 
             let author = app.app_status.lock_ref().as_ref().map(|app_status| app_status.hospital_name.clone()).unwrap_or_default();
             let user = app.user.lock_ref().as_ref().map(|user| user.user.name.get_cloned()).unwrap_or_default();

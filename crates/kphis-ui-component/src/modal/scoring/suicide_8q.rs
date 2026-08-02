@@ -79,17 +79,7 @@ impl Suicide8Q {
         }
     }
 
-    fn cal_total(
-        score_1: &Option<u8>,
-        score_2: &Option<u8>,
-        score_3a: &Option<u8>,
-        score_3b: &Option<u8>,
-        score_4: &Option<u8>,
-        score_5: &Option<u8>,
-        score_6: &Option<u8>,
-        score_7: &Option<u8>,
-        score_8: &Option<u8>,
-    ) -> Option<u8> {
+    fn cal_total(score_1: &Option<u8>, score_2: &Option<u8>, score_3a: &Option<u8>, score_3b: &Option<u8>, score_4: &Option<u8>, score_5: &Option<u8>, score_6: &Option<u8>, score_7: &Option<u8>, score_8: &Option<u8>) -> Option<u8> {
         if let (Some(s1), Some(s2), Some(s3a), Some(s3b), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8)) = (score_1, score_2, score_3a, score_3b, score_4, score_5, score_6, score_7, score_8) {
             Some(s1 + s2 + s3a + s3b + s4 + s5 + s6 + s7 + s8)
         } else {

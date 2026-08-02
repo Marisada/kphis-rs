@@ -53,12 +53,7 @@ pub async fn get_ipd_focus_note(Path(an): Path<String>, Query(params): Query<Foc
         FocusNoteSaveParams,
     ),
 )]
-pub async fn post_ipd_focus_note(
-    Path(an): Path<String>,
-    Query(params): Query<FocusNoteSaveParams>,
-    ctx: RequestState,
-    Json(payload): Json<FocusNoteSave>,
-) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
+pub async fn post_ipd_focus_note(Path(an): Path<String>, Query(params): Query<FocusNoteSaveParams>, ctx: RequestState, Json(payload): Json<FocusNoteSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
     ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
     ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
@@ -67,17 +62,7 @@ pub async fn post_ipd_focus_note(
     check_an_can_execute(&an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     if let (Some(hn), Some(ward)) = (params.hn.and_then(str_some), params.ward.and_then(str_some)) {
-        let result = focus_note::post_focus_note(
-            &an,
-            &hn,
-            &ward,
-            &payload,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_log(),
-        )
-        .await?;
+        let result = focus_note::post_focus_note(&an, &hn, &ward, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(result))
     } else {
@@ -104,15 +89,7 @@ pub async fn delete_ipd_focus_note(Path(_an): Path<String>, Query(params): Query
     ctx.authorize_and_access_log(&Method::DELETE, false).await?;
 
     if let (Some(fcnote_id), Some(version)) = (params.fcnote_id, params.version) {
-        let result = focus_note::delete_focus_note(
-            fcnote_id,
-            version,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_log(),
-        )
-        .await?;
+        let result = focus_note::delete_focus_note(fcnote_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(result))
     } else {

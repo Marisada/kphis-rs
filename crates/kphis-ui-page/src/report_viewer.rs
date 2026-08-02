@@ -157,9 +157,7 @@ impl ReportViewerPage {
     fn load_and_render_svg(page: Rc<Self>, app: Rc<App>) {
         if let (Some(template), Some(ids)) = match *page.report_type.lock_ref() {
             ReportType::Ipd | ReportType::OpdEr => (
-                page.selected_system_template
-                    .get_cloned()
-                    .map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
+                page.selected_system_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
                 str_some(page.vnan.get_cloned()),
             ),
             ReportType::Custom => (

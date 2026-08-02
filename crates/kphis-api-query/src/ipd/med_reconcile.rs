@@ -7,8 +7,7 @@ use kphis_model::{
     app::VisitTypeId,
     fetch::ExecuteResponse,
     med_reconcile::{
-        AdmissionNoteLastDose, MedReconciliation, MedReconciliationDetail, MedReconciliationItem, MedReconciliationItemPatch, MedReconciliationItemSave, MedReconciliationNote,
-        MedReconciliationParams, ReMedMedication, ReMedVisit,
+        AdmissionNoteLastDose, MedReconciliation, MedReconciliationDetail, MedReconciliationItem, MedReconciliationItemPatch, MedReconciliationItemSave, MedReconciliationNote, MedReconciliationParams, ReMedMedication, ReMedVisit,
     },
 };
 use kphis_sql::ipd::med_reconcile;
@@ -25,11 +24,7 @@ pub async fn get_ipd_med_reconcile(params: &MedReconciliationParams, doctor_code
         let ids = recons.iter().map(|r| r.med_reconciliation_id).collect::<Vec<u32>>();
         let items = get_med_reconciliation_item(&ids, params, pool, hosxp, kphis).await?;
         for recon in recons.iter_mut() {
-            recon.med_reconciliation_items = items
-                .iter()
-                .filter(|i| i.med_reconciliation_id == Some(recon.med_reconciliation_id))
-                .cloned()
-                .collect::<Vec<MedReconciliationItem>>();
+            recon.med_reconciliation_items = items.iter().filter(|i| i.med_reconciliation_id == Some(recon.med_reconciliation_id)).cloned().collect::<Vec<MedReconciliationItem>>();
         }
 
         Ok(recons)
@@ -124,14 +119,7 @@ fn med_rec_item_from_row(row: &MySqlRow) -> sqlx::Result<MedReconciliationItem> 
 
 // // ipd-dr-med-reconcile-save.php
 // POST /ipd/med-reconcile
-pub async fn post_ipd_med_reconcile(
-    an: &str,
-    items: &[MedReconciliationItemSave],
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
+pub async fn post_ipd_med_reconcile(an: &str, items: &[MedReconciliationItemSave], doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
     let id;
     let mut results = Vec::with_capacity(2);
     // 1. get last unconfirm med_reconcile
@@ -217,15 +205,7 @@ async fn insert_mri(med_reconciliation_id: u32, an: &str, items: &[MedReconcilia
 // ipd-dr-med-reconcile-pharmacist-unconfirm.php
 // ipd-dr-med-reconcile-last-dose-save.php
 // PATCH /ipd/med-reconcile
-pub async fn patch_ipd_med_reconcile(
-    med_reconciliation_id: u32,
-    patch: &str,
-    items: &[MedReconciliationItemPatch],
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+pub async fn patch_ipd_med_reconcile(med_reconciliation_id: u32, patch: &str, items: &[MedReconciliationItemPatch], doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::with_capacity(2);
     match patch {
         "doctor" => {

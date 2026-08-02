@@ -48,14 +48,7 @@ pub async fn post_refernote(Path(vnan): Path<String>, ctx: RequestState, Json(pa
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
     if payload.vn == vnan {
-        let result = refer_note::post_refernote(
-            &payload,
-            &ctx.user_state.user.doctorcode,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis_extra(),
-        )
-        .await?;
+        let result = refer_note::post_refernote(&payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
         Ok(Json(result))
     } else {

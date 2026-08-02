@@ -153,9 +153,7 @@ fn check_reassign(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, gender: 
             reassign(
                 grouper,
                 gender,
-                sdxs.iter()
-                    .filter(|sdx| sdx.starts_with("A50") || sdx.starts_with("A51") || sdx.starts_with("A52") || sdx.starts_with("A53"))
-                    .max(),
+                sdxs.iter().filter(|sdx| sdx.starts_with("A50") || sdx.starts_with("A51") || sdx.starts_with("A52") || sdx.starts_with("A53")).max(),
             )
         }
         "O982" => {
@@ -168,16 +166,7 @@ fn check_reassign(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, gender: 
                 grouper,
                 gender,
                 sdxs.iter()
-                    .filter(|sdx| {
-                        sdx.starts_with("A55")
-                            || sdx.starts_with("A56")
-                            || sdx.starts_with("A57")
-                            || sdx.starts_with("A58")
-                            || sdx.starts_with("A59")
-                            || sdx.starts_with("A60")
-                            || sdx.starts_with("A63")
-                            || sdx.starts_with("A64")
-                    })
+                    .filter(|sdx| sdx.starts_with("A55") || sdx.starts_with("A56") || sdx.starts_with("A57") || sdx.starts_with("A58") || sdx.starts_with("A59") || sdx.starts_with("A60") || sdx.starts_with("A63") || sdx.starts_with("A64"))
                     .max(),
             )
         }
@@ -213,11 +202,7 @@ fn check_reassign(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, gender: 
         }
         "O986" => {
             // B500-B64
-            reassign(
-                grouper,
-                gender,
-                sdxs.iter().filter(|sdx| sdx.starts_with("B5") || sdx.starts_with("B60") || sdx.starts_with("B64")).max(),
-            )
+            reassign(grouper, gender, sdxs.iter().filter(|sdx| sdx.starts_with("B5") || sdx.starts_with("B60") || sdx.starts_with("B64")).max())
         }
         "O988" => {
             // A000-A099, A200-A499, A65-A799, B350-B49, B650-B949, B99
@@ -274,9 +259,7 @@ fn check_reassign(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, gender: 
                 grouper,
                 gender,
                 sdxs.iter()
-                    .filter(|sdx| {
-                        sdx.starts_with("D65") || sdx.starts_with("D66") || sdx.starts_with("D67") || sdx.starts_with("D68") || sdx.starts_with("D69") || sdx.starts_with("D7") || sdx.starts_with("D8")
-                    })
+                    .filter(|sdx| sdx.starts_with("D65") || sdx.starts_with("D66") || sdx.starts_with("D67") || sdx.starts_with("D68") || sdx.starts_with("D69") || sdx.starts_with("D7") || sdx.starts_with("D8"))
                     .max(),
             )
         }

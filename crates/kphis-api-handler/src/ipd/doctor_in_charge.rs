@@ -80,15 +80,7 @@ pub async fn delete_ipd_doctor_in_charge(Query(params): Query<DoctorInChargePara
     ctx.authorize_and_access_log(&Method::DELETE, is_pre_admit).await?;
 
     if let (Some(doctor_in_charge_id), Some(version)) = (params.doctor_in_charge_id, params.version) {
-        let result = doctor_in_charge::delete_doctor_in_charge(
-            doctor_in_charge_id,
-            version,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_log(),
-        )
-        .await?;
+        let result = doctor_in_charge::delete_doctor_in_charge(doctor_in_charge_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(result))
     } else {

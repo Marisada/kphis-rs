@@ -61,6 +61,7 @@ impl UserConfigResponse {
 #[schema(example = json!(UserConfigCommand::demo_clear2fa(String::from("user"))))]
 pub enum UserConfigCommand {
     Clear2fa(String),
+    ClearFailed(String),
 }
 
 impl UserConfigCommand {

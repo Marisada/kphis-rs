@@ -30,19 +30,13 @@ pub async fn post_ipd_mra(form: &IpdMra, user: &str, pool: &Pool<MySql>, kphis_e
 }
 
 pub async fn put_ipd_mra(form: &IpdMra, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {
-    form.update("mra_id", None, TABLE_UPDATE_SET, &[user], pool, kphis_extra)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Update IpdMra"))
+    form.update("mra_id", None, TABLE_UPDATE_SET, &[user], pool, kphis_extra).await.map_err(|e| Source::SQLx.to_error(500, e, "Update IpdMra"))
 }
 
 pub async fn delete_ipd_mra(mra_id: u32, pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {
     let sql = mra::delete_mra(kphis_extra);
 
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(mra_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete IpdMra"))
+    sqlx::query(AssertSqlSafe(sql)).bind(mra_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete IpdMra"))
 }
 
 #[cfg(test)]
