@@ -81,11 +81,7 @@ pub async fn put_vital_sign(an: &str, hn: &str, form: &VitalSignSave, user: &str
 // ipd-vital-sign-save.php
 pub async fn delete_vital_sign(vs_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = vital_sign::delete_vital_sign(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(vs_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete VitalSign"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(vs_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete VitalSign"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete VitalSign"))
 }

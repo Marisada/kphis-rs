@@ -38,15 +38,7 @@ pub async fn get_io_date(opd_er_order_master_id: u32, pool: &Pool<MySql>, kphis:
 
 // odp-er-vital-sign-io-table.php
 // GET /opd-er/io
-pub async fn get_io_shift(
-    params: &IoParams,
-    shift_day_start: Time,
-    shift_evening_start: Time,
-    shift_night_start: Time,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-) -> Result<Vec<IoShift>, AppError> {
+pub async fn get_io_shift(params: &IoParams, shift_day_start: Time, shift_evening_start: Time, shift_night_start: Time, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<IoShift>, AppError> {
     let sql = io::select_io(params, kphis, hosxp);
     let mut query = sqlx::query(AssertSqlSafe(sql));
     if let Some(io_id) = &params.io_id {

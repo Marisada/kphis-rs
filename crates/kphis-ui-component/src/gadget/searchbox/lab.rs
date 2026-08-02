@@ -63,15 +63,7 @@ impl LabSearchboxCpn {
         )
     }
 
-    pub fn render(
-        pre_order_master_id: Option<u32>,
-        page: Rc<Self>,
-        display_mutable: Mutable<bool>,
-        items: MutableVec<Rc<OrderItemMutable>>,
-        focus: Mutable<Option<u32>>,
-        changed: Mutable<bool>,
-        app: Rc<App>,
-    ) -> Dom {
+    pub fn render(pre_order_master_id: Option<u32>, page: Rc<Self>, display_mutable: Mutable<bool>, items: MutableVec<Rc<OrderItemMutable>>, focus: Mutable<Option<u32>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(html!("div", {
                 .class(class::CARD_TW_T_CYANS)

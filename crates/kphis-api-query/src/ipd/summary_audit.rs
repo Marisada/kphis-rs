@@ -93,17 +93,9 @@ pub async fn post_ipd_summary_audit(save: &SummaryAudit, user: &str, pool: &Pool
 }
 
 async fn insert_summary_audit(form: &SummaryAudit, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {
-    form.insert(
-        Some("summary_audit_id"),
-        Some("ipd_summary_audit"),
-        TABLE_CREATE_COLUMNS,
-        TABLE_CREATE_PREPARED,
-        &[user, user],
-        pool,
-        kphis_extra,
-    )
-    .await
-    .map_err(|e| Source::SQLx.to_error(500, e, "Insert IpdSummaryAudit"))
+    form.insert(Some("summary_audit_id"), Some("ipd_summary_audit"), TABLE_CREATE_COLUMNS, TABLE_CREATE_PREPARED, &[user, user], pool, kphis_extra)
+        .await
+        .map_err(|e| Source::SQLx.to_error(500, e, "Insert IpdSummaryAudit"))
 }
 
 async fn update_summary_audit(form: &SummaryAudit, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {

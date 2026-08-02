@@ -81,14 +81,7 @@ pub struct DatePicker<F: Fn(String) -> String + 'static> {
 }
 
 impl<F: Fn(String) -> String + 'static> DatePicker<F> {
-    pub fn new_date(
-        date_mutable: Mutable<String>,
-        changed_mutable: Mutable<bool>,
-        paired_mutable: Option<Mutable<String>>,
-        container: Mutable<Option<Rc<Self>>>,
-        update_fn: F,
-        config: PickerConfig<DateConstraints>,
-    ) -> Rc<Self> {
+    pub fn new_date(date_mutable: Mutable<String>, changed_mutable: Mutable<bool>, paired_mutable: Option<Mutable<String>>, container: Mutable<Option<Rc<Self>>>, update_fn: F, config: PickerConfig<DateConstraints>) -> Rc<Self> {
         let default_datetime = config.guess_allowed_year_month();
         let view_type_adjusted = match config.selection_type() {
             DialogViewType::Days => default_datetime,
@@ -115,14 +108,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    pub fn new_time(
-        time_mutable: Mutable<String>,
-        changed_mutable: Mutable<bool>,
-        paired_mutable: Option<Mutable<String>>,
-        container: Mutable<Option<Rc<Self>>>,
-        update_fn: F,
-        config: PickerConfig<DateConstraints>,
-    ) -> Rc<Self> {
+    pub fn new_time(time_mutable: Mutable<String>, changed_mutable: Mutable<bool>, paired_mutable: Option<Mutable<String>>, container: Mutable<Option<Rc<Self>>>, update_fn: F, config: PickerConfig<DateConstraints>) -> Rc<Self> {
         let default_datetime = config.guess_allowed_year_month() - Duration::days(1);
         let viewed_date = paired_mutable
             .and_then(|date_paired| date_8601(&date_paired.lock_ref()))

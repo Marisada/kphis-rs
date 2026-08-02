@@ -222,11 +222,7 @@ impl PatientInfo {
         self.sex.clone()
     }
     pub fn image(&self) -> String {
-        if let Some(hn) = self.hn() {
-            [PATH_PREFIX_PATIENT_IMAGE, &hn].concat()
-        } else {
-            DEFAULT_USER_IMAGE.to_owned()
-        }
+        if let Some(hn) = self.hn() { [PATH_PREFIX_PATIENT_IMAGE, &hn].concat() } else { DEFAULT_USER_IMAGE.to_owned() }
     }
 
     /// GET `EndPoint::IpdShowPatientMainAn`

@@ -500,11 +500,7 @@ impl TypstReport {
         match self {
             Self::System(r) => r.key_names().to_owned(),
             Self::Coercion((_, r, _)) => r.key_names().to_owned(),
-            Self::Custom(r) => r
-                .statement_params
-                .as_ref()
-                .map(|s| explode_cap_pipe_iter(s, 2).map(|v| v[0]).collect::<Vec<&str>>().join("|"))
-                .unwrap_or_default(),
+            Self::Custom(r) => r.statement_params.as_ref().map(|s| explode_cap_pipe_iter(s, 2).map(|v| v[0]).collect::<Vec<&str>>().join("|")).unwrap_or_default(),
         }
     }
 
@@ -942,19 +938,11 @@ impl PartialEq for CustomReport {
 
 impl CustomReport {
     pub fn title_with_ids(&self, ids: &str) -> String {
-        let kvs_opt = self.statement_params.as_ref().map(|s| {
-            explode_cap_pipe_iter(s, 2)
-                .map(|v| v[0])
-                .zip(ids.split("|"))
-                .map(|(k, v)| [k, ": ", v].concat())
-                .collect::<Vec<String>>()
-                .join(", ")
-        });
-        if let Some(kvs) = kvs_opt {
-            [&self.title, " [", &kvs, "]"].concat()
-        } else {
-            self.title.to_owned()
-        }
+        let kvs_opt = self
+            .statement_params
+            .as_ref()
+            .map(|s| explode_cap_pipe_iter(s, 2).map(|v| v[0]).zip(ids.split("|")).map(|(k, v)| [k, ": ", v].concat()).collect::<Vec<String>>().join(", "));
+        if let Some(kvs) = kvs_opt { [&self.title, " [", &kvs, "]"].concat() } else { self.title.to_owned() }
     }
 
     pub fn download_file_name(&self, ids: &str) -> String {
@@ -1140,11 +1128,7 @@ impl ReportParam {
     }
 
     pub fn to_cap_pipe(items: &[Self]) -> String {
-        items
-            .iter()
-            .map(|item| [&item.id, "^", &item.title, "^", &item.ty.to_str()].concat())
-            .collect::<Vec<String>>()
-            .join("|")
+        items.iter().map(|item| [&item.id, "^", &item.title, "^", &item.ty.to_str()].concat()).collect::<Vec<String>>().join("|")
     }
 
     pub fn is_array(&self) -> bool {

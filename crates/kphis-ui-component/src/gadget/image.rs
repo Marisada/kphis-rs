@@ -12,8 +12,8 @@ use std::{
 use wasm_bindgen::{JsCast, JsValue, closure::Closure};
 use wasm_bindgen_futures::JsFuture;
 use web_sys::{
-    Blob, CanvasRenderingContext2d, ConstrainDomStringParameters, Event, File, FilePropertyBag, HtmlButtonElement, HtmlCanvasElement, HtmlInputElement, HtmlVideoElement, MediaDeviceInfo,
-    MediaDeviceKind, MediaDevices, MediaStream, MediaStreamConstraints, MediaStreamTrack, MediaTrackConstraints,
+    Blob, CanvasRenderingContext2d, ConstrainDomStringParameters, Event, File, FilePropertyBag, HtmlButtonElement, HtmlCanvasElement, HtmlInputElement, HtmlVideoElement, MediaDeviceInfo, MediaDeviceKind, MediaDevices, MediaStream,
+    MediaStreamConstraints, MediaStreamTrack, MediaTrackConstraints,
 };
 
 use kphis_model::{

@@ -52,9 +52,7 @@ impl PtsdCries13 {
         let score_11 = split.get(11).and_then(|s| s.parse::<u8>().ok());
         let score_12 = split.get(12).and_then(|s| s.parse::<u8>().ok());
         let score_13 = split.get(13).and_then(|s| s.parse::<u8>().ok());
-        let score_total = Self::cal_total(
-            &score_1, &score_2, &score_3, &score_4, &score_5, &score_6, &score_7, &score_8, &score_9, &score_10, &score_11, &score_12, &score_13,
-        );
+        let score_total = Self::cal_total(&score_1, &score_2, &score_3, &score_4, &score_5, &score_6, &score_7, &score_8, &score_9, &score_10, &score_11, &score_12, &score_13);
         Rc::new(Self {
             score_1: Mutable::new(score_1),
             score_2: Mutable::new(score_2),

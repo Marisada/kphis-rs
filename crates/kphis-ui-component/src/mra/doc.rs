@@ -3,21 +3,9 @@ use std::sync::LazyLock;
 
 use kphis_ui_core::class;
 
-pub static MRA_NA: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "NA",
-        "หมายถึง เวชระเบียนฉบับนั้นไม่จำเป็นต้องมีบันทึกเกี่ยวกับหัวข้อเรื่องนั้นๆ เนื่องจากไม่มีส่วนเกี่ยวข้องกับการให้บริการ ให้กากบาทช่อง NA",
-        Vec::new(),
-    )
-});
+pub static MRA_NA: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("NA", "หมายถึง เวชระเบียนฉบับนั้นไม่จำเป็นต้องมีบันทึกเกี่ยวกับหัวข้อเรื่องนั้นๆ เนื่องจากไม่มีส่วนเกี่ยวข้องกับการให้บริการ ให้กากบาทช่อง NA", Vec::new()));
 
-pub static MRA_MISSING: LazyLock<MraDoc> = LazyLock::new(|| {
-    MraDoc::div_head_tail(
-        "Missing",
-        "หมายถึง เวชระเบียนฉบับนั้นจำเป็นต้องมีบันทึกเกี่ยวกับหัวข้อเรื่องนั้นๆ แต่ปรากฏว่าไม่มีเอกสารที่เกี่ยวข้องให้ประเมิน ให้กากบาทช่อง Missing",
-        Vec::new(),
-    )
-});
+pub static MRA_MISSING: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("Missing", "หมายถึง เวชระเบียนฉบับนั้นจำเป็นต้องมีบันทึกเกี่ยวกับหัวข้อเรื่องนั้นๆ แต่ปรากฏว่าไม่มีเอกสารที่เกี่ยวข้องให้ประเมิน ให้กากบาทช่อง Missing", Vec::new()));
 
 pub static MRA_NO: LazyLock<MraDoc> = LazyLock::new(|| MraDoc::div_head_tail("No", "หมายถึง มีเอกสารที่เกียวข้องให้ประเมิน แต่ไม่มีการบันทึก ให้กากบาทลงในช่อง No", Vec::new()));
 

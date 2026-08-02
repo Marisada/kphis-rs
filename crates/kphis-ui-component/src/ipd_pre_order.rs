@@ -58,10 +58,7 @@ pub struct IpdPreOrderCpn {
 
 impl IpdPreOrderCpn {
     pub fn new(pre_order_master_id: Mutable<u32>) -> Rc<Self> {
-        Rc::new(Self {
-            pre_order_master_id,
-            ..Default::default()
-        })
+        Rc::new(Self { pre_order_master_id, ..Default::default() })
     }
 
     fn load_order_all(page: Rc<Self>, app: Rc<App>) {
@@ -550,17 +547,8 @@ impl IpdPreOrderCpn {
 // function oneday_data_to_text(one_day_order)
 // function continuous_data_to_text(continuous_order)
 pub fn render_order(order: Rc<PreOrder>, is_oneday: bool, used: Mutable<String>, page_opt: Option<Rc<IpdPreOrderCpn>>, app: Rc<App>) -> Dom {
-    let will_blue = if is_oneday {
-        vec!["med", "home-medication", "injection", "ivfluid"]
-    } else {
-        vec!["med", "injection", "ivfluid"]
-    };
-    let is_same_doctor = app
-        .user
-        .lock_ref()
-        .as_ref()
-        .map(|user| user.user.doctorcode.lock_ref().deref() == &order.order_doctor)
-        .unwrap_or_default();
+    let will_blue = if is_oneday { vec!["med", "home-medication", "injection", "ivfluid"] } else { vec!["med", "injection", "ivfluid"] };
+    let is_same_doctor = app.user.lock_ref().as_ref().map(|user| user.user.doctorcode.lock_ref().deref() == &order.order_doctor).unwrap_or_default();
 
     let allow_order_form = app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPreOrderOrder, true) && app.has_permission(Permission::DataTypeDoctorUse);
     let allow_order_edit = app.has_permission(Permission::IpdOrderEdit) || app.has_permission(Permission::OpdErOrderEdit);
@@ -739,12 +727,7 @@ pub fn render_progress_note(progress_note: Rc<PreProgressNote>, page_opt: Option
         "auditor" => " (Auditor)",
         _ => "",
     };
-    let is_same_doctor = app
-        .user
-        .lock_ref()
-        .as_ref()
-        .map(|user| user.user.doctorcode.lock_ref().deref() == &progress_note.progress_note_doctor)
-        .unwrap_or_default();
+    let is_same_doctor = app.user.lock_ref().as_ref().map(|user| user.user.doctorcode.lock_ref().deref() == &progress_note.progress_note_doctor).unwrap_or_default();
 
     let allow_progress_form = app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPreOrderProgressNote, true) && app.has_permission(Permission::DataTypeDoctorUse);
     let allow_progress_edit = app.has_permission(Permission::ProgressNoteEdit);

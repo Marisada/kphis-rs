@@ -586,16 +586,8 @@ LIMIT 50;"#;
         let user = app.user.lock_ref().as_ref().map(|user| user.user.name.get_cloned()).unwrap_or_default();
         let ids = page.ids.lock_ref();
         let (file_name, title) = match page.designer_mode.get_cloned() {
-            DesignerMode::Custom => page
-                .selected_custom_template
-                .lock_ref()
-                .as_ref()
-                .map(|selected| (selected.download_file_name(&ids), selected.title_with_ids(&ids))),
-            DesignerMode::System => page
-                .selected_system_template
-                .lock_ref()
-                .as_ref()
-                .map(|selected| (selected.download_file_name(&ids), selected.title_with_ids(&ids))),
+            DesignerMode::Custom => page.selected_custom_template.lock_ref().as_ref().map(|selected| (selected.download_file_name(&ids), selected.title_with_ids(&ids))),
+            DesignerMode::System => page.selected_system_template.lock_ref().as_ref().map(|selected| (selected.download_file_name(&ids), selected.title_with_ids(&ids))),
             DesignerMode::Demo => None,
         }
         .unwrap_or((String::from("CUSTOM-REPORT"), String::from("Custom Report")));

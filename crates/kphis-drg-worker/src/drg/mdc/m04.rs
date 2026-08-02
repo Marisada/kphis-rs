@@ -46,11 +46,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, procs: &Has
     } else if grouper.is_pdx_pdc(Mdc::M04, "4D", pdx) {
         MdcResult::Dc(String::from("0453"))
     } else if grouper.is_pdx_pdc(Mdc::M04, "4E", pdx) {
-        if dch_type == "04" {
-            MdcResult::Dc(String::from("0471"))
-        } else {
-            MdcResult::Dc(String::from("0454"))
-        }
+        if dch_type == "04" { MdcResult::Dc(String::from("0471")) } else { MdcResult::Dc(String::from("0454")) }
     } else if grouper.is_pdx_pdc(Mdc::M04, "4F", pdx) {
         MdcResult::Dc(String::from("0455"))
     } else if grouper.is_pdx_pdc(Mdc::M04, "4G", pdx) {
@@ -83,11 +79,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, procs: &Has
     } else if grouper.is_pdx_pdc(Mdc::M04, "4R", pdx) {
         MdcResult::Dc(String::from("0470"))
     } else if grouper.is_pdx_pdc(Mdc::M04, "4N", pdx) {
-        if dch_type == "04" {
-            MdcResult::Dc(String::from("0472"))
-        } else {
-            MdcResult::Dc(String::from("0462"))
-        }
+        if dch_type == "04" { MdcResult::Dc(String::from("0472")) } else { MdcResult::Dc(String::from("0462")) }
     } else if grouper.is_pdx_pdc(Mdc::M04, "4P", pdx) {
         MdcResult::Dc(String::from("0463"))
     } else if grouper.is_pdx_pdc(Mdc::M04, "4Q", pdx) {

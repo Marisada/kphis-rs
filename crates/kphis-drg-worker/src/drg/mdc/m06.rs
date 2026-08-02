@@ -127,11 +127,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, procs: &Has
     } else if grouper.is_pdx_pdc(Mdc::M06, "6E", pdx) {
         MdcResult::Dc(String::from("0655"))
     } else if grouper.is_pdx_pdc(Mdc::M06, "6F", pdx) {
-        if dch_type == "04" {
-            MdcResult::Dc(String::from("0674"))
-        } else {
-            MdcResult::Dc(String::from("0656"))
-        }
+        if dch_type == "04" { MdcResult::Dc(String::from("0674")) } else { MdcResult::Dc(String::from("0656")) }
     } else if grouper.is_pdx_pdc(Mdc::M06, "6N", pdx) {
         if *age_y > 9 { MdcResult::Dc(String::from("0676")) } else { MdcResult::Dc(String::from("0658")) }
     } else if grouper.is_pdx_pdc(Mdc::M06, "6G", pdx) {
@@ -139,11 +135,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, procs: &Has
     } else if grouper.is_pdx_pdc(Mdc::M06, "6H", pdx) {
         if *age_y > 9 { MdcResult::Dc(String::from("0666")) } else { MdcResult::Dc(String::from("0663")) }
     } else if grouper.is_pdx_pdc(Mdc::M06, "6J", pdx) {
-        if dch_type == "04" {
-            MdcResult::Dc(String::from("0675"))
-        } else {
-            MdcResult::Dc(String::from("0660"))
-        }
+        if dch_type == "04" { MdcResult::Dc(String::from("0675")) } else { MdcResult::Dc(String::from("0660")) }
     } else if grouper.is_pdx_pdc(Mdc::M06, "6K", pdx) {
         MdcResult::Dc(String::from("0661"))
     } else if grouper.is_pdx_pdc(Mdc::M06, "6L", pdx) {

@@ -167,11 +167,7 @@ pub struct OpdErEmergencyCpn {
 
 impl OpdErEmergencyCpn {
     pub fn new(patient: Mutable<Option<Rc<PatientInfo>>>, view_by: Mutable<String>) -> Rc<Self> {
-        Rc::new(Self {
-            patient,
-            view_by,
-            ..Default::default()
-        })
+        Rc::new(Self { patient, view_by, ..Default::default() })
     }
 
     fn is_doctor(&self) -> impl Signal<Item = bool> + use<> {

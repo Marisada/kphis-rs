@@ -120,15 +120,7 @@ pub async fn delete_ipd_io_shift(Query(params): Query<IoParams>, ctx: RequestSta
     ctx.authorize_and_access_log(&Method::DELETE, is_pre_admit).await?;
 
     if let (Some(io_id), Some(version)) = (params.io_id, params.version) {
-        let response = io::delete_io_shift(
-            io_id,
-            version,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_log(),
-        )
-        .await?;
+        let response = io::delete_io_shift(io_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(response))
     } else {

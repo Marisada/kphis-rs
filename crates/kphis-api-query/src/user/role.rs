@@ -178,11 +178,7 @@ pub async fn post_user_role(payload: UserRoleSave, user: &str, pool: &Pool<MySql
 
 async fn delete_role_user_by_loginname(loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let delete_sql = role::delete_role_user_by_loginname(kphis);
-    sqlx::query(AssertSqlSafe(delete_sql))
-        .bind(loginname)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete RoleUserByName"))
+    sqlx::query(AssertSqlSafe(delete_sql)).bind(loginname).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete RoleUserByName"))
 }
 
 async fn insert_roles_user(roles: &[String], loginname: &str, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
@@ -380,11 +376,7 @@ pub async fn delete_role_permission(params: UserRoleParams, user: &str, pool: &P
 
 async fn delete_role_user_by_role(role: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let delete_ru_sql = role::delete_role_user_by_role(kphis);
-    sqlx::query(AssertSqlSafe(delete_ru_sql))
-        .bind(role)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete RoleUserByRole"))
+    sqlx::query(AssertSqlSafe(delete_ru_sql)).bind(role).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete RoleUserByRole"))
 }
 
 #[cfg(test)]

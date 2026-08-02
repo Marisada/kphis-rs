@@ -322,11 +322,7 @@ pub fn time_from_pat(text: &str) -> Option<Time> {
     // failover with str.chars() method, allocate, slower
     if text.contains(['/', '-', '.', ':']) {
         let hm = text.split(['/', '-', '.', ':']).map(str::trim).collect::<Vec<&str>>();
-        if hm.len() > 1 {
-            time_from_pat_inner(hm[0].parse::<u8>().ok(), hm[1].parse::<u8>().ok())
-        } else {
-            None
-        }
+        if hm.len() > 1 { time_from_pat_inner(hm[0].parse::<u8>().ok(), hm[1].parse::<u8>().ok()) } else { None }
     } else {
         let c = text.chars().filter(|c| c.is_numeric()).collect::<Vec<char>>();
         match c.len() {

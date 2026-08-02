@@ -329,14 +329,7 @@ pub struct ImagePath {
 impl ImagePath {
     /// GET `EndPoint::ImageUsageId`
     pub async fn call_api_get(usage_id: &ImageUsage, usage_key_id: u32, app: Rc<AppState>) -> Result<Vec<Self>, AppError> {
-        match fetch_json_api(
-            &[&EndPoint::ImageUsageId.base(), &(usage_id.clone() as u32).to_string(), "/", &usage_key_id.to_string()].concat(),
-            "GET",
-            None,
-            app,
-        )
-        .await
-        {
+        match fetch_json_api(&[&EndPoint::ImageUsageId.base(), &(usage_id.clone() as u32).to_string(), "/", &usage_key_id.to_string()].concat(), "GET", None, app).await {
             Ok((response, true)) => {
                 let response: Vec<Self> = serde_wasm_bindgen::from_value(response).map_err(|e| Source::SerdeWasm.to_teapot_error(e, "Fetch ImageUsage"))?;
                 Ok(response)

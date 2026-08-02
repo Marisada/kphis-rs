@@ -46,10 +46,7 @@ impl OrderDate {
     pub fn from_string(value: &str) -> Option<Self> {
         let tuple = value.split('|').collect::<Vec<&str>>();
         if tuple.len() == 2 {
-            Date::parse(tuple[0], &Iso8601::DEFAULT).ok().map(|date| Self {
-                order_date: date,
-                is_today: tuple[1] == "1",
-            })
+            Date::parse(tuple[0], &Iso8601::DEFAULT).ok().map(|date| Self { order_date: date, is_today: tuple[1] == "1" })
         } else {
             None
         }
@@ -625,9 +622,7 @@ impl OrderItemType {
         // normal order: has `icode`
         // off order: not has `icode`, has `off_icode`
         // med reconciliation order: not has `icode`, has `med_reconciliation_item_id`
-        self.order_items
-            .iter()
-            .any(|oi| oi.icode.is_some() || oi.off_icode.is_some() || oi.med_reconciliation_item_id.is_some())
+        self.order_items.iter().any(|oi| oi.icode.is_some() || oi.off_icode.is_some() || oi.med_reconciliation_item_id.is_some())
     }
     pub fn is_note(&self) -> bool {
         matches!(self.order_item_type, OrderTypeName::Note)
@@ -860,11 +855,7 @@ impl OrderItem {
     }
 
     pub fn is_med_rec_change_usage(&self) -> bool {
-        if let (Some(old), Some(new)) = (&self.old_drugusage, &self.order_item_detail) {
-            old != new
-        } else {
-            false
-        }
+        if let (Some(old), Some(new)) = (&self.old_drugusage, &self.order_item_detail) { old != new } else { false }
     }
 
     pub fn has_dtx(&self) -> bool {

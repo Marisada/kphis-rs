@@ -126,9 +126,7 @@ impl AsideResizerCpn {
 
     fn load_and_render_template(page: Rc<Self>, app: Rc<App>) {
         if let (Some(template), Some(vnan)) = (
-            page.selected_template
-                .get_cloned()
-                .map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
+            page.selected_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
             str_some(page.vnan.get_cloned()),
         ) {
             app.async_load(

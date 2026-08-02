@@ -56,10 +56,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, procs: &Has
     } else if grouper.is_pdx_pdc(Mdc::M17, "17B", pdx) {
         // CaRT: SDx as AX 99BX and Proc as AX 99PEX + CaCRx: SDx as AX 99CX and Proc as AX 99PFX
         // or ITCCRx: Proc Combination as AX 99PGX
-        if grouper.has_mdc_ax_sdxs("99BX", sdxs)
-            && grouper.has_mdc_pax("99PEX", procs)
-            && ((grouper.has_mdc_ax_sdxs("99CX", sdxs) && grouper.has_mdc_pax("99PFX", procs)) || grouper.has_mdc_pax("99PGX", procs))
-        {
+        if grouper.has_mdc_ax_sdxs("99BX", sdxs) && grouper.has_mdc_pax("99PEX", procs) && ((grouper.has_mdc_ax_sdxs("99CX", sdxs) && grouper.has_mdc_pax("99PFX", procs)) || grouper.has_mdc_pax("99PGX", procs)) {
             MdcResult::Dc(String::from("1761"))
         // CaCRx: SDx as AX 99CX and Proc as AX 99PFX
         // or ITCCRx: Proc Combination as AX 99PGX

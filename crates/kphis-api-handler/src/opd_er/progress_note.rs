@@ -43,14 +43,7 @@ pub async fn get_opd_er_progress_note(Query(params): Query<ProgressNoteParams>, 
     Ok(Json(progress_notes))
 }
 
-pub async fn get_opd_er_progress_note_bundle(
-    params: &ProgressNoteParams,
-    intern_roles: &[String],
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-    kphis_extra: &str,
-) -> Result<Vec<ProgressNote>, AppError> {
+pub async fn get_opd_er_progress_note_bundle(params: &ProgressNoteParams, intern_roles: &[String], pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_extra: &str) -> Result<Vec<ProgressNote>, AppError> {
     let mut progress_notes = progress_note::get_progress_note(params, intern_roles, pool, hosxp, kphis, kphis_extra).await?;
     let ids = progress_notes.iter().map(|op| op.progress_note_id).collect::<Vec<u32>>();
     let item_types = progress_note::get_progress_note_types(&ids, pool, kphis).await?;

@@ -122,8 +122,7 @@ pub async fn post_ipd_consult(save: &ConsultSave, loginname: &str, pool: &Pool<M
                 results.push(ExecuteResponse::from_query_result(update_consult_result, "Update ConsultRequest"));
 
                 if update_affectd > 0 {
-                    let insert_consult_history_result =
-                        insert_history_log(SourceTable::IpdDrConsult, "U", loginname, &[KeyValue("consult_id", consult_id.to_string())], kphis, kphis_log, pool).await?;
+                    let insert_consult_history_result = insert_history_log(SourceTable::IpdDrConsult, "U", loginname, &[KeyValue("consult_id", consult_id.to_string())], kphis, kphis_log, pool).await?;
                     results.push(ExecuteResponse::from_query_result(insert_consult_history_result, "Insert Consult History"));
 
                     let delete_sig_request_result = delete_consult_signature_request(consult_id, pool, kphis).await?;
@@ -131,16 +130,7 @@ pub async fn post_ipd_consult(save: &ConsultSave, loginname: &str, pool: &Pool<M
 
                     results.extend(insert_consult_signature_request(consult_id, save, loginname, pool, kphis).await?);
 
-                    let insert_sig_request_history_result = insert_history_log(
-                        SourceTable::IpdDrConsultSignatureRequest,
-                        "U",
-                        loginname,
-                        &[KeyValue("consult_id", consult_id.to_string())],
-                        kphis,
-                        kphis_log,
-                        pool,
-                    )
-                    .await?;
+                    let insert_sig_request_history_result = insert_history_log(SourceTable::IpdDrConsultSignatureRequest, "U", loginname, &[KeyValue("consult_id", consult_id.to_string())], kphis, kphis_log, pool).await?;
                     results.push(ExecuteResponse::from_query_result(insert_sig_request_history_result, "Insert ConsultSignatureRequest History"));
                 }
             }
@@ -152,8 +142,7 @@ pub async fn post_ipd_consult(save: &ConsultSave, loginname: &str, pool: &Pool<M
                 results.push(ExecuteResponse::from_query_result(update_consult_result, "Update ConsultReply"));
 
                 if update_affected > 0 {
-                    let insert_consult_history_result =
-                        insert_history_log(SourceTable::IpdDrConsult, "U", loginname, &[KeyValue("consult_id", consult_id.to_string())], kphis, kphis_log, pool).await?;
+                    let insert_consult_history_result = insert_history_log(SourceTable::IpdDrConsult, "U", loginname, &[KeyValue("consult_id", consult_id.to_string())], kphis, kphis_log, pool).await?;
                     results.push(ExecuteResponse::from_query_result(insert_consult_history_result, "Insert Consult History"));
 
                     let delete_sig_reply_result = delete_consult_signature_reply(consult_id, pool, kphis).await?;
@@ -161,16 +150,7 @@ pub async fn post_ipd_consult(save: &ConsultSave, loginname: &str, pool: &Pool<M
 
                     results.extend(insert_consult_signature_reply(consult_id, save, loginname, pool, kphis).await?);
 
-                    let insert_sig_reply_history_result = insert_history_log(
-                        SourceTable::IpdDrConsultSignatureReply,
-                        "U",
-                        loginname,
-                        &[KeyValue("consult_id", consult_id.to_string())],
-                        kphis,
-                        kphis_log,
-                        pool,
-                    )
-                    .await?;
+                    let insert_sig_reply_history_result = insert_history_log(SourceTable::IpdDrConsultSignatureReply, "U", loginname, &[KeyValue("consult_id", consult_id.to_string())], kphis, kphis_log, pool).await?;
                     results.push(ExecuteResponse::from_query_result(insert_sig_reply_history_result, "Insert ConsultSignatureReply History"));
                 }
             }
@@ -187,16 +167,7 @@ pub async fn post_ipd_consult(save: &ConsultSave, loginname: &str, pool: &Pool<M
 
         results.extend(insert_consult_signature_request(consult_id, save, loginname, pool, kphis).await?);
 
-        let insert_sig_request_history_result = insert_history_log(
-            SourceTable::IpdDrConsultSignatureRequest,
-            "I",
-            loginname,
-            &[KeyValue("consult_id", consult_id.to_string())],
-            kphis,
-            kphis_log,
-            pool,
-        )
-        .await?;
+        let insert_sig_request_history_result = insert_history_log(SourceTable::IpdDrConsultSignatureRequest, "I", loginname, &[KeyValue("consult_id", consult_id.to_string())], kphis, kphis_log, pool).await?;
         results.push(ExecuteResponse::from_query_result(insert_sig_request_history_result, "Insert ConsultSignatureRequest History"));
     }
 
@@ -262,15 +233,7 @@ async fn select_consult_datetime(id: u32, pool: &Pool<MySql>, kphis: &str) -> Re
         .map_err(|e| Source::Time.to_error(500, e, "Select CreateReplyDateTime"))
 }
 
-async fn update_consult_reply(
-    id: u32,
-    consult_datetime: Option<PrimitiveDateTime>,
-    consult_status: &str,
-    save: &ConsultSave,
-    loginname: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+async fn update_consult_reply(id: u32, consult_datetime: Option<PrimitiveDateTime>, consult_status: &str, save: &ConsultSave, loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let consult_datetime_update_reply = consult_datetime.is_some().then(now);
     let consult_datetime_create_reply = consult_datetime.or(Some(now()));
     let update_consult_sql = consult::update_consult_reply(kphis);
@@ -381,11 +344,7 @@ pub async fn delete_ipd_consult_by_id(consult_id: u32, version: i32, loginname: 
 
 async fn delete_consult(consult_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let delete_sql = consult::delete_consult(kphis);
-    sqlx::query(AssertSqlSafe(delete_sql))
-        .bind(consult_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete Colsult"))
+    sqlx::query(AssertSqlSafe(delete_sql)).bind(consult_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete Colsult"))
 }
 
 #[cfg(test)]

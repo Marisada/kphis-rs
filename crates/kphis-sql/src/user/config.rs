@@ -57,3 +57,11 @@ pub fn remove_totp(kphis_extra: &str) -> String {
         "UPDATE ",kphis_extra,".user_config SET totp=NULL,ts=NULL,totp_done=NULL,update_user=?,update_datetime=NOW(),version=(version+1) WHERE loginname=?;"
     ].concat()
 }
+
+// UPDATE kphis_extra.user_config SET failed=NULL,update_user=?,update_datetime=NOW(),version=(version+1) WHERE loginname=?;
+/// update_user, target_loginname
+pub fn clear_failed(kphis_extra: &str) -> String {
+    [
+        "UPDATE ",kphis_extra,".user_config SET failed=NULL,update_user=?,update_datetime=NOW(),version=(version+1) WHERE loginname=?;"
+    ].concat()
+}

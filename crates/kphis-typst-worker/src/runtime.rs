@@ -242,11 +242,7 @@ impl<'a> codespan_reporting::files::Files<'a> for SystemWorld {
         let source = self.lookup(id);
         source.byte_to_column(given).ok_or_else(|| {
             let max = source.len_bytes();
-            if given <= max {
-                CodespanError::InvalidCharBoundary { given }
-            } else {
-                CodespanError::IndexTooLarge { given, max }
-            }
+            if given <= max { CodespanError::InvalidCharBoundary { given } } else { CodespanError::IndexTooLarge { given, max } }
         })
     }
 }
@@ -297,8 +293,7 @@ impl FileSlot {
 
     /// Retrieve the source for this file.
     fn source(&mut self, read_fn: Option<ReadFn>, token: &Option<String>) -> FileResult<Source> {
-        self.source
-            .get_or_init(read_fn, |reader| read_file(self.id, reader, token), |data, prev| create_source(self.id, &data, prev))
+        self.source.get_or_init(read_fn, |reader| read_file(self.id, reader, token), |data, prev| create_source(self.id, &data, prev))
     }
 
     /// Retrieve the file's bytes.
@@ -321,11 +316,7 @@ struct SlotCell<T> {
 impl<T: Clone> SlotCell<T> {
     /// Creates a new, empty cell.
     fn new() -> Self {
-        Self {
-            data: None,
-            fingerprint: 0,
-            accessed: false,
-        }
+        Self { data: None, fingerprint: 0, accessed: false }
     }
 
     /// Marks the cell as not yet accessed in preparation of the next

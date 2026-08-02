@@ -14,7 +14,7 @@ use kphis_util::{
 use super::totp;
 
 // POST user-config
-pub async fn insert_dup_user_config(payload: &UserConfig, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<(UserConfigResponse, Option<Option<String>>), AppError> {
+pub async fn insert_dup_user_config(payload: &UserConfig, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<UserConfigResponse, AppError> {
     let (totp, pk, ts) = if payload.totp.unwrap_or_default() {
         let (qr, secret) = totp::new_totp_encoded_key(user, "KPHIS")?;
         (Some(qr), Some(secret), get_timestamp_server().ok())
@@ -36,10 +36,7 @@ pub async fn insert_dup_user_config(payload: &UserConfig, user: &str, pool: &Poo
         .map(|res| ExecuteResponse::from_query_result(res, "Post User Config"))
         .map_err(|e| Source::SQLx.to_error(500, e, "Post User Config"))?;
 
-    // Some is changed, None is not changed
-    let changed_pk = if payload.totp.is_some() { Some(pk) } else { None };
-
-    Ok((UserConfigResponse { totp, result }, changed_pk))
+    Ok(UserConfigResponse { totp, result })
 }
 
 pub async fn insert_dup_config_sse(payload: &SseGroup, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<ExecuteResponse, AppError> {
@@ -86,11 +83,7 @@ pub async fn insert_dup_failed(failed: i8, target_loginname: &str, pool: &Pool<M
 
 pub async fn update_totp_done(target_loginname: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {
     let sql = config::update_totp_done(kphis_extra);
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(target_loginname)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Update TOTP Done"))
+    sqlx::query(AssertSqlSafe(sql)).bind(target_loginname).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Update TOTP Done"))
 }
 
 pub async fn remove_totp(target_loginname: &str, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<ExecuteResponse, AppError> {
@@ -102,6 +95,17 @@ pub async fn remove_totp(target_loginname: &str, user: &str, pool: &Pool<MySql>,
         .await
         .map(|res| ExecuteResponse::from_query_result(res, "Remove TOTP"))
         .map_err(|e| Source::SQLx.to_error(500, e, "Remove TOTP"))
+}
+
+pub async fn clear_failed(target_loginname: &str, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<ExecuteResponse, AppError> {
+    let sql = config::clear_failed(kphis_extra);
+    sqlx::query(AssertSqlSafe(sql))
+        .bind(user)
+        .bind(target_loginname)
+        .execute(pool)
+        .await
+        .map(|res| ExecuteResponse::from_query_result(res, "Clear Failed"))
+        .map_err(|e| Source::SQLx.to_error(500, e, "Clear Failed"))
 }
 
 #[cfg(test)]
@@ -130,28 +134,28 @@ mod tests {
         // when payload.totp is Some(true), insert/update with a new PK, return new QR-CODE
         let mut payload = UserConfig::demo();
         let success = insert_dup_user_config(&payload,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert!(success.0.totp.is_some());
-        assert_eq!(success.0.result.rows_affected, 1); // 1 is insert, 2 is update
+        assert!(success.totp.is_some());
+        assert_eq!(success.result.rows_affected, 1); // 1 is insert, 2 is update
 
         let again_success = insert_dup_user_config(&payload,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert!(again_success.0.totp.is_some());
-        assert_eq!(again_success.0.result.rows_affected, 2); // 1 is insert, 2 is update
+        assert!(again_success.totp.is_some());
+        assert_eq!(again_success.result.rows_affected, 2); // 1 is insert, 2 is update
         let (_,_,totp) = select_user_config("user", &tester.db_pool, &tester.kphis_extra).await;
         assert!(totp.is_some());
 
         // when payload.totp is None, insert with totp = NULL, do not update totp, return NONE QR-CODE
         payload.totp = None;
         let again_without_totp = insert_dup_user_config(&payload,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert!(again_without_totp.0.totp.is_none());
-        assert_eq!(again_without_totp.0.result.rows_affected, 2); // 1 is insert, 2 is update
+        assert!(again_without_totp.totp.is_none());
+        assert_eq!(again_without_totp.result.rows_affected, 2); // 1 is insert, 2 is update
         let (_,_,totp_again) = select_user_config("user", &tester.db_pool, &tester.kphis_extra).await;
         assert_eq!(totp_again, totp);
 
         // when payload.totp is Some(false), insert/update with totp = NULL, return NONE QR-CODE
         payload.totp = Some(false);
         let again_with_totp = insert_dup_user_config(&payload,"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert!(again_with_totp.0.totp.is_none());
-        assert_eq!(again_with_totp.0.result.rows_affected, 2); // 1 is insert, 2 is update
+        assert!(again_with_totp.totp.is_none());
+        assert_eq!(again_with_totp.result.rows_affected, 2); // 1 is insert, 2 is update
         let (_,_,totp_last) = select_user_config("user", &tester.db_pool, &tester.kphis_extra).await;
         assert!(totp_last.is_none()); 
     }
@@ -181,7 +185,7 @@ mod tests {
         assert_eq!(no_totp.rows_affected(), 0);
 
         let update_totp = insert_dup_user_config(&UserConfig::demo(),"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert!(update_totp.0.totp.is_some());
+        assert!(update_totp.totp.is_some());
 
         let success = update_ts("user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
         assert_eq!(success.rows_affected(), 1);
@@ -214,7 +218,7 @@ mod tests {
         assert_eq!(no_totp.rows_affected(), 0);
 
         let update_totp = insert_dup_user_config(&UserConfig::demo(),"user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
-        assert!(update_totp.0.totp.is_some());
+        assert!(update_totp.totp.is_some());
 
         let success = update_totp_done("user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
         assert_eq!(success.rows_affected(), 1);
@@ -236,6 +240,21 @@ mod tests {
         let again_success = remove_totp("user","admin",&tester.db_pool,&tester.kphis_extra).await.unwrap();
         assert_eq!(again_success.rows_affected, 1);
         let not_found = remove_totp("admin","user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
+        assert_eq!(not_found.rows_affected, 0);
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn sqlx_clear_failed() {
+        let tester = MySqlTester::new_kphis_extra().await;
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/kphis_extra/user_config.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis_extra/user_config.sql")).execute(&tester.db_pool).await.unwrap();
+
+        let success = clear_failed("user","admin",&tester.db_pool,&tester.kphis_extra).await.unwrap();
+        assert_eq!(success.rows_affected, 1);
+        let again_success = clear_failed("user","admin",&tester.db_pool,&tester.kphis_extra).await.unwrap();
+        assert_eq!(again_success.rows_affected, 1);
+        let not_found = clear_failed("admin","user",&tester.db_pool,&tester.kphis_extra).await.unwrap();
         assert_eq!(not_found.rows_affected, 0);
     }
 }

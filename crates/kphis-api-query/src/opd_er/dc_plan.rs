@@ -111,14 +111,7 @@ pub async fn post_dc_plan(opd_er_order_master_id: u32, save: &DischargePlanSave,
     }
 }
 
-pub async fn update_dc_plan_bundle(
-    dc_plan_id: u32,
-    opd_er_order_master_id: u32,
-    save: &DischargePlanSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis_extra: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+pub async fn update_dc_plan_bundle(dc_plan_id: u32, opd_er_order_master_id: u32, save: &DischargePlanSave, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::with_capacity(9);
 
     let update_dc_plan_result = update_dc_plan(opd_er_order_master_id, save, user, pool, kphis_extra).await?;
@@ -235,25 +228,17 @@ pub async fn insert_dc_plan(opd_er_order_master_id: u32, form: &DischargePlanSav
 }
 
 pub async fn insert_dc_plan_only(opd_er_order_master_id: u32, only: &DischargePlanOnly, pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {
-    only.insert(
-        Some("dc_plan_id"),
-        Some("opd_er_dc_plan"),
-        ",opd_er_order_master_id",
-        ",?",
-        &[&opd_er_order_master_id.to_string()],
-        pool,
-        kphis_extra,
-    )
-    .await
-    .map_err(|e| {
-        if let sqlx::error::Error::Database(err) = &e
-            && err.code().map(|c| c == "23000").unwrap_or_default()
-        {
-            AppError::app_403_duplicate("Insert OpdErDischargePlanOnly")
-        } else {
-            Source::SQLx.to_error(500, e, "Insert OpdErDischargePlanOnly")
-        }
-    })
+    only.insert(Some("dc_plan_id"), Some("opd_er_dc_plan"), ",opd_er_order_master_id", ",?", &[&opd_er_order_master_id.to_string()], pool, kphis_extra)
+        .await
+        .map_err(|e| {
+            if let sqlx::error::Error::Database(err) = &e
+                && err.code().map(|c| c == "23000").unwrap_or_default()
+            {
+                AppError::app_403_duplicate("Insert OpdErDischargePlanOnly")
+            } else {
+                Source::SQLx.to_error(500, e, "Insert OpdErDischargePlanOnly")
+            }
+        })
 }
 
 pub async fn update_dc_plan(opd_er_order_master_id: u32, form: &DischargePlanSave, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<MySqlQueryResult, AppError> {

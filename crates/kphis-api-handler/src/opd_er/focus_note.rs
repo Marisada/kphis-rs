@@ -31,15 +31,7 @@ pub async fn get_opd_er_focus_note(Path(opd_er_order_master_id): Path<u32>, Quer
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = focus_note::get_focus_note(
-        opd_er_order_master_id,
-        &params,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-        &ctx.api_state.kphis_extra(),
-    )
-    .await?;
+    let response = focus_note::get_focus_note(opd_er_order_master_id, &params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
     Ok(Json(response))
 }
@@ -61,15 +53,7 @@ pub async fn post_opd_er_focus_note(Path(opd_er_order_master_id): Path<u32>, ctx
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
-    let result = focus_note::post_focus_note(
-        opd_er_order_master_id,
-        &payload,
-        &ctx.user_state.user.loginname,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.kphis(),
-        &ctx.api_state.kphis_log(),
-    )
-    .await?;
+    let result = focus_note::post_focus_note(opd_er_order_master_id, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
     Ok(Json(result))
 }
@@ -91,15 +75,7 @@ pub async fn delete_opd_er_focus_note(Path(_opd_er_order_master_id): Path<u32>, 
     ctx.authorize_and_access_log(&Method::DELETE, false).await?;
 
     if let (Some(fcnote_id), Some(version)) = (params.fcnote_id, params.version) {
-        let result = focus_note::delete_focus_note(
-            fcnote_id,
-            version,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_log(),
-        )
-        .await?;
+        let result = focus_note::delete_focus_note(fcnote_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(result))
     } else {

@@ -440,17 +440,9 @@ async fn insert_order(opd_er_order_master_id: u32, save: &OrderSave, user: &str,
 }
 
 pub async fn insert_order_only(opd_er_order_master_id: u32, only: &OrderOnly, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
-    only.insert(
-        Some("order_id"),
-        Some("opd_er_order"),
-        ",opd_er_order_master_id",
-        ",?",
-        &[&opd_er_order_master_id.to_string()],
-        pool,
-        kphis,
-    )
-    .await
-    .map_err(|e| Source::SQLx.to_error(500, e, "Insert OrderOnly"))
+    only.insert(Some("order_id"), Some("opd_er_order"), ",opd_er_order_master_id", ",?", &[&opd_er_order_master_id.to_string()], pool, kphis)
+        .await
+        .map_err(|e| Source::SQLx.to_error(500, e, "Insert OrderOnly"))
 }
 
 async fn insert_order_items(order_id: u32, opd_er_order_master_id: u32, order_items: &[OrderItemSave], user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
@@ -476,17 +468,9 @@ async fn insert_order_items(order_id: u32, opd_er_order_master_id: u32, order_it
 
 async fn insert_order_item_only(order_id: u32, opd_er_order_master_id: u32, only: &mut OrderItemOnly, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     only.order_id = Some(order_id);
-    only.insert(
-        Some("order_item_id"),
-        Some("opd_er_order_item"),
-        ",opd_er_order_master_id",
-        ",?",
-        &[&opd_er_order_master_id.to_string()],
-        pool,
-        kphis,
-    )
-    .await
-    .map_err(|e| Source::SQLx.to_error(500, e, "Insert OrderItemsOnly"))
+    only.insert(Some("order_item_id"), Some("opd_er_order_item"), ",opd_er_order_master_id", ",?", &[&opd_er_order_master_id.to_string()], pool, kphis)
+        .await
+        .map_err(|e| Source::SQLx.to_error(500, e, "Insert OrderItemsOnly"))
 }
 
 // pub async fn insert_order_items_only(order_id: u32, opd_er_order_master_id: u32, order_item_onlys: &[OrderItemOnly], pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
@@ -659,11 +643,7 @@ pub async fn get_pharmacy_order(params: &OpdErOrderPharmacyParams, hlen: usize, 
 // opd-er-order-one-day-delete.php, opd-er-order-continuous-delete.php
 pub async fn delete_order(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = order::delete_order(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(order_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete Order"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(order_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete Order"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete Order"))
 }
@@ -682,11 +662,7 @@ pub async fn delete_order_bundle(opd_er_order_master_id: u32, pool: &Pool<MySql>
 
 async fn delete_order_item(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let delete_sql = order::delete_order_item(kphis);
-    sqlx::query(AssertSqlSafe(delete_sql))
-        .bind(order_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete OrderItem"))
+    sqlx::query(AssertSqlSafe(delete_sql)).bind(order_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete OrderItem"))
 }
 
 #[cfg(test)]

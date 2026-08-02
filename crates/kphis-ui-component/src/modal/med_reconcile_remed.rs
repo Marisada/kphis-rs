@@ -141,11 +141,7 @@ impl MedReconcileRemed {
                 .iter()
                 .map(|med| {
                     let (med_name, custom_med_name, usage) = if med.icode == medrec_icode {
-                        (
-                            None,
-                            med.name1.clone(),
-                            Some([&med.name2.clone().unwrap_or_default(), " ", &med.name3.clone().unwrap_or_default()].concat()),
-                        )
+                        (None, med.name1.clone(), Some([&med.name2.clone().unwrap_or_default(), " ", &med.name3.clone().unwrap_or_default()].concat()))
                     } else {
                         (med.item_name.clone(), None, med.usage.clone())
                     };

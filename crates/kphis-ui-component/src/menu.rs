@@ -387,11 +387,11 @@ impl MenuCpn {
                     .attr("aria-label","Toggle navigation")
                     .child(html!("span", {.class("navbar-toggler-icon")}))
                 }),
-                // Drug information
                 html!("div", {
                     .class(class::NAV_BAR_COLLAPSE)
                     .attr("id", "collapsibleNavId")
                     .child(menu_items(app.clone()))
+                    // Drug information
                     .apply_if(
                         app.endpoint_is_allow(&Method::GET, &EndPoint::DrugUseDuration, false)
                         && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxMedHnText, false),
@@ -1858,24 +1858,9 @@ fn menu_items(app: Rc<App>) -> Dom {
 
     let ipd_doctor_children = vec![
         link_checked(Route::IpdSearchPatientDr, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(
-            Route::IpdPreAdmitList { view_by: String::from("doctor") },
-            html!("i", {.class(class::FA_CLOCK).class("ms-2")}),
-            " รอ Admit",
-            app.state(),
-        ),
-        link_checked(
-            Route::IpdPostAdmitList { view_by: String::from("doctor") },
-            html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
-            " สรุป Chart",
-            app.state(),
-        ),
-        link_checked(
-            Route::IpdPreOrderList { view_by: String::from("doctor") },
-            html!("i", {.class(class::FA_PASTE).class("ms-2")}),
-            " Order ล่วงหน้า",
-            app.state(),
-        ),
+        link_checked(Route::IpdPreAdmitList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
+        link_checked(Route::IpdPostAdmitList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}), " สรุป Chart", app.state()),
+        link_checked(Route::IpdPreOrderList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
         link_checked(
             Route::IpdConsultList { view_by: String::from("doctor") },
             html!("i", {.class(class::FA_COMMENTS).class("ms-2")}),
@@ -1896,12 +1881,7 @@ fn menu_items(app: Rc<App>) -> Dom {
 
     let ipd_nurse_children = vec![
         link_checked(Route::IpdSearchPatientNurse, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(
-            Route::IpdPreAdmitList { view_by: String::from("nurse") },
-            html!("i", {.class(class::FA_CLOCK).class("ms-2")}),
-            " รอ Admit",
-            app.state(),
-        ),
+        link_checked(Route::IpdPreAdmitList { view_by: String::from("nurse") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
         link_checked(
             Route::IpdPostAdmitList { view_by: String::from("nurse") },
             html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
@@ -1910,12 +1890,7 @@ fn menu_items(app: Rc<App>) -> Dom {
         ),
         link_checked(Route::IpdVitalSign, html!("i", {.class(class::FA_HEARTBEAT).class("ms-2")}), " IPD Vital Sign", app.state()),
         link_checked(Route::IpdIndexPlan, html!("i", {.class(class::FA_SYRINGE).class("ms-2")}), " IPD Nurse Planning", app.state()),
-        link_checked(
-            Route::IpdPreOrderList { view_by: String::from("nurse") },
-            html!("i", {.class(class::FA_PASTE).class("ms-2")}),
-            " Order ล่วงหน้า",
-            app.state(),
-        ),
+        link_checked(Route::IpdPreOrderList { view_by: String::from("nurse") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
         link_checked(
             Route::IpdConsultList { view_by: String::from("nurse") },
             html!("i", {.class(class::FA_COMMENTS).class("ms-2")}),
@@ -1941,22 +1916,12 @@ fn menu_items(app: Rc<App>) -> Dom {
     .flatten()
     .collect::<Vec<Dom>>();
 
-    let prescription_screen_child = link_checked(
-        Route::PrescriptionScreen { hn: String::new() },
-        html!("i", {.class(class::FA_FILE_RX).class("ms-2")}),
-        " Screen ใบสั่งยา",
-        app.state(),
-    );
+    let prescription_screen_child = link_checked(Route::PrescriptionScreen { hn: String::new() }, html!("i", {.class(class::FA_FILE_RX).class("ms-2")}), " Screen ใบสั่งยา", app.state());
 
     let ipd_pharm_children = vec![
         link_checked(Route::IpdOrderPharmacy, html!("i", {.class(class::FA_USER_CLOCK).class("ms-2")}), " IPD Order", app.state()),
         link_checked(Route::IpdSearchPatientPharmacist, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(
-            Route::IpdPreAdmitList { view_by: String::from("pharmacist") },
-            html!("i", {.class(class::FA_CLOCK).class("ms-2")}),
-            " รอ Admit",
-            app.state(),
-        ),
+        link_checked(Route::IpdPreAdmitList { view_by: String::from("pharmacist") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
         link_checked(
             Route::IpdPostAdmitList { view_by: String::from("pharmacist") },
             html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
@@ -1989,24 +1954,14 @@ fn menu_items(app: Rc<App>) -> Dom {
 
     let ipd_other_children = vec![
         link_checked(Route::IpdSearchPatientOther, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(
-            Route::IpdPreAdmitList { view_by: String::from("other") },
-            html!("i", {.class(class::FA_CLOCK).class("ms-2")}),
-            " รอ Admit",
-            app.state(),
-        ),
+        link_checked(Route::IpdPreAdmitList { view_by: String::from("other") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
         link_checked(
             Route::IpdPostAdmitList { view_by: String::from("other") },
             html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
             " Audit Chart",
             app.state(),
         ),
-        link_checked(
-            Route::IpdPreOrderList { view_by: String::from("other") },
-            html!("i", {.class(class::FA_PASTE).class("ms-2")}),
-            " Order ล่วงหน้า",
-            app.state(),
-        ),
+        link_checked(Route::IpdPreOrderList { view_by: String::from("other") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
     ]
     .into_iter()
     .flatten()

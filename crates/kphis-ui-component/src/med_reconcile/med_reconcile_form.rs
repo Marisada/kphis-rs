@@ -329,8 +329,7 @@ impl MedReconForm {
         match MedReconciliation::call_api_patch(page.visit_type.is_ipd(), &items, params, app.state()).await {
             Ok(responses) => {
                 if let Some(res) = responses.iter().find(|res| res.error.is_some()) {
-                    app.alert_error_with_clipboard(CONTACT_ADMIN, &["ExecuteResponse: ", &res.error.clone().unwrap_or_default()].concat())
-                        .await;
+                    app.alert_error_with_clipboard(CONTACT_ADMIN, &["ExecuteResponse: ", &res.error.clone().unwrap_or_default()].concat()).await;
                     false
                 } else {
                     // app.alert("บันทึกข้อมูลเรียบร้อย", &["จำนวน", &responses.iter().map(|r| r.rows_affected).sum::<u64>().to_string(), " รายการ"].concat());
@@ -1384,7 +1383,7 @@ impl From<MedReconciliationItem> for MedReconItem {
             receive_date: Mutable::new(item.receive_date.map(|d| d.to_string()).unwrap_or_default()), // date
             old_drugusage: Mutable::new(item.old_drugusage.unwrap_or_default()),
             changed_drugusage: Mutable::new(item.changed_drugusage.unwrap_or_default()),
-            receive_qty: Mutable::new(item.receive_qty.map(|i| i.to_string()).unwrap_or_default()), // i32
+            receive_qty: Mutable::new(item.receive_qty.map(|i| i.to_string()).unwrap_or_default()),                     // i32
             last_dose_taken_time: Mutable::new(item.last_dose_taken_time.map(|dt| dt.js_string()).unwrap_or_default()), // datetime
             last_dose_taken_remark: Mutable::new(item.last_dose_taken_remark.unwrap_or_default()),
             used: Mutable::new(item.used.unwrap_or_default()), // use

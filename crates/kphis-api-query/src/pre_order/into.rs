@@ -78,18 +78,8 @@ async fn pre_order_to_order(pre_order_master_id: &str, an: &str, loginname: &str
     }
 }
 
-async fn pre_order_to_opd_er_order(
-    pre_order_master_id: &str,
-    opd_er_order_master_id: &str,
-    loginname: &str,
-    doctorcode: &Option<String>,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
-    if let (Some(pre_order_master_id), Some(opd_er_order_master_id)) = (
-        pre_order_master_id.parse::<u32>().ok().and_then(zero_none),
-        opd_er_order_master_id.parse::<u32>().ok().and_then(zero_none),
-    ) {
+async fn pre_order_to_opd_er_order(pre_order_master_id: &str, opd_er_order_master_id: &str, loginname: &str, doctorcode: &Option<String>, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<ExecuteResponse>, AppError> {
+    if let (Some(pre_order_master_id), Some(opd_er_order_master_id)) = (pre_order_master_id.parse::<u32>().ok().and_then(zero_none), opd_er_order_master_id.parse::<u32>().ok().and_then(zero_none)) {
         let used_opt = master::select_pre_order_used_by_master_id(pre_order_master_id, pool, kphis).await?;
         if used_opt.unwrap_or_default() {
             Ok(vec![ExecuteResponse {
@@ -141,18 +131,8 @@ async fn pre_order_to_opd_er_order(
 
 // ipd-dr-template-to-opd-er-order.php
 /// move continuous order to oneday order
-async fn template_to_opd_er_order(
-    template_master_id: &str,
-    opd_er_order_master_id: &str,
-    loginname: &str,
-    doctorcode: &Option<String>,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
-    if let (Some(template_master_id), Some(opd_er_order_master_id)) = (
-        template_master_id.parse::<u32>().ok().and_then(zero_none),
-        opd_er_order_master_id.parse::<u32>().ok().and_then(zero_none),
-    ) {
+async fn template_to_opd_er_order(template_master_id: &str, opd_er_order_master_id: &str, loginname: &str, doctorcode: &Option<String>, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<ExecuteResponse>, AppError> {
+    if let (Some(template_master_id), Some(opd_er_order_master_id)) = (template_master_id.parse::<u32>().ok().and_then(zero_none), opd_er_order_master_id.parse::<u32>().ok().and_then(zero_none)) {
         let mut results = Vec::with_capacity(2);
 
         if let Some(doctor) = doctorcode {
@@ -228,14 +208,7 @@ async fn template_to_order(pre_order_master_id: &str, an: &str, loginname: &str,
 }
 
 // ipd-dr-template-to-pre-order.php
-async fn template_to_pre_order(
-    template_master_id: &str,
-    pre_order_master_id: &str,
-    loginname: &str,
-    doctorcode: &Option<String>,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+async fn template_to_pre_order(template_master_id: &str, pre_order_master_id: &str, loginname: &str, doctorcode: &Option<String>, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     if let (Some(template_master_id), Some(pre_order_master_id)) = (template_master_id.parse::<u32>().ok().and_then(zero_none), pre_order_master_id.parse::<u32>().ok().and_then(zero_none)) {
         let mut results = Vec::with_capacity(2);
 
@@ -261,10 +234,7 @@ async fn template_to_pre_order(
                 if !note_items.is_empty() {
                     let note_id_map: HashMap<u32, u64> = note_ids.into_iter().zip(new_note_ids).collect();
                     let insert_note_item_result = progress_note::insert_pre_order_progress_note_items(&note_items, &note_id_map, pre_order_master_id, loginname, pool, kphis).await?;
-                    results.push(ExecuteResponse::from_query_result(
-                        insert_note_item_result,
-                        "Insert TemplateProgressNoteItem to PreOrderProgressNoteItem",
-                    ));
+                    results.push(ExecuteResponse::from_query_result(insert_note_item_result, "Insert TemplateProgressNoteItem to PreOrderProgressNoteItem"));
                 }
             }
         }

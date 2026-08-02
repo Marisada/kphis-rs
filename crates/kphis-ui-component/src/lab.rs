@@ -1029,15 +1029,7 @@ pub fn full_text(row: &LabHead) -> String {
                 if exact.is_empty() { None } else { Some(exact.to_owned()) }
             });
             if let (Some(lab_items_name_ref), Some(lab_order_result)) = (&item.lab_items_name_ref, &result) {
-                Some(
-                    [
-                        lab_items_name_ref,
-                        " ",
-                        lab_order_result,
-                        &item.lab_items_unit.clone().map(|unit| [" ", &unit].concat()).unwrap_or_default(),
-                    ]
-                    .concat(),
-                )
+                Some([lab_items_name_ref, " ", lab_order_result, &item.lab_items_unit.clone().map(|unit| [" ", &unit].concat()).unwrap_or_default()].concat())
             } else {
                 None
             }

@@ -193,17 +193,7 @@ impl SummaryPage {
                 .map(|or| {
                     let icd9 = or.icd9.as_ref().map(|icd9| [" [ICD9 : ", icd9, "]"].concat()).unwrap_or_default();
                     let doctor = or.doctor_name.as_ref().map(|name| [" [", name, "]"].concat()).unwrap_or_default();
-                    [
-                        &or.name.clone().unwrap_or_default(),
-                        &icd9,
-                        &doctor,
-                        " (",
-                        &datetime_th_opt(&or.begin_datetime),
-                        " - ",
-                        &datetime_th_opt(&or.end_datetime),
-                        ")",
-                    ]
-                    .concat()
+                    [&or.name.clone().unwrap_or_default(), &icd9, &doctor, " (", &datetime_th_opt(&or.begin_datetime), " - ", &datetime_th_opt(&or.end_datetime), ")"].concat()
                 })
                 .collect::<Vec<String>>()
                 .join("\n")
@@ -214,17 +204,7 @@ impl SummaryPage {
         self.hosxp_ct.signal_cloned().map(|hosxp_ct| {
             hosxp_ct
                 .iter()
-                .map(|ct| {
-                    [
-                        &ct.xray_items_name.clone().unwrap_or_default(),
-                        " (",
-                        &date_th_opt(&ct.examined_date),
-                        " ",
-                        &time_hm_opt(&ct.examined_time),
-                        ")",
-                    ]
-                    .concat()
-                })
+                .map(|ct| [&ct.xray_items_name.clone().unwrap_or_default(), " (", &date_th_opt(&ct.examined_date), " ", &time_hm_opt(&ct.examined_time), ")"].concat())
                 .collect::<Vec<String>>()
                 .join("\n")
         })
@@ -234,17 +214,7 @@ impl SummaryPage {
         self.hosxp_mri.signal_cloned().map(|hosxp_mri| {
             hosxp_mri
                 .iter()
-                .map(|mri| {
-                    [
-                        &mri.xray_items_name.clone().unwrap_or_default(),
-                        " (",
-                        &date_th_opt(&mri.examined_date),
-                        " ",
-                        &time_hm_opt(&mri.examined_time),
-                        ")",
-                    ]
-                    .concat()
-                })
+                .map(|mri| [&mri.xray_items_name.clone().unwrap_or_default(), " (", &date_th_opt(&mri.examined_date), " ", &time_hm_opt(&mri.examined_time), ")"].concat())
                 .collect::<Vec<String>>()
                 .join("\n")
         })
@@ -797,8 +767,7 @@ impl SummaryPage {
     pub fn render_form(page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_auditor = app.has_permission(Permission::DataTypeAuditorUse);
         let is_pre_admit = app.is_pre_admit(&page.an.lock_ref());
-        let can_save_summary =
-            page.view_by.lock_ref().deref() == "doctor" && app.has_permission(Permission::DataTypeDoctorUse) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdSummary, is_pre_admit);
+        let can_save_summary = page.view_by.lock_ref().deref() == "doctor" && app.has_permission(Permission::DataTypeDoctorUse) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdSummary, is_pre_admit);
 
         // // for test UI
         // let is_auditor = false;
@@ -2355,20 +2324,9 @@ fn group_to_dxdatas(group: Rc<Group<Rc<Icd10>>>, ty: i32) -> Vec<DxData> {
 }
 
 fn group_to_vec_code(group: Rc<Group<Rc<Icd10>>>) -> Vec<String> {
-    group
-        .draggables
-        .lock_ref()
-        .iter()
-        .filter_map(|d| d.state.lock_ref().as_ref().map(|s| s.icd10.to_owned()))
-        .collect::<Vec<String>>()
+    group.draggables.lock_ref().iter().filter_map(|d| d.state.lock_ref().as_ref().map(|s| s.icd10.to_owned())).collect::<Vec<String>>()
 }
 
 fn group_to_comma_string(group: Rc<Group<Rc<Icd10>>>) -> String {
-    group
-        .draggables
-        .lock_ref()
-        .iter()
-        .filter_map(|d| d.state.lock_ref().as_ref().map(|s| icd10_dot(&s.icd10)))
-        .collect::<Vec<String>>()
-        .join(", ")
+    group.draggables.lock_ref().iter().filter_map(|d| d.state.lock_ref().as_ref().map(|s| icd10_dot(&s.icd10))).collect::<Vec<String>>().join(", ")
 }

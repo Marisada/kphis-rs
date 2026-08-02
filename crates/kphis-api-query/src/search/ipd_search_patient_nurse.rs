@@ -7,20 +7,8 @@ use kphis_util::error::{AppError, Source};
 use crate::{query_all, query1_all, query2_all, query3_all};
 
 // ipd-nurse-search-patient-table.php
-pub async fn get_ipd_nurse_search_patient(
-    request: IpdSearchPatientNurseRequest,
-    hn_len: usize,
-    an_len: usize,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-    kphis_extra: &str,
-) -> Result<Vec<IpdSearchPatientNurseResponse>, AppError> {
-    let patient = request
-        .patient
-        .as_ref()
-        .and_then(|patient| urlencoding::decode(&patient).map(|s| s.into_owned()).ok())
-        .unwrap_or_default();
+pub async fn get_ipd_nurse_search_patient(request: IpdSearchPatientNurseRequest, hn_len: usize, an_len: usize, pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_extra: &str) -> Result<Vec<IpdSearchPatientNurseResponse>, AppError> {
+    let patient = request.patient.as_ref().and_then(|patient| urlencoding::decode(&patient).map(|s| s.into_owned()).ok()).unwrap_or_default();
     let ward = request.ward.clone().unwrap_or_default();
     let doctor = request.doctor_in_charge.clone().unwrap_or_default();
     let passcode = request.passcode.clone().unwrap_or_default();

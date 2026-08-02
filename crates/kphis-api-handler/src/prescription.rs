@@ -85,16 +85,7 @@ pub async fn patch_prescription_screen(Query(params): Query<PrescriptionScreenPa
 
     if let (Some(vn), Some(action)) = (params.vn, params.action) {
         if let Some(doctorcode) = ctx.user_state.user.doctorcode {
-            let response = prescription::patch_prescription_screen(
-                &vn,
-                &action,
-                &payload,
-                &doctorcode,
-                &ctx.user_state.user.loginname,
-                &ctx.api_state.db_pool,
-                &ctx.api_state.kphis_extra(),
-            )
-            .await?;
+            let response = prescription::patch_prescription_screen(&vn, &action, &payload, &doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
             Ok(Json(response))
         } else {

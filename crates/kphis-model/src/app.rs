@@ -469,15 +469,10 @@ impl AppState {
         self.msg_private.lock_ref().iter().min_by(|a, b| a.message_id.cmp(&b.message_id)).map(|msg| msg.message_id)
     }
     pub fn get_min_message_id(&self) -> Option<u32> {
-        [
-            self.get_min_global_message_id(),
-            self.get_min_ward_message_id(),
-            self.get_min_spclty_message_id(),
-            self.get_min_private_message_id(),
-        ]
-        .into_iter()
-        .flatten()
-        .min()
+        [self.get_min_global_message_id(), self.get_min_ward_message_id(), self.get_min_spclty_message_id(), self.get_min_private_message_id()]
+            .into_iter()
+            .flatten()
+            .min()
     }
     pub fn load_messages(&self, messages: &[SseMessage]) {
         let mut globals = Vec::new();
@@ -523,13 +518,7 @@ impl AppState {
         }
     }
     pub fn read_one_global_msg(&self, msg_id: u32) {
-        let id_msg = self
-            .msg_global
-            .lock_ref()
-            .iter()
-            .enumerate()
-            .find(|(_, msg)| msg.message_id == msg_id)
-            .map(|(id, msg)| (id, msg.clone()));
+        let id_msg = self.msg_global.lock_ref().iter().enumerate().find(|(_, msg)| msg.message_id == msg_id).map(|(id, msg)| (id, msg.clone()));
         if let Some((idx, mut new)) = id_msg {
             new.readed = true;
             self.msg_global.lock_mut().set_cloned(idx, new);
@@ -543,26 +532,14 @@ impl AppState {
         }
     }
     pub fn read_one_spclty_msg(&self, msg_id: u32) {
-        let id_msg = self
-            .msg_spclty
-            .lock_ref()
-            .iter()
-            .enumerate()
-            .find(|(_, msg)| msg.message_id == msg_id)
-            .map(|(id, msg)| (id, msg.clone()));
+        let id_msg = self.msg_spclty.lock_ref().iter().enumerate().find(|(_, msg)| msg.message_id == msg_id).map(|(id, msg)| (id, msg.clone()));
         if let Some((idx, mut new)) = id_msg {
             new.readed = true;
             self.msg_spclty.lock_mut().set_cloned(idx, new);
         }
     }
     pub fn read_one_private_msg(&self, msg_id: u32) {
-        let id_msg = self
-            .msg_private
-            .lock_ref()
-            .iter()
-            .enumerate()
-            .find(|(_, msg)| msg.message_id == msg_id)
-            .map(|(id, msg)| (id, msg.clone()));
+        let id_msg = self.msg_private.lock_ref().iter().enumerate().find(|(_, msg)| msg.message_id == msg_id).map(|(id, msg)| (id, msg.clone()));
         if let Some((idx, mut new)) = id_msg {
             new.readed = true;
             self.msg_private.lock_mut().set_cloned(idx, new);
@@ -684,12 +661,10 @@ impl AppState {
         self.app_status.signal_ref(|opt_status| opt_status.as_ref().map(|status| status.hosxp_vn_length).unwrap_or(12))
     }
     pub fn hospital_name_signal(&self) -> impl Signal<Item = String> + use<> {
-        self.app_status
-            .signal_ref(|opt_status| opt_status.as_ref().map(|status| status.hospital_name.clone()).unwrap_or_default())
+        self.app_status.signal_ref(|opt_status| opt_status.as_ref().map(|status| status.hospital_name.clone()).unwrap_or_default())
     }
     pub fn hospital_short_name_signal(&self) -> impl Signal<Item = String> + use<> {
-        self.app_status
-            .signal_ref(|opt_status| opt_status.as_ref().map(|status| status.hospital_short_name.clone()).unwrap_or_default())
+        self.app_status.signal_ref(|opt_status| opt_status.as_ref().map(|status| status.hospital_short_name.clone()).unwrap_or_default())
     }
     pub fn nurse_assign_groups(&self) -> Vec<String> {
         self.app_status.lock_ref().as_ref().map(|status| status.nurse_assign_groups.clone()).unwrap_or_default()
@@ -701,34 +676,19 @@ impl AppState {
         self.app_status.lock_ref().as_ref().map(|status| status.has_pacs_host).unwrap_or_default()
     }
     pub fn pacs_hn_url(&self, hn: &str) -> Option<String> {
-        self.app_status
-            .lock_ref()
-            .as_ref()
-            .and_then(|status| status.pacs_hn_url.clone().map(|hn_url| hn_url.replace("[HN]", hn)))
+        self.app_status.lock_ref().as_ref().and_then(|status| status.pacs_hn_url.clone().map(|hn_url| hn_url.replace("[HN]", hn)))
     }
     pub fn ekg_hn_url(&self, hn: &str) -> Option<String> {
-        self.app_status
-            .lock_ref()
-            .as_ref()
-            .and_then(|status| status.ekg_hn_url.clone().map(|hn_url| hn_url.replace("[HN]", hn)))
+        self.app_status.lock_ref().as_ref().and_then(|status| status.ekg_hn_url.clone().map(|hn_url| hn_url.replace("[HN]", hn)))
     }
     pub fn scan_hn_url(&self, hn: &str) -> Option<String> {
-        self.app_status
-            .lock_ref()
-            .as_ref()
-            .and_then(|status| status.scan_hn_url.clone().map(|hn_url| hn_url.replace("[HN]", hn)))
+        self.app_status.lock_ref().as_ref().and_then(|status| status.scan_hn_url.clone().map(|hn_url| hn_url.replace("[HN]", hn)))
     }
     pub fn scan_an_url(&self, an: &str) -> Option<String> {
-        self.app_status
-            .lock_ref()
-            .as_ref()
-            .and_then(|status| status.scan_an_url.clone().map(|vn_url| vn_url.replace("[AN]", an)))
+        self.app_status.lock_ref().as_ref().and_then(|status| status.scan_an_url.clone().map(|vn_url| vn_url.replace("[AN]", an)))
     }
     pub fn cart_vnan_url(&self, vnan: &str) -> Option<String> {
-        self.app_status
-            .lock_ref()
-            .as_ref()
-            .and_then(|status| status.cart_vnan_url.clone().map(|vnan_url| vnan_url.replace("[VNAN]", vnan)))
+        self.app_status.lock_ref().as_ref().and_then(|status| status.cart_vnan_url.clone().map(|vnan_url| vnan_url.replace("[VNAN]", vnan)))
     }
     pub fn food_url(&self) -> Option<String> {
         self.app_status.lock_ref().as_ref().and_then(|status| status.food_url.clone())

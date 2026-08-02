@@ -29,15 +29,7 @@ pub async fn get_ipd_consult_list(Query(params): Query<IpdConsultListParams>, ct
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = consult::get_ipd_consult_list(
-        params,
-        ctx.api_state.hosxp_hn_len(),
-        ctx.api_state.hosxp_an_len(),
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = consult::get_ipd_consult_list(params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }
@@ -127,15 +119,7 @@ pub async fn delete_ipd_consult_by_id(Query(params): Query<ConsultParams>, ctx: 
     ctx.authorize_and_access_log(&Method::DELETE, false).await?;
 
     if let (Some(consult_id), Some(version)) = (params.consult_id, params.version) {
-        let response = consult::delete_ipd_consult_by_id(
-            consult_id,
-            version,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-            &ctx.api_state.kphis_log(),
-        )
-        .await?;
+        let response = consult::delete_ipd_consult_by_id(consult_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(response))
     } else {

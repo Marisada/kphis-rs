@@ -49,10 +49,7 @@ pub async fn post_index_note(save: &IndexNote, user: &str, pool: &Pool<MySql>, k
         Ok((id, ExecuteResponse::from_query_result(update_note_result, "Update IpdNurseIndexNote")))
     } else {
         let insert_note_result = insert_ipd_nurse_index_note(&save.an, &save.nurse_index_note, user, pool, kphis).await?;
-        Ok((
-            insert_note_result.last_insert_id() as u32,
-            ExecuteResponse::from_query_result(insert_note_result, "Insert IpdNurseIndexNote"),
-        ))
+        Ok((insert_note_result.last_insert_id() as u32, ExecuteResponse::from_query_result(insert_note_result, "Insert IpdNurseIndexNote")))
     }
 }
 
@@ -82,11 +79,7 @@ async fn insert_ipd_nurse_index_note(an: &Option<String>, nurse_index_note: &Opt
 // ipd-nurse-index-note-delete.php
 pub async fn delete_index_note(nurse_index_note_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = index_note::delete_ipd_nurse_index_note(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(nurse_index_note_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexNote"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(nurse_index_note_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexNote"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete IndexNote"))
 }

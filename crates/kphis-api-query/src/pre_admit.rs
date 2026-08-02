@@ -227,15 +227,7 @@ async fn sync_an_pm_only(pm_an: &str, pm_vn: &str, pm_ipt_an: &Option<String>, u
 }
 
 // sync_an route B (#5, #6, #7)
-async fn sync_an_ipt_only(
-    ipt_an: &str,
-    ipt_pm_vn: &Option<String>,
-    ipt_pm_an: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_extra: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+async fn sync_an_ipt_only(ipt_an: &str, ipt_pm_vn: &Option<String>, ipt_pm_an: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_extra: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::new();
     if let Some(pm_vn) = ipt_pm_vn.as_ref() {
         if let Some(pm_an) = ipt_pm_an.as_ref() {
@@ -512,84 +504,56 @@ use kphis_sqlx_tester::MySqlTester;
 #[cfg(test)]
 impl AnTester {
     pub async fn add_before(&mut self, old_an: &str, tester: &MySqlTester) {
-        self.test01
-            .add_before(get_an_count_of_table("ipd_doctor_in_charge", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test02
-            .add_before(get_an_count_of_table("ipd_dr_admission_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test03
-            .add_before(get_an_count_of_table("ipd_dr_admission_note_item", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test01.add_before(get_an_count_of_table("ipd_doctor_in_charge", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test02.add_before(get_an_count_of_table("ipd_dr_admission_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test03.add_before(get_an_count_of_table("ipd_dr_admission_note_item", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test04.add_before(get_an_count_of_table("ipd_dr_consult", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test05
-            .add_before(get_an_count_of_table("ipd_dr_consult_signature_reply", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test06
-            .add_before(get_an_count_of_table("ipd_dr_consult_signature_request", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test05.add_before(get_an_count_of_table("ipd_dr_consult_signature_reply", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test06.add_before(get_an_count_of_table("ipd_dr_consult_signature_request", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test07.add_before(get_an_count_of_table("ipd_focus_list", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test08.add_before(get_an_count_of_table("ipd_focus_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test09.add_before(get_an_count_of_table("ipd_io", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test10
-            .add_before(get_an_count_of_table("ipd_med_reconciliation", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test11
-            .add_before(get_an_count_of_table("ipd_med_reconciliation_item", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test12
-            .add_before(get_an_count_of_table("ipd_nurse_admission_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test13
-            .add_before(get_an_count_of_table("ipd_nurse_index_action", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test14
-            .add_before(get_an_count_of_table("ipd_nurse_index_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test15
-            .add_before(get_an_count_of_table("ipd_nurse_index_plan", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test10.add_before(get_an_count_of_table("ipd_med_reconciliation", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test11.add_before(get_an_count_of_table("ipd_med_reconciliation_item", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test12.add_before(get_an_count_of_table("ipd_nurse_admission_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test13.add_before(get_an_count_of_table("ipd_nurse_index_action", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test14.add_before(get_an_count_of_table("ipd_nurse_index_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test15.add_before(get_an_count_of_table("ipd_nurse_index_plan", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test16.add_before(get_an_count_of_table("ipd_order", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test17.add_before(get_an_count_of_table("ipd_order_item", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test18
-            .add_before(get_an_count_of_table("ipd_progress_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test19
-            .add_before(get_an_count_of_table("ipd_progress_note_item", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test18.add_before(get_an_count_of_table("ipd_progress_note", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test19.add_before(get_an_count_of_table("ipd_progress_note_item", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         // self.test20.add_before(get_an_count_of_table("ipd_summary", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test21.add_before(get_an_count_of_table("ipd_summary_2", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test22
-            .add_before(get_an_count_of_table("ipd_vs_vital_sign", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test23
-            .add_before(get_an_count_of_table("ipd_document", old_an, &tester.db_pool, &tester.kphis_extra).await.unwrap());
+        self.test22.add_before(get_an_count_of_table("ipd_vs_vital_sign", old_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test23.add_before(get_an_count_of_table("ipd_document", old_an, &tester.db_pool, &tester.kphis_extra).await.unwrap());
         self.test24.add_before(get_an_count_of_table("ipd_mra", old_an, &tester.db_pool, &tester.kphis_extra).await.unwrap());
     }
 
     pub async fn add_after(&mut self, new_an: &str, tester: &MySqlTester) {
-        self.test01
-            .add_after(get_an_count_of_table("ipd_doctor_in_charge", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test02
-            .add_after(get_an_count_of_table("ipd_dr_admission_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test03
-            .add_after(get_an_count_of_table("ipd_dr_admission_note_item", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test01.add_after(get_an_count_of_table("ipd_doctor_in_charge", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test02.add_after(get_an_count_of_table("ipd_dr_admission_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test03.add_after(get_an_count_of_table("ipd_dr_admission_note_item", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test04.add_after(get_an_count_of_table("ipd_dr_consult", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test05
-            .add_after(get_an_count_of_table("ipd_dr_consult_signature_reply", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test06
-            .add_after(get_an_count_of_table("ipd_dr_consult_signature_request", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test05.add_after(get_an_count_of_table("ipd_dr_consult_signature_reply", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test06.add_after(get_an_count_of_table("ipd_dr_consult_signature_request", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test07.add_after(get_an_count_of_table("ipd_focus_list", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test08.add_after(get_an_count_of_table("ipd_focus_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test09.add_after(get_an_count_of_table("ipd_io", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test10
-            .add_after(get_an_count_of_table("ipd_med_reconciliation", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test11
-            .add_after(get_an_count_of_table("ipd_med_reconciliation_item", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test12
-            .add_after(get_an_count_of_table("ipd_nurse_admission_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test13
-            .add_after(get_an_count_of_table("ipd_nurse_index_action", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test14
-            .add_after(get_an_count_of_table("ipd_nurse_index_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test15
-            .add_after(get_an_count_of_table("ipd_nurse_index_plan", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test10.add_after(get_an_count_of_table("ipd_med_reconciliation", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test11.add_after(get_an_count_of_table("ipd_med_reconciliation_item", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test12.add_after(get_an_count_of_table("ipd_nurse_admission_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test13.add_after(get_an_count_of_table("ipd_nurse_index_action", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test14.add_after(get_an_count_of_table("ipd_nurse_index_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test15.add_after(get_an_count_of_table("ipd_nurse_index_plan", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test16.add_after(get_an_count_of_table("ipd_order", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test17.add_after(get_an_count_of_table("ipd_order_item", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test18.add_after(get_an_count_of_table("ipd_progress_note", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test19
-            .add_after(get_an_count_of_table("ipd_progress_note_item", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
+        self.test19.add_after(get_an_count_of_table("ipd_progress_note_item", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         // self.test20.add_after(get_an_count_of_table("ipd_summary", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test21.add_after(get_an_count_of_table("ipd_summary_2", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
         self.test22.add_after(get_an_count_of_table("ipd_vs_vital_sign", new_an, &tester.db_pool, &tester.kphis).await.unwrap());
-        self.test23
-            .add_after(get_an_count_of_table("ipd_document", new_an, &tester.db_pool, &tester.kphis_extra).await.unwrap());
+        self.test23.add_after(get_an_count_of_table("ipd_document", new_an, &tester.db_pool, &tester.kphis_extra).await.unwrap());
         self.test24.add_after(get_an_count_of_table("ipd_mra", new_an, &tester.db_pool, &tester.kphis_extra).await.unwrap());
     }
 
@@ -704,14 +668,7 @@ impl NumComparable {
 #[cfg(test)]
 async fn get_an_count_of_table(table: &str, an: &str, pool: &Pool<MySql>, database: &str) -> Option<i64> {
     let sql = ["SELECT COUNT(*) AS c FROM ", database, ".", table, " WHERE an=?;"].concat();
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(an)
-        .fetch_optional(pool)
-        .await
-        .unwrap()
-        .map(|row| row.try_get("c"))
-        .transpose()
-        .unwrap()
+    sqlx::query(AssertSqlSafe(sql)).bind(an).fetch_optional(pool).await.unwrap().map(|row| row.try_get("c")).transpose().unwrap()
 }
 
 #[rustfmt::skip]

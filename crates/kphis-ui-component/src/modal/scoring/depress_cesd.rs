@@ -65,8 +65,7 @@ impl DepressCesD {
         let score_19 = split.get(19).and_then(|s| s.parse::<u8>().ok());
         let score_20 = split.get(20).and_then(|s| s.parse::<u8>().ok());
         let score_total = Self::cal_total(
-            &score_1, &score_2, &score_3, &score_4, &score_5, &score_6, &score_7, &score_8, &score_9, &score_10, &score_11, &score_12, &score_13, &score_14, &score_15, &score_16, &score_17,
-            &score_18, &score_19, &score_20,
+            &score_1, &score_2, &score_3, &score_4, &score_5, &score_6, &score_7, &score_8, &score_9, &score_10, &score_11, &score_12, &score_13, &score_14, &score_15, &score_16, &score_17, &score_18, &score_19, &score_20,
         );
         Rc::new(Self {
             score_1: Mutable::new(score_1),
@@ -144,30 +143,8 @@ impl DepressCesD {
         score_19: &Option<u8>,
         score_20: &Option<u8>,
     ) -> Option<u8> {
-        if let (
-            Some(s1),
-            Some(s2),
-            Some(s3),
-            Some(s4),
-            Some(s5),
-            Some(s6),
-            Some(s7),
-            Some(s8),
-            Some(s9),
-            Some(s10),
-            Some(s11),
-            Some(s12),
-            Some(s13),
-            Some(s14),
-            Some(s15),
-            Some(s16),
-            Some(s17),
-            Some(s18),
-            Some(s19),
-            Some(s20),
-        ) = (
-            score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10, score_11, score_12, score_13, score_14, score_15, score_16, score_17, score_18, score_19,
-            score_20,
+        if let (Some(s1), Some(s2), Some(s3), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8), Some(s9), Some(s10), Some(s11), Some(s12), Some(s13), Some(s14), Some(s15), Some(s16), Some(s17), Some(s18), Some(s19), Some(s20)) = (
+            score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10, score_11, score_12, score_13, score_14, score_15, score_16, score_17, score_18, score_19, score_20,
         ) {
             Some(s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15 + s16 + s17 + s18 + s19 + s20)
         } else {

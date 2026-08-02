@@ -38,10 +38,7 @@ pub async fn get_opd_image(vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<
             if let Ok(Some(image)) = image_from_row(row) {
                 ScanImage { image, note: None }
             } else {
-                ScanImage {
-                    image: ImageBase64::new_warn(),
-                    note: None,
-                }
+                ScanImage { image: ImageBase64::new_warn(), note: None }
             }
         })
         .collect::<Vec<ScanImage>>();

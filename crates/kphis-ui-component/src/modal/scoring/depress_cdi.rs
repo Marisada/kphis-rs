@@ -83,8 +83,8 @@ impl DepressCdi {
         let score_26 = split.get(26).and_then(|s| s.parse::<u8>().ok());
         let score_27 = split.get(27).and_then(|s| s.parse::<u8>().ok());
         let score_total = Self::cal_total(
-            &score_1, &score_2, &score_3, &score_4, &score_5, &score_6, &score_7, &score_8, &score_9, &score_10, &score_11, &score_12, &score_13, &score_14, &score_15, &score_16, &score_17,
-            &score_18, &score_19, &score_20, &score_21, &score_22, &score_23, &score_24, &score_25, &score_26, &score_27,
+            &score_1, &score_2, &score_3, &score_4, &score_5, &score_6, &score_7, &score_8, &score_9, &score_10, &score_11, &score_12, &score_13, &score_14, &score_15, &score_16, &score_17, &score_18, &score_19, &score_20, &score_21,
+            &score_22, &score_23, &score_24, &score_25, &score_26, &score_27,
         );
         Rc::new(Self {
             score_1: Mutable::new(score_1),
@@ -212,8 +212,8 @@ impl DepressCdi {
             Some(s26),
             Some(s27),
         ) = (
-            score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10, score_11, score_12, score_13, score_14, score_15, score_16, score_17, score_18, score_19,
-            score_20, score_21, score_22, score_23, score_24, score_25, score_26, score_27,
+            score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9, score_10, score_11, score_12, score_13, score_14, score_15, score_16, score_17, score_18, score_19, score_20, score_21, score_22, score_23,
+            score_24, score_25, score_26, score_27,
         ) {
             Some(s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9 + s10 + s11 + s12 + s13 + s14 + s15 + s16 + s17 + s18 + s19 + s20 + s21 + s22 + s23 + s24 + s25 + s26 + s27)
         } else {

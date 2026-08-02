@@ -160,13 +160,7 @@ impl FocusList {
 
     /// DELETE `EndPoint::OpdErFocusListId`
     pub async fn call_api_delete_opd_er(opd_er_order_master_id: u32, params: &FocusListParams, app: Rc<AppState>) -> Result<Vec<ExecuteResponse>, AppError> {
-        execute_fetch_vec(
-            &[EndPoint::OpdErFocusListId.base(), opd_er_order_master_id.to_string(), params.query_string()].concat(),
-            "DELETE",
-            None,
-            app,
-        )
-        .await
+        execute_fetch_vec(&[EndPoint::OpdErFocusListId.base(), opd_er_order_master_id.to_string(), params.query_string()].concat(), "DELETE", None, app).await
     }
 }
 

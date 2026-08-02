@@ -6,9 +6,7 @@ use axum::{
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
 use kphis_api_query::search::searchbox;
-use kphis_model::search::searchbox::{
-    DrugCheckParams, DrugDuplicateCheck, DrugInteractionCheck, HospSearchBox, IvfluidSearchbox, LabSearchbox, MedSearchbox, OpdVisitSearchbox, PatientSearchbox, XraySearchbox,
-};
+use kphis_model::search::searchbox::{DrugCheckParams, DrugDuplicateCheck, DrugInteractionCheck, HospSearchBox, IvfluidSearchbox, LabSearchbox, MedSearchbox, OpdVisitSearchbox, PatientSearchbox, XraySearchbox};
 use kphis_util::error::{AppError, Source};
 
 // common-searchbox-lab-data.php

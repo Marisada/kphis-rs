@@ -137,13 +137,7 @@ impl IndexAction {
             .into_iter()
             .filter(|monitor| monitor.monitor_abnormal.is_some() && monitor.monitor_datetime.is_some())
             .collect::<Vec<IndexMonitor>>();
-        monitors.sort_by(|a, b| {
-            if let (Some(adt), Some(bdt)) = (a.monitor_datetime, b.monitor_datetime) {
-                bdt.cmp(&adt)
-            } else {
-                Ordering::Equal
-            }
-        });
+        monitors.sort_by(|a, b| if let (Some(adt), Some(bdt)) = (a.monitor_datetime, b.monitor_datetime) { bdt.cmp(&adt) } else { Ordering::Equal });
         let monitor_len = monitors.len();
         let last = monitors.first().map(|monitor| monitor.monitor_abnormal.as_ref().map(|s| s == "Y").unwrap_or_default());
         let had = order_item.monitor_status.as_ref().map(|s| s == "Y").unwrap_or_default().then(|| {

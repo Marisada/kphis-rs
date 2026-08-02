@@ -16,8 +16,8 @@ use kphis_model::{
     app::{self, AppState},
     avatar, dc_plan, drug_use_duration, emr,
     endpoint::{EndPoint, QueryString},
-    fetch, focus_list, focus_note, image, index_action, index_monitor, index_plan, ipd, lab, med_reconcile, opd_er, order, pacs, patient_info, post_admit, pre_admit, pre_order, prescription,
-    progress_note, refer_note, refer_out, report, search, sse, user, vital_sign, xray,
+    fetch, focus_list, focus_note, image, index_action, index_monitor, index_plan, ipd, lab, med_reconcile, opd_er, order, pacs, patient_info, post_admit, pre_admit, pre_order, prescription, progress_note, refer_note, refer_out, report,
+    search, sse, user, vital_sign, xray,
 };
 use kphis_util::error::AppError;
 

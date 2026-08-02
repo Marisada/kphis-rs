@@ -105,30 +105,12 @@ impl ProgressNoteForm {
             progress_note_form.progress_note_time.set(progress_note.progress_note_time.js_string());
             for progress_note_item_type in progress_note.progress_note_item_types.clone() {
                 match progress_note_item_type.progress_note_item_type {
-                    ProgressNoteTypeName::ProblemList => progress_note_form
-                        .problem_list
-                        .lock_mut()
-                        .extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
-                    ProgressNoteTypeName::Note => progress_note_form
-                        .notes
-                        .lock_mut()
-                        .extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
-                    ProgressNoteTypeName::Subjective => progress_note_form
-                        .subjectives
-                        .lock_mut()
-                        .extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
-                    ProgressNoteTypeName::Objective => progress_note_form
-                        .objectives
-                        .lock_mut()
-                        .extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
-                    ProgressNoteTypeName::Assessment => progress_note_form
-                        .assessments
-                        .lock_mut()
-                        .extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
-                    ProgressNoteTypeName::Plan => progress_note_form
-                        .plans
-                        .lock_mut()
-                        .extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
+                    ProgressNoteTypeName::ProblemList => progress_note_form.problem_list.lock_mut().extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
+                    ProgressNoteTypeName::Note => progress_note_form.notes.lock_mut().extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
+                    ProgressNoteTypeName::Subjective => progress_note_form.subjectives.lock_mut().extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
+                    ProgressNoteTypeName::Objective => progress_note_form.objectives.lock_mut().extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
+                    ProgressNoteTypeName::Assessment => progress_note_form.assessments.lock_mut().extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
+                    ProgressNoteTypeName::Plan => progress_note_form.plans.lock_mut().extend(progress_note_item_type.progress_note_items.into_iter().map(|i| Rc::new(i.into()))),
                 }
             }
             progress_note_form.changed.set(true);

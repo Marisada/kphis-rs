@@ -166,15 +166,7 @@ pub async fn get_sse_message(Query(params): Query<SseMessageParams>, ctx: Reques
 )]
 pub async fn post_sse_message(ctx: RequestState, Json(payload): Json<SsePostMessage>) -> Result<Json<String>, AppError> {
     let message_datetime = now();
-    let insert_response = sse::post_sse_message(
-        &payload,
-        message_datetime,
-        &ctx.user_state.user.doctorcode,
-        &ctx.user_state.user.name,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.kphis_log(),
-    )
-    .await?;
+    let insert_response = sse::post_sse_message(&payload, message_datetime, &ctx.user_state.user.doctorcode, &ctx.user_state.user.name, &ctx.api_state.db_pool, &ctx.api_state.kphis_log()).await?;
 
     let message_id = insert_response.last_insert_id as u32;
 

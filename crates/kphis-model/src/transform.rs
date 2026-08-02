@@ -74,13 +74,7 @@ pub struct AnInPreAdmitAndIpt {
 
 impl PartialEq for AnInPreAdmitAndIpt {
     fn eq(&self, other: &Self) -> bool {
-        self.pm_vn == other.pm_vn
-            && self.pm_an == other.pm_an
-            && self.pm_ipt_an == other.pm_ipt_an
-            && self.ipt_vn == other.ipt_vn
-            && self.ipt_pm_vn == other.ipt_pm_vn
-            && self.ipt_pm_an == other.ipt_pm_an
-            && self.ipt_an == other.ipt_an
+        self.pm_vn == other.pm_vn && self.pm_an == other.pm_an && self.pm_ipt_an == other.pm_ipt_an && self.ipt_vn == other.ipt_vn && self.ipt_pm_vn == other.ipt_pm_vn && self.ipt_pm_an == other.ipt_pm_an && self.ipt_an == other.ipt_an
     }
 }
 

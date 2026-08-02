@@ -35,22 +35,14 @@ fn opd_er_from_row(row: &MySqlRow) -> sqlx::Result<PatientInfo> {
     let vn: String = row.try_get("vn")?;
     let opd_er_order_master_id: Option<u32> = row.try_get("opd_er_order_master_id")?;
     let pre_admit_master_id: Option<u32> = row.try_get("pre_admit_master_id")?;
-    let visit_type = if let Some(id) = opd_er_order_master_id {
-        VisitTypeId::OpdEr(vn.clone(), id)
-    } else {
-        VisitTypeId::Visit(vn.clone())
-    };
+    let visit_type = if let Some(id) = opd_er_order_master_id { VisitTypeId::OpdEr(vn.clone(), id) } else { VisitTypeId::Visit(vn.clone()) };
     from_row(vn, opd_er_order_master_id, pre_admit_master_id, visit_type, row)
 }
 fn pre_admit_from_row(row: &MySqlRow) -> sqlx::Result<PatientInfo> {
     let vn: String = row.try_get("vn")?;
     let opd_er_order_master_id: Option<u32> = row.try_get("opd_er_order_master_id")?;
     let pre_admit_master_id: Option<u32> = row.try_get("pre_admit_master_id")?;
-    let visit_type = if pre_admit_master_id.is_some() {
-        VisitTypeId::PreAdmit(vn.clone())
-    } else {
-        VisitTypeId::Visit(vn.clone())
-    };
+    let visit_type = if pre_admit_master_id.is_some() { VisitTypeId::PreAdmit(vn.clone()) } else { VisitTypeId::Visit(vn.clone()) };
     from_row(vn, opd_er_order_master_id, pre_admit_master_id, visit_type, row)
 }
 fn from_row(vn: String, opd_er_order_master_id: Option<u32>, pre_admit_master_id: Option<u32>, visit_type: VisitTypeId, row: &MySqlRow) -> sqlx::Result<PatientInfo> {

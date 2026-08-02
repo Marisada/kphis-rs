@@ -19,15 +19,7 @@ pub async fn get_ipd_other_search_patient(Query(params): Query<IpdSearchPatientO
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = ipd_search_patient_other::get_ipd_other_search_patient(
-        params,
-        ctx.api_state.hosxp_hn_len(),
-        ctx.api_state.hosxp_an_len(),
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = ipd_search_patient_other::get_ipd_other_search_patient(params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }

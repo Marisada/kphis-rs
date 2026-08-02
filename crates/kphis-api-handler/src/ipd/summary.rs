@@ -79,31 +79,12 @@ pub async fn post_ipd_summary(ctx: RequestState, Json(payload): Json<SummarySave
         Err(AppError::app_400("Post IpdSummary"))
     } else {
         // check AN is valid (pre-admit was admited or admit was revoked)
-        check_an_can_execute(
-            &payload.summary.an,
-            ctx.api_state.hosxp_an_len(),
-            &ctx.api_state.db_pool,
-            &ctx.api_state.hosxp(),
-            &ctx.api_state.kphis(),
-        )
-        .await?;
+        check_an_can_execute(&payload.summary.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
-        let is_doctor = if ctx.api_state.production() {
-            ctx.user_state.permissions.contains(&Permission::DataTypeDoctorUse)
-        } else {
-            true
-        };
+        let is_doctor = if ctx.api_state.production() { ctx.user_state.permissions.contains(&Permission::DataTypeDoctorUse) } else { true };
 
         // only doctor can edit diagnosis 1-4
-        let result = summary::post_ipd_summary(
-            &payload,
-            &ctx.user_state.user.doctorcode,
-            &ctx.user_state.user.loginname,
-            is_doctor,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-        )
-        .await?;
+        let result = summary::post_ipd_summary(&payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, is_doctor, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
         Ok(Json(result))
     }
@@ -171,16 +152,9 @@ pub async fn post_ipd_summary_note(Path(summary_id): Path<u32>, ctx: RequestStat
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
-    let result = summary::insert_summary_note(
-        summary_id,
-        &payload,
-        &ctx.user_state.user.doctorcode,
-        &ctx.user_state.user.loginname,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.kphis(),
-    )
-    .await
-    .map(|res| ExecuteResponse::from_query_result(res, "Insert SummaryNoteSave"))?;
+    let result = summary::insert_summary_note(summary_id, &payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis())
+        .await
+        .map(|res| ExecuteResponse::from_query_result(res, "Insert SummaryNoteSave"))?;
 
     Ok(Json(result))
 }
@@ -203,16 +177,9 @@ pub async fn patch_ipd_summary_note(Path(summary_id): Path<u32>, ctx: RequestSta
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
     if payload.note_id.is_some() {
-        let result = summary::update_summary_note(
-            summary_id,
-            &payload,
-            &ctx.user_state.user.doctorcode,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-        )
-        .await
-        .map(|res| ExecuteResponse::from_query_result(res, "Update SummaryNoteSave"))?;
+        let result = summary::update_summary_note(summary_id, &payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis())
+            .await
+            .map(|res| ExecuteResponse::from_query_result(res, "Update SummaryNoteSave"))?;
 
         Ok(Json(result))
     } else {

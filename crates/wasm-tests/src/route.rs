@@ -35,12 +35,7 @@ pub fn test_route_from_url_without_hash() {
 #[wasm_bindgen_test]
 pub fn test_route_from_url_root() {
     let root_another_host = Route::from_url("http://somehost", "localhost");
-    assert_eq!(
-        root_another_host,
-        Route::External {
-            path: String::from("http://somehost")
-        }
-    );
+    assert_eq!(root_another_host, Route::External { path: String::from("http://somehost") });
     let root_without_slash = Route::from_url("http://localhost", "localhost");
     assert_eq!(root_without_slash, Route::Root);
     let root_with_slash = Route::from_url("http://localhost/", "localhost");

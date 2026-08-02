@@ -39,15 +39,7 @@ pub async fn get_io_date(an: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Ve
 
 // ipd-vital-sign-io-table.php
 // GET /ipd/io
-pub async fn get_io_shift(
-    params: &IoParams,
-    shift_day_start: Time,
-    shift_evening_start: Time,
-    shift_night_start: Time,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-) -> Result<Vec<IoShift>, AppError> {
+pub async fn get_io_shift(params: &IoParams, shift_day_start: Time, shift_evening_start: Time, shift_night_start: Time, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<IoShift>, AppError> {
     let sql = io::select_io(params, kphis, hosxp);
     let mut query = sqlx::query(AssertSqlSafe(sql));
     if let Some(io_id) = &params.io_id {
@@ -295,16 +287,7 @@ async fn insert_io_only(an: &str, only: &IoOnly, pool: &Pool<MySql>, kphis: &str
 pub async fn delete_io_shift(io_id: u32, version: i32, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::with_capacity(2);
     // 1. Insert to history
-    let insert_history_io_result = insert_history_log(
-        SourceTable::IpdIo,
-        "D",
-        user,
-        &[KeyValue("io_id", io_id.to_string()), KeyValue("version", version.to_string())],
-        kphis,
-        kphis_log,
-        pool,
-    )
-    .await?;
+    let insert_history_io_result = insert_history_log(SourceTable::IpdIo, "D", user, &[KeyValue("io_id", io_id.to_string()), KeyValue("version", version.to_string())], kphis, kphis_log, pool).await?;
     let will_delete = insert_history_io_result.rows_affected() > 0;
     results.push(ExecuteResponse::from_query_result(insert_history_io_result, "Insert IpdIo History"));
 

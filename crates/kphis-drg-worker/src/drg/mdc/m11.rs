@@ -67,11 +67,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, procs: &Has
         if *age_y > 17 { MdcResult::Dc(String::from("1150")) } else { MdcResult::Dc(String::from("1151")) }
     } else if grouper.is_pdx_pdc(Mdc::M11, "11J", pdx) {
         if *age_y > 17 {
-            if dch_type == "04" {
-                MdcResult::Dc(String::from("1167"))
-            } else {
-                MdcResult::Dc(String::from("1159"))
-            }
+            if dch_type == "04" { MdcResult::Dc(String::from("1167")) } else { MdcResult::Dc(String::from("1159")) }
         } else {
             MdcResult::Dc(String::from("1160"))
         }

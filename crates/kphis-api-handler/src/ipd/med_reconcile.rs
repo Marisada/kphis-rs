@@ -11,10 +11,7 @@ use kphis_api_core::{
 use kphis_api_query::{ipd::med_reconcile, transform::query::check_an_opt_can_execute};
 use kphis_model::{
     fetch::ExecuteResponse,
-    med_reconcile::{
-        AdmissionNoteLastDose, MedReconciliation, MedReconciliationDetail, MedReconciliationItemPatch, MedReconciliationItemSave, MedReconciliationNote, MedReconciliationParams, ReMedMedication,
-        ReMedVisit,
-    },
+    med_reconcile::{AdmissionNoteLastDose, MedReconciliation, MedReconciliationDetail, MedReconciliationItemPatch, MedReconciliationItemSave, MedReconciliationNote, MedReconciliationParams, ReMedMedication, ReMedVisit},
 };
 use kphis_util::{
     error::{AppError, Source},
@@ -60,11 +57,7 @@ pub async fn get_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>
     responses(DocVecU32<ExecuteResponse>),
     params(MedReconciliationParams),
 )]
-pub async fn post_ipd_med_reconcile(
-    Query(params): Query<MedReconciliationParams>,
-    ctx: RequestState,
-    Json(payload): Json<Vec<MedReconciliationItemSave>>,
-) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
+pub async fn post_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemSave>>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
     ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
     ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
@@ -73,15 +66,7 @@ pub async fn post_ipd_med_reconcile(
         // check AN is valid (pre-admit was admited or admit was revoked)
         check_an_opt_can_execute(&params.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
-        let result = med_reconcile::post_ipd_med_reconcile(
-            an,
-            &payload,
-            &ctx.user_state.user.doctorcode,
-            &ctx.user_state.user.loginname,
-            &ctx.api_state.db_pool,
-            &ctx.api_state.kphis(),
-        )
-        .await?;
+        let result = med_reconcile::post_ipd_med_reconcile(an, &payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
         Ok(Json(result))
     } else {
@@ -104,11 +89,7 @@ pub async fn post_ipd_med_reconcile(
     responses(DocVec<ExecuteResponse>),
     params(MedReconciliationParams),
 )]
-pub async fn patch_ipd_med_reconcile(
-    Query(params): Query<MedReconciliationParams>,
-    ctx: RequestState,
-    Json(payload): Json<Vec<MedReconciliationItemPatch>>,
-) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
+pub async fn patch_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemPatch>>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::PATCH, false).await?;
 

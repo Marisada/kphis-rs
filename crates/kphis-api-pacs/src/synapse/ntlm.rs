@@ -117,9 +117,7 @@ impl<'a> AspNetAuth<'a> {
             AspNetState::Finished(bytes) => Ok(bytes.to_owned()),
             AspNetState::ClientError(e) => Err(Source::PacsClient.to_error(500, e, "NTLM")),
             AspNetState::Error((status, message)) => Err(Source::PacsClient.to_error(500, &[&status.to_string(), ":", message].concat(), "NTLM")),
-            AspNetState::Negotiation | AspNetState::Redirect(_, _, _) | AspNetState::Challenge(_) | AspNetState::Final | AspNetState::NotSupported => {
-                Err(Source::PacsClient.to_error(500, "Unexpected !!", "NTLM"))
-            }
+            AspNetState::Negotiation | AspNetState::Redirect(_, _, _) | AspNetState::Challenge(_) | AspNetState::Final | AspNetState::NotSupported => Err(Source::PacsClient.to_error(500, "Unexpected !!", "NTLM")),
         }
     }
 
@@ -136,9 +134,7 @@ impl<'a> AspNetAuth<'a> {
             }
             AspNetState::Negotiation => {
                 if let Ok(Some(next_bytes)) = self.sspi.next_bytes(None) {
-                    self.client
-                        .request(Method::GET, &self.next_path)
-                        .header(header::AUTHORIZATION, format!("{} {}", NTLM, STANDARD.encode(next_bytes)))
+                    self.client.request(Method::GET, &self.next_path).header(header::AUTHORIZATION, format!("{} {}", NTLM, STANDARD.encode(next_bytes)))
                 } else {
                     self.client.request(Method::GET, &self.next_path)
                 }
@@ -147,9 +143,7 @@ impl<'a> AspNetAuth<'a> {
                 let challenge = message.trim_start_matches(NTLM).trim_start();
                 let in_bytes = STANDARD.decode(challenge).ok();
                 if let Ok(Some(next_bytes)) = self.sspi.next_bytes(in_bytes.as_deref()) {
-                    self.client
-                        .request(Method::GET, &self.next_path)
-                        .header(header::AUTHORIZATION, format!("{} {}", NTLM, STANDARD.encode(next_bytes)))
+                    self.client.request(Method::GET, &self.next_path).header(header::AUTHORIZATION, format!("{} {}", NTLM, STANDARD.encode(next_bytes)))
                 } else {
                     self.client.request(Method::GET, &self.next_path)
                 }
@@ -157,11 +151,7 @@ impl<'a> AspNetAuth<'a> {
             AspNetState::Final => {
                 self.is_next = false;
                 let req = self.client.request(self.final_method.clone(), &self.final_path).body(self.final_body.to_vec());
-                if self.final_is_json {
-                    req.header(header::CONTENT_TYPE, "application/json;charset=utf-8")
-                } else {
-                    req
-                }
+                if self.final_is_json { req.header(header::CONTENT_TYPE, "application/json;charset=utf-8") } else { req }
             }
             AspNetState::Finished(_) | AspNetState::ClientError(_) | AspNetState::Error(_) | AspNetState::NotSupported => self.client.request(Method::GET, &self.next_path),
         };

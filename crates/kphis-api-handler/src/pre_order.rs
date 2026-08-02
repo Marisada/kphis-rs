@@ -39,14 +39,7 @@ pub async fn get_ipd_pre_order_list(Query(params): Query<PreOrderMasterParams>, 
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let response = master::get_pre_order_list(
-        &params,
-        &ctx.api_state.app_config.doctor_intern_roles,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let response = master::get_pre_order_list(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(response))
 }
@@ -87,14 +80,7 @@ pub async fn get_ipd_pre_order(Query(params): Query<PreOrderParams>, ctx: Reques
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let orders = get_ipd_pre_order_bundle(
-        &params,
-        &ctx.api_state.app_config.doctor_intern_roles,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let orders = get_ipd_pre_order_bundle(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(orders))
 }
@@ -154,14 +140,7 @@ pub async fn get_ipd_pre_progress_note(Query(params): Query<PreProgressNoteParam
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::GET, false).await?;
 
-    let progress_notes = get_ipd_pre_progress_note_bundle(
-        &params,
-        &ctx.api_state.app_config.doctor_intern_roles,
-        &ctx.api_state.db_pool,
-        &ctx.api_state.hosxp(),
-        &ctx.api_state.kphis(),
-    )
-    .await?;
+    let progress_notes = get_ipd_pre_progress_note_bundle(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
     Ok(Json(progress_notes))
 }

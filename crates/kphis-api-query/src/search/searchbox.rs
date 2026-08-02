@@ -1,8 +1,7 @@
 use sqlx::{AssertSqlSafe, FromRow, MySql, Pool};
 
 use kphis_model::search::searchbox::{
-    DrugCheckParams, DrugDuplicateCheck, DrugInteractionCheck, DrugUsage, HospSearchBox, IvfluidSearchbox, LabSearchbox, MedSearchbox, OpdVisitSearchType, OpdVisitSearchbox, PatientSearchbox,
-    XraySearchbox,
+    DrugCheckParams, DrugDuplicateCheck, DrugInteractionCheck, DrugUsage, HospSearchBox, IvfluidSearchbox, LabSearchbox, MedSearchbox, OpdVisitSearchType, OpdVisitSearchbox, PatientSearchbox, XraySearchbox,
 };
 use kphis_sql::search::searchbox;
 use kphis_util::error::{AppError, Source};

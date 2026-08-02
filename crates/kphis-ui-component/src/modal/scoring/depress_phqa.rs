@@ -94,17 +94,7 @@ impl DepressPhqA {
         }
     }
 
-    fn cal_total(
-        score_1: &Option<u8>,
-        score_2: &Option<u8>,
-        score_3: &Option<u8>,
-        score_4: &Option<u8>,
-        score_5: &Option<u8>,
-        score_6: &Option<u8>,
-        score_7: &Option<u8>,
-        score_8: &Option<u8>,
-        score_9: &Option<u8>,
-    ) -> Option<u8> {
+    fn cal_total(score_1: &Option<u8>, score_2: &Option<u8>, score_3: &Option<u8>, score_4: &Option<u8>, score_5: &Option<u8>, score_6: &Option<u8>, score_7: &Option<u8>, score_8: &Option<u8>, score_9: &Option<u8>) -> Option<u8> {
         if let (Some(s1), Some(s2), Some(s3), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8), Some(s9)) = (score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9) {
             Some(s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9)
         } else {
@@ -127,17 +117,7 @@ impl DepressPhqA {
         }
     }
 
-    fn cal_diagnosis(
-        score_1: &Option<u8>,
-        score_2: &Option<u8>,
-        score_3: &Option<u8>,
-        score_4: &Option<u8>,
-        score_5: &Option<u8>,
-        score_6: &Option<u8>,
-        score_7: &Option<u8>,
-        score_8: &Option<u8>,
-        score_9: &Option<u8>,
-    ) -> bool {
+    fn cal_diagnosis(score_1: &Option<u8>, score_2: &Option<u8>, score_3: &Option<u8>, score_4: &Option<u8>, score_5: &Option<u8>, score_6: &Option<u8>, score_7: &Option<u8>, score_8: &Option<u8>, score_9: &Option<u8>) -> bool {
         if let (Some(s1), Some(s2), Some(s3), Some(s4), Some(s5), Some(s6), Some(s7), Some(s8), Some(s9)) = (score_1, score_2, score_3, score_4, score_5, score_6, score_7, score_8, score_9) {
             let b1 = *s1 > 1;
             let b2 = *s2 > 1;
@@ -161,11 +141,7 @@ impl DepressPhqA {
     }
 
     fn cal_suicide(score_9: &Option<u8>, score_s1: &Option<u8>, score_s2: &Option<u8>) -> bool {
-        if let (Some(s9), Some(x1), Some(x2)) = (score_9, score_s1, score_s2) {
-            (s9 + x1 + x2) > 0
-        } else {
-            false
-        }
+        if let (Some(s9), Some(x1), Some(x2)) = (score_9, score_s1, score_s2) { (s9 + x1 + x2) > 0 } else { false }
     }
 
     pub fn render(modal: Rc<Self>) -> Dom {

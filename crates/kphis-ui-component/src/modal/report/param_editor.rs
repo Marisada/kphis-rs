@@ -28,12 +28,7 @@ pub struct ReportParamEditor {
 
 impl ReportParamEditor {
     pub fn new(parent_params: Mutable<String>, parent_changed: Mutable<bool>, app: Rc<App>) -> Rc<Self> {
-        let param_items = MutableVec::new_with_values(
-            ReportParam::from_cap_pipe(&parent_params.lock_ref())
-                .iter()
-                .map(|rp| ReportParamMutable::from_report_param(rp, app.clone()))
-                .collect(),
-        );
+        let param_items = MutableVec::new_with_values(ReportParam::from_cap_pipe(&parent_params.lock_ref()).iter().map(|rp| ReportParamMutable::from_report_param(rp, app.clone())).collect());
         Rc::new(Self {
             param_items,
             parent_params,
@@ -517,11 +512,7 @@ impl ReportParamMutable {
             VarType::System => {
                 if let Some(system_list_type) = self.system_list_type.lock_ref().as_ref() {
                     let system_list_type_str = system_list_type.to_str();
-                    if self.is_array {
-                        ["[(", system_list_type_str, ")]"].concat()
-                    } else {
-                        ["(", system_list_type_str, ")"].concat()
-                    }
+                    if self.is_array { ["[(", system_list_type_str, ")]"].concat() } else { ["(", system_list_type_str, ")"].concat() }
                 // reverse to basic type if NO SystemListType
                 } else if self.is_array {
                     ["[", key_type_str, "]"].concat()

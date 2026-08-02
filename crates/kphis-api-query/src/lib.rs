@@ -50,23 +50,12 @@ pub async fn execute1(first: &str, sql: &str, pool: &Pool<MySql>, action: &str) 
 
 #[inline]
 pub async fn execute2(first: &str, second: &str, sql: &str, pool: &Pool<MySql>, action: &str) -> Result<MySqlQueryResult, AppError> {
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(first)
-        .bind(second)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, action))
+    sqlx::query(AssertSqlSafe(sql)).bind(first).bind(second).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, action))
 }
 
 #[inline]
 pub async fn execute3(first: &str, second: &str, third: &str, sql: &str, pool: &Pool<MySql>, action: &str) -> Result<MySqlQueryResult, AppError> {
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(first)
-        .bind(second)
-        .bind(third)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, action))
+    sqlx::query(AssertSqlSafe(sql)).bind(first).bind(second).bind(third).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, action))
 }
 
 #[inline]
@@ -125,23 +114,12 @@ pub async fn query1_all(first: &str, sql: &str, pool: &Pool<MySql>, action: &str
 
 #[inline]
 pub async fn query2_all(first: &str, second: &str, sql: &str, pool: &Pool<MySql>, action: &str) -> Result<Vec<MySqlRow>, AppError> {
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(first)
-        .bind(second)
-        .fetch_all(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, action))
+    sqlx::query(AssertSqlSafe(sql)).bind(first).bind(second).fetch_all(pool).await.map_err(|e| Source::SQLx.to_error(500, e, action))
 }
 
 #[inline]
 pub async fn query3_all(first: &str, second: &str, third: &str, sql: &str, pool: &Pool<MySql>, action: &str) -> Result<Vec<MySqlRow>, AppError> {
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(first)
-        .bind(second)
-        .bind(third)
-        .fetch_all(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, action))
+    sqlx::query(AssertSqlSafe(sql)).bind(first).bind(second).bind(third).fetch_all(pool).await.map_err(|e| Source::SQLx.to_error(500, e, action))
 }
 
 #[inline]
@@ -195,21 +173,12 @@ pub async fn query_opt(sql: &str, pool: &Pool<MySql>, action: &str) -> Result<Op
 
 #[inline]
 pub async fn query1_opt(first: &str, sql: &str, pool: &Pool<MySql>, action: &str) -> Result<Option<MySqlRow>, AppError> {
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(first)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, action))
+    sqlx::query(AssertSqlSafe(sql)).bind(first).fetch_optional(pool).await.map_err(|e| Source::SQLx.to_error(500, e, action))
 }
 
 #[inline]
 pub async fn query2_opt(first: &str, second: &str, sql: &str, pool: &Pool<MySql>, action: &str) -> Result<Option<MySqlRow>, AppError> {
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(first)
-        .bind(second)
-        .fetch_optional(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, action))
+    sqlx::query(AssertSqlSafe(sql)).bind(first).bind(second).fetch_optional(pool).await.map_err(|e| Source::SQLx.to_error(500, e, action))
 }
 
 #[inline]

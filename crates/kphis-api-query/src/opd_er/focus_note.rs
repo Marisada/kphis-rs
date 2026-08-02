@@ -96,15 +96,7 @@ pub async fn post_focus_note(opd_er_order_master_id: u32, save: &FocusNoteSave, 
     }
 }
 
-async fn update_focus_note_bundle(
-    fcnote_id: u32,
-    opd_er_order_master_id: u32,
-    save: &FocusNoteSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+async fn update_focus_note_bundle(fcnote_id: u32, opd_er_order_master_id: u32, save: &FocusNoteSave, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::with_capacity(8);
     // 1. Update focus_note
     let update_focus_note_result = update_focus_note(fcnote_id, opd_er_order_master_id, save, user, pool, kphis).await?;
@@ -151,14 +143,7 @@ async fn update_focus_note_bundle(
     Ok(results)
 }
 
-pub async fn insert_focus_note_bundle(
-    opd_er_order_master_id: u32,
-    save: &FocusNoteSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
+pub async fn insert_focus_note_bundle(opd_er_order_master_id: u32, save: &FocusNoteSave, user: &str, pool: &Pool<MySql>, kphis: &str, kphis_log: &str) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
     let mut results = Vec::with_capacity(6);
     // 1. Insert focus_note
     let insert_focus_note_result = insert_focus_note(opd_er_order_master_id, save, user, pool, kphis).await?;
@@ -201,16 +186,7 @@ pub async fn insert_focus_note_only_bundle(opd_er_order_master_id: u32, only: &F
         let insert_intvt_item_result = insert_intvt_items_only(fcnote_id, &only.focus_note_intvt_items, pool, kphis).await?;
         results.push(ExecuteResponse::from_query_result(insert_intvt_item_result, "Insert FocusNoteIntvtItemOnly"));
         // 4. Insert history intvt_item
-        let insert_history_intvt_result = insert_history_log(
-            SourceTable::OpdErFocusNoteIntvtItem,
-            "I",
-            "system",
-            &[KeyValue("fcnote_id", fcnote_id.to_string())],
-            kphis,
-            kphis_log,
-            pool,
-        )
-        .await?;
+        let insert_history_intvt_result = insert_history_log(SourceTable::OpdErFocusNoteIntvtItem, "I", "system", &[KeyValue("fcnote_id", fcnote_id.to_string())], kphis, kphis_log, pool).await?;
         results.push(ExecuteResponse::from_query_result(insert_history_intvt_result, "Insert FocusNoteIntvtItemOnly History"));
     }
     if !only.focus_note_dlc_items.is_empty() {
@@ -218,16 +194,7 @@ pub async fn insert_focus_note_only_bundle(opd_er_order_master_id: u32, only: &F
         let insert_dlc_item_result = insert_dlc_items_only(fcnote_id, &only.focus_note_dlc_items, pool, kphis).await?;
         results.push(ExecuteResponse::from_query_result(insert_dlc_item_result, "Insert FocusNoteDlcItemOnly"));
         // 6. Insert history dlc_item
-        let insert_history_dlc_result = insert_history_log(
-            SourceTable::OpdErFocusNoteDlcItem,
-            "I",
-            "system",
-            &[KeyValue("fcnote_id", fcnote_id.to_string())],
-            kphis,
-            kphis_log,
-            pool,
-        )
-        .await?;
+        let insert_history_dlc_result = insert_history_log(SourceTable::OpdErFocusNoteDlcItem, "I", "system", &[KeyValue("fcnote_id", fcnote_id.to_string())], kphis, kphis_log, pool).await?;
         results.push(ExecuteResponse::from_query_result(insert_history_dlc_result, "Insert FocusNoteDlcItemOnly History"));
     }
 

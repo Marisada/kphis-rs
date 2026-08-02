@@ -43,12 +43,7 @@ pub async fn get_xn_data_inner(xn: i32, pacs_client: &reqwest::Client, pacs_conf
     let result = get_xn_data_synapse(&series_body).map_err(|e| Source::SerdeJson.to_error(500, e, "GetXnData"))?;
 
     // 4. delete sessionID
-    client.set_next_request(
-        Method::DELETE,
-        &[&pacs_config.pacs_host, "/api/WorkflowEngine/Worklist/Cache?sessionId=", &session_id].concat(),
-        &[],
-        false,
-    );
+    client.set_next_request(Method::DELETE, &[&pacs_config.pacs_host, "/api/WorkflowEngine/Worklist/Cache?sessionId=", &session_id].concat(), &[], false);
     let _ = client.run().await?;
 
     Ok(result)

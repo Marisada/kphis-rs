@@ -65,18 +65,7 @@ pub struct Pews {
 
 impl Pews {
     #[allow(clippy::too_many_arguments)]
-    pub fn new(
-        birthday: Option<Date>,
-        regday: Date,
-        bt: Option<Decimal>,
-        pr: Option<u32>,
-        rr: Option<u32>,
-        sbp: Option<u32>,
-        sat: Option<u32>,
-        o2_id: Option<u32>,
-        avpu_id: Option<u32>,
-        pops_other_id: Option<u32>,
-    ) -> Self {
+    pub fn new(birthday: Option<Date>, regday: Date, bt: Option<Decimal>, pr: Option<u32>, rr: Option<u32>, sbp: Option<u32>, sat: Option<u32>, o2_id: Option<u32>, avpu_id: Option<u32>, pops_other_id: Option<u32>) -> Self {
         let age_group = birthday.map(|day| AgeGroup::from_birthday(day, regday));
         let score_bt = Self::score_bt(&age_group, bt);
         let score_pr = Self::score_pr(&age_group, pr);
@@ -328,19 +317,8 @@ impl Pews {
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn scoring(
-        score_bt: Option<u32>,
-        score_pr: Option<u32>,
-        score_rr: Option<u32>,
-        score_sbp: Option<u32>,
-        score_sat: Option<u32>,
-        score_o2: Option<u32>,
-        score_avpu: Option<u32>,
-        score_pops_other: Option<u32>,
-    ) -> Option<u32> {
-        if let (Some(bt), Some(pr), Some(rr), Some(sbp), Some(sat), Some(avpu), Some(o2), Some(pops_other)) =
-            (score_bt, score_pr, score_rr, score_sbp, score_sat, score_o2, score_avpu, score_pops_other)
-        {
+    fn scoring(score_bt: Option<u32>, score_pr: Option<u32>, score_rr: Option<u32>, score_sbp: Option<u32>, score_sat: Option<u32>, score_o2: Option<u32>, score_avpu: Option<u32>, score_pops_other: Option<u32>) -> Option<u32> {
+        if let (Some(bt), Some(pr), Some(rr), Some(sbp), Some(sat), Some(avpu), Some(o2), Some(pops_other)) = (score_bt, score_pr, score_rr, score_sbp, score_sat, score_o2, score_avpu, score_pops_other) {
             Some(bt + pr + rr + sbp + sat + avpu + o2 + pops_other)
         } else {
             None
@@ -348,16 +326,7 @@ impl Pews {
     }
 
     fn rescore(&mut self) {
-        self.score = Self::scoring(
-            self.score_bt,
-            self.score_pr,
-            self.score_rr,
-            self.score_sbp,
-            self.score_sat,
-            self.score_o2,
-            self.score_avpu,
-            self.score_pops_other,
-        );
+        self.score = Self::scoring(self.score_bt, self.score_pr, self.score_rr, self.score_sbp, self.score_sat, self.score_o2, self.score_avpu, self.score_pops_other);
     }
 }
 

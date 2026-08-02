@@ -61,12 +61,7 @@ pub async fn get_json_data(path: &Path, app: &ApiState, user: &UserState) -> Res
         // /api/xxx
         } else if let Some(endpoint) = EndPoint::VARIANTS.iter().find(|ep| path.starts_with(strip_prefix_slash(&ep.base()))) {
             // dbg!(path.to_str().unwrap_or_default());
-            let paths = path
-                .strip_prefix(strip_prefix_slash(&endpoint.base()))
-                .unwrap_or(path)
-                .iter()
-                .map(|s| s.to_str().unwrap_or_default())
-                .collect::<Vec<&str>>();
+            let paths = path.strip_prefix(strip_prefix_slash(&endpoint.base())).unwrap_or(path).iter().map(|s| s.to_str().unwrap_or_default()).collect::<Vec<&str>>();
             let params = paths_params
                 .next()
                 .map(|q| {
@@ -97,9 +92,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
     let invalid = Source::App.to_error(500, "Invalid path or query data", "Get json data");
     let forbidden = AppError::app_403("Get json data");
     match endpoint {
-        EndPoint::AvatarOpdEr => kphis_api_query::avatar::get_avatar_opd_er(&app.db_pool, &app.hosxp(), &app.kphis())
-            .await
-            .map(|s| serde_json::json!(s).to_string()),
+        EndPoint::AvatarOpdEr => kphis_api_query::avatar::get_avatar_opd_er(&app.db_pool, &app.hosxp(), &app.kphis()).await.map(|s| serde_json::json!(s).to_string()),
         EndPoint::AvatarIpd => {
             if let Some(query) = kphis_model::avatar::AvatarParams::from_tuples(params) {
                 kphis_api_query::avatar::get_avatar_ipd(&query, app.hosxp_hn_len(), app.hosxp_an_len(), &app.db_pool, &app.hosxp(), &app.kphis())
@@ -112,45 +105,35 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::DrugUseDuration => Err(forbidden),
         EndPoint::ExistsKeyId => {
             if paths.len() == 2 {
-                kphis_api_query::app::get_exists(paths[0], paths[1], &app.db_pool, &app.hosxp(), &app.kphis())
-                    .await
-                    .map(|s| s.to_string())
+                kphis_api_query::app::get_exists(paths[0], paths[1], &app.db_pool, &app.hosxp(), &app.kphis()).await.map(|s| s.to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::EmrDateHn => {
             if paths.len() == 1 {
-                kphis_api_query::emr::get_emr_date(paths[0], &app.db_pool, &app.hosxp(), &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::emr::get_emr_date(paths[0], &app.db_pool, &app.hosxp(), &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::EmrVisitVn => {
             if paths.len() == 1 {
-                kphis_api_query::emr::get_emr_visit(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::emr::get_emr_visit(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::HisIptDiagAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::his::get_ipt_diag(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::his::get_ipt_diag(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::HisIptOprtAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::his::get_ipt_oprt(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::his::get_ipt_oprt(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -166,18 +149,14 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::HisMedPlanIpdAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::his::get_medplan_ipd_remains(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::his::get_medplan_ipd_remains(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::HisReferOutVnan => {
             if paths.len() == 1 {
-                kphis_api_query::refer_out::select_his_referout_data(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::refer_out::select_his_referout_data(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -186,15 +165,9 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::ImageUsage => Err(forbidden),
         EndPoint::ImageUsageId => {
             if paths.len() == 2 {
-                kphis_api_query::image::file_path::get_image_usage_id(
-                    paths[0].parse::<u32>().unwrap_or_default(),
-                    paths[1].parse::<u32>().unwrap_or_default(),
-                    &app.db_pool,
-                    &app.hosxp(),
-                    &app.kphis_extra(),
-                )
-                .await
-                .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::image::file_path::get_image_usage_id(paths[0].parse::<u32>().unwrap_or_default(), paths[1].parse::<u32>().unwrap_or_default(), &app.db_pool, &app.hosxp(), &app.kphis_extra())
+                    .await
+                    .map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -264,45 +237,35 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::IpdDcPlanTmpDx => {
             if let Some(query) = kphis_model::ipd::dc_plan_tmp::DcPlanTmpParams::from_tuples(params) {
-                kphis_api_query::ipd::dc_plan_tmp::get_dx(&query, &app.db_pool, &app.kphis_extra())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::dc_plan_tmp::get_dx(&query, &app.db_pool, &app.kphis_extra()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::IpdDcPlanTmpMed => {
             if let Some(query) = kphis_model::ipd::dc_plan_tmp::DcPlanTmpParams::from_tuples(params) {
-                kphis_api_query::ipd::dc_plan_tmp::get_med(&query, &app.db_pool, &app.kphis_extra())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::dc_plan_tmp::get_med(&query, &app.db_pool, &app.kphis_extra()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::IpdDcPlanTmpEnv => {
             if let Some(query) = kphis_model::ipd::dc_plan_tmp::DcPlanTmpParams::from_tuples(params) {
-                kphis_api_query::ipd::dc_plan_tmp::get_env(&query, &app.db_pool, &app.kphis_extra())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::dc_plan_tmp::get_env(&query, &app.db_pool, &app.kphis_extra()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::IpdDcPlanTmpTx => {
             if let Some(query) = kphis_model::ipd::dc_plan_tmp::DcPlanTmpParams::from_tuples(params) {
-                kphis_api_query::ipd::dc_plan_tmp::get_tx(&query, &app.db_pool, &app.kphis_extra())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::dc_plan_tmp::get_tx(&query, &app.db_pool, &app.kphis_extra()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::IpdDcPlanTmpDiet => {
             if let Some(query) = kphis_model::ipd::dc_plan_tmp::DcPlanTmpParams::from_tuples(params) {
-                kphis_api_query::ipd::dc_plan_tmp::get_diet(&query, &app.db_pool, &app.kphis_extra())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::dc_plan_tmp::get_diet(&query, &app.db_pool, &app.kphis_extra()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -318,9 +281,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::IpdDocumentDatetimeAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::document::get_ipd_document_datetime(paths[0], &app.db_pool, &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::document::get_ipd_document_datetime(paths[0], &app.db_pool, &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -367,9 +328,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::IpdIndexAction => Err(forbidden),
         EndPoint::IpdIndexMedPayAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::index_plan::get_index_med_pay(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::index_plan::get_index_med_pay(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -379,18 +338,14 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::IpdIndexNoteId => Err(forbidden),
         EndPoint::IpdIndexNote => {
             if let Some(query) = kphis_model::ipd::index_note::IndexNoteParams::from_tuples(params) {
-                kphis_api_query::ipd::index_note::get_index_note(&query, &app.db_pool, &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::index_note::get_index_note(&query, &app.db_pool, &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::IpdIndexPlanDateAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::index_plan::get_index_plan_date(paths[0], &app.db_pool, &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::index_plan::get_index_plan_date(paths[0], &app.db_pool, &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -428,9 +383,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::IpdIoDateAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::io::get_io_date(paths[0], &app.db_pool, &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::io::get_io_date(paths[0], &app.db_pool, &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -487,9 +440,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::IpdMra => {
             if let Some(query) = kphis_model::ipd::mra::MraParams::from_tuples(params) {
                 if query.an.is_some() {
-                    kphis_api_query::ipd::mra::get_ipd_mra(&query, &app.db_pool, &app.kphis_extra())
-                        .await
-                        .map(|s| serde_json::json!(s).to_string())
+                    kphis_api_query::ipd::mra::get_ipd_mra(&query, &app.db_pool, &app.kphis_extra()).await.map(|s| serde_json::json!(s).to_string())
                 } else {
                     Err(invalid)
                 }
@@ -561,9 +512,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::IpdOrderOrderDateAn => {
             if paths.len() == 1 {
-                kphis_api_query::ipd::order::get_order_date(paths[0], &app.db_pool, &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::order::get_order_date(paths[0], &app.db_pool, &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -572,17 +521,9 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::IpdOrderOrder => {
             if let Some(query) = kphis_model::order::OrderParams::from_tuples(params) {
                 if query.an.is_some() && query.view_by.is_some() {
-                    kphis_api_handler::ipd::order::get_ipd_order_bundle(
-                        &query,
-                        &user.user.doctorcode,
-                        &app.app_config.doctor_intern_roles,
-                        &app.db_pool,
-                        &app.hosxp(),
-                        &app.kphis(),
-                        &app.kphis_extra(),
-                    )
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                    kphis_api_handler::ipd::order::get_ipd_order_bundle(&query, &user.user.doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
+                        .await
+                        .map(|s| serde_json::json!(s).to_string())
                 } else {
                     Err(invalid)
                 }
@@ -699,9 +640,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::IpdTmpSubgroup => {
             if let Some(query) = kphis_model::ipd::tmp::TmpParams::from_tuples(params) {
-                kphis_api_query::ipd::tmp::get_subgroup(&query, &app.db_pool, &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::ipd::tmp::get_subgroup(&query, &app.db_pool, &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -830,9 +769,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::OpdErHisMedVn => {
             if paths.len() == 1 {
-                kphis_api_query::opd_er::hosxp_med::get_opd_med(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::opd_er::hosxp_med::get_opd_med(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1042,17 +979,9 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::OpdErOrderOrderId => Err(forbidden),
         EndPoint::OpdErOrderOrder => {
             if let Some(query) = kphis_model::order::OrderParams::from_tuples(params) {
-                kphis_api_handler::opd_er::order::get_opd_er_order_bundle(
-                    &query,
-                    &user.user.doctorcode,
-                    &app.app_config.doctor_intern_roles,
-                    &app.db_pool,
-                    &app.hosxp(),
-                    &app.kphis(),
-                    &app.kphis_extra(),
-                )
-                .await
-                .map(|s| serde_json::json!(s).to_string())
+                kphis_api_handler::opd_er::order::get_opd_er_order_bundle(&query, &user.user.doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
+                    .await
+                    .map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1141,18 +1070,14 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::ReportTemplateTypeId => Err(forbidden),
         EndPoint::ScanHisImage => {
             if let Some(query) = kphis_model::image::scan_his::ScanImageParams::from_tuples(params) {
-                kphis_api_query::image::scan_his::get_scan_his_image(&query, &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::image::scan_his::get_scan_his_image(&query, &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::SearchBoxHospText => {
             if paths.len() == 1 {
-                kphis_api_query::search::searchbox::get_hosp_searchbox(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::search::searchbox::get_hosp_searchbox(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1204,9 +1129,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::SearchBoxLabText => {
             if paths.len() == 1 {
-                kphis_api_query::search::searchbox::get_lab_searchbox(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::search::searchbox::get_lab_searchbox(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1222,9 +1145,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::SearchBoxXrayText => {
             if paths.len() == 1 {
-                kphis_api_query::search::searchbox::get_xray_searchbox(paths[0], &app.db_pool, &app.hosxp())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::search::searchbox::get_xray_searchbox(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1240,34 +1161,18 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::SearchNurse => {
             if let Some(query) = kphis_model::search::ipd_search_patient_nurse::IpdSearchPatientNurseRequest::from_tuples(params) {
-                kphis_api_query::search::ipd_search_patient_nurse::get_ipd_nurse_search_patient(
-                    query,
-                    app.hosxp_hn_len(),
-                    app.hosxp_an_len(),
-                    &app.db_pool,
-                    &app.hosxp(),
-                    &app.kphis(),
-                    &app.kphis_extra(),
-                )
-                .await
-                .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::search::ipd_search_patient_nurse::get_ipd_nurse_search_patient(query, app.hosxp_hn_len(), app.hosxp_an_len(), &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
+                    .await
+                    .map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
         }
         EndPoint::SearchPharmacist => {
             if let Some(query) = kphis_model::search::ipd_search_patient_pharmacist::IpdSearchPatientPharmacistRequest::from_tuples(params) {
-                kphis_api_query::search::ipd_search_patient_pharmacist::get_ipd_pharmacist_search_patient(
-                    query,
-                    app.hosxp_hn_len(),
-                    app.hosxp_an_len(),
-                    &app.db_pool,
-                    &app.hosxp(),
-                    &app.kphis(),
-                    &app.kphis_extra(),
-                )
-                .await
-                .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::search::ipd_search_patient_pharmacist::get_ipd_pharmacist_search_patient(query, app.hosxp_hn_len(), app.hosxp_an_len(), &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
+                    .await
+                    .map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1283,14 +1188,10 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::Sse | EndPoint::SseGroup | EndPoint::SseMessage => Err(forbidden),
         EndPoint::User | EndPoint::UserConfig => Err(forbidden),
-        EndPoint::UserRolePrelude => kphis_api_query::user::role::get_user_role_prelude(&app.db_pool, &app.hosxp(), &app.kphis())
-            .await
-            .map(|s| serde_json::json!(s).to_string()),
+        EndPoint::UserRolePrelude => kphis_api_query::user::role::get_user_role_prelude(&app.db_pool, &app.hosxp(), &app.kphis()).await.map(|s| serde_json::json!(s).to_string()),
         EndPoint::UserRoleRole => {
             if let Some(query) = kphis_model::user::role::UserRoleParams::from_tuples(params) {
-                kphis_api_query::user::role::get_role_permission_list(query, &app.db_pool, &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::user::role::get_role_permission_list(query, &app.db_pool, &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1306,9 +1207,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::XrayReportHn => {
             if paths.len() == 1 {
-                kphis_api_query::xray::get_xray_report(paths[0], &app.db_pool, &app.hosxp(), &app.kphis())
-                    .await
-                    .map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::xray::get_xray_report(paths[0], &app.db_pool, &app.hosxp(), &app.kphis()).await.map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }

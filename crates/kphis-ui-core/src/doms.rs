@@ -226,16 +226,7 @@ where
 /// `NOTE`: under `input-group` parent
 /// - use `d-flex` and `flex-grow-1` classes to `container_mixin`
 /// - use `rounded-0` or `rounded-start-0` or `rounded-end-0` class to `label_mixin` and `input_mixin`
-pub fn datetime_picker<B, C, D, F, S, T>(
-    datetime_mutable: Mutable<String>,
-    changed_mutable: Mutable<bool>,
-    disable_signal: S,
-    container_mixin: B,
-    label_mixin: C,
-    input_mixin: D,
-    update_fn: F,
-    config_signal: T,
-) -> Dom
+pub fn datetime_picker<B, C, D, F, S, T>(datetime_mutable: Mutable<String>, changed_mutable: Mutable<bool>, disable_signal: S, container_mixin: B, label_mixin: C, input_mixin: D, update_fn: F, config_signal: T) -> Dom
 where
     B: FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>,
     C: FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>,
@@ -981,15 +972,7 @@ pub fn radio_binding_texts_container(mutable: Mutable<String>, texts: Vec<Mutabl
 
 /// if radio is != value -> all of texts are ""<br>
 /// and disabled this input when by_not != by_not_value
-pub fn radio_binding_texts_disable_by_not_container(
-    mutable: Mutable<String>,
-    texts: Vec<Mutable<String>>,
-    by_not: Mutable<String>,
-    by_not_value: &'static str,
-    changed: Mutable<bool>,
-    id: &str,
-    value: &'static str,
-) -> Dom {
+pub fn radio_binding_texts_disable_by_not_container(mutable: Mutable<String>, texts: Vec<Mutable<String>>, by_not: Mutable<String>, by_not_value: &'static str, changed: Mutable<bool>, id: &str, value: &'static str) -> Dom {
     html!("input" => HtmlInputElement, {
         .attr("type", "radio")
         .class("form-check-input")
@@ -1026,14 +1009,7 @@ pub fn radio_toggle_texts_container(mutable: Mutable<String>, texts: Vec<Mutable
 }
 
 /// if radio is value -> all of texts are ""
-pub fn radio_binding_toggle_texts_container(
-    mutable: Mutable<String>,
-    binding_texts: Vec<Mutable<String>>,
-    toggle_texts: Vec<Mutable<String>>,
-    changed: Mutable<bool>,
-    id: &str,
-    value: &'static str,
-) -> Dom {
+pub fn radio_binding_toggle_texts_container(mutable: Mutable<String>, binding_texts: Vec<Mutable<String>>, toggle_texts: Vec<Mutable<String>>, changed: Mutable<bool>, id: &str, value: &'static str) -> Dom {
     html!("input" => HtmlInputElement, {
         .attr("type", "radio")
         .class("form-check-input")
@@ -1094,14 +1070,7 @@ pub fn checkbox_binding_texts_container(mutable: Mutable<String>, texts: Vec<Mut
 
 /// if checkbox is "" -> all of texts are ""<br>
 /// and disabled this input when by_not != by_not_value
-pub fn checkbox_binding_texts_disable_by_not_container(
-    mutable: Mutable<String>,
-    texts: Vec<Mutable<String>>,
-    by_not: Mutable<String>,
-    by_not_value: &'static str,
-    changed: Mutable<bool>,
-    id: &str,
-) -> Dom {
+pub fn checkbox_binding_texts_disable_by_not_container(mutable: Mutable<String>, texts: Vec<Mutable<String>>, by_not: Mutable<String>, by_not_value: &'static str, changed: Mutable<bool>, id: &str) -> Dom {
     html!("input" => HtmlInputElement, {
         .attr("type", "checkbox")
         .class("form-check-input")
@@ -1139,14 +1108,7 @@ pub fn checkbox_toggle_texts_container(mutable: Mutable<String>, texts: Vec<Muta
 
 /// if checkbox is "ํY" -> all of texts are ""<br>
 /// and disabled this input when by_not != by_not_value
-pub fn checkbox_toggle_texts_disable_by_not_container(
-    mutable: Mutable<String>,
-    texts: Vec<Mutable<String>>,
-    by_not: Mutable<String>,
-    by_not_value: &'static str,
-    changed: Mutable<bool>,
-    id: &str,
-) -> Dom {
+pub fn checkbox_toggle_texts_disable_by_not_container(mutable: Mutable<String>, texts: Vec<Mutable<String>>, by_not: Mutable<String>, by_not_value: &'static str, changed: Mutable<bool>, id: &str) -> Dom {
     html!("input" => HtmlInputElement, {
         .attr("type", "checkbox")
         .class("form-check-input")

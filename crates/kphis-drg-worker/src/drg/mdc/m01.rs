@@ -89,11 +89,7 @@ fn process_pdx(grouper: &Grouper, pdx: &str, sdxs: &HashSet<String>, procs: &Has
     } else if grouper.is_pdx_pdc(Mdc::M01, "1J", pdx) {
         MdcResult::Dc(String::from("0158"))
     } else if grouper.is_pdx_pdc(Mdc::M01, "1K", pdx) {
-        if dch_type == "04" {
-            MdcResult::Dc(String::from("0176"))
-        } else {
-            MdcResult::Dc(String::from("0159"))
-        }
+        if dch_type == "04" { MdcResult::Dc(String::from("0176")) } else { MdcResult::Dc(String::from("0159")) }
     } else if grouper.is_pdx_pdc(Mdc::M01, "1L", pdx) {
         MdcResult::Dc(String::from("0160"))
     } else if grouper.is_pdx_pdc(Mdc::M01, "1M", pdx) {

@@ -33,12 +33,7 @@ pub async fn get_order(params: &PreOrderParams, intern_roles: &[String], pool: &
     query
         .fetch_all(pool)
         .await
-        .map(|rows| {
-            rows.iter()
-                .map(PreOrder::from_row)
-                .collect::<sqlx::Result<Vec<PreOrder>>>()
-                .map_err(|e| Source::SQLx.to_error(500, e, "Select PreOrder"))
-        })
+        .map(|rows| rows.iter().map(PreOrder::from_row).collect::<sqlx::Result<Vec<PreOrder>>>().map_err(|e| Source::SQLx.to_error(500, e, "Select PreOrder")))
         .map_err(|e| Source::SQLx.to_error(500, e, "Select PreOrder"))?
 }
 
@@ -183,14 +178,7 @@ async fn insert_pre_order_item(order_id: u32, pre_order_master_id: u32, order_it
         .map_err(|e| Source::SQLx.to_error(500, e, "Insert PreOrderItem"))
 }
 
-pub async fn insert_pre_order_items(
-    pre_order_items: &[OrderItemSave],
-    order_id_map: &HashMap<u32, u64>,
-    pre_order_master_id: u32,
-    loginname: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_pre_order_items(pre_order_items: &[OrderItemSave], order_id_map: &HashMap<u32, u64>, pre_order_master_id: u32, loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_order_item_sql = pre_order::order::insert_pre_order_items(pre_order_items, order_id_map, pre_order_master_id, loginname, kphis);
     sqlx::query(AssertSqlSafe(insert_order_item_sql))
         .execute(pool)
@@ -228,14 +216,7 @@ pub async fn insert_many_ipd_orders_with_pre(pre_orders: &[PreOrderSave], an: &s
     Ok(res)
 }
 
-pub async fn insert_ipd_order_items(
-    pre_order_items: &[OrderItemSave],
-    order_id_map: &HashMap<u32, u64>,
-    an: &str,
-    loginname: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_ipd_order_items(pre_order_items: &[OrderItemSave], order_id_map: &HashMap<u32, u64>, an: &str, loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_order_item_sql = order::insert_pre_to_order_items(pre_order_items, order_id_map, an, loginname, kphis);
     sqlx::query(AssertSqlSafe(insert_order_item_sql))
         .execute(pool)
@@ -243,14 +224,7 @@ pub async fn insert_ipd_order_items(
         .map_err(|e| Source::SQLx.to_error(500, e, "Insert PreOrderItem to OrderItem"))
 }
 
-pub async fn insert_many_opd_er_orders_with_pre(
-    pre_orders: &[PreOrderSave],
-    opd_er_order_master_id: u32,
-    loginname: &str,
-    doctorcode: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<u64>, AppError> {
+pub async fn insert_many_opd_er_orders_with_pre(pre_orders: &[PreOrderSave], opd_er_order_master_id: u32, loginname: &str, doctorcode: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<u64>, AppError> {
     let insert_order_sql = opd_er::order::insert_many_orders_with_pre(pre_orders, opd_er_order_master_id, loginname, doctorcode, kphis);
     let res = pool
         .execute_many(AssertSqlSafe(insert_order_sql))
@@ -265,19 +239,9 @@ pub async fn insert_many_opd_er_orders_with_pre(
     Ok(res)
 }
 
-pub async fn insert_opd_er_order_items(
-    pre_order_items: &[OrderItemSave],
-    order_id_map: &HashMap<u32, u64>,
-    opd_er_order_master_id: u32,
-    loginname: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<MySqlQueryResult, AppError> {
+pub async fn insert_opd_er_order_items(pre_order_items: &[OrderItemSave], order_id_map: &HashMap<u32, u64>, opd_er_order_master_id: u32, loginname: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let insert_order_item_sql = opd_er::order::insert_pre_to_order_items(pre_order_items, order_id_map, opd_er_order_master_id, loginname, kphis);
-    sqlx::query(AssertSqlSafe(insert_order_item_sql))
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Insert OpdEr OrderItems"))
+    sqlx::query(AssertSqlSafe(insert_order_item_sql)).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Insert OpdEr OrderItems"))
 }
 
 async fn update_pre_order(order_id: u32, order_doctor: &str, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
@@ -295,11 +259,7 @@ async fn update_pre_order(order_id: u32, order_doctor: &str, user: &str, pool: &
 /// delete ipd_pre_order and ipd_pre_order_item
 pub async fn delete_pre_order(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = pre_order::order::delete_pre_order(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(order_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete PreOrder"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(order_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete PreOrder"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete PreOrder"))
 }
@@ -324,11 +284,7 @@ pub async fn delete_pre_order_item_by_master_id(pre_order_master_id: u32, pool: 
 
 async fn delete_pre_order_item(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let delete_sql = pre_order::order::delete_pre_order_item(kphis);
-    sqlx::query(AssertSqlSafe(delete_sql))
-        .bind(order_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete PreOrder"))
+    sqlx::query(AssertSqlSafe(delete_sql)).bind(order_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete PreOrder"))
 }
 
 #[cfg(test)]

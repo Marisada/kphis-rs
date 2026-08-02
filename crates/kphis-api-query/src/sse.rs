@@ -8,15 +8,7 @@ use kphis_model::{
 use kphis_sql::sse;
 use kphis_util::error::{AppError, Source};
 
-pub async fn get_sse_message(
-    params: &SseMessageParams,
-    user: &str,
-    doctorcode: &Option<String>,
-    wards: &[String],
-    spclty_ids: &[u32],
-    pool: &Pool<MySql>,
-    kphis_log: &str,
-) -> Result<Vec<SseMessage>, AppError> {
+pub async fn get_sse_message(params: &SseMessageParams, user: &str, doctorcode: &Option<String>, wards: &[String], spclty_ids: &[u32], pool: &Pool<MySql>, kphis_log: &str) -> Result<Vec<SseMessage>, AppError> {
     let result = if let Some(my_code) = doctorcode {
         if let Some(cat) = &params.cat {
             match cat.as_str() {
@@ -83,15 +75,7 @@ async fn get_sse_message_global(limit: usize, params: &SseMessageParams, user: &
     Ok(result)
 }
 
-async fn get_sse_message_ward(
-    limit: usize,
-    params: &SseMessageParams,
-    user: &str,
-    doctorcode: &str,
-    wards: &[String],
-    pool: &Pool<MySql>,
-    kphis_log: &str,
-) -> Result<impl Iterator<Item = SseMessage>, AppError> {
+async fn get_sse_message_ward(limit: usize, params: &SseMessageParams, user: &str, doctorcode: &str, wards: &[String], pool: &Pool<MySql>, kphis_log: &str) -> Result<impl Iterator<Item = SseMessage>, AppError> {
     let sql = sse::select_sse_message_ward(wards, params.min_id.is_some(), kphis_log, limit);
     let mut query = sqlx::query(AssertSqlSafe(sql)).bind(user).bind(doctorcode);
     if let Some(min_id) = params.min_id {
@@ -111,15 +95,7 @@ async fn get_sse_message_ward(
     Ok(result)
 }
 
-async fn get_sse_message_spclty(
-    limit: usize,
-    params: &SseMessageParams,
-    user: &str,
-    doctorcode: &str,
-    spclty_ids: &[u32],
-    pool: &Pool<MySql>,
-    kphis_log: &str,
-) -> Result<impl Iterator<Item = SseMessage>, AppError> {
+async fn get_sse_message_spclty(limit: usize, params: &SseMessageParams, user: &str, doctorcode: &str, spclty_ids: &[u32], pool: &Pool<MySql>, kphis_log: &str) -> Result<impl Iterator<Item = SseMessage>, AppError> {
     let sql = sse::select_sse_message_spclty(&spclty_ids, params.min_id.is_some(), kphis_log, limit);
     let mut query = sqlx::query(AssertSqlSafe(sql)).bind(user).bind(doctorcode);
     if let Some(min_id) = params.min_id {
@@ -159,14 +135,7 @@ async fn get_sse_message_private(limit: usize, params: &SseMessageParams, user: 
     Ok(result)
 }
 
-pub async fn post_sse_message(
-    message: &SsePostMessage,
-    message_datetime: PrimitiveDateTime,
-    sender_code: &Option<String>,
-    sender_name: &str,
-    pool: &Pool<MySql>,
-    kphis_log: &str,
-) -> Result<ExecuteResponse, AppError> {
+pub async fn post_sse_message(message: &SsePostMessage, message_datetime: PrimitiveDateTime, sender_code: &Option<String>, sender_name: &str, pool: &Pool<MySql>, kphis_log: &str) -> Result<ExecuteResponse, AppError> {
     let sql = sse::insert_sse_message(kphis_log);
     let reference = message.reference.as_ref().and_then(|data| serde_json::to_string(&data).ok());
     let result = sqlx::query(AssertSqlSafe(sql))
@@ -192,10 +161,7 @@ pub async fn patch_sse_messages(user: &str, message_ids: &[u32], pool: &Pool<MyS
         return Ok(ExecuteResponse::default().with_action("Update SseMessageReaded"));
     }
     let sql = sse::insert_dup_sse_message_read(user, message_ids, kphis_log);
-    let result = sqlx::query(AssertSqlSafe(sql))
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Update SseMessageReaded"))?;
+    let result = sqlx::query(AssertSqlSafe(sql)).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Update SseMessageReaded"))?;
 
     Ok(ExecuteResponse::from_query_result(result, "Update SseMessageReaded"))
 }

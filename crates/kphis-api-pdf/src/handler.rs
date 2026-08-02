@@ -284,16 +284,12 @@ pub async fn prepare_template_data(typst_report: &TypstReport, ids: &str, app: &
 
 async fn get_typ(typst_report: &TypstReport, app: &ApiState) -> Result<String, AppError> {
     let typ = match &typst_report {
-        TypstReport::System(system_report) => tokio::fs::read_to_string(&system_report.typ_path_server())
-            .await
-            .map_err(|e| Source::App.to_error(500, e, "Get Template"))?,
+        TypstReport::System(system_report) => tokio::fs::read_to_string(&system_report.typ_path_server()).await.map_err(|e| Source::App.to_error(500, e, "Get Template"))?,
         TypstReport::Coercion((custom_template, system_report, _)) => match select_report_template_content(custom_template, &app.db_pool, &app.kphis_extra()).await? {
             Some(report) => report,
             None => {
                 tracing::warn!("Custom template '{}' not found, use default template instead", &custom_template);
-                tokio::fs::read_to_string(&system_report.typ_path_server())
-                    .await
-                    .map_err(|e| Source::App.to_error(500, e, "Get Template"))?
+                tokio::fs::read_to_string(&system_report.typ_path_server()).await.map_err(|e| Source::App.to_error(500, e, "Get Template"))?
             }
         },
         TypstReport::Custom(custom_report) => select_report_template_content(&custom_report.template_name, &app.db_pool, &app.kphis_extra())

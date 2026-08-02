@@ -41,9 +41,9 @@ use kphis_ui_component::{
     modal::{
         blank_modal,
         scoring::{
-            addict_assist::AddictAssistV2, aggression_oas::AggressionOAS, alcohol_audit::AlcoholAudit, alcohol_aws::AlcoholAws, alcohol_ciwa_ar::AlcoholCiwaAr, amphetamine_awq::AmphetamineAwqV2,
-            braden::Braden, depress_2q::Depress2Q, depress_9q::Depress9Q, depress_cdi::DepressCdi, depress_cesd::DepressCesD, depress_phqa::DepressPhqA, nicotin_ftnd::NicotinFtnd,
-            ptsd_cries13::PtsdCries13, ptsd_pisces10::PtsdPisces10, ptsd_screen::PtsdScreen, stress_st5::StressST5, suicide_8q::Suicide8Q,
+            addict_assist::AddictAssistV2, aggression_oas::AggressionOAS, alcohol_audit::AlcoholAudit, alcohol_aws::AlcoholAws, alcohol_ciwa_ar::AlcoholCiwaAr, amphetamine_awq::AmphetamineAwqV2, braden::Braden, depress_2q::Depress2Q,
+            depress_9q::Depress9Q, depress_cdi::DepressCdi, depress_cesd::DepressCesD, depress_phqa::DepressPhqA, nicotin_ftnd::NicotinFtnd, ptsd_cries13::PtsdCries13, ptsd_pisces10::PtsdPisces10, ptsd_screen::PtsdScreen,
+            stress_st5::StressST5, suicide_8q::Suicide8Q,
         },
     },
     show_patient_main::ShowPatientMainCpn,
@@ -377,22 +377,13 @@ impl IpdAdmissionNoteDrPage {
             an: Mutable::new(an),
             pen_color: Mutable::new(String::from("#0000ff")),
             pen_width: Mutable::new(2),
-            all_body_image: Mutable::new(Rc::new(String::from(
-                r#"<svg id="svg" width="800" height="600" version="1.1" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"></svg>"#,
-            ))),
+            all_body_image: Mutable::new(Rc::new(String::from(r#"<svg id="svg" width="800" height="600" version="1.1" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg"></svg>"#))),
             ..Default::default()
         })
     }
 
     fn is_female(&self) -> bool {
-        self.patient
-            .lock_ref()
-            .patient
-            .lock_ref()
-            .as_ref()
-            .and_then(|pt| pt.sex.as_ref())
-            .map(|sex| sex == "2")
-            .unwrap_or_default()
+        self.patient.lock_ref().patient.lock_ref().as_ref().and_then(|pt| pt.sex.as_ref()).map(|sex| sex == "2").unwrap_or_default()
     }
 
     fn patient_signal(&self) -> impl Signal<Item = Option<Rc<PatientInfo>>> + use<> {
@@ -405,11 +396,8 @@ impl IpdAdmissionNoteDrPage {
 
     /// return true if None
     fn is_puberty_signal(&self) -> impl Signal<Item = bool> + use<> {
-        self.patient_signal().map(|pt_opt| {
-            pt_opt
-                .map(|pt| if let (Some(sex), Some(year)) = (&pt.sex, &pt.age_y) { sex == "2" && *year > 8 } else { true })
-                .unwrap_or_default()
-        })
+        self.patient_signal()
+            .map(|pt_opt| pt_opt.map(|pt| if let (Some(sex), Some(year)) = (&pt.sex, &pt.age_y) { sex == "2" && *year > 8 } else { true }).unwrap_or_default())
     }
 
     /// return true if None
@@ -442,364 +430,367 @@ impl IpdAdmissionNoteDrPage {
     }
 
     fn load(page: Rc<Self>, app: Rc<App>) {
-        app.async_load(true, clone!(app, page => async move {
-            // GET `EndPoint::IpdAdmissionNoteDrAn`
-            match IpdAdmissionNoteDrRaw::call_api_get(&page.an.lock_ref(), app.state()).await {
-                Ok(response) => {
-                    let old_regdatetime = response.old_regdatetime.to_owned();
-                    if let Some(period) = response.period.as_ref() {
-                        page.period_period.set_neq(period.period.to_owned().unwrap_or_default());
-                        page.period_period_normal.set_neq(period.period_normal.to_owned().unwrap_or_default());
-                        page.period_period_disorders.set_neq(period.period_disorders.to_owned().unwrap_or_default());
-                        page.period_period_lmp.set_neq(period.period_lmp.to_owned().unwrap_or_default());
-                        page.period_period_menopause.set_neq(period.period_menopause.to_owned().unwrap_or_default());
-                        page.period_occupation.set_neq(period.occupation.to_owned().unwrap_or_default());
-                        page.period_no_risk.set_neq(period.no_risk.to_owned().unwrap_or_default());
-                        page.period_smoking.set_neq(period.smoking.to_owned().unwrap_or_default());
-                        page.period_smoke_year.set_neq(period.smoke_year.to_owned().unwrap_or_default());
-                        page.period_smoke_frequency.set_neq(period.smoke_frequency.to_owned().unwrap_or_default());
-                        page.period_smoke_stopped.set_neq(period.smoke_stopped.to_owned().unwrap_or_default());
-                        page.period_alcohol.set_neq(period.alcohol.to_owned().unwrap_or_default());
-                        page.period_alc_year.set_neq(period.alc_year.to_owned().unwrap_or_default());
-                        page.period_alc_frequency.set_neq(period.alc_frequency.to_owned().unwrap_or_default());
-                        page.period_alc_stopped.set_neq(period.alc_stopped.to_owned().unwrap_or_default());
-                        page.period_medication_used.set_neq(period.medication_used.to_owned().unwrap_or_default());
-                        page.period_med_name.set_neq(period.med_name.to_owned().unwrap_or_default());
-                        page.period_med_year.set_neq(period.med_year.to_owned().unwrap_or_default());
-                        page.period_med_frequency.set_neq(period.med_frequency.to_owned().unwrap_or_default());
-                        page.period_med_stopped.set_neq(period.med_stopped.to_owned().unwrap_or_default());
-                    }
-                    if let Some(pe) = response.opdscreen_pe.as_ref() {
-                        page.chief_complaints_opdscreen.set_neq(pe.cc.to_owned().unwrap_or_default());
-                        page.medical_history_opdscreen.set_neq(pe.hpi.to_owned().unwrap_or_default());
-                        page.t_opdscreen.set_neq(pe.temperature.map(|f| f.to_string()).unwrap_or_default());
-                        page.pr_opdscreen.set_neq(pe.pulse.map(|f| f.to_string()).unwrap_or_default());
-                        page.rr_opdscreen.set_neq(pe.rr.map(|f| f.to_string()).unwrap_or_default());
-                        page.bp_opdscreen.set_neq([&pe.bps.map(|f| f.to_string()).unwrap_or(String::from("-")), "/", &pe.bpd.map(|f| f.to_string()).unwrap_or(String::from("-"))].concat());
-                        page.pe_bw.set_neq(pe.bw.map(|f| f.to_string()).unwrap_or_default());
-                        page.pe_height.set_neq(pe.height.map(|i| i.to_string()).unwrap_or_default());
-                    } else {
-                        page.pe_bw.set_neq(String::new());
-                        page.pe_height.set_neq(String::new());
-                    }
-                    // has note
-                    if let Some(note) = response.admission_note.as_ref() {
-                        page.hn.set_neq(str_some(note.hn.to_owned()));
-                        page.chief_complaints.set_neq(note.chief_complaints.to_owned().unwrap_or_default());
-                        page.medical_history.set_neq(note.medical_history.to_owned().unwrap_or_default());
-                        page.bp.set_neq(note.bp.to_owned().unwrap_or_default());
-                        page.t.set_neq(note.t.as_ref().map(|d| d.to_string()).unwrap_or_default());
-                        page.pr.set_neq(note.pr.map(|u| u.to_string()).unwrap_or_default());
-                        page.rr.set_neq(note.rr.map(|i| i.to_string()).unwrap_or_default());
-                        page.gcs.set_neq(note.gcs.map(|i| i.to_string()).unwrap_or_default());
-                        page.e.set_neq(note.e.to_owned().unwrap_or_default());
-                        page.v.set_neq(note.v.to_owned().unwrap_or_default());
-                        page.m.set_neq(note.m.to_owned().unwrap_or_default());
-                        page.braden_scale.set_neq(note.braden_scale.to_owned().unwrap_or_default());
-
-                        page.admission_note_id.set_neq(zero_none(note.admission_note_id));
-                        page.receiver_medication_date.set_neq(note.receiver_medication_date.map(|d| d.to_string()).unwrap_or_default());
-                        page.receiver_medication_time.set_neq(note.receiver_medication_time.map(|t| t.js_string()).unwrap_or_default());
-                        page.arrive_by.set_neq(note.arrive_by.as_ref().map(|by| ArriveBy::from_str(by)).unwrap_or_default());
-                        page.informant_patient.set_neq(note.informant_patient.to_owned());
-                        page.informant_relatives.set_neq(note.informant_relatives.to_owned());
-                        page.informant_deliverer.set_neq(note.informant_deliverer.to_owned());
-                        page.informant_etc.set_neq(note.informant_etc.to_owned());
-                        page.take_medication_by.set_neq(note.take_medication_by.as_ref().map(|by| TakeMedicationBy::from_str(by)).unwrap_or_default());
-                        page.taken_by_relative.set_neq(note.taken_by_relative.to_owned().unwrap_or_default());
-                        page.taken_by_nurse.set_neq(note.taken_by_nurse.to_owned().unwrap_or_default());
-                        page.taken_by_crib.set_neq(note.taken_by_crib.to_owned().unwrap_or_default());
-                        page.taken_by_etc.set_neq(note.taken_by_etc.to_owned().unwrap_or_default());
-                        page.taken_by.set_neq(note.taken_by.to_owned().unwrap_or_default());
-                        page.disease.set_neq(note.disease.to_owned().unwrap_or_default());
-
-                        let disease_details = note.disease_detail.as_ref().map(|dd| { // "name year hospital name year hospital ..." -> Vec<Rc<DiseaseDetail>>
-                            explode(dd, 3).iter().map(|chunk| {
-                                Rc::new(DiseaseDetail {
-                                    id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
-                                    name: Mutable::new(chunk[0].to_owned()),
-                                    year: Mutable::new(chunk[1].to_owned()),
-                                    hospital: Mutable::new(chunk[2].to_owned()),
-                                })
-                            }).collect::<Vec<Rc<DiseaseDetail>>>()
-                        }).unwrap_or(Vec::new());
-
-                        page.disease_details.lock_mut().replace_cloned(disease_details);
-                        page.disease_etc.set_neq(note.disease_etc.to_owned());
-                        page.last_dose_taken_time.set_neq(note.last_dose_taken_time.map(|dt| dt.js_string()).unwrap_or_default());
-                        page.last_dose_taken_remark.set_neq(note.last_dose_taken_remark.to_owned());
-                        page.operation_history.set_neq(note.operation_history.to_owned());
-                        page.allergy_history.set_neq(note.allergy_history.to_owned().unwrap_or_default());
-                        page.allergy_drug_history_hosxp.set_neq(note.allergy_drug_history_hosxp.to_owned().unwrap_or_default());
-                        page.allergy_drug_pharmacy_check_person.set_neq(note.allergy_drug_pharmacy_check_person.to_owned());
-                        page.allergy_drug_pharmacy_check_datetime.set_neq(note.allergy_drug_pharmacy_check_datetime.to_owned());
-
-                        let allergy_drugs = note.allergy_drug_history.as_ref().map(|dh| {
-                            explode(dh, 2).iter().map(|chunk| {
-                                Rc::new(DrugAllergy {
-                                    id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
-                                    agent: Mutable::new(chunk[0].to_owned()),
-                                    symptom: Mutable::new(chunk[1].to_owned()),
-                                })
-                            }).collect::<Vec<Rc<DrugAllergy>>>()
-                        }).unwrap_or(Vec::new());
-                        page.allergy_drugs.lock_mut().replace_cloned(allergy_drugs);
-                        let allergy_foods = note.allergy_food_history.as_ref().map(|fh| {
-                            explode(fh, 2).iter().map(|chunk| {
-                                Rc::new(FoodAllergy {
-                                    id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
-                                    agent: Mutable::new(chunk[0].to_owned()),
-                                    symptom: Mutable::new(chunk[1].to_owned()),
-                                })
-                            }).collect::<Vec<Rc<FoodAllergy>>>()
-                        }).unwrap_or(Vec::new());
-                        page.allergy_foods.lock_mut().replace_cloned(allergy_foods);
-                        let allergy_etcs = note.allergy_etc_history.as_ref().map(|eh| {
-                            explode(eh, 2).iter().map(|chunk| {
-                                Rc::new(EtcAllergy {
-                                    id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
-                                    agent: Mutable::new(chunk[0].to_owned()),
-                                    symptom: Mutable::new(chunk[1].to_owned()),
-                                })
-                            }).collect::<Vec<Rc<EtcAllergy>>>()
-                        }).unwrap_or(Vec::new());
-                        page.allergy_etcs.lock_mut().replace_cloned(allergy_etcs);
-                        page.allergy_detail.set_neq(note.allergy_detail.to_owned());
-                        page.family_medical_history.set_neq(note.family_medical_history.to_owned().unwrap_or_default());
-                        let family_medicals = note.family_medical_history_detail.as_ref().map(|fmh| {
-                            explode(fmh, 2).iter().map(|chunk| {
-                                Rc::new(FamilyMedical {
-                                    id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
-                                    disease: Mutable::new(chunk[0].to_owned()),
-                                    relation: Mutable::new(chunk[1].to_owned()),
-                                })
-                            }).collect::<Vec<Rc<FamilyMedical>>>()
-                        }).unwrap_or(Vec::new());
-                        page.family_medicals.lock_mut().replace_cloned(family_medicals);
-
-                        page.receives_immunisation_history_kid.set_neq(note.receives_immunisation_history_kid.to_owned());
-                        page.developmentally_kid.set_neq(note.developmentally_kid.to_owned());
-                        page.g.set_neq(note.g.map(|i| i.to_string()).unwrap_or_default());
-                        page.p.set_neq(note.p.to_owned().unwrap_or_default());
-                        page.anc.set_neq(note.anc.to_owned().unwrap_or_default());
-                        page.tt.set_neq(note.tt.map(|i| i.to_string()).unwrap_or_default());
-                        page.gestational_age.set_neq(note.gestational_age.to_owned().unwrap_or_default());
-                        page.gestational_day.set_neq(note.gestational_day.to_owned().unwrap_or_default());
-                        page.last_child.set_neq(note.last_child.map(|i| i.to_string()).unwrap_or_default());
-                        page.last_abort.set_neq(note.last_abort.to_owned().unwrap_or_default());
-                        page.curette.set_neq(note.curette.to_owned().unwrap_or_default());
-                        page.lmp.set_neq(note.lmp.to_owned().map(|d| d.to_string()).unwrap_or_default());
-                        page.edc.set_neq(note.edc.to_owned().map(|d| d.to_string()).unwrap_or_default());
-                        page.pb_no.set_neq(note.pb_no.to_owned().unwrap_or_default());
-                        page.giant_baby.set_neq(note.giant_baby.to_owned().unwrap_or_default());
-                        page.distocia.set_neq(note.distocia.to_owned().unwrap_or_default());
-                        page.extraction.set_neq(note.extraction.to_owned());
-                        page.pph.set_neq(note.pph.to_owned().unwrap_or_default());
-                        page.pb_etc.set_neq(note.pb_etc.to_owned());
-                        page.hf.set_neq(note.hf.map(|i| i.to_string()).unwrap_or_default());
-                        page.hf_position.set_neq(note.hf_position.to_owned().unwrap_or_default());
-                        page.mem_ruptured_hours.set_neq(note.mem_ruptured_hours.map(|u| u.to_string()));
-
-                        page.lr_back_fetus.set_neq(note.lr_back_fetus.to_owned().unwrap_or_default());
-                        page.lr_presentation.set_neq(note.lr_presentation.to_owned().unwrap_or_default());
-                        page.lr_engagement.set_neq(note.lr_engagement.to_owned().unwrap_or_default());
-                        page.lr_prominence.set_neq(note.lr_prominence.to_owned().unwrap_or_default());
-                        page.lr_attitude.set_neq(note.lr_attitude.to_owned().unwrap_or_default());
-                        page.lr_fhr.set_neq(note.lr_fhr.map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_fhr_irrigular.set_neq(note.lr_fhr_irrigular.to_owned().unwrap_or_default());
-                        page.lr_efw.set_neq(note.lr_efw.map(|u| u.to_string()).unwrap_or_default());
-                        let (lr_int_m, lr_int_s) = if let Some(lr_int) = &note.lr_interval { lr_int_from_quote(lr_int) } else { (0, 0) };
-                        page.lr_interval_m.set_neq(zero_none(lr_int_m).map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_interval_s.set_neq(zero_none(lr_int_s).map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_duration.set_neq(note.lr_duration.map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_intensity.set_neq(note.lr_intensity.to_owned().unwrap_or_default());
-                        page.lr_pelvic_diagonal.set_neq(note.lr_pelvic_diagonal.map(|d| d.to_string()).unwrap_or_default());
-                        page.lr_pelvic_interspinous.set_neq(note.lr_pelvic_interspinous.map(|d| d.to_string()).unwrap_or_default());
-                        page.lr_pelvic_sidewall.set_neq(note.lr_pelvic_sidewall.to_owned().unwrap_or_default());
-                        page.lr_ischeal_spine.set_neq(note.lr_ischeal_spine.to_owned().unwrap_or_default());
-                        page.lr_sacral_curve.set_neq(note.lr_sacral_curve.to_owned().unwrap_or_default());
-                        page.lr_pubic_angle.set_neq(note.lr_pubic_angle.map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_pelvic_ok.set_neq(note.lr_pelvic_ok.to_owned().unwrap_or_default());
-                        page.lr_cx_dilate.set_neq(note.lr_cx_dilate.map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_cx_efface.set_neq(note.lr_cx_efface.map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_cx_station.set_neq(note.lr_cx_station.map(|i| i.to_string()).unwrap_or_default());
-                        page.lr_cx_position.set_neq(note.lr_cx_position.to_owned().unwrap_or_default());
-                        page.lr_cx_consistency.set_neq(note.lr_cx_consistency.to_owned().unwrap_or_default());
-                        page.lr_cx_bishop.set_neq(note.lr_cx_bishop.map(|u| u.to_string()).unwrap_or_default());
-                        page.lr_cx_ok.set_neq(note.lr_cx_ok.to_owned().unwrap_or_default());
-                        page.lr_membrane.set_neq(note.lr_membrane.to_owned().unwrap_or_default());
-                        page.lr_amniotic_color.set_neq(note.lr_amniotic_color.to_owned().unwrap_or_default());
-                        page.lr_amniotic_smell.set_neq(note.lr_amniotic_smell.to_owned().unwrap_or_default());
-
-                        page.hiv.set_neq(note.hiv.to_owned().unwrap_or_default());
-                        page.vdrl.set_neq(note.vdrl.to_owned().unwrap_or_default());
-                        page.hbs_ag.set_neq(note.hbs_ag.to_owned().unwrap_or_default());
-                        page.hct.set_neq(note.hct.to_owned().map(|dc| dc.to_string()).unwrap_or_default());
-                        page.hiv2.set_neq(note.hiv2.to_owned().unwrap_or_default());
-                        page.vdrl2.set_neq(note.vdrl2.to_owned().unwrap_or_default());
-                        page.hbs_ag2.set_neq(note.hbs_ag2.to_owned().unwrap_or_default());
-                        page.hct2.set_neq(note.hct2.to_owned().map(|dc| dc.to_string()).unwrap_or_default());
-                        page.gr.set_neq(note.gr.to_owned().unwrap_or_default());
-                        page.thalassemia.set_neq(note.thalassemia.to_owned().unwrap_or_default());
-                        page.husband.set_neq(note.husband.to_owned().unwrap_or_default());
-                        page.condition_pregnant.set_neq(note.condition_pregnant.to_owned());
-                        page.deliver_anomalies.set_neq(note.deliver_anomalies.to_owned());
-                        page.deliver_anomalies_means.set_neq(note.deliver_anomalies_means.to_owned().unwrap_or_default());
-                        page.deliver_location.set_neq(note.deliver_location.to_owned().unwrap_or_default());
-                        page.deliver_first_weight.set_neq(note.deliver_first_weight.to_owned().map(|dc| dc.to_string()).unwrap_or_default());
-                        page.deliver_first_health.set_neq(note.deliver_first_health.to_owned().unwrap_or_default());
-                        page.fant_breast_feeding_end_age_month.set_neq(note.fant_breast_feeding_end_age_month.map(|i| i.to_string()));
-                        page.fant_artificial_feeding_start_age_month.set_neq(note.fant_artificial_feeding_start_age_month.map(|i| i.to_string()));
-                        page.fant_feeding_etc.set_neq(note.fant_feeding_etc.to_owned());
-                        page.supplementary_feeding.set_neq(note.supplementary_feeding.to_owned().unwrap_or_default());
-                        page.supplementary_feeding_start_age_month.set_neq(note.supplementary_feeding_start_age_month.map(|i| i.to_string()).unwrap_or_default());
-                        page.disease_operation_allergy.set_neq(note.disease_operation_allergy.to_owned());
-                        page.inpatient_history.set_neq(note.inpatient_history.to_owned().unwrap_or_default());
-                        page.inpatient_last_date.set_neq(note.inpatient_last_date.to_owned().unwrap_or_default());
-                        page.inpatient_location.set_neq(note.inpatient_location.to_owned().unwrap_or_default());
-                        page.inpatient_because.set_neq(note.inpatient_because.to_owned().unwrap_or_default());
-
-                        page.pe_general.set_neq(note.pe_general.to_owned().unwrap_or_default());
-                        page.pe_skin.set_neq(note.pe_skin.to_owned().unwrap_or_default());
-                        page.pe_heent.set_neq(note.pe_heent.to_owned().unwrap_or_default());
-                        page.pe_neck.set_neq(note.pe_neck.to_owned().unwrap_or_default());
-                        page.pe_breastthorax.set_neq(note.pe_breastthorax.to_owned().unwrap_or_default());
-                        page.pe_heart.set_neq(note.pe_heart.to_owned().unwrap_or_default());
-                        page.pe_lungs.set_neq(note.pe_lungs.to_owned().unwrap_or_default());
-                        page.pe_abdomen.set_neq(note.pe_abdomen.to_owned().unwrap_or_default());
-                        page.pe_rectalgenitalia.set_neq(note.pe_rectalgenitalia.to_owned().unwrap_or_default());
-                        page.pe_extremities.set_neq(note.pe_extremities.to_owned().unwrap_or_default());
-                        page.pe_neurological.set_neq(note.pe_neurological.to_owned().unwrap_or_default());
-                        page.pe_ob_gynexam.set_neq(note.pe_ob_gynexam.to_owned().unwrap_or_default());
-                        page.pe_other.set_neq(note.pe_other.to_owned().unwrap_or_default());
-                        page.pe_text.set_neq(note.pe_text.to_owned().unwrap_or_default());
-
-                        page.ros_eent.set_neq(note.ros_eent.to_owned().unwrap_or_default());
-                        page.ros_neuro.set_neq(note.ros_neuro.to_owned().unwrap_or_default());
-                        page.ros_lung.set_neq(note.ros_lung.to_owned().unwrap_or_default());
-                        page.ros_tb.set_neq(note.ros_tb.to_owned().unwrap_or_default());
-                        page.ros_ht.set_neq(note.ros_ht.to_owned().unwrap_or_default());
-                        page.ros_heart.set_neq(note.ros_heart.to_owned().unwrap_or_default());
-                        page.ros_liver.set_neq(note.ros_liver.to_owned().unwrap_or_default());
-                        page.ros_gi.set_neq(note.ros_gi.to_owned().unwrap_or_default());
-                        page.ros_endocrine.set_neq(note.ros_endocrine.to_owned().unwrap_or_default());
-                        page.ros_kidney.set_neq(note.ros_kidney.to_owned().unwrap_or_default());
-                        page.ros_tumour.set_neq(note.ros_tumour.to_owned().unwrap_or_default());
-                        page.ros_hemato.set_neq(note.ros_hemato.to_owned().unwrap_or_default());
-                        page.ros_rheumato.set_neq(note.ros_rheumato.to_owned().unwrap_or_default());
-                        page.ros_psychia.set_neq(note.ros_psychia.to_owned().unwrap_or_default());
-                        page.ros_other.set_neq(note.ros_other.to_owned().unwrap_or_default());
-
-                        page.addict.set_neq(note.addict.to_owned().unwrap_or_default());
-                        let addict_assist = note.addict_assist.as_ref().map(|assist| {
-                            explode(assist, 2).iter().map(|chunk| {
-                                Rc::new(AddictAssist {
-                                    id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
-                                    agent: Mutable::new(chunk[0].to_owned()),
-                                    score: Mutable::new(chunk[1].to_owned()),
-                                })
-                            }).collect::<Vec<Rc<AddictAssist>>>()
-                        }).unwrap_or(Vec::new());
-
-                        page.addict_assists.lock_mut().replace_cloned(addict_assist);
-                        page.addict_inj.set_neq(note.addict_inj.to_owned().unwrap_or_default());
-                        page.addict_inj_often.set_neq(note.addict_inj_often.to_owned().unwrap_or_default());
-                        page.amphetamine_awq.set_neq(note.amphetamine_awq.clone().unwrap_or_default());
-                        page.aggression_oas.set_neq(note.aggression_oas.clone().unwrap_or_default());
-                        page.motivation_scale.set_neq(note.motivation_scale.map(|u| u.to_string()).unwrap_or_default());
-                        page.craving_scale.set_neq(note.craving_scale.map(|u| u.to_string()).unwrap_or_default());
-                        page.stage_of_change_id.set_neq(note.stage_of_change_id.map(|u| u.to_string()).unwrap_or_default());
-                        page.alcohol_audit.set_neq(note.alcohol_audit.clone().unwrap_or_default());
-                        page.alcohol_aws.set_neq(note.alcohol_aws.clone().unwrap_or_default());
-                        page.alcohol_ciwa.set_neq(note.alcohol_ciwa.clone().unwrap_or_default());
-                        page.depress_2q.set_neq(note.depress_2q.clone().unwrap_or_default());
-                        page.depress_9q.set_neq(note.depress_9q.clone().unwrap_or_default());
-                        page.depress_cdi.set_neq(note.depress_cdi.clone().unwrap_or_default());
-                        page.depress_cesd.set_neq(note.depress_cesd.clone().unwrap_or_default());
-                        page.depress_phqa.set_neq(note.depress_phqa.clone().unwrap_or_default());
-                        page.nicotin_ftnd.set_neq(note.nicotin_ftnd.clone().unwrap_or_default());
-                        page.ptsd_screen.set_neq(note.ptsd_screen.clone().unwrap_or_default());
-                        page.ptsd_pisces.set_neq(note.ptsd_pisces.clone().unwrap_or_default());
-                        page.ptsd_cries.set_neq(note.ptsd_cries.clone().unwrap_or_default());
-                        page.suicide_8q.set_neq(note.suicide_8q.clone().unwrap_or_default());
-                        page.stress_st5.set_neq(note.stress_st5.clone().unwrap_or_default());
-
-                        page.svg_tag.set_neq(note.svg_tag.to_owned().unwrap_or_default());
-
-                        page.impression.set_neq(note.impression.to_owned().unwrap_or_default());
-                        page.diff_dx.set_neq(note.diff_dx.to_owned().unwrap_or_default());
-                        page.plan_management.set_neq(note.plan_management.to_owned().unwrap_or_default());
-
-                        page.nurse_name.set_neq(note.nurse_name.to_owned().unwrap_or_default());
-                        page.nurse_pos.set_neq(note.nurse_pos.to_owned().unwrap_or_default());
-                        page.nurse_licenseno.set_neq(note.nurse_licenseno.to_owned().unwrap_or_default());
-                        page.doc_name.set_neq(note.doc_name.to_owned());
-                        page.doc_pos.set_neq(note.doc_pos.to_owned());
-                    // not has note
-                    } else {
-                        let patient = page.patient.lock_ref();
-                        if let Some(regdate) = patient.patient.lock_ref().as_ref().and_then(|pt| pt.regdate()) {
-                            page.receiver_medication_date.set_neq(regdate.to_string());
-                        }
-                        if let Some(regtime) = patient.patient.lock_ref().as_ref().and_then(|pt| pt.regtime()) {
-                            page.receiver_medication_time.set_neq(regtime.js_string());
+        app.async_load(
+            true,
+            clone!(app, page => async move {
+                // GET `EndPoint::IpdAdmissionNoteDrAn`
+                match IpdAdmissionNoteDrRaw::call_api_get(&page.an.lock_ref(), app.state()).await {
+                    Ok(response) => {
+                        let old_regdatetime = response.old_regdatetime.to_owned();
+                        if let Some(period) = response.period.as_ref() {
+                            page.period_period.set_neq(period.period.to_owned().unwrap_or_default());
+                            page.period_period_normal.set_neq(period.period_normal.to_owned().unwrap_or_default());
+                            page.period_period_disorders.set_neq(period.period_disorders.to_owned().unwrap_or_default());
+                            page.period_period_lmp.set_neq(period.period_lmp.to_owned().unwrap_or_default());
+                            page.period_period_menopause.set_neq(period.period_menopause.to_owned().unwrap_or_default());
+                            page.period_occupation.set_neq(period.occupation.to_owned().unwrap_or_default());
+                            page.period_no_risk.set_neq(period.no_risk.to_owned().unwrap_or_default());
+                            page.period_smoking.set_neq(period.smoking.to_owned().unwrap_or_default());
+                            page.period_smoke_year.set_neq(period.smoke_year.to_owned().unwrap_or_default());
+                            page.period_smoke_frequency.set_neq(period.smoke_frequency.to_owned().unwrap_or_default());
+                            page.period_smoke_stopped.set_neq(period.smoke_stopped.to_owned().unwrap_or_default());
+                            page.period_alcohol.set_neq(period.alcohol.to_owned().unwrap_or_default());
+                            page.period_alc_year.set_neq(period.alc_year.to_owned().unwrap_or_default());
+                            page.period_alc_frequency.set_neq(period.alc_frequency.to_owned().unwrap_or_default());
+                            page.period_alc_stopped.set_neq(period.alc_stopped.to_owned().unwrap_or_default());
+                            page.period_medication_used.set_neq(period.medication_used.to_owned().unwrap_or_default());
+                            page.period_med_name.set_neq(period.med_name.to_owned().unwrap_or_default());
+                            page.period_med_year.set_neq(period.med_year.to_owned().unwrap_or_default());
+                            page.period_med_frequency.set_neq(period.med_frequency.to_owned().unwrap_or_default());
+                            page.period_med_stopped.set_neq(period.med_stopped.to_owned().unwrap_or_default());
                         }
                         if let Some(pe) = response.opdscreen_pe.as_ref() {
-                            page.hn.set_neq(pe.hn.to_owned());
-                            page.chief_complaints.set_neq(pe.cc.to_owned().unwrap_or_default());
-                            page.medical_history.set_neq(pe.hpi.to_owned().unwrap_or_default());
-                            page.pe_general.set_neq(pe.pe_ga_text.to_owned().unwrap_or_default());
-                            page.pe_heent.set_neq(pe.pe_heent_text.to_owned().unwrap_or_default());
-                            page.pe_heart.set_neq(pe.pe_heart_text.to_owned().unwrap_or_default());
-                            page.pe_lungs.set_neq(pe.pe_lung_text.to_owned().unwrap_or_default());
-                            page.pe_abdomen.set_neq(pe.pe_ab_text.to_owned().unwrap_or_default());
-                            page.pe_neurological.set_neq(pe.pe_neuro_text.to_owned().unwrap_or_default());
-                            page.pe_extremities.set_neq(pe.pe_ext_text.to_owned().unwrap_or_default());
-                            page.pe_text.set_neq(pe.pe.to_owned().unwrap_or_default());
-
-                            page.bp.set_neq([pe.bps.map(|f| f.to_string()).unwrap_or(String::from("--")),String::from("/"),pe.bpd.map(|f| f.to_string()).unwrap_or(String::from("--"))].concat());
-                            page.t.set_neq(pe.temperature.map(|f| f.to_string()).unwrap_or_default());
-                            page.pr.set_neq(pe.pulse.map(|f| f.to_string()).unwrap_or_default());
-                            page.rr.set_neq(pe.rr.map(|f| f.to_string()).unwrap_or_default());
+                            page.chief_complaints_opdscreen.set_neq(pe.cc.to_owned().unwrap_or_default());
+                            page.medical_history_opdscreen.set_neq(pe.hpi.to_owned().unwrap_or_default());
+                            page.t_opdscreen.set_neq(pe.temperature.map(|f| f.to_string()).unwrap_or_default());
+                            page.pr_opdscreen.set_neq(pe.pulse.map(|f| f.to_string()).unwrap_or_default());
+                            page.rr_opdscreen.set_neq(pe.rr.map(|f| f.to_string()).unwrap_or_default());
+                            page.bp_opdscreen.set_neq([&pe.bps.map(|f| f.to_string()).unwrap_or(String::from("-")), "/", &pe.bpd.map(|f| f.to_string()).unwrap_or(String::from("-"))].concat());
+                            page.pe_bw.set_neq(pe.bw.map(|f| f.to_string()).unwrap_or_default());
+                            page.pe_height.set_neq(pe.height.map(|i| i.to_string()).unwrap_or_default());
                         } else {
-                            page.hn.set_neq(str_some(patient.hn.get_cloned()));
+                            page.pe_bw.set_neq(String::new());
+                            page.pe_height.set_neq(String::new());
                         }
-                        // first kphis.ipd_vs_vital_sign of this AN
-                        if let Some(vs) = response.vs.as_ref() {
-                            let e = vs.eye.to_owned().unwrap_or_default();
-                            let v = vs.verbal.to_owned().unwrap_or_default().parse::<i32>().unwrap_or(0);
-                            let m = vs.movement.to_owned().unwrap_or_default();
+                        // has note
+                        if let Some(note) = response.admission_note.as_ref() {
+                            page.hn.set_neq(str_some(note.hn.to_owned()));
+                            page.chief_complaints.set_neq(note.chief_complaints.to_owned().unwrap_or_default());
+                            page.medical_history.set_neq(note.medical_history.to_owned().unwrap_or_default());
+                            page.bp.set_neq(note.bp.to_owned().unwrap_or_default());
+                            page.t.set_neq(note.t.as_ref().map(|d| d.to_string()).unwrap_or_default());
+                            page.pr.set_neq(note.pr.map(|u| u.to_string()).unwrap_or_default());
+                            page.rr.set_neq(note.rr.map(|i| i.to_string()).unwrap_or_default());
+                            page.gcs.set_neq(note.gcs.map(|i| i.to_string()).unwrap_or_default());
+                            page.e.set_neq(note.e.to_owned().unwrap_or_default());
+                            page.v.set_neq(note.v.to_owned().unwrap_or_default());
+                            page.m.set_neq(note.m.to_owned().unwrap_or_default());
+                            page.braden_scale.set_neq(note.braden_scale.to_owned().unwrap_or_default());
 
-                            page.bp.set_neq([vs.sbp.map(|u| u.to_string()).unwrap_or(String::from("--")),String::from("/"),vs.dbp.to_owned().map(|u| u.to_string()).unwrap_or(String::from("--"))].concat());
-                            page.t.set_neq(vs.bt.to_owned().map(|d| d.to_string()).unwrap_or_default());
-                            page.pr.set_neq(vs.pr.map(|u| u.to_string()).unwrap_or_default());
-                            page.rr.set_neq(vs.rr.map(|u| u.to_string()).unwrap_or_default());
-                            page.e.set_neq(e.to_string());
-                            page.v.set_neq(v.to_string());
-                            page.m.set_neq(m.to_string());
-                            page.gcs.set_neq((e + v + m).to_string());
-                            page.braden_scale.set_neq(vs.braden.to_owned().unwrap_or_default());
+                            page.admission_note_id.set_neq(zero_none(note.admission_note_id));
+                            page.receiver_medication_date.set_neq(note.receiver_medication_date.map(|d| d.to_string()).unwrap_or_default());
+                            page.receiver_medication_time.set_neq(note.receiver_medication_time.map(|t| t.js_string()).unwrap_or_default());
+                            page.arrive_by.set_neq(note.arrive_by.as_ref().map(|by| ArriveBy::from_str(by)).unwrap_or_default());
+                            page.informant_patient.set_neq(note.informant_patient.to_owned());
+                            page.informant_relatives.set_neq(note.informant_relatives.to_owned());
+                            page.informant_deliverer.set_neq(note.informant_deliverer.to_owned());
+                            page.informant_etc.set_neq(note.informant_etc.to_owned());
+                            page.take_medication_by.set_neq(note.take_medication_by.as_ref().map(|by| TakeMedicationBy::from_str(by)).unwrap_or_default());
+                            page.taken_by_relative.set_neq(note.taken_by_relative.to_owned().unwrap_or_default());
+                            page.taken_by_nurse.set_neq(note.taken_by_nurse.to_owned().unwrap_or_default());
+                            page.taken_by_crib.set_neq(note.taken_by_crib.to_owned().unwrap_or_default());
+                            page.taken_by_etc.set_neq(note.taken_by_etc.to_owned().unwrap_or_default());
+                            page.taken_by.set_neq(note.taken_by.to_owned().unwrap_or_default());
+                            page.disease.set_neq(note.disease.to_owned().unwrap_or_default());
+
+                            let disease_details = note.disease_detail.as_ref().map(|dd| { // "name year hospital name year hospital ..." -> Vec<Rc<DiseaseDetail>>
+                                explode(dd, 3).iter().map(|chunk| {
+                                    Rc::new(DiseaseDetail {
+                                        id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
+                                        name: Mutable::new(chunk[0].to_owned()),
+                                        year: Mutable::new(chunk[1].to_owned()),
+                                        hospital: Mutable::new(chunk[2].to_owned()),
+                                    })
+                                }).collect::<Vec<Rc<DiseaseDetail>>>()
+                            }).unwrap_or(Vec::new());
+
+                            page.disease_details.lock_mut().replace_cloned(disease_details);
+                            page.disease_etc.set_neq(note.disease_etc.to_owned());
+                            page.last_dose_taken_time.set_neq(note.last_dose_taken_time.map(|dt| dt.js_string()).unwrap_or_default());
+                            page.last_dose_taken_remark.set_neq(note.last_dose_taken_remark.to_owned());
+                            page.operation_history.set_neq(note.operation_history.to_owned());
+                            page.allergy_history.set_neq(note.allergy_history.to_owned().unwrap_or_default());
+                            page.allergy_drug_history_hosxp.set_neq(note.allergy_drug_history_hosxp.to_owned().unwrap_or_default());
+                            page.allergy_drug_pharmacy_check_person.set_neq(note.allergy_drug_pharmacy_check_person.to_owned());
+                            page.allergy_drug_pharmacy_check_datetime.set_neq(note.allergy_drug_pharmacy_check_datetime.to_owned());
+
+                            let allergy_drugs = note.allergy_drug_history.as_ref().map(|dh| {
+                                explode(dh, 2).iter().map(|chunk| {
+                                    Rc::new(DrugAllergy {
+                                        id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
+                                        agent: Mutable::new(chunk[0].to_owned()),
+                                        symptom: Mutable::new(chunk[1].to_owned()),
+                                    })
+                                }).collect::<Vec<Rc<DrugAllergy>>>()
+                            }).unwrap_or(Vec::new());
+                            page.allergy_drugs.lock_mut().replace_cloned(allergy_drugs);
+                            let allergy_foods = note.allergy_food_history.as_ref().map(|fh| {
+                                explode(fh, 2).iter().map(|chunk| {
+                                    Rc::new(FoodAllergy {
+                                        id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
+                                        agent: Mutable::new(chunk[0].to_owned()),
+                                        symptom: Mutable::new(chunk[1].to_owned()),
+                                    })
+                                }).collect::<Vec<Rc<FoodAllergy>>>()
+                            }).unwrap_or(Vec::new());
+                            page.allergy_foods.lock_mut().replace_cloned(allergy_foods);
+                            let allergy_etcs = note.allergy_etc_history.as_ref().map(|eh| {
+                                explode(eh, 2).iter().map(|chunk| {
+                                    Rc::new(EtcAllergy {
+                                        id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
+                                        agent: Mutable::new(chunk[0].to_owned()),
+                                        symptom: Mutable::new(chunk[1].to_owned()),
+                                    })
+                                }).collect::<Vec<Rc<EtcAllergy>>>()
+                            }).unwrap_or(Vec::new());
+                            page.allergy_etcs.lock_mut().replace_cloned(allergy_etcs);
+                            page.allergy_detail.set_neq(note.allergy_detail.to_owned());
+                            page.family_medical_history.set_neq(note.family_medical_history.to_owned().unwrap_or_default());
+                            let family_medicals = note.family_medical_history_detail.as_ref().map(|fmh| {
+                                explode(fmh, 2).iter().map(|chunk| {
+                                    Rc::new(FamilyMedical {
+                                        id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
+                                        disease: Mutable::new(chunk[0].to_owned()),
+                                        relation: Mutable::new(chunk[1].to_owned()),
+                                    })
+                                }).collect::<Vec<Rc<FamilyMedical>>>()
+                            }).unwrap_or(Vec::new());
+                            page.family_medicals.lock_mut().replace_cloned(family_medicals);
+
+                            page.receives_immunisation_history_kid.set_neq(note.receives_immunisation_history_kid.to_owned());
+                            page.developmentally_kid.set_neq(note.developmentally_kid.to_owned());
+                            page.g.set_neq(note.g.map(|i| i.to_string()).unwrap_or_default());
+                            page.p.set_neq(note.p.to_owned().unwrap_or_default());
+                            page.anc.set_neq(note.anc.to_owned().unwrap_or_default());
+                            page.tt.set_neq(note.tt.map(|i| i.to_string()).unwrap_or_default());
+                            page.gestational_age.set_neq(note.gestational_age.to_owned().unwrap_or_default());
+                            page.gestational_day.set_neq(note.gestational_day.to_owned().unwrap_or_default());
+                            page.last_child.set_neq(note.last_child.map(|i| i.to_string()).unwrap_or_default());
+                            page.last_abort.set_neq(note.last_abort.to_owned().unwrap_or_default());
+                            page.curette.set_neq(note.curette.to_owned().unwrap_or_default());
+                            page.lmp.set_neq(note.lmp.to_owned().map(|d| d.to_string()).unwrap_or_default());
+                            page.edc.set_neq(note.edc.to_owned().map(|d| d.to_string()).unwrap_or_default());
+                            page.pb_no.set_neq(note.pb_no.to_owned().unwrap_or_default());
+                            page.giant_baby.set_neq(note.giant_baby.to_owned().unwrap_or_default());
+                            page.distocia.set_neq(note.distocia.to_owned().unwrap_or_default());
+                            page.extraction.set_neq(note.extraction.to_owned());
+                            page.pph.set_neq(note.pph.to_owned().unwrap_or_default());
+                            page.pb_etc.set_neq(note.pb_etc.to_owned());
+                            page.hf.set_neq(note.hf.map(|i| i.to_string()).unwrap_or_default());
+                            page.hf_position.set_neq(note.hf_position.to_owned().unwrap_or_default());
+                            page.mem_ruptured_hours.set_neq(note.mem_ruptured_hours.map(|u| u.to_string()));
+
+                            page.lr_back_fetus.set_neq(note.lr_back_fetus.to_owned().unwrap_or_default());
+                            page.lr_presentation.set_neq(note.lr_presentation.to_owned().unwrap_or_default());
+                            page.lr_engagement.set_neq(note.lr_engagement.to_owned().unwrap_or_default());
+                            page.lr_prominence.set_neq(note.lr_prominence.to_owned().unwrap_or_default());
+                            page.lr_attitude.set_neq(note.lr_attitude.to_owned().unwrap_or_default());
+                            page.lr_fhr.set_neq(note.lr_fhr.map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_fhr_irrigular.set_neq(note.lr_fhr_irrigular.to_owned().unwrap_or_default());
+                            page.lr_efw.set_neq(note.lr_efw.map(|u| u.to_string()).unwrap_or_default());
+                            let (lr_int_m, lr_int_s) = if let Some(lr_int) = &note.lr_interval { lr_int_from_quote(lr_int) } else { (0, 0) };
+                            page.lr_interval_m.set_neq(zero_none(lr_int_m).map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_interval_s.set_neq(zero_none(lr_int_s).map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_duration.set_neq(note.lr_duration.map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_intensity.set_neq(note.lr_intensity.to_owned().unwrap_or_default());
+                            page.lr_pelvic_diagonal.set_neq(note.lr_pelvic_diagonal.map(|d| d.to_string()).unwrap_or_default());
+                            page.lr_pelvic_interspinous.set_neq(note.lr_pelvic_interspinous.map(|d| d.to_string()).unwrap_or_default());
+                            page.lr_pelvic_sidewall.set_neq(note.lr_pelvic_sidewall.to_owned().unwrap_or_default());
+                            page.lr_ischeal_spine.set_neq(note.lr_ischeal_spine.to_owned().unwrap_or_default());
+                            page.lr_sacral_curve.set_neq(note.lr_sacral_curve.to_owned().unwrap_or_default());
+                            page.lr_pubic_angle.set_neq(note.lr_pubic_angle.map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_pelvic_ok.set_neq(note.lr_pelvic_ok.to_owned().unwrap_or_default());
+                            page.lr_cx_dilate.set_neq(note.lr_cx_dilate.map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_cx_efface.set_neq(note.lr_cx_efface.map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_cx_station.set_neq(note.lr_cx_station.map(|i| i.to_string()).unwrap_or_default());
+                            page.lr_cx_position.set_neq(note.lr_cx_position.to_owned().unwrap_or_default());
+                            page.lr_cx_consistency.set_neq(note.lr_cx_consistency.to_owned().unwrap_or_default());
+                            page.lr_cx_bishop.set_neq(note.lr_cx_bishop.map(|u| u.to_string()).unwrap_or_default());
+                            page.lr_cx_ok.set_neq(note.lr_cx_ok.to_owned().unwrap_or_default());
+                            page.lr_membrane.set_neq(note.lr_membrane.to_owned().unwrap_or_default());
+                            page.lr_amniotic_color.set_neq(note.lr_amniotic_color.to_owned().unwrap_or_default());
+                            page.lr_amniotic_smell.set_neq(note.lr_amniotic_smell.to_owned().unwrap_or_default());
+
+                            page.hiv.set_neq(note.hiv.to_owned().unwrap_or_default());
+                            page.vdrl.set_neq(note.vdrl.to_owned().unwrap_or_default());
+                            page.hbs_ag.set_neq(note.hbs_ag.to_owned().unwrap_or_default());
+                            page.hct.set_neq(note.hct.to_owned().map(|dc| dc.to_string()).unwrap_or_default());
+                            page.hiv2.set_neq(note.hiv2.to_owned().unwrap_or_default());
+                            page.vdrl2.set_neq(note.vdrl2.to_owned().unwrap_or_default());
+                            page.hbs_ag2.set_neq(note.hbs_ag2.to_owned().unwrap_or_default());
+                            page.hct2.set_neq(note.hct2.to_owned().map(|dc| dc.to_string()).unwrap_or_default());
+                            page.gr.set_neq(note.gr.to_owned().unwrap_or_default());
+                            page.thalassemia.set_neq(note.thalassemia.to_owned().unwrap_or_default());
+                            page.husband.set_neq(note.husband.to_owned().unwrap_or_default());
+                            page.condition_pregnant.set_neq(note.condition_pregnant.to_owned());
+                            page.deliver_anomalies.set_neq(note.deliver_anomalies.to_owned());
+                            page.deliver_anomalies_means.set_neq(note.deliver_anomalies_means.to_owned().unwrap_or_default());
+                            page.deliver_location.set_neq(note.deliver_location.to_owned().unwrap_or_default());
+                            page.deliver_first_weight.set_neq(note.deliver_first_weight.to_owned().map(|dc| dc.to_string()).unwrap_or_default());
+                            page.deliver_first_health.set_neq(note.deliver_first_health.to_owned().unwrap_or_default());
+                            page.fant_breast_feeding_end_age_month.set_neq(note.fant_breast_feeding_end_age_month.map(|i| i.to_string()));
+                            page.fant_artificial_feeding_start_age_month.set_neq(note.fant_artificial_feeding_start_age_month.map(|i| i.to_string()));
+                            page.fant_feeding_etc.set_neq(note.fant_feeding_etc.to_owned());
+                            page.supplementary_feeding.set_neq(note.supplementary_feeding.to_owned().unwrap_or_default());
+                            page.supplementary_feeding_start_age_month.set_neq(note.supplementary_feeding_start_age_month.map(|i| i.to_string()).unwrap_or_default());
+                            page.disease_operation_allergy.set_neq(note.disease_operation_allergy.to_owned());
+                            page.inpatient_history.set_neq(note.inpatient_history.to_owned().unwrap_or_default());
+                            page.inpatient_last_date.set_neq(note.inpatient_last_date.to_owned().unwrap_or_default());
+                            page.inpatient_location.set_neq(note.inpatient_location.to_owned().unwrap_or_default());
+                            page.inpatient_because.set_neq(note.inpatient_because.to_owned().unwrap_or_default());
+
+                            page.pe_general.set_neq(note.pe_general.to_owned().unwrap_or_default());
+                            page.pe_skin.set_neq(note.pe_skin.to_owned().unwrap_or_default());
+                            page.pe_heent.set_neq(note.pe_heent.to_owned().unwrap_or_default());
+                            page.pe_neck.set_neq(note.pe_neck.to_owned().unwrap_or_default());
+                            page.pe_breastthorax.set_neq(note.pe_breastthorax.to_owned().unwrap_or_default());
+                            page.pe_heart.set_neq(note.pe_heart.to_owned().unwrap_or_default());
+                            page.pe_lungs.set_neq(note.pe_lungs.to_owned().unwrap_or_default());
+                            page.pe_abdomen.set_neq(note.pe_abdomen.to_owned().unwrap_or_default());
+                            page.pe_rectalgenitalia.set_neq(note.pe_rectalgenitalia.to_owned().unwrap_or_default());
+                            page.pe_extremities.set_neq(note.pe_extremities.to_owned().unwrap_or_default());
+                            page.pe_neurological.set_neq(note.pe_neurological.to_owned().unwrap_or_default());
+                            page.pe_ob_gynexam.set_neq(note.pe_ob_gynexam.to_owned().unwrap_or_default());
+                            page.pe_other.set_neq(note.pe_other.to_owned().unwrap_or_default());
+                            page.pe_text.set_neq(note.pe_text.to_owned().unwrap_or_default());
+
+                            page.ros_eent.set_neq(note.ros_eent.to_owned().unwrap_or_default());
+                            page.ros_neuro.set_neq(note.ros_neuro.to_owned().unwrap_or_default());
+                            page.ros_lung.set_neq(note.ros_lung.to_owned().unwrap_or_default());
+                            page.ros_tb.set_neq(note.ros_tb.to_owned().unwrap_or_default());
+                            page.ros_ht.set_neq(note.ros_ht.to_owned().unwrap_or_default());
+                            page.ros_heart.set_neq(note.ros_heart.to_owned().unwrap_or_default());
+                            page.ros_liver.set_neq(note.ros_liver.to_owned().unwrap_or_default());
+                            page.ros_gi.set_neq(note.ros_gi.to_owned().unwrap_or_default());
+                            page.ros_endocrine.set_neq(note.ros_endocrine.to_owned().unwrap_or_default());
+                            page.ros_kidney.set_neq(note.ros_kidney.to_owned().unwrap_or_default());
+                            page.ros_tumour.set_neq(note.ros_tumour.to_owned().unwrap_or_default());
+                            page.ros_hemato.set_neq(note.ros_hemato.to_owned().unwrap_or_default());
+                            page.ros_rheumato.set_neq(note.ros_rheumato.to_owned().unwrap_or_default());
+                            page.ros_psychia.set_neq(note.ros_psychia.to_owned().unwrap_or_default());
+                            page.ros_other.set_neq(note.ros_other.to_owned().unwrap_or_default());
+
+                            page.addict.set_neq(note.addict.to_owned().unwrap_or_default());
+                            let addict_assist = note.addict_assist.as_ref().map(|assist| {
+                                explode(assist, 2).iter().map(|chunk| {
+                                    Rc::new(AddictAssist {
+                                        id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
+                                        agent: Mutable::new(chunk[0].to_owned()),
+                                        score: Mutable::new(chunk[1].to_owned()),
+                                    })
+                                }).collect::<Vec<Rc<AddictAssist>>>()
+                            }).unwrap_or(Vec::new());
+
+                            page.addict_assists.lock_mut().replace_cloned(addict_assist);
+                            page.addict_inj.set_neq(note.addict_inj.to_owned().unwrap_or_default());
+                            page.addict_inj_often.set_neq(note.addict_inj_often.to_owned().unwrap_or_default());
+                            page.amphetamine_awq.set_neq(note.amphetamine_awq.clone().unwrap_or_default());
+                            page.aggression_oas.set_neq(note.aggression_oas.clone().unwrap_or_default());
+                            page.motivation_scale.set_neq(note.motivation_scale.map(|u| u.to_string()).unwrap_or_default());
+                            page.craving_scale.set_neq(note.craving_scale.map(|u| u.to_string()).unwrap_or_default());
+                            page.stage_of_change_id.set_neq(note.stage_of_change_id.map(|u| u.to_string()).unwrap_or_default());
+                            page.alcohol_audit.set_neq(note.alcohol_audit.clone().unwrap_or_default());
+                            page.alcohol_aws.set_neq(note.alcohol_aws.clone().unwrap_or_default());
+                            page.alcohol_ciwa.set_neq(note.alcohol_ciwa.clone().unwrap_or_default());
+                            page.depress_2q.set_neq(note.depress_2q.clone().unwrap_or_default());
+                            page.depress_9q.set_neq(note.depress_9q.clone().unwrap_or_default());
+                            page.depress_cdi.set_neq(note.depress_cdi.clone().unwrap_or_default());
+                            page.depress_cesd.set_neq(note.depress_cesd.clone().unwrap_or_default());
+                            page.depress_phqa.set_neq(note.depress_phqa.clone().unwrap_or_default());
+                            page.nicotin_ftnd.set_neq(note.nicotin_ftnd.clone().unwrap_or_default());
+                            page.ptsd_screen.set_neq(note.ptsd_screen.clone().unwrap_or_default());
+                            page.ptsd_pisces.set_neq(note.ptsd_pisces.clone().unwrap_or_default());
+                            page.ptsd_cries.set_neq(note.ptsd_cries.clone().unwrap_or_default());
+                            page.suicide_8q.set_neq(note.suicide_8q.clone().unwrap_or_default());
+                            page.stress_st5.set_neq(note.stress_st5.clone().unwrap_or_default());
+
+                            page.svg_tag.set_neq(note.svg_tag.to_owned().unwrap_or_default());
+
+                            page.impression.set_neq(note.impression.to_owned().unwrap_or_default());
+                            page.diff_dx.set_neq(note.diff_dx.to_owned().unwrap_or_default());
+                            page.plan_management.set_neq(note.plan_management.to_owned().unwrap_or_default());
+
+                            page.nurse_name.set_neq(note.nurse_name.to_owned().unwrap_or_default());
+                            page.nurse_pos.set_neq(note.nurse_pos.to_owned().unwrap_or_default());
+                            page.nurse_licenseno.set_neq(note.nurse_licenseno.to_owned().unwrap_or_default());
+                            page.doc_name.set_neq(note.doc_name.to_owned());
+                            page.doc_pos.set_neq(note.doc_pos.to_owned());
+                        // not has note
+                        } else {
+                            let patient = page.patient.lock_ref();
+                            if let Some(regdate) = patient.patient.lock_ref().as_ref().and_then(|pt| pt.regdate()) {
+                                page.receiver_medication_date.set_neq(regdate.to_string());
+                            }
+                            if let Some(regtime) = patient.patient.lock_ref().as_ref().and_then(|pt| pt.regtime()) {
+                                page.receiver_medication_time.set_neq(regtime.js_string());
+                            }
+                            if let Some(pe) = response.opdscreen_pe.as_ref() {
+                                page.hn.set_neq(pe.hn.to_owned());
+                                page.chief_complaints.set_neq(pe.cc.to_owned().unwrap_or_default());
+                                page.medical_history.set_neq(pe.hpi.to_owned().unwrap_or_default());
+                                page.pe_general.set_neq(pe.pe_ga_text.to_owned().unwrap_or_default());
+                                page.pe_heent.set_neq(pe.pe_heent_text.to_owned().unwrap_or_default());
+                                page.pe_heart.set_neq(pe.pe_heart_text.to_owned().unwrap_or_default());
+                                page.pe_lungs.set_neq(pe.pe_lung_text.to_owned().unwrap_or_default());
+                                page.pe_abdomen.set_neq(pe.pe_ab_text.to_owned().unwrap_or_default());
+                                page.pe_neurological.set_neq(pe.pe_neuro_text.to_owned().unwrap_or_default());
+                                page.pe_extremities.set_neq(pe.pe_ext_text.to_owned().unwrap_or_default());
+                                page.pe_text.set_neq(pe.pe.to_owned().unwrap_or_default());
+
+                                page.bp.set_neq([pe.bps.map(|f| f.to_string()).unwrap_or(String::from("--")),String::from("/"),pe.bpd.map(|f| f.to_string()).unwrap_or(String::from("--"))].concat());
+                                page.t.set_neq(pe.temperature.map(|f| f.to_string()).unwrap_or_default());
+                                page.pr.set_neq(pe.pulse.map(|f| f.to_string()).unwrap_or_default());
+                                page.rr.set_neq(pe.rr.map(|f| f.to_string()).unwrap_or_default());
+                            } else {
+                                page.hn.set_neq(str_some(patient.hn.get_cloned()));
+                            }
+                            // first kphis.ipd_vs_vital_sign of this AN
+                            if let Some(vs) = response.vs.as_ref() {
+                                let e = vs.eye.to_owned().unwrap_or_default();
+                                let v = vs.verbal.to_owned().unwrap_or_default().parse::<i32>().unwrap_or(0);
+                                let m = vs.movement.to_owned().unwrap_or_default();
+
+                                page.bp.set_neq([vs.sbp.map(|u| u.to_string()).unwrap_or(String::from("--")),String::from("/"),vs.dbp.to_owned().map(|u| u.to_string()).unwrap_or(String::from("--"))].concat());
+                                page.t.set_neq(vs.bt.to_owned().map(|d| d.to_string()).unwrap_or_default());
+                                page.pr.set_neq(vs.pr.map(|u| u.to_string()).unwrap_or_default());
+                                page.rr.set_neq(vs.rr.map(|u| u.to_string()).unwrap_or_default());
+                                page.e.set_neq(e.to_string());
+                                page.v.set_neq(v.to_string());
+                                page.m.set_neq(m.to_string());
+                                page.gcs.set_neq((e + v + m).to_string());
+                                page.braden_scale.set_neq(vs.braden.to_owned().unwrap_or_default());
+                            }
+                            //let allergy_drugs: Vec<Rc<DrugAllergy>> = .collect();
+                            page.allergy_drugs.lock_mut().extend(response.opd_er_allergy_histories.iter().map(|ah| Rc::new(ah.into())));
+                            page.inpatient_last_date.set_neq(response.old_regdatetime.map(|dt| dt.js_string()).unwrap_or_default());
+                            if old_regdatetime.is_some() {
+                                page.inpatient_history.set_neq(String::from("เคย"));
+                                page.inpatient_location.set_neq(app.app_status.lock_ref().as_ref().map(|status| status.hospital_name.clone()).unwrap_or_default());
+                            }
                         }
-                        //let allergy_drugs: Vec<Rc<DrugAllergy>> = .collect();
-                        page.allergy_drugs.lock_mut().extend(response.opd_er_allergy_histories.iter().map(|ah| Rc::new(ah.into())));
-                        page.inpatient_last_date.set_neq(response.old_regdatetime.map(|dt| dt.js_string()).unwrap_or_default());
-                        if old_regdatetime.is_some() {
-                            page.inpatient_history.set_neq(String::from("เคย"));
-                            page.inpatient_location.set_neq(app.app_status.lock_ref().as_ref().map(|status| status.hospital_name.clone()).unwrap_or_default());
-                        }
+
+                        page.old_regdatetime.set_neq(old_regdatetime.map(|dt| dt.js_string()));
+                        page.admission_note_doctors.lock_mut().extend(response.admission_note_doctors.iter().map(|d| Rc::new(d.clone())));
+
+                        page.raw.set(Rc::new(Mutex::new(response)));
+                        page.loaded.set(true);
                     }
-
-                    page.old_regdatetime.set_neq(old_regdatetime.map(|dt| dt.js_string()));
-                    page.admission_note_doctors.lock_mut().extend(response.admission_note_doctors.iter().map(|d| Rc::new(d.clone())));
-
-                    page.raw.set(Rc::new(Mutex::new(response)));
-                    page.loaded.set(true);
+                    Err(e) => {
+                        app.alert_app_error(&e).await;
+                    }
                 }
-                Err(e) => {
-                    app.alert_app_error(&e).await;
-                }
-            }
-        }))
+            }),
+        )
     }
 
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
@@ -7456,16 +7447,16 @@ impl IpdAdmissionNoteDrPage {
                 disease_etc: page.disease_etc.get_cloned(),                                             // unused
                 last_dose_taken_time: datetime_8601(&page.last_dose_taken_time.lock_ref()),
                 last_dose_taken_remark: opt_empty_none(page.last_dose_taken_remark.get_cloned()),
-                operation_history: opt_empty_none(page.operation_history.get_cloned()), //.or(Some(String::from("ไม่มี"))),
-                allergy_history: str_some(page.allergy_history.get_cloned()),           //.or(Some(String::from("ไม่มี"))),
+                operation_history: opt_empty_none(page.operation_history.get_cloned()),                     //.or(Some(String::from("ไม่มี"))),
+                allergy_history: str_some(page.allergy_history.get_cloned()),                               //.or(Some(String::from("ไม่มี"))),
                 allergy_drug_history: str_some(concat_mutable_vec(&page.allergy_drugs, concat_with_space)), // agent + ' ' + symptom + ' ' + agent + ..
                 allergy_drug_history_hosxp: str_some(page.allergy_drug_history_hosxp.get_cloned()),
-                allergy_drug_pharmacy_check_person: page.allergy_drug_pharmacy_check_person.get_cloned(), // unused
-                allergy_drug_pharmacy_check_datetime: page.allergy_drug_pharmacy_check_datetime.get_cloned(), // unused
-                allergy_food_history: str_some(concat_mutable_vec(&page.allergy_foods, concat_with_space)), // agent + ' ' + symptom + ' ' + agent + ..
-                allergy_etc_history: str_some(concat_mutable_vec(&page.allergy_etcs, concat_with_space)), // agent + ' ' + symptom + ' ' + agent + ..
-                allergy_detail: page.allergy_detail.get_cloned(),                                         // unused
-                family_medical_history: str_some(page.family_medical_history.get_cloned()),               //.or(Some(String::from("ไม่มี"))),
+                allergy_drug_pharmacy_check_person: page.allergy_drug_pharmacy_check_person.get_cloned(),              // unused
+                allergy_drug_pharmacy_check_datetime: page.allergy_drug_pharmacy_check_datetime.get_cloned(),          // unused
+                allergy_food_history: str_some(concat_mutable_vec(&page.allergy_foods, concat_with_space)),            // agent + ' ' + symptom + ' ' + agent + ..
+                allergy_etc_history: str_some(concat_mutable_vec(&page.allergy_etcs, concat_with_space)),              // agent + ' ' + symptom + ' ' + agent + ..
+                allergy_detail: page.allergy_detail.get_cloned(),                                                      // unused
+                family_medical_history: str_some(page.family_medical_history.get_cloned()),                            //.or(Some(String::from("ไม่มี"))),
                 family_medical_history_detail: str_some(concat_mutable_vec(&page.family_medicals, concat_with_space)), // disease + ' ' + relation + ' ' + disease + ..
 
                 receives_immunisation_history_kid: opt_empty_none(page.receives_immunisation_history_kid.get_cloned()).or(Some(String::from("ครบตามวัย"))),
@@ -7603,11 +7594,7 @@ impl IpdAdmissionNoteDrPage {
                 suicide_8q: str_some(page.suicide_8q.get_cloned()),
                 stress_st5: str_some(page.stress_st5.get_cloned()),
 
-                svg_tag: page
-                    .canvas
-                    .lock_ref()
-                    .as_ref()
-                    .and_then(|c| (!c.get_objects().is_empty()).then(|| c.to_svg_suppress_preamble()).filter(|s| s.contains("path"))),
+                svg_tag: page.canvas.lock_ref().as_ref().and_then(|c| (!c.get_objects().is_empty()).then(|| c.to_svg_suppress_preamble()).filter(|s| s.contains("path"))),
 
                 impression: str_some(page.impression.get_cloned()),
                 diff_dx: str_some(page.diff_dx.get_cloned()),

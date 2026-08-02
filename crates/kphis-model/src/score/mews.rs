@@ -30,17 +30,7 @@ pub struct Mews {
 
 impl Mews {
     #[allow(clippy::too_many_arguments)]
-    pub fn new(
-        bt: Option<Decimal>,
-        pr: Option<u32>,
-        rr: Option<u32>,
-        sbp: Option<u32>,
-        inotrope: bool,
-        respirator: bool,
-        conscious_id: Option<u32>,
-        urine_amount: Option<u32>,
-        urine_duration: Option<u32>,
-    ) -> Self {
+    pub fn new(bt: Option<Decimal>, pr: Option<u32>, rr: Option<u32>, sbp: Option<u32>, inotrope: bool, respirator: bool, conscious_id: Option<u32>, urine_amount: Option<u32>, urine_duration: Option<u32>) -> Self {
         let score_bt = Self::score_bt(bt);
         let score_pr = Self::score_pr(pr);
         let score_rr = Self::score_rr(rr, respirator);

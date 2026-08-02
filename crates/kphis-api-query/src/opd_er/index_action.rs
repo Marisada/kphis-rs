@@ -135,17 +135,9 @@ async fn insert_index_action(save: &IndexAction, user: &str, pool: &Pool<MySql>,
 
 pub async fn insert_index_action_only(plan_id: u32, opd_er_order_master_id: u32, only: &mut IndexActionOnly, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     only.plan_id = Some(plan_id);
-    only.insert(
-        Some("action_id"),
-        Some("opd_er_nurse_index_action"),
-        ",opd_er_order_master_id",
-        ",?",
-        &[&opd_er_order_master_id.to_string()],
-        pool,
-        kphis,
-    )
-    .await
-    .map_err(|e| Source::SQLx.to_error(500, e, "Insert IndexActionOnly"))
+    only.insert(Some("action_id"), Some("opd_er_nurse_index_action"), ",opd_er_order_master_id", ",?", &[&opd_er_order_master_id.to_string()], pool, kphis)
+        .await
+        .map_err(|e| Source::SQLx.to_error(500, e, "Insert IndexActionOnly"))
 }
 
 // pub async fn insert_index_actions_only(plan_id: u32, opd_er_order_master_id: u32, index_actions_only: &[IndexActionOnly], pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
@@ -156,11 +148,7 @@ pub async fn insert_index_action_only(plan_id: u32, opd_er_order_master_id: u32,
 // opd-er-nurse-index-plan-action-delete.php
 pub async fn delete_index_action(action_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = index_action::delete_index_action(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(action_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexAction"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(action_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete IndexAction"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete IndexAction"))
 }

@@ -121,14 +121,7 @@ pub fn test_set_day_last() {
     assert_eq!(end_date_mutable.get_cloned(), String::from("2024-01-30"));
 
     // fixed start_date/end_date
-    set_day_last(
-        Some(date!(2024 - 01 - 01)),
-        Some(date!(2024 - 01 - 30)),
-        start_date_mutable.clone(),
-        end_date_mutable.clone(),
-        changed_mutable.clone(),
-        10,
-    );
+    set_day_last(Some(date!(2024 - 01 - 01)), Some(date!(2024 - 01 - 30)), start_date_mutable.clone(), end_date_mutable.clone(), changed_mutable.clone(), 10);
     assert_eq!(start_date_mutable.get_cloned(), String::from("2024-01-21"));
     assert_eq!(end_date_mutable.get_cloned(), String::from("2024-01-30"));
 }

@@ -48,10 +48,7 @@ pub async fn get_pacs_thumbnail(Query(params): Query<PacsParams>, State(app): St
         if let (Some(file_path), Some(study_uid), Some(series_uid), Some(object_uid)) = (&params.file_path, &params.study_uid, &params.series_uid, &params.object_uid) {
             let data = get_thumbnail(file_path, study_uid, series_uid, object_uid, &app.pacs_client, pacs_config).await?;
             let body = Full::new(data);
-            Response::builder()
-                .header(header::CONTENT_TYPE, "image/jpeg")
-                .body(body)
-                .map_err(|e| Source::App.to_error(500, e, "Get PacsThumbnail"))
+            Response::builder().header(header::CONTENT_TYPE, "image/jpeg").body(body).map_err(|e| Source::App.to_error(500, e, "Get PacsThumbnail"))
         } else {
             Err(AppError::app_400("Get PacsThumbnail"))
         }
@@ -70,10 +67,7 @@ pub async fn get_pacs_image(Query(params): Query<PacsParams>, State(app): State<
         if let (Some(file_path), Some(study_uid), Some(series_uid), Some(object_uid)) = (&params.file_path, &params.study_uid, &params.series_uid, &params.object_uid) {
             let data = get_image(file_path, study_uid, series_uid, object_uid, &app.pacs_client, pacs_config).await?;
             let body = Full::new(data);
-            Response::builder()
-                .header(header::CONTENT_TYPE, "image/jpeg")
-                .body(body)
-                .map_err(|e| Source::App.to_error(500, e, "Get PacsImage"))
+            Response::builder().header(header::CONTENT_TYPE, "image/jpeg").body(body).map_err(|e| Source::App.to_error(500, e, "Get PacsImage"))
         } else {
             Err(AppError::app_400("Get PacsImage"))
         }

@@ -155,8 +155,7 @@ impl IpdSearchPatientDrPage {
             .map(|asset| (asset.ward_select_option.clone(), asset.doctor_select_option.clone(), asset.all_doctor_select_option.clone()))
             .unwrap_or_default();
 
-        let allow_passcode =
-            app.can_change_ward_passcode() && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false);
+        let allow_passcode = app.can_change_ward_passcode() && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPasscode, false) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPasscode, false);
 
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {

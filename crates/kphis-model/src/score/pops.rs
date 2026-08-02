@@ -38,17 +38,7 @@ pub struct Pops {
 
 impl Pops {
     #[allow(clippy::too_many_arguments)]
-    pub fn new(
-        age_y: Option<i8>,
-        bt: Option<Decimal>,
-        pr: Option<u32>,
-        rr: Option<u32>,
-        sat: Option<u32>,
-        breathing_id: Option<u32>,
-        avpu_id: Option<u32>,
-        gut_feeling_id: Option<u32>,
-        pops_other_id: Option<u32>,
-    ) -> Self {
+    pub fn new(age_y: Option<i8>, bt: Option<Decimal>, pr: Option<u32>, rr: Option<u32>, sat: Option<u32>, breathing_id: Option<u32>, avpu_id: Option<u32>, gut_feeling_id: Option<u32>, pops_other_id: Option<u32>) -> Self {
         let score_bt = Self::score_bt(age_y, bt);
         let score_pr = Self::score_pr(age_y, pr);
         let score_rr = Self::score_rr(age_y, rr);
@@ -258,9 +248,7 @@ impl Pops {
         score_gut_feeling: Option<u32>,
         score_pops_other: Option<u32>,
     ) -> Option<u32> {
-        if let (Some(bt), Some(pr), Some(rr), Some(sat), Some(avpu), Some(breathing), Some(gut_feeling), Some(pops_other)) =
-            (score_bt, score_pr, score_rr, score_sat, score_breathing, score_avpu, score_gut_feeling, score_pops_other)
-        {
+        if let (Some(bt), Some(pr), Some(rr), Some(sat), Some(avpu), Some(breathing), Some(gut_feeling), Some(pops_other)) = (score_bt, score_pr, score_rr, score_sat, score_breathing, score_avpu, score_gut_feeling, score_pops_other) {
             Some(bt + pr + rr + sat + avpu + breathing + gut_feeling + pops_other)
         } else {
             None

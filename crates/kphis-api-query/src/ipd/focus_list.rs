@@ -85,17 +85,7 @@ pub async fn post_focus_list(an: &str, hn: &str, save: &FocusListSave, user: &st
 }
 
 #[allow(clippy::too_many_arguments)]
-async fn update_focus_list_bundle(
-    fclist_id: u32,
-    an: &str,
-    hn: &str,
-    save: &FocusListSave,
-    user: &str,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-    kphis_log: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+async fn update_focus_list_bundle(fclist_id: u32, an: &str, hn: &str, save: &FocusListSave, user: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_log: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::with_capacity(5);
     // 0. Check fclist_id is used in focus_note
     let used = get_exists("ipd-focus-list-used", &fclist_id.to_string(), pool, hosxp, kphis).await?;
@@ -165,16 +155,7 @@ pub async fn insert_focus_list_only_bundle(an: &str, hn: &str, only: &FocusListO
         let insert_goal_item_result = insert_goal_items_only(fclist_id, &only.focus_list_goal_items, pool, kphis).await?;
         results.push(ExecuteResponse::from_query_result(insert_goal_item_result, "Insert GoalItemOnly"));
         // 4. Insert history goal_item
-        let insert_history_goal_result = insert_history_log(
-            SourceTable::IpdFocusListGoalItem,
-            "I",
-            "system",
-            &[KeyValue("fclist_id", fclist_id.to_string())],
-            kphis,
-            kphis_log,
-            pool,
-        )
-        .await?;
+        let insert_history_goal_result = insert_history_log(SourceTable::IpdFocusListGoalItem, "I", "system", &[KeyValue("fclist_id", fclist_id.to_string())], kphis, kphis_log, pool).await?;
         results.push(ExecuteResponse::from_query_result(insert_history_goal_result, "Insert GoalItemOnly History"));
     }
 

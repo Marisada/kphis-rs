@@ -47,11 +47,7 @@ pub async fn get_ipd_admission_note_dr_from_an(an: &str, pool: &Pool<MySql>, hos
     };
 
     // 6. get get_opd_er_allergy_with_symptom
-    let opd_er_allergy_history = if let Some(vn) = &vn_opt {
-        get_opd_er_allergy_with_symptom_by_vn(vn, pool, kphis).await?
-    } else {
-        None
-    };
+    let opd_er_allergy_history = if let Some(vn) = &vn_opt { get_opd_er_allergy_with_symptom_by_vn(vn, pool, kphis).await? } else { None };
 
     // 7. get doctor_in_charge
     let doctor_in_charge = select_ipd_doctor_in_charge(an, pool, hosxp, kphis).await?;
@@ -102,11 +98,7 @@ pub async fn get_ipd_admission_note_dr_from_vn(vn: &str, pool: &Pool<MySql>, hos
     let admission_note_id = admission_note.as_ref().map(|note| note.admission_note_id);
 
     // 5. get opd_er_allergy_history_list **if admission_note_id.is_none()
-    let opd_er_allergy_histories = if admission_note_id.is_none() {
-        get_opd_er_allergy_list_by_vn(vn, pool, kphis).await?
-    } else {
-        Vec::new()
-    };
+    let opd_er_allergy_histories = if admission_note_id.is_none() { get_opd_er_allergy_list_by_vn(vn, pool, kphis).await? } else { Vec::new() };
 
     // 6. get get_opd_er_allergy_with_symptom
     let opd_er_allergy_history = get_opd_er_allergy_with_symptom_by_vn(vn, pool, kphis).await?;
@@ -132,12 +124,7 @@ pub async fn get_ipd_admission_note_dr_from_vn(vn: &str, pool: &Pool<MySql>, hos
 
 async fn select_ipt_from_an(an: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Option<Ipt>, AppError> {
     let sql = admission_note_dr::select_ipt_from_an(hosxp);
-    query1_opt(an, &sql, pool, "Select Ipt")
-        .await?
-        .as_ref()
-        .map(Ipt::from_row)
-        .transpose()
-        .map_err(|e| Source::SQLx.to_error(500, e, "Select Ipt"))
+    query1_opt(an, &sql, pool, "Select Ipt").await?.as_ref().map(Ipt::from_row).transpose().map_err(|e| Source::SQLx.to_error(500, e, "Select Ipt"))
 }
 
 async fn select_admission_note_dr_items_from_an(an: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<AdmissionNoteDoctor>, AppError> {
@@ -152,12 +139,7 @@ async fn select_admission_note_dr_items_from_an(an: &str, pool: &Pool<MySql>, ho
 
 async fn select_vs_from_an(an: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Option<Vs>, AppError> {
     let sql = admission_note_dr::select_vs_from_an(kphis);
-    query1_opt(an, &sql, pool, "Select Vs")
-        .await?
-        .as_ref()
-        .map(Vs::from_row)
-        .transpose()
-        .map_err(|e| Source::SQLx.to_error(500, e, "Select Vs"))
+    query1_opt(an, &sql, pool, "Select Vs").await?.as_ref().map(Vs::from_row).transpose().map_err(|e| Source::SQLx.to_error(500, e, "Select Vs"))
 }
 
 async fn select_period_from_an(an: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Option<Period>, AppError> {
@@ -248,17 +230,15 @@ async fn select_ipd_doctor_in_charge(an: &str, pool: &Pool<MySql>, hosxp: &str, 
 
 // ipd-dr-admission-note-save.php
 pub async fn post_ipd_admission_note_dr(form: &IpdDrAdmissionNote, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
-    form.insert(Some("admission_note_id"), None, TABLE_CREATE_COLUMNS, TABLE_CREATE_PREPARED, &[user, user], pool, kphis)
-        .await
-        .map_err(|e| {
-            if let sqlx::error::Error::Database(err) = &e
-                && err.code().map(|c| c == "23000").unwrap_or_default()
-            {
-                AppError::app_403_duplicate("Insert IpdDrAdmissionNote")
-            } else {
-                Source::SQLx.to_error(500, e, "Insert IpdDrAdmissionNote")
-            }
-        })
+    form.insert(Some("admission_note_id"), None, TABLE_CREATE_COLUMNS, TABLE_CREATE_PREPARED, &[user, user], pool, kphis).await.map_err(|e| {
+        if let sqlx::error::Error::Database(err) = &e
+            && err.code().map(|c| c == "23000").unwrap_or_default()
+        {
+            AppError::app_403_duplicate("Insert IpdDrAdmissionNote")
+        } else {
+            Source::SQLx.to_error(500, e, "Insert IpdDrAdmissionNote")
+        }
+    })
 }
 
 // ipd-dr-admission-note-update.php
@@ -280,11 +260,7 @@ pub async fn insert_ipd_admission_note_dr_items(items: &[String], admission_note
 
 pub async fn delete_ipd_admission_note_dr_items(an: &str, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let sql = admission_note_dr::delete_ipd_dr_admission_note_item(kphis);
-    sqlx::query(AssertSqlSafe(sql))
-        .bind(an)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete IpdDrAdmissionNoteItem"))
+    sqlx::query(AssertSqlSafe(sql)).bind(an).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete IpdDrAdmissionNoteItem"))
 }
 
 // ipd-dr-admission-note-pharmacy-check-save.php

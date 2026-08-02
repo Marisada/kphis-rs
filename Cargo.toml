@@ -3,7 +3,7 @@ members = [ "crates/*"]
 resolver = "3"
 
 [workspace.package]
-version = "0.4.19"
+version = "0.4.20"
 rust-version = "1.96"
 edition = "2024"
 authors = ["Marisada Pitakthum <p.marisada@gmail.com>"]

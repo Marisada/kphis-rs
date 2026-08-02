@@ -60,10 +60,7 @@ impl ScanHis5 {
 
         if let Some(bytes) = self.image1.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image1_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image1_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -71,10 +68,7 @@ impl ScanHis5 {
         }
         if let Some(bytes) = self.image2.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image2_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image2_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -82,10 +76,7 @@ impl ScanHis5 {
         }
         if let Some(bytes) = self.image3.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image3_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image3_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -93,10 +84,7 @@ impl ScanHis5 {
         }
         if let Some(bytes) = self.image4.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image4_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image4_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -104,10 +92,7 @@ impl ScanHis5 {
         }
         if let Some(bytes) = self.image5.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image5_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image5_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -148,10 +133,7 @@ impl ScanHis10 {
 
         if let Some(bytes) = self.image1.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image1_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image1_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -159,10 +141,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image2.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image2_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image2_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -170,10 +149,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image3.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image3_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image3_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -181,10 +157,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image4.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image4_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image4_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -192,10 +165,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image5.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image5_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image5_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -203,10 +173,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image6.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image6_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image6_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -214,10 +181,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image7.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image7_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image7_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -225,10 +189,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image8.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image8_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image8_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -236,10 +197,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image9.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image9_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image9_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);
@@ -247,10 +205,7 @@ impl ScanHis10 {
         }
         if let Some(bytes) = self.image10.as_ref() {
             if let Some(sc_img) = match ImageBase64::from_bytes(bytes) {
-                Ok(opt) => opt.map(|image| ScanImage {
-                    image,
-                    note: self.image10_note.clone(),
-                }),
+                Ok(opt) => opt.map(|image| ScanImage { image, note: self.image10_note.clone() }),
                 Err(e) => Some(ScanImage::new_warn(&e.message)),
             } {
                 res.push(sc_img);

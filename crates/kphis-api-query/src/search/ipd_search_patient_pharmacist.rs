@@ -16,11 +16,7 @@ pub async fn get_ipd_pharmacist_search_patient(
     kphis: &str,
     kphis_extra: &str,
 ) -> Result<Vec<IpdSearchPatientPharmacistResponse>, AppError> {
-    let patient = request
-        .patient
-        .as_ref()
-        .and_then(|patient| urlencoding::decode(patient).map(|s| s.into_owned()).ok())
-        .unwrap_or_default();
+    let patient = request.patient.as_ref().and_then(|patient| urlencoding::decode(patient).map(|s| s.into_owned()).ok()).unwrap_or_default();
     let ward = request.ward.clone().unwrap_or_default();
     let doctor = request.doctor_in_charge.clone().unwrap_or_default();
     let patient_wildcard = ["%", &patient, "%"].concat();

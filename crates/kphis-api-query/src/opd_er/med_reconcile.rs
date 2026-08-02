@@ -21,11 +21,7 @@ pub async fn get_opd_er_med_reconcile(params: &MedReconciliationParams, doctor_c
         let ids = recons.iter().map(|r| r.med_reconciliation_id).collect::<Vec<u32>>();
         let items = get_med_reconciliation_item(&ids, params, pool, hosxp, kphis).await?;
         for recon in recons.iter_mut() {
-            recon.med_reconciliation_items = items
-                .iter()
-                .filter(|i| i.med_reconciliation_id == Some(recon.med_reconciliation_id))
-                .cloned()
-                .collect::<Vec<MedReconciliationItem>>();
+            recon.med_reconciliation_items = items.iter().filter(|i| i.med_reconciliation_id == Some(recon.med_reconciliation_id)).cloned().collect::<Vec<MedReconciliationItem>>();
         }
 
         Ok(recons)
@@ -119,14 +115,7 @@ fn med_rec_item_from_row(row: &MySqlRow) -> sqlx::Result<MedReconciliationItem> 
 }
 
 // POST /opd-er/med-reconcile
-pub async fn post_opd_er_med_reconcile(
-    opd_er_order_master_id: u32,
-    items: &[MedReconciliationItemSave],
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
+pub async fn post_opd_er_med_reconcile(opd_er_order_master_id: u32, items: &[MedReconciliationItemSave], doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<(u32, Vec<ExecuteResponse>), AppError> {
     let id;
     let mut results = Vec::with_capacity(2);
     // 1. get last unconfirm med_reconcile
@@ -208,15 +197,7 @@ async fn insert_mri(med_reconciliation_id: u32, opd_er_order_master_id: u32, ite
 }
 
 // PATCH /opd-er/med-reconcile
-pub async fn patch_opd_er_med_reconcile(
-    med_reconciliation_id: u32,
-    patch: &str,
-    items: &[MedReconciliationItemPatch],
-    doctor_code: &Option<String>,
-    user: &str,
-    pool: &Pool<MySql>,
-    kphis: &str,
-) -> Result<Vec<ExecuteResponse>, AppError> {
+pub async fn patch_opd_er_med_reconcile(med_reconciliation_id: u32, patch: &str, items: &[MedReconciliationItemPatch], doctor_code: &Option<String>, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<Vec<ExecuteResponse>, AppError> {
     let mut results = Vec::new();
     match patch {
         "doctor" => {

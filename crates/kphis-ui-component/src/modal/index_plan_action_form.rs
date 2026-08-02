@@ -108,15 +108,7 @@ impl IndexPlanActionForm {
     /// order_item_id = 0 is plan without order <br>
     /// plan_id = None is start with no plan selected <br>
     /// action_id = None is start with no action selected <br>
-    pub fn new(
-        order_item_id: u32,
-        plan_id: Option<u32>,
-        action_id: Option<u32>,
-        patient: Mutable<Option<Rc<PatientInfo>>>,
-        order_type: OrderType,
-        form_type: FormType,
-        view_by: Mutable<String>,
-    ) -> Rc<Self> {
+    pub fn new(order_item_id: u32, plan_id: Option<u32>, action_id: Option<u32>, patient: Mutable<Option<Rc<PatientInfo>>>, order_type: OrderType, form_type: FormType, view_by: Mutable<String>) -> Rc<Self> {
         Rc::new(Self {
             order_item_id: Mutable::new(order_item_id),
             plan_id: Mutable::new(plan_id),
@@ -133,15 +125,7 @@ impl IndexPlanActionForm {
     /// plan_id = None is start with no plan selected <br>
     /// action_id = None is start with no action selected <br>
     /// this will call load_patient_info() from visit_type later
-    pub fn new_with_visit_type(
-        order_item_id: u32,
-        plan_id: Option<u32>,
-        action_id: Option<u32>,
-        visit_type: VisitTypeId,
-        order_type: OrderType,
-        form_type: FormType,
-        view_by: Mutable<String>,
-    ) -> Rc<Self> {
+    pub fn new_with_visit_type(order_item_id: u32, plan_id: Option<u32>, action_id: Option<u32>, visit_type: VisitTypeId, order_type: OrderType, form_type: FormType, view_by: Mutable<String>) -> Rc<Self> {
         Rc::new(Self {
             order_item_id: Mutable::new(order_item_id),
             plan_id: Mutable::new(plan_id),
@@ -187,11 +171,7 @@ impl IndexPlanActionForm {
             opt.as_ref()
                 .and_then(|order_item| {
                     // allow `without_order` to use `stat` tab
-                    if order_item.order_item_id == 0 {
-                        Some(true)
-                    } else {
-                        order_item.stat.as_ref().map(|stat| stat.as_str() == "Y")
-                    }
+                    if order_item.order_item_id == 0 { Some(true) } else { order_item.stat.as_ref().map(|stat| stat.as_str() == "Y") }
                 })
                 .unwrap_or_default()
         })
@@ -1464,12 +1444,7 @@ impl IndexPlanActionForm {
     fn render_plan_sch_time_multiple(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
         let order_hr = modal.order_item.lock_ref().as_ref().and_then(|oi| oi.order_time.map(|ot| ot.hour())).unwrap_or(js_now().time().hour());
         // set start hour with min plan datetime / order time /now
-        let start_hr = time_plans
-            .iter()
-            .filter_map(|plan| datetime_from_opt(plan.plan_date, plan.plan_time))
-            .min()
-            .map(|dt| dt.hour())
-            .unwrap_or(order_hr);
+        let start_hr = time_plans.iter().filter_map(|plan| datetime_from_opt(plan.plan_date, plan.plan_time)).min().map(|dt| dt.hour()).unwrap_or(order_hr);
         modal.plan_time_start_hour.set_neq(start_hr);
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
 
@@ -1778,13 +1753,7 @@ impl IndexPlanActionForm {
         let (container_id, container_hash, gut_id, gut_hash, title) = if plan_id_opt.is_some() {
             ("modal-actions-list-container", "#modal-actions-list-container", "modal-actions-list", "#modal-actions-list", "")
         } else {
-            (
-                "modal-all-actions-list-container",
-                "#modal-all-actions-list-container",
-                "modal-all-actions-list",
-                "#modal-all-actions-list",
-                "ทั้งหมด",
-            )
+            ("modal-all-actions-list-container", "#modal-all-actions-list-container", "modal-all-actions-list", "#modal-all-actions-list", "ทั้งหมด")
         };
         modal.plan_actions(plan_id_opt, order_item_opt.clone(), allow_all).and_then(|actions| {
             let actions_len = actions.len();
@@ -2852,10 +2821,7 @@ impl IndexPlanActionForm {
 
     fn plan_dom(plan: Rc<IndexPlan>, modal: Rc<Self>, custom_label: Option<String>) -> Dom {
         let label = custom_label.unwrap_or([date_th_opt(&plan.plan_date), time_hm_opt(&plan.plan_time)].join(" "));
-        let actions_len = modal
-            .plan_actions(Some(plan.plan_id), modal.order_item.get_cloned(), false)
-            .map(|actions| actions.len())
-            .unwrap_or_default();
+        let actions_len = modal.plan_actions(Some(plan.plan_id), modal.order_item.get_cloned(), false).map(|actions| actions.len()).unwrap_or_default();
         let is_same_plan_id = modal.plan_id.get().map(|id| id == plan.plan_id).unwrap_or_default();
         html!("a", {
             .apply(|dom| {
@@ -2923,8 +2889,7 @@ impl IndexPlanActionForm {
     fn plan_dom_new_and_action_now(modal: Rc<Self>, app: Rc<App>) -> Dom {
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
         let allow = if is_ipd {
-            app.endpoint_is_allow(&Method::POST, &EndPoint::IpdIndexAction, is_pre_admit) && app.has_permission(Permission::IpdNurseIndexAdd)
-                || (is_pre_admit && app.has_permission(Permission::OpdErNurseIndexAdd))
+            app.endpoint_is_allow(&Method::POST, &EndPoint::IpdIndexAction, is_pre_admit) && app.has_permission(Permission::IpdNurseIndexAdd) || (is_pre_admit && app.has_permission(Permission::OpdErNurseIndexAdd))
         } else {
             app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErIndexAction, false) && app.has_permission(Permission::OpdErNurseIndexAdd)
         };
@@ -2987,13 +2952,7 @@ impl IndexPlanActionForm {
                 order_item
                     .index_plans
                     .iter()
-                    .flat_map(|plan| {
-                        plan.actions
-                            .iter()
-                            .find(|action| action.action_id == Some(action_id))
-                            .map(|action| action.monitors.clone())
-                            .unwrap_or_default()
-                    })
+                    .flat_map(|plan| plan.actions.iter().find(|action| action.action_id == Some(action_id)).map(|action| action.monitors.clone()).unwrap_or_default())
                     .rev()
                     .map(Rc::new)
                     .collect()
@@ -3004,15 +2963,7 @@ impl IndexPlanActionForm {
     fn order_item_plans_with_sch_type(&self, sch_type: &'static str) -> impl Signal<Item = Vec<Rc<IndexPlan>>> + use<> {
         self.order_item.signal_cloned().map(move |opt| {
             opt.as_ref()
-                .map(|order_item| {
-                    order_item
-                        .index_plans
-                        .iter()
-                        .filter(|plan| plan.plan_sch_type == Some(String::from(sch_type)))
-                        .cloned()
-                        .map(Rc::new)
-                        .collect()
-                })
+                .map(|order_item| order_item.index_plans.iter().filter(|plan| plan.plan_sch_type == Some(String::from(sch_type))).cloned().map(Rc::new).collect())
                 .unwrap_or_default()
         })
     }
@@ -3106,14 +3057,8 @@ impl IndexPlanActionForm {
     }
 
     fn no_more_action(&self) -> bool {
-        let actions_len = self
-            .plan_actions(self.plan_id.get(), self.order_item.get_cloned(), false)
-            .map(|actions| actions.len())
-            .unwrap_or_default();
-        matches!(
-            (self.active_tab.get_cloned(), self.is_continuous(), actions_len > 0),
-            (PlanTab::Time, false, true) | (PlanTab::Stat, _, true)
-        )
+        let actions_len = self.plan_actions(self.plan_id.get(), self.order_item.get_cloned(), false).map(|actions| actions.len()).unwrap_or_default();
+        matches!((self.active_tab.get_cloned(), self.is_continuous(), actions_len > 0), (PlanTab::Time, false, true) | (PlanTab::Stat, _, true))
     }
 
     fn set_no_action(&self) {
@@ -3228,12 +3173,7 @@ impl IndexPlanActionForm {
     fn go_and_set_action(&self, action: &Rc<IndexAction>) {
         self.form_type.set_neq(FormType::Action);
         if let Some(plan_id) = action.plan_id {
-            if let Some(plan) = self
-                .order_item
-                .lock_ref()
-                .as_ref()
-                .and_then(|order_item| order_item.index_plans.iter().find(|plan| plan.plan_id == plan_id).cloned())
-            {
+            if let Some(plan) = self.order_item.lock_ref().as_ref().and_then(|order_item| order_item.index_plans.iter().find(|plan| plan.plan_id == plan_id).cloned()) {
                 self.active_tab.set(PlanTab::from_sch_type(&plan.plan_sch_type));
                 self.plan_detail.set_neq(plan.plan_detail.clone().unwrap_or_default());
             }
@@ -3346,11 +3286,7 @@ impl IndexPlanActionForm {
 
 fn render_order_item(order_item: Rc<OrderItem>, app: Rc<App>) -> Dom {
     let is_oneday = order_item.order_type.clone().unwrap_or_default().as_str() == "oneday";
-    let will_blue = if is_oneday {
-        vec!["med", "home-medication", "injection", "ivfluid"]
-    } else {
-        vec!["med", "injection", "ivfluid"]
-    };
+    let will_blue = if is_oneday { vec!["med", "home-medication", "injection", "ivfluid"] } else { vec!["med", "injection", "ivfluid"] };
     let (owner_text, owner_bg) = match order_item.order_owner_type.clone().unwrap_or_default().as_str() {
         "doctor" => ("Doctor", "bg-primary"),
         "nurse" => ("Nurse", "text-bg-warning"),
@@ -3599,20 +3535,10 @@ impl OrderType {
     }
 }
 
-fn first_24hr_plan_buttons_iter(
-    start_hr: u8,
-    order_hr: u8,
-    first_24hr: Vec<u8>,
-    order_date_opt: Option<Date>,
-    time_plans: &[Rc<IndexPlan>],
-    plan_add_datetimes: Mutable<HashSet<PrimitiveDateTime>>,
-) -> impl Iterator<Item = Dom> {
+fn first_24hr_plan_buttons_iter(start_hr: u8, order_hr: u8, first_24hr: Vec<u8>, order_date_opt: Option<Date>, time_plans: &[Rc<IndexPlan>], plan_add_datetimes: Mutable<HashSet<PrimitiveDateTime>>) -> impl Iterator<Item = Dom> {
     first_24hr.into_iter().map(move |h| {
         let btn_date = if h < start_hr { order_date_opt.and_then(|d| d.next_day()) } else { order_date_opt }.unwrap_or(js_now().date());
-        let plan_count = time_plans
-            .iter()
-            .filter(|plan| plan.plan_date == Some(btn_date) && plan.plan_time.map(|t| t.hour() == h).unwrap_or_default())
-            .count();
+        let plan_count = time_plans.iter().filter(|plan| plan.plan_date == Some(btn_date) && plan.plan_time.map(|t| t.hour() == h).unwrap_or_default()).count();
 
         html!("button", {
             .attr("type", "button")

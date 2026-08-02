@@ -7,34 +7,15 @@ use kphis_util::error::{AppError, Source};
 use crate::{query_all, query1_all, query2_all, query3_all, query4_all, query5_all};
 
 // ipd-dr-search-patient-table.php
-pub async fn get_ipd_dr_search_patient(
-    request: IpdSearchPatientDrRequest,
-    hn_len: usize,
-    an_len: usize,
-    pool: &Pool<MySql>,
-    hosxp: &str,
-    kphis: &str,
-) -> Result<Vec<IpdSearchPatientDrResponse>, AppError> {
-    let patient = request
-        .patient
-        .as_ref()
-        .and_then(|patient| urlencoding::decode(&patient).map(|s| s.into_owned()).ok())
-        .unwrap_or_default();
+pub async fn get_ipd_dr_search_patient(request: IpdSearchPatientDrRequest, hn_len: usize, an_len: usize, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<IpdSearchPatientDrResponse>, AppError> {
+    let patient = request.patient.as_ref().and_then(|patient| urlencoding::decode(&patient).map(|s| s.into_owned()).ok()).unwrap_or_default();
     let ward = request.ward.clone().unwrap_or_default();
     let doctor = request.doctor_in_charge.clone().unwrap_or_default();
     let consult = request.consult_dr_search.clone().unwrap_or_default();
     let passcode = request.passcode.clone().unwrap_or_default();
     let patient_wildcard = ["%", &patient, "%"].concat();
     let (sql, filter) = sql_and_filter(request, hn_len, an_len, hosxp, kphis);
-    let rows = match (
-        filter.has_patient,
-        filter.pt_is_num,
-        filter.anlen_eq_hnlen,
-        filter.has_ward,
-        filter.has_doctor,
-        filter.has_consult,
-        filter.has_passcode,
-    ) {
+    let rows = match (filter.has_patient, filter.pt_is_num, filter.anlen_eq_hnlen, filter.has_ward, filter.has_doctor, filter.has_consult, filter.has_passcode) {
         (true, true, false, _, _, _, true) => query2_all(&patient, &passcode, &sql, pool, "Select IpdDrSearchPatient-1").await,
         (true, true, false, _, _, _, false) => query1_all(&patient, &sql, pool, "Select IpdDrSearchPatient-2").await,
         (true, false, true, _, _, _, true) => query3_all(&patient_wildcard, &patient_wildcard, &passcode, &sql, pool, "Select IpdDrSearchPatient-3").await,

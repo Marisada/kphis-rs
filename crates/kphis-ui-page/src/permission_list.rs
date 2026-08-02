@@ -121,10 +121,7 @@ impl PermissionListPage {
     }
 
     fn render_option_recursive(indent: usize, mut space: usize, head: &Rc<Role>, tails: &[Rc<Role>], modal_role_with_child: &[String], options: &mut Vec<Dom>) {
-        let heads = tails
-            .iter()
-            .filter(|role| role.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default())
-            .collect::<Vec<&Rc<Role>>>();
+        let heads = tails.iter().filter(|role| role.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default()).collect::<Vec<&Rc<Role>>>();
         let heads_len = heads.len();
         if heads_len == 0 {
             space = space.saturating_sub(1);
@@ -150,19 +147,15 @@ impl PermissionListPage {
     }
 
     fn create_parent_badge(perm: &Permission, page: Rc<Self>) -> impl Iterator<Item = Dom> {
-        page.all_role_permissions
-            .lock_ref()
-            .to_vec()
-            .into_iter()
-            .filter_map(clone!(page, perm => move |role: Rc<RolePermissionList>| {
-                (page.modal_parents.lock_ref().contains(&role.role) && role.permissions.as_ref().map(|perms| perms.contains(&perm)).unwrap_or_default()).then(|| {
-                    html!("span", {
-                        .class(class::BADGE_CYAN_R)
-                        .style("cursor","default")
-                        .text(&role.role_desc.clone().unwrap_or_default())
-                    })
+        page.all_role_permissions.lock_ref().to_vec().into_iter().filter_map(clone!(page, perm => move |role: Rc<RolePermissionList>| {
+            (page.modal_parents.lock_ref().contains(&role.role) && role.permissions.as_ref().map(|perms| perms.contains(&perm)).unwrap_or_default()).then(|| {
+                html!("span", {
+                    .class(class::BADGE_CYAN_R)
+                    .style("cursor","default")
+                    .text(&role.role_desc.clone().unwrap_or_default())
                 })
-            }))
+            })
+        }))
     }
 
     fn get_parents(&self) -> impl Iterator<Item = String> {
@@ -222,12 +215,7 @@ impl PermissionListPage {
         page.modal_role.set_neq(role.role.clone());
         page.modal_role_desc.set_neq(role.role_desc.clone().unwrap_or_default());
         if let Some(parent) = role.parent_role.clone() {
-            let parent_selected_option = page
-                .roles
-                .lock_ref()
-                .iter()
-                .find(|r| r.role == parent)
-                .map(|r| (r.role.clone(), r.role_desc.clone().unwrap_or_default()));
+            let parent_selected_option = page.roles.lock_ref().iter().find(|r| r.role == parent).map(|r| (r.role.clone(), r.role_desc.clone().unwrap_or_default()));
             page.modal_parent_selected_option.set(parent_selected_option);
             page.modal_parent_role.set_neq(parent.clone());
         } else {
@@ -632,11 +620,7 @@ impl PermissionListPage {
     }
 
     fn render_table_view(i: usize, role: Rc<RolePermissionList>, page: Rc<Self>) -> Dom {
-        let perms_dom = role
-            .permissions
-            .as_ref()
-            .map(|perms| perms.iter().map(|perm| html!("li", {.text(perm.str())})).collect::<Vec<Dom>>())
-            .unwrap_or_default();
+        let perms_dom = role.permissions.as_ref().map(|perms| perms.iter().map(|perm| html!("li", {.text(perm.str())})).collect::<Vec<Dom>>()).unwrap_or_default();
 
         html!("tr", {
             .style("cursor","pointer")

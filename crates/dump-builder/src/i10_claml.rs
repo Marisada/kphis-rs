@@ -318,11 +318,7 @@ fn triage(e: &XmlEvent, state: Rc<RefCell<State>>) {
         ParseAt::Others => {
             let mut state_mut = state.borrow_mut();
             match e {
-                XmlEvent::StartDocument {
-                    version: _,
-                    encoding: _,
-                    standalone: _,
-                } => {}
+                XmlEvent::StartDocument { version: _, encoding: _, standalone: _ } => {}
                 XmlEvent::EndDocument => {}
                 XmlEvent::ProcessingInstruction { name: _, data: _ } => {}
                 XmlEvent::StartElement { name, attributes, namespace: _ } => match name.local_name.as_str() {
@@ -392,11 +388,7 @@ fn triage(e: &XmlEvent, state: Rc<RefCell<State>>) {
 fn parse_modifier(current: &str, rubric_id_opt: &Option<String>, e: &XmlEvent, state: Rc<RefCell<State>>) {
     let mut state_mut = state.borrow_mut();
     match e {
-        XmlEvent::StartDocument {
-            version: _,
-            encoding: _,
-            standalone: _,
-        } => {}
+        XmlEvent::StartDocument { version: _, encoding: _, standalone: _ } => {}
         XmlEvent::EndDocument => {}
         XmlEvent::ProcessingInstruction { name: _, data: _ } => {}
         XmlEvent::StartElement { name, attributes, namespace: _ } => {
@@ -464,11 +456,7 @@ fn parse_modifier(current: &str, rubric_id_opt: &Option<String>, e: &XmlEvent, s
 fn parse_modifier_class(current: &str, rubric_id_opt: &Option<String>, e: &XmlEvent, state: Rc<RefCell<State>>) {
     let mut state_mut = state.borrow_mut();
     match e {
-        XmlEvent::StartDocument {
-            version: _,
-            encoding: _,
-            standalone: _,
-        } => {}
+        XmlEvent::StartDocument { version: _, encoding: _, standalone: _ } => {}
         XmlEvent::EndDocument => {}
         XmlEvent::ProcessingInstruction { name: _, data: _ } => {}
         XmlEvent::StartElement { name, attributes, namespace: _ } => {
@@ -545,11 +533,7 @@ fn parse_modifier_class(current: &str, rubric_id_opt: &Option<String>, e: &XmlEv
 fn parse_class(current: &str, rubric_id_opt: &Option<String>, e: &XmlEvent, state: Rc<RefCell<State>>) {
     let mut state_mut = state.borrow_mut();
     match e {
-        XmlEvent::StartDocument {
-            version: _,
-            encoding: _,
-            standalone: _,
-        } => {}
+        XmlEvent::StartDocument { version: _, encoding: _, standalone: _ } => {}
         XmlEvent::EndDocument => {}
         XmlEvent::ProcessingInstruction { name: _, data: _ } => {}
         XmlEvent::StartElement { name, attributes, namespace: _ } => {
@@ -654,16 +638,8 @@ pub fn get_claml_asterisk_dagger() -> HashMap<String, HashSet<String>> {
         for (_, ru) in class.rubrics.iter() {
             let rubric_usage = ru.usage.as_ref();
             if matches!(ru.kind, RubricKind::Exclusion) {
-                let daggers = ru
-                    .reference
-                    .iter()
-                    .filter(|rf| rf.usage.as_ref().map(|u| matches!(u, UsageKind::Dagger)).unwrap_or_default())
-                    .collect::<Vec<&Reference>>();
-                let asters = ru
-                    .reference
-                    .iter()
-                    .filter(|rf| rf.usage.as_ref().map(|u| matches!(u, UsageKind::Aster)).unwrap_or_default())
-                    .collect::<Vec<&Reference>>();
+                let daggers = ru.reference.iter().filter(|rf| rf.usage.as_ref().map(|u| matches!(u, UsageKind::Dagger)).unwrap_or_default()).collect::<Vec<&Reference>>();
+                let asters = ru.reference.iter().filter(|rf| rf.usage.as_ref().map(|u| matches!(u, UsageKind::Aster)).unwrap_or_default()).collect::<Vec<&Reference>>();
                 if !daggers.is_empty() && !asters.is_empty() {
                     exclusion_usage.push((daggers, asters));
                 }

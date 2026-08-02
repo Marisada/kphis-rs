@@ -59,10 +59,7 @@ pub struct IpdMraPage {
 
 impl IpdMraPage {
     pub fn new(an: String) -> Rc<Self> {
-        Rc::new(Self {
-            an: Mutable::new(an),
-            ..Default::default()
-        })
+        Rc::new(Self { an: Mutable::new(an), ..Default::default() })
     }
 
     fn load_list(page: Rc<Self>, app: Rc<App>) {
@@ -2426,14 +2423,7 @@ impl IpdMraMutable {
         })
     }
 
-    fn check_bool_btn(
-        row: MraRow,
-        mra: Rc<Self>,
-        mutable: Mutable<bool>,
-        true_disable_mutable_na: Option<Mutable<bool>>,
-        true_disable_mutable_mn: Option<Mutable<bool>>,
-        recal_mutable: Mutable<bool>,
-    ) -> Dom {
+    fn check_bool_btn(row: MraRow, mra: Rc<Self>, mutable: Mutable<bool>, true_disable_mutable_na: Option<Mutable<bool>>, true_disable_mutable_mn: Option<Mutable<bool>>, recal_mutable: Mutable<bool>) -> Dom {
         html!("button" => HtmlButtonElement, {
             .attr("type", "button")
             .style("width","38px")

@@ -39,11 +39,7 @@ pub async fn post_image_file(files: &[ImageSave], user: &str, pool: &Pool<MySql>
         }
     }
     // then database
-    let results = if !image_paths.is_empty() {
-        post_image_path(&image_paths, user, pool, kphis_extra).await?
-    } else {
-        Vec::new()
-    };
+    let results = if !image_paths.is_empty() { post_image_path(&image_paths, user, pool, kphis_extra).await? } else { Vec::new() };
 
     Ok(results)
 }
@@ -157,12 +153,7 @@ pub async fn post_image_usage(images: &[ImagePath], user: &str, pool: &Pool<MySq
     let sql = file_path::insert_image_usage(images.len(), kphis_extra);
     let mut query = sqlx::query(AssertSqlSafe(sql));
     for image in images.iter() {
-        query = query
-            .bind(image.usage_id.clone().map(|usage| usage as u32))
-            .bind(image.usage_key_id)
-            .bind(image.image_id)
-            .bind(user)
-            .bind(user);
+        query = query.bind(image.usage_id.clone().map(|usage| usage as u32)).bind(image.usage_key_id).bind(image.image_id).bind(user).bind(user);
     }
     query.execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Insert ImageUsage"))
 }

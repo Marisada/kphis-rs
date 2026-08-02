@@ -73,12 +73,7 @@ impl IpdOrderPharmacyPage {
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         app.set_title("KPHIS - IPD Pharmacy Order");
 
-        let (ward_select_option, doctor_select_option) = app
-            .app_asset
-            .lock_ref()
-            .as_ref()
-            .map(|asset| (asset.ward_select_option.clone(), asset.doctor_select_option.clone()))
-            .unwrap_or_default();
+        let (ward_select_option, doctor_select_option) = app.app_asset.lock_ref().as_ref().map(|asset| (asset.ward_select_option.clone(), asset.doctor_select_option.clone())).unwrap_or_default();
 
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {

@@ -849,11 +849,7 @@ pub async fn get_pharmacy_order(params: &IpdOrderPharmacyParams, hlen: usize, al
 /// delete order and order_item
 pub async fn delete_order(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = order::delete_order(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(order_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete Order"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(order_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete Order"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete Order"))
 }
@@ -862,22 +858,14 @@ pub async fn delete_order(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Res
 /// an
 pub async fn delete_order_bundle(an: &str, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = order::delete_order_bundle(kphis);
-    let delete_result = sqlx::query(AssertSqlSafe(sql))
-        .bind(an)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete OrderBundle"))?;
+    let delete_result = sqlx::query(AssertSqlSafe(sql)).bind(an).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete OrderBundle"))?;
 
     Ok(ExecuteResponse::from_query_result(delete_result, "Delete OrderBundle"))
 }
 
 async fn delete_order_item(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Result<MySqlQueryResult, AppError> {
     let delete_sql = order::delete_order_item(kphis);
-    sqlx::query(AssertSqlSafe(delete_sql))
-        .bind(order_id)
-        .execute(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Delete OrderItem"))
+    sqlx::query(AssertSqlSafe(delete_sql)).bind(order_id).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete OrderItem"))
 }
 
 async fn insert_medplan_ipd(medplan: &MedPlanItem, med_rec_icode: &str, user: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<ExecuteResponse, AppError> {
@@ -897,11 +885,7 @@ async fn insert_medplan_ipd(medplan: &MedPlanItem, med_rec_icode: &str, user: &s
             let sp_use_opt = if let Some(order_item_detail) = opt_empty_none(order_item_detail_opt) {
                 if let Some(sp_use) = bump_and_get_sp_use(pool, hosxp).await? {
                     let (line1, line2, line3) = split_to_three(&order_item_detail, is_ivfluid);
-                    if insert_sp_use(&sp_use, &line1, &line2, &line3, user, pool, hosxp).await.is_ok() {
-                        Some(sp_use)
-                    } else {
-                        None
-                    }
+                    if insert_sp_use(&sp_use, &line1, &line2, &line3, user, pool, hosxp).await.is_ok() { Some(sp_use) } else { None }
                 } else {
                     None
                 }

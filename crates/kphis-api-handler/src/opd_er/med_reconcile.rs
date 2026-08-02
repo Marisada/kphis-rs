@@ -53,11 +53,7 @@ pub async fn get_opd_er_med_reconcile(Query(params): Query<MedReconciliationPara
     responses(DocVecU32<ExecuteResponse>),
     params(MedReconciliationParams),
 )]
-pub async fn post_opd_er_med_reconcile(
-    Query(params): Query<MedReconciliationParams>,
-    ctx: RequestState,
-    Json(payload): Json<Vec<MedReconciliationItemSave>>,
-) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
+pub async fn post_opd_er_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemSave>>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::POST, false).await?;
 
@@ -89,11 +85,7 @@ pub async fn post_opd_er_med_reconcile(
     responses(DocVec<ExecuteResponse>),
     params(MedReconciliationParams),
 )]
-pub async fn patch_opd_er_med_reconcile(
-    Query(params): Query<MedReconciliationParams>,
-    ctx: RequestState,
-    Json(payload): Json<Vec<MedReconciliationItemPatch>>,
-) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
+pub async fn patch_opd_er_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemPatch>>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
     ctx.user_state.trace_req_by();
     ctx.authorize_and_access_log(&Method::PATCH, false).await?;
 

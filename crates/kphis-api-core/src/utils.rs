@@ -30,10 +30,7 @@ use crate::{pdf::core::JsonActorHandle, state::ApiState};
 /// create logs folder and parse config
 pub fn get_config(mode: &str) -> Config {
     let config_path = ["./volume/config/", mode, ".toml"].concat();
-    let cfg = config::Config::builder()
-        .add_source(config::File::with_name(&config_path))
-        .build()
-        .expect("Error create config from file");
+    let cfg = config::Config::builder().add_source(config::File::with_name(&config_path)).build().expect("Error create config from file");
     println!("Loading config from {}", &config_path);
 
     cfg
@@ -171,10 +168,7 @@ where
             parts.path_and_query = "/".parse().ok();
         }
 
-        parts.authority = parts
-            .authority
-            .map(|auth| auth.as_str().replace(&ports.http_port.to_string(), &ports.https().to_string()).parse::<Authority>())
-            .transpose()?;
+        parts.authority = parts.authority.map(|auth| auth.as_str().replace(&ports.http_port.to_string(), &ports.https().to_string()).parse::<Authority>()).transpose()?;
 
         Ok(Uri::from_parts(parts)?)
     }

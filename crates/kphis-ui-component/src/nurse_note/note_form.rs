@@ -138,9 +138,7 @@ impl NurseNoteFormCpn {
     }
 
     fn is_ipd_and_is_pre_admit(&self) -> impl Signal<Item = (bool, bool)> + use<> {
-        self.patient
-            .signal_cloned()
-            .map(|opt| opt.as_ref().map(|pt| pt.visit_type.is_ipd_and_is_pre_admit()).unwrap_or_default())
+        self.patient.signal_cloned().map(|opt| opt.as_ref().map(|pt| pt.visit_type.is_ipd_and_is_pre_admit()).unwrap_or_default())
     }
 
     fn is_pre_admit(&self) -> impl Signal<Item = bool> + use<> {

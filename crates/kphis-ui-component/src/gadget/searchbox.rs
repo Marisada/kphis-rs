@@ -106,11 +106,7 @@ pub fn red_keywords_in_icd_dot(is_icd9: bool, keyword: &str, icd10_with_dot: &st
     if keyword.is_empty() {
         return vec![text(icd10_with_dot)];
     }
-    let keyword_lo = if is_icd9 {
-        icd9_dot(keyword).to_ascii_lowercase()
-    } else {
-        icd10_dot(keyword).to_ascii_lowercase()
-    };
+    let keyword_lo = if is_icd9 { icd9_dot(keyword).to_ascii_lowercase() } else { icd10_dot(keyword).to_ascii_lowercase() };
     let s_word_lo = icd10_with_dot.to_ascii_lowercase();
     let mut results = Vec::new();
     if let Some(s) = s_word_lo.find(&keyword_lo) {

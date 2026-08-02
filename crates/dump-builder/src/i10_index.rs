@@ -120,9 +120,7 @@ pub fn parse_i10_index() -> I10Index {
     }
 }
 
-const NEED_NEXT_WORD_ENDED: [&str; 15] = [
-    " against", " also", " and", " as", " by", " for", " in", " of", " or", " see", " to", " type", " under", " with", " without",
-];
+const NEED_NEXT_WORD_ENDED: [&str; 15] = [" against", " also", " and", " as", " by", " for", " in", " of", " or", " see", " to", " type", " under", " with", " without"];
 const NEED_NEXT_WORD_EXACT: [&str; 15] = ["against", "also", "and", "as", "by", "for", "in", "of", "or", "see", "to", "type", "under", "with", "without"];
 const DISCARD_PARENTHESES_WORD: [&str; 9] = ["(by)", "(for)", "(from)", "(in)", "(of)", "(to)", "(type)", "(with)", "(without)"];
 
@@ -145,15 +143,7 @@ fn split_section(raw: &str) -> (Vec<Vec<(usize, String)>>, Vec<Vec<(usize, Strin
 
     let lines = raw.lines().collect::<Vec<&str>>();
     for line in lines.windows(2) {
-        match LineType::new(
-            line[0],
-            line[1],
-            &mut current_section,
-            &mut alphabet,
-            &mut is_start_new_alphabet,
-            &mut next_alphabet,
-            &prev_need_next_word,
-        ) {
+        match LineType::new(line[0], line[1], &mut current_section, &mut alphabet, &mut is_start_new_alphabet, &mut next_alphabet, &prev_need_next_word) {
             LineType::Empty => {}
             LineType::PageLabel => {}
             LineType::PageNumber => {}
@@ -296,11 +286,7 @@ impl LineType {
             }
         } else {
             match line {
-                "INTERNATIONAL CLASSIFICATION OF DISEASES"
-                | "ALPHABETICAL INDEX TO DISEASES AND NATURE OF INJURY"
-                | "EXTERNAL CAUSES OF INJURIES"
-                | "EXTERNAL CAUSES OF INJURY"
-                | "TABLE OF DRUGS AND CHEMICALS" => Self::PageLabel,
+                "INTERNATIONAL CLASSIFICATION OF DISEASES" | "ALPHABETICAL INDEX TO DISEASES AND NATURE OF INJURY" | "EXTERNAL CAUSES OF INJURIES" | "EXTERNAL CAUSES OF INJURY" | "TABLE OF DRUGS AND CHEMICALS" => Self::PageLabel,
                 "Section I" => {
                     *section = Section::I;
                     Self::Section(Section::I)
@@ -314,26 +300,9 @@ impl LineType {
                     Self::Section(Section::III)
                 }
                 _ => {
-                    if matches!(section, Section::III)
-                        && [
-                            "Poisoning",
-                            "Substance Chapter XIX Accidental",
-                            "Intentional",
-                            "self-harm",
-                            "Undetermined",
-                            "intent",
-                            "Adverse effect",
-                            "in therapeutic",
-                            "use",
-                        ]
-                        .contains(&line)
-                    {
+                    if matches!(section, Section::III) && ["Poisoning", "Substance Chapter XIX Accidental", "Intentional", "self-harm", "Undetermined", "intent", "Adverse effect", "in therapeutic", "use"].contains(&line) {
                         Self::PageLabel
-                    } else if line.ends_with("––continued")
-                        || line.ends_with("––")
-                        || line == "continued"
-                        || (next_line.ends_with("––continued") && !next_line.starts_with(*alphabet) && !next_line.starts_with('–'))
-                    {
+                    } else if line.ends_with("––continued") || line.ends_with("––") || line == "continued" || (next_line.ends_with("––continued") && !next_line.starts_with(*alphabet) && !next_line.starts_with('–')) {
                         Self::Continued
                     } else if line.starts_with("– – – – – – – – – – – ") {
                         Self::Sub(11, line.trim_start_matches("– ").to_owned())
@@ -729,13 +698,7 @@ impl Patterned {
             }
         }
 
-        Self {
-            main,
-            note,
-            bracket_notes,
-            code,
-            concat,
-        }
+        Self { main, note, bracket_notes, code, concat }
     }
 }
 
@@ -770,10 +733,7 @@ fn is_keyword(line: &str, alphabet: &char, next_alphabet: &mut char, prev_need_n
 }
 
 fn is_accent_char(c: &char) -> bool {
-    [
-        'á', 'à', 'â', 'ã', 'ä', 'å', 'é', 'è', 'ê', 'ë', 'ē', 'í', 'ì', 'î', 'ĩ', 'ï', 'ó', 'ò', 'ô', 'õ', 'ö', 'ú', 'ù', 'û', 'ũ', 'ü', 'ç',
-    ]
-    .contains(c)
+    ['á', 'à', 'â', 'ã', 'ä', 'å', 'é', 'è', 'ê', 'ë', 'ē', 'í', 'ì', 'î', 'ĩ', 'ï', 'ó', 'ò', 'ô', 'õ', 'ö', 'ú', 'ù', 'û', 'ũ', 'ü', 'ç'].contains(c)
 }
 
 fn convert_accent_char(c: &char) -> char {
