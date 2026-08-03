@@ -285,7 +285,8 @@ pub fn verify_password(password: &str, hash: &str) -> Result<(), AppError> {
 ///
 /// Get Access token by Refresh token in Cookie, return single Login Response (new Access Token insided)<br>
 /// and new Refresh Token in Secure Cookies
-// return 404 to tell client that "not calling PUT /user for a new refresh token later"
+// mask any cookie/token/claims/user related 5xx error with 401 error
+// return 409 for client to call PUT /user (get a new refresh token) later
 #[utoipa::path(
     get,
     path = "/user",
@@ -302,11 +303,11 @@ pub async fn refresh_token(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, he
         Some(UserState { user, roles, permissions, addr, .. }) => {
             let user_db = login::get_user(&user.loginname, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
                 .await?
-                .ok_or(AppError::app_404("Unexpected").with_title(ErrorTitle::Security))?;
+                .ok_or(AppError::app_401("Unexpected").with_title(ErrorTitle::Security))?;
             // check expiration after check online-user
             let now_ts = get_timestamp_server()?;
             if claims.iat > now_ts || claims.exp < now_ts {
-                return Err(AppError::app_401("Get Token").with_title(ErrorTitle::Security));
+                return Err(Source::App.to_error(409, "Expired", "Get Token").with_title(ErrorTitle::Security));
             }
             // check IP address
             let real_addr = app
@@ -327,7 +328,7 @@ pub async fn refresh_token(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, he
 
             Ok(Json(response))
         }
-        None => Err(AppError::app_404("Get Token").with_title(ErrorTitle::Security)),
+        None => Err(AppError::app_401("Get Token").with_title(ErrorTitle::Security)),
     }
 }
 

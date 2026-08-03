@@ -36,16 +36,20 @@ pub async fn update_token(app: Rc<AppState>) -> bool {
                 // log::debug!("Access Token Valid");
                 true
             } else {
-                let (is_success, not_online) = renew_access_token(app.clone()).await;
-                if is_success {
-                    // |   | access expired | X | refresh expired |   |
-                    true
-                } else if !not_online {
-                    // |   | access expired |   | refresh expired | X |
-                    renew_refresh_popup(user.user.totp_done.get().unwrap_or_default(), app.clone()).await
-                } else {
-                    // log::debug!("no online");
-                    false
+                match renew_access_token(app.clone()).await {
+                    // (is_success, no_renew_refresh)
+                    (true, _) => {
+                        // |   | access expired | X | refresh expired |   |
+                        true
+                    }
+                    (false, true) => {
+                        // |   | access expired |   | refresh expired | X |
+                        renew_refresh_popup(user.user.totp_done.get().unwrap_or_default(), app.clone()).await
+                    }
+                    (false, false) => {
+                        // log::debug!("no online");
+                        false
+                    }
                 }
             }
         }
@@ -169,7 +173,7 @@ pub fn set_user(token_response: Option<LoginResponse>, app: Rc<AppState>) -> Res
 }
 
 /// GET `EndPoint::User`<br>
-/// return (is_success, not_online)
+/// return (is_success, need_renew_refresh)
 pub async fn renew_access_token(app: Rc<AppState>) -> (bool, bool) {
     match LoginResponse::call_api_get_access_renew(app.clone()).await {
         Ok(token_response) => {
@@ -182,7 +186,9 @@ pub async fn renew_access_token(app: Rc<AppState>) -> (bool, bool) {
         }
         Err(e) => {
             // log::warn!("Server return: {}", e.message);
-            (false, e.status == 404)
+            // mask any cookie/token/claims/user related 5xx error with 401 error
+            // return 409 for client to call PUT /user (get a new refresh token) later
+            (false, e.status == 409)
         }
     }
 }
