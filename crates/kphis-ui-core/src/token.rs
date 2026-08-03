@@ -37,7 +37,7 @@ pub async fn update_token(app: Rc<AppState>) -> bool {
                 true
             } else {
                 match renew_access_token(app.clone()).await {
-                    // (is_success, no_renew_refresh)
+                    // (is_success, need_renew_refresh)
                     (true, _) => {
                         // |   | access expired | X | refresh expired |   |
                         true
