@@ -58,7 +58,7 @@ pub fn get_claim_public(token: &str, public_key: &AsymmetricPublicKey<V4>) -> Re
     let trusted_token = PublicToken::verify(public_key, &untrusted_token, None, Some(SERVER_ENTITY.as_bytes())).map_err(|_e| AppError::app_401("Verify Token"))?;
 
     let claims_string = trusted_token.payload();
-    let claims = serde_json::from_str::<Claims>(claims_string).map_err(|_e| AppError::app_401("Verify Token").with_title(ErrorTitle::Security))?;
+    let claims = serde_json::from_str::<Claims>(claims_string).map_err(|e| Source::SerdeJson.to_error(500, e, "Verify Token").with_title(ErrorTitle::Security))?;
 
     Ok(claims)
 }

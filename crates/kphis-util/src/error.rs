@@ -110,7 +110,7 @@ impl Source {
             Self::Time => "Time",
             Self::Totp => "2FA",
             Self::Typst => "Typst",
-            Self::UlidDecode => "U128Decode",
+            Self::UlidDecode => "UidDecode",
             Self::UrlEncoding => "UrlEncoding",
             Self::X509 => "CryptoPdfCert",
         }
@@ -142,7 +142,7 @@ impl Source {
             "Time" => Self::Time,
             "2FA" => Self::Totp,
             "Typst" => Self::Typst,
-            "U128Decode" => Self::UlidDecode,
+            "UidDecode" => Self::UlidDecode,
             "UrlEncoding" => Self::UrlEncoding,
             "CryptoPdfCert" => Self::X509,
             _ => Self::App,
