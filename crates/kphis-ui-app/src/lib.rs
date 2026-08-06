@@ -347,10 +347,10 @@ impl App {
         app.async_load(
             false,
             clone!(app => async move {
-                let (is_success, not_online) = token::renew_access_token(app.state()).await;
+                let (is_success, need_renew_refresh) = token::renew_access_token(app.state()).await;
                 let is_auth = if is_success {
                     true
-                } else if !not_online {
+                } else if need_renew_refresh {
                     if let Some(user) = app.user.get_cloned() {
                         let totp_done = user.user.totp_done.get().unwrap_or_default();
                         if token::renew_refresh_popup(totp_done, app.state()).await {
