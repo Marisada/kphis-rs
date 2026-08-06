@@ -169,21 +169,38 @@ impl IndexPage {
                                 }))
                             }
                         })))
-                        .child(html!("button", {
-                            .attr("type", "button")
-                            .style("position","fixed")
-                            .style("right","19px")
-                            .style("bottom","0")
-                            .style("border","1px solid #333")
-                            .style("border-bottom-width","0px")
-                            .style("border-radius","9px 9px 0 0")
-                            .style("padding","0 9px")
-                            .child(html!("i", {.class(class::FA_SEARCH)}))
-                            .text(" \u{00a0}Update")
-                            .event(clone!(app => move |_: events::Click| {
-                                app.update_sw();
-                            }))
-                        }))
+                        .children([
+                            html!("button", {
+                                .attr("type", "button")
+                                .style("position","fixed")
+                                .style("right","119px")
+                                .style("bottom","0")
+                                .style("border","1px solid #333")
+                                .style("border-bottom-width","0px")
+                                .style("border-radius","9px 9px 0 0")
+                                .style("padding","0 9px")
+                                .child(html!("i", {.class(class::FA_SEARCH)}))
+                                .text(" Update")
+                                .event(clone!(app => move |_: events::Click| {
+                                    app.update_sw();
+                                }))
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .style("position","fixed")
+                                .style("right","19px")
+                                .style("bottom","0")
+                                .style("border","1px solid #333")
+                                .style("border-bottom-width","0px")
+                                .style("border-radius","9px 9px 0 0")
+                                .style("padding","0 9px")
+                                .child(html!("i", {.class(class::FA_SYNC)}))
+                                .text(" Reload")
+                                .event(clone!(app => move |_: events::Click| {
+                                    app.window.with(|w| w.location().reload().unwrap());
+                                }))
+                            }),
+                        ])
                     }))
                 }))
             }))
