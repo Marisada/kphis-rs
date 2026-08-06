@@ -220,7 +220,7 @@ impl UserListPage {
     }
 
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
-        app.set_title("KPHIS - Permission List");
+        app.set_title("KPHIS - User List");
 
         html!("section", {
             .future(map_ref!(
@@ -653,7 +653,7 @@ impl UserListPage {
             .attr("data-bs-target", "#userManageModal")
             .children([
                 html!("td", {.class("text-center").text(&(i + 1).to_string())}),
-                html!("td", {.text(&row.loginname.clone())}),
+                html!("td", {.text(&row.loginname)}),
                 html!("td", {.text(&row.name.clone().unwrap_or_default())}),
                 html!("td", {
                     .child(html!("ul", {

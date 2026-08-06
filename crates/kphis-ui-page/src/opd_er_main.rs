@@ -354,7 +354,7 @@ impl OpdErMainPage {
     }
 
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
-        app.set_title("KPHIS - Opd-Er Main Page");
+        app.set_title("KPHIS - Opd-ER Main Page");
 
         let (patient_main, hn) = match zero_none(page.opd_er_order_master_id.get()) {
             Some(id) => {
