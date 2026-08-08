@@ -1221,9 +1221,9 @@ impl VitalSignFormCpn {
                 }),
                 html!("div", {
                     .class(class::ROW)
-                    .visible_signal(page.is_scorable("crt"))
+                    // .visible_signal(page.is_scorable("crt"))
                     .children([
-                        label_for("crt_ews", "Capillary Refill Time", true),
+                        label_for("crt_ews", "Capillary Refill", true),
                         input_number("crt_ews", page.crt.clone(), page.changed.clone(), 0, Some("0"), Some("99"), Some("sec"), Some((page.scores.clone(), "crt"))),
                         ews_badges(page.scores.clone(), "crt"),
                     ])
