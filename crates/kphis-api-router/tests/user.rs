@@ -125,10 +125,10 @@ async fn api_user() {
 
     // Try Use Refresh Token to get Access Token after logout
     let get_refresh_failure = server.get(&EndPoint::User.base()).expect_failure().await;
-    assert_eq!(get_refresh_failure.status_code(), StatusCode::NOT_FOUND); // 404 instead of 401 for preventing further request
+    assert_eq!(get_refresh_failure.status_code(), StatusCode::UNAUTHORIZED);
     let get_refresh_failure_error = get_refresh_failure.json::<AppError>();
     assert_eq!(get_refresh_failure_error.source, Source::App);
-    assert_eq!(get_refresh_failure_error.status, 404); // 404 instead of 401 for preventing further request
+    assert_eq!(get_refresh_failure_error.status, 401);
 
     // Try PUT with Refresh Token and state_id after logout
     let put_refresh_failure = server.put(&EndPoint::User.base()).json(&user).expect_failure().await;

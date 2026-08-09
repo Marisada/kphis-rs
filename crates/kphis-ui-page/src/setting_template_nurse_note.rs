@@ -953,8 +953,6 @@ impl SettingTemplateNurseNotePage {
                                                                 let child = if &group.smp_status.clone().unwrap_or_default() == "Y" {
                                                                     html!("i", {
                                                                         .class(class::FA_CHECK_GREEN)
-                                                                        .attr("data-bs-toggle","tooltip")
-                                                                        .attr("data-bs-placement","top")
                                                                         .attr("title","ยังใช้งานอยู่")
                                                                     })
                                                                 } else {
@@ -1199,8 +1197,6 @@ impl SettingTemplateNurseNotePage {
                                                                 let child = if &subgroup.subgroup_status.clone().unwrap_or_default() == "Y" {
                                                                     html!("i", {
                                                                         .class(class::FA_CHECK_GREEN)
-                                                                        .attr("data-bs-toggle","tooltip")
-                                                                        .attr("data-bs-placement","top")
                                                                         .attr("title","ยังใช้งานอยู่")
                                                                     })
                                                                 } else {
@@ -1415,8 +1411,6 @@ impl SettingTemplateNurseNotePage {
                                                                 let child = if &focus.focus_status.clone().unwrap_or_default() == "Y" {
                                                                     html!("i", {
                                                                         .class(class::FA_CHECK_GREEN)
-                                                                        .attr("data-bs-toggle","tooltip")
-                                                                        .attr("data-bs-placement","top")
                                                                         .attr("title","ยังใช้งานอยู่")
                                                                     })
                                                                 } else {
@@ -1631,8 +1625,6 @@ impl SettingTemplateNurseNotePage {
                                                                 let child = if &goal.goal_status.clone().unwrap_or_default() == "Y" {
                                                                     html!("i", {
                                                                         .class(class::FA_CHECK_GREEN)
-                                                                        .attr("data-bs-toggle","tooltip")
-                                                                        .attr("data-bs-placement","top")
                                                                         .attr("title","ยังใช้งานอยู่")
                                                                     })
                                                                 } else {
@@ -1850,8 +1842,6 @@ impl SettingTemplateNurseNotePage {
                                                                 let child = if &intvt.intvt_status.clone().unwrap_or_default() == "Y" {
                                                                     html!("i", {
                                                                         .class(class::FA_CHECK_GREEN)
-                                                                        .attr("data-bs-toggle","tooltip")
-                                                                        .attr("data-bs-placement","top")
                                                                         .attr("title","ยังใช้งานอยู่")
                                                                     })
                                                                 } else {

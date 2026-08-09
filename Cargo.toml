@@ -63,9 +63,13 @@ futures-core = "0.3"
 futures-channel = "0.3"
 futures-signals = "0.3"
 futures-util = "0.3"
-hayro = { version = "0.7", default-features = false }
-hayro-syntax = { version = "0.7.2", default-features = false }
-hayro-interpret = { version = "0.7", default-features = false }
+# hayro = { version = "0.7", default-features = false }
+# hayro-syntax = { version = "0.7.2", default-features = false }
+# hayro-interpret = { version = "0.7", default-features = false }
+# pin as Typst
+hayro = { git = "https://github.com/LaurenzV/hayro", rev = "d8e24e29eda62581e1ea15497effb2a884fb1608", default-features = false }
+hayro-syntax = { git = "https://github.com/LaurenzV/hayro", rev = "d8e24e29eda62581e1ea15497effb2a884fb1608", default-features = false }
+hayro-interpret = { git = "https://github.com/LaurenzV/hayro", rev = "d8e24e29eda62581e1ea15497effb2a884fb1608", default-features = false }
 gloo-events = "0.3"
 hex = "0.4"
 http = "1"
