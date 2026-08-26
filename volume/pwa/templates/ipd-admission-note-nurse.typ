@@ -15,6 +15,7 @@
 #let label_note(l,n) = [#text(weight:700,l) #n]
 // SET PAGE ATTRIBUTES
 #set page(
+  paper:"a4",
   margin: (y: 1.5cm, x: 1cm),
   header-ascent: 9pt,
   footer-descent: 5pt,

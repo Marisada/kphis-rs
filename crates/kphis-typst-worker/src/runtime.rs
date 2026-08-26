@@ -74,7 +74,7 @@ impl SystemWorld {
     }
 
     /// create Document from typst syntax string
-    pub fn compile(&mut self, input: &str, data: &str, read_fn: ReadFn, token: Option<String>, fullname: &str) -> Result<PagedDocument, String> {
+    pub fn compile(&mut self, input: &str, data: &str, read_fn: ReadFn, user: &str, token: Option<String>) -> Result<PagedDocument, String> {
         self.reset();
         let input_id = FileId::new(RootedPath::new(VirtualRoot::Project, VirtualPath::new(INPUT_PATH).unwrap()));
         let data_id = FileId::new(RootedPath::new(VirtualRoot::Project, VirtualPath::new(DATA_PATH).unwrap()));
@@ -90,7 +90,7 @@ impl SystemWorld {
         data_slot.file.set(|| Ok(data.as_bytes().to_vec()), |bytes, _| Ok(Bytes::new(bytes)));
 
         let mut matermark_slot = FileSlot::new(watermark_id);
-        let watermark = ["โดย ", fullname, "\n", &datetime_th(&js_now())].concat();
+        let watermark = ["โดย ", user, "\n", &datetime_th(&js_now())].concat();
         matermark_slot.source.set(|| Ok(watermark.as_bytes().to_vec()), |bytes, prev| create_source(watermark_id, &bytes, prev));
         matermark_slot.file.set(|| Ok(watermark.as_bytes().to_vec()), |bytes, _| Ok(Bytes::new(bytes)));
 

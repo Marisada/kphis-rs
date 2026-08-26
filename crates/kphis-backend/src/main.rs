@@ -92,13 +92,10 @@ fn main() {
                 .with_filter(EnvFilter::new(log_console)),
         );
 
-    // remote syslog 
+    // remote syslog
     if let Ok(syslog_addr) = config.get_string("log-centralize-host") {
         let syslog_udp = UdpTransport::new(syslog_addr).expect("Can't create a UDP syslog connection");
-        tracing::subscriber::set_global_default(subscriber.with(
-            tracing_rfc_5424::layer::Layer::with_transport(syslog_udp)
-                .with_filter(EnvFilter::new(log_file)),
-        )).expect("Unable to set a global subscriber");
+        tracing::subscriber::set_global_default(subscriber.with(tracing_rfc_5424::layer::Layer::with_transport(syslog_udp).with_filter(EnvFilter::new(log_file)))).expect("Unable to set a global subscriber");
         info!("Start logging with remote syslog");
     } else {
         tracing::subscriber::set_global_default(subscriber).expect("Unable to set a global subscriber");

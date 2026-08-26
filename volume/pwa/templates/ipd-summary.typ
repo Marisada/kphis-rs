@@ -50,7 +50,7 @@
   v(12pt) + dr.filter(d => d.ty == ty).map(d => text(size: 12pt, top-edge:0.2em, repeat[.])).join()
 }
 //RENDER
-#set page(margin: 1cm,foreground: watermarks(2,55pt,33%))
+#set page(paper:"a4",margin: 1cm,foreground: watermarks(2,55pt,33%))
 #set text(fill: olive, top-edge: 0.2em)
 #place(top + center, image(width: 60pt, "statics/picture/krut-green.svg"))
 #grid(
