@@ -28,7 +28,7 @@
 #set text(font:"TH Sarabun New",size:12pt)
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[แบบบันทึกผลการตรวจสอบเวชระเบียน (Summary / Coding Audit) #hospital-name])#h(1fr)#counter(page).display("1/1",both:true)],
-  background: watermark(77pt),
+  foreground: watermark(77pt),
 )
 // Page template
 #let body(b) = {

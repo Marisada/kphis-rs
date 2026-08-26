@@ -48,7 +48,7 @@
 #set text(font:"TH Sarabun New",size:14pt)
 #set page(paper:"a4",flipped:true,margin:(x:1cm,top:1.5cm,bottom:1cm),header-ascent:9pt,footer-descent:0pt,
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
-  background: watermark(77pt),
+  foreground: watermark(77pt),
 )
 // Page template
 #let body(p) = box[

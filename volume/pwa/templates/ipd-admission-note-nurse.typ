@@ -20,7 +20,7 @@
   footer-descent: 5pt,
   header: context[#h(3fr) #text(size:16pt)[*การ​ประเมิน​สภาพ​ผู้ป่วย​แรก​รับ​และ​แบบแผน​สุข​ภาพ​ (ยกเว้น​ผู้ป่วย​เด็ก​อา​ยุ​ < 1 ปี )*] #h(1fr) #code-name\-IPD-NS-ADM #counter(page).display("1/1",both:true)],
   footer: [#label_note([HN: ],pt.hn) #label_note([AN: ], pt.an) #label_note([ชื่อ-สกุล: ], [#pt.pname#pt.fname #pt.lname]) #label_note([อายุ: ], [#pt.age_y ปี]) #label_note([ตึก: ], pt.at("ward_name",default: none)) #label_note([เตียง: ], pt.at("bedno",default: none)) #label_note([แผนก: ], pt.at("spclty_name",default: none)) #label_note([สิทธิ: ], [(#pt.pttype) #pt.pttype_name])],
-  background: watermarks(2,55pt,33%),
+  foreground: watermarks(2,55pt,33%),
 )
 #set text(font: "TH Sarabun New",size: 14pt)
 // RENDER

@@ -161,7 +161,7 @@
 #set text(font:"TH Sarabun New",size:16pt)
 #set page(paper:"a4",margin:(x:1cm,y:1.5cm),header-ascent:5pt,footer-descent:0pt,
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
-  background: watermarks(2,55pt,33%),
+  foreground: watermarks(2,55pt,33%),
 )
 #h(1fr) #text(size:20pt,weight:700,align(center,[สรุปร้อยละการ Audit เวชระเบียนผู้ป่วยใน#linebreak()#audit_type Audit #is_psy #ward#linebreak()ระหว่างวันที่ #date_th(data.start) ถึงวันที่ #date_th(data.end)]))#h(1fr)
 #v(-15pt)

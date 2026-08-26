@@ -147,7 +147,7 @@ impl ReportDesignerPage {
     fn set_demo(&self) {
         let typst_text = r##"#import "@preview/cetz:0.5.2"
 #import "templates/utils.typ": watermarks
-#set page(background: watermarks(2,55pt,33%))
+#set page(foreground: watermarks(2,55pt,33%))
 == START TEST #datetime.today().display()
 #place(dx: 127.5pt, dy: 320pt, cetz.canvas({
   import cetz.draw: *

@@ -2,7 +2,7 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "@preview/based:0.2.0": base64
 #let api = "/api/"
-#let watermark(s) = rotate(-33deg,text(s,fill:rgb(222,22,22,22),read("/watermark.txt")))
+#let watermark(s) = rotate(-33deg,text(s,weight:700,fill:rgb(222,22,22,22),read("/watermark.txt")))
 #let watermarks(n,s,sp) = ((watermark(s),) * n).join(v(sp)) 
 #let vnan_is_ipd(vnan) = if vnan == none {false} else {vnan.len() == an-len}
 #let get_patient_main(id) = if id.len() == an-len {

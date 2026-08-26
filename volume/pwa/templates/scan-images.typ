@@ -13,7 +13,7 @@
 #let footer = if pt == none [] else [
   #label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([VN : ],pt.vn) #if is_ipd {label_note([AN : ],pt.an)}
 ]
-#set page(paper:"a4",margin:1cm,columns:if per_page > 2 {2} else {1},footer:footer,background:watermarks(2,55pt,33%))
+#set page(paper:"a4",margin:1cm,columns:if per_page > 2 {2} else {1},footer:footer,foreground:watermarks(2,55pt,33%))
 #if images.len() > 0 {
   for img in images {
     if per_page == 1 {

@@ -187,7 +187,7 @@
   header-ascent:8pt,
   header:context[#h(1fr) #text(size:20pt,weight:700,[บันทึกการคลอด])#h(1fr)#counter(page).display("1/1",both:true)],
   footer:[#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([AN : ],pt.an)],
-  background: watermarks(2,55pt,33%),
+  foreground: watermarks(2,55pt,33%),
 )
 // patient info
 #table(columns:(3fr,3fr,3fr,2fr,3fr,3fr,3fr),

@@ -73,7 +73,7 @@
 #set page(paper:"a4",margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[Index Plan and Action])#h(1fr)#counter(page).display("1/1",both:true)],
   footer: [#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([VN : ],pt.vn)],
-  background: watermarks(2,55pt,33%),
+  foreground: watermarks(2,55pt,33%),
 )
 #table(columns:(120pt,45pt,1fr),stroke:.5pt,
   table.header(table_h[Order],table_h[Plan],table_h[Details]),

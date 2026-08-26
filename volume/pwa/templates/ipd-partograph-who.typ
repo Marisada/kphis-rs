@@ -232,7 +232,7 @@
   margin: (x:0.7cm,top:30pt,bottom:0.5cm),
   header-ascent: 8pt,
   header: [#h(1fr) #text(size:22pt,weight:700)[*Partograph*] #h(1fr)],
-  background: watermarks(2,55pt,33%),
+  foreground: watermarks(2,55pt,33%),
 )
 // patient info
 #table(columns:(6fr,3fr,2fr,3fr,3fr,3fr),

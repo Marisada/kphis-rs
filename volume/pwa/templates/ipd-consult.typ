@@ -11,7 +11,7 @@
 #let section(c) = align(center,text(size:20pt,weight:700,c))
 #let label_note(l,n) = [#text(weight:700,l) #n]
 // RENDER
-#set page(paper:"a4",margin:1cm,background:watermarks(2,55pt,33%))
+#set page(paper:"a4",margin:1cm,foreground:watermarks(2,55pt,33%))
 #set text(font:"TH Sarabun New",size:14pt)
 #set grid(gutter:10pt)
 #let render(con) = [

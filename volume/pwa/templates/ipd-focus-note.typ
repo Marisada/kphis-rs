@@ -36,7 +36,7 @@
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[บันทึกความก้าวหน้าทางการพยาบาล])#h(1fr)#counter(page).display("1/1",both:true)],
   footer: [#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([AN : ],pt.an)],
-  background: watermark(77pt),
+  foreground: watermark(77pt),
 )
 #table(columns:(60pt,42pt,3fr,5fr,120pt),stroke:.5pt,
   table.header(table_h[วัน เดือน ปี#linebreak()เวลา],table_h[ประเภท#linebreak()ผู้ป่วย],table_h[Focus],table_h[บันทึกความก้าวหน้าทางการพยาบาล#linebreak()A:Assessment, I:Intervention, E:Evaluation],table_h[ผู้บันทึก#linebreak()ตำแหน่ง]),

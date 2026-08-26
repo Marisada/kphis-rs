@@ -38,7 +38,7 @@
   footer: [
     #table(stroke:none,columns:(1fr,auto,auto,auto), [*ชื่อ - สกุล* : #pt.pname#pt.fname #pt.lname],[*อายุ* : #pt.age_y ปี #pt.age_m เดือน #pt.age_d วัน],[*HN* : #pt.hn],[*AN* : #pt.an],)#v(-15pt)
     #table(stroke:none,columns: 4,[*ตึก* : #pt.at("ward_name",default: none)],[*เตียง* : #pt.at("bedno",default:none)],[*แผนก* : #pt.at("spclty_name",default: none)],[*สิทธิ* : (#pt.pttype) #pt.pttype_name])],
-  background: watermarks(2,55pt,33%),
+  foreground: watermarks(2,55pt,33%),
 )
 #set table(stroke:.5pt)
 #set text(font:"TH Sarabun New",size:14pt,baseline:2pt,top-edge:"x-height")

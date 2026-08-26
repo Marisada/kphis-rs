@@ -313,7 +313,7 @@
     }),
   )
   #text(size:33pt,weight:700,baseline:-35pt,align(center,[T.P.R.]))],
-  background: watermarks(2,55pt,33%),
+  foreground: watermarks(2,55pt,33%),
 )
 #set table(
   stroke:(x,y) => (

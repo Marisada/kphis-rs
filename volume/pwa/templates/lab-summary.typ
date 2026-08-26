@@ -16,7 +16,7 @@
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[LAB SUMMARY])#h(1fr)#counter(page).display("1/1",both:true)],
   footer: [#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([VN : ],pt.vn) #label_note([AN : ],pt.an)],
-  background: watermark(77pt),
+  foreground: watermark(77pt),
 )
 #let labs = labs.filter(lab => lab.confirm_report == "Y")
 #let groups = labs.map(lab => lab.lab_items_group.map(gr => gr.lab_items_group_name)).flatten().dedup().sorted()

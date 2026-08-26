@@ -108,7 +108,7 @@
   )}
   // RENDER
   set text(font:"TH Sarabun New",size:14pt)
-  set page(paper:"a4",margin:1cm,background:watermarks(2,55pt,33%))
+  set page(paper:"a4",margin:1cm,foreground:watermarks(2,55pt,33%))
   [#section[ประวัติผู้ป่วย Emergency Room]
   #border_box[
     #label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([VN : ],pt.vn)\

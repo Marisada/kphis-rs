@@ -12,7 +12,7 @@
 #let table_h(c) = [#align(center,strong(c))]
 #let pad_l(c) = [#pad(left:20pt,c)]
 // RENDER
-#set page(paper:"a4",margin:1cm,background:watermarks(2,55pt,33%))
+#set page(paper:"a4",margin:1cm,foreground:watermarks(2,55pt,33%))
 #set text(font:"TH Sarabun New",size:14pt)
 #set table(stroke:.5pt)
 #align(center,text(size:20pt,weight:700,[เอกสารใบปะหน้า]))

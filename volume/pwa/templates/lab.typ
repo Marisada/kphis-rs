@@ -48,7 +48,7 @@
 }]
 // RENDER
 #set text(font:"TH Sarabun New",size:12pt)
-#set page(paper:"a4",margin:1cm,background:watermarks(2,55pt,33%))
+#set page(paper:"a4",margin:1cm,foreground:watermarks(2,55pt,33%))
 #if labs.len() > 0 {
   for lab in labs {render(lab)}
 }

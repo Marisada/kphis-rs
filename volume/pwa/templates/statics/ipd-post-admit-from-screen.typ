@@ -20,7 +20,7 @@
 #set page(paper:"a4",flipped:true,margin:(x:1cm,top:1cm,bottom:.5cm),
   footer-descent:-10pt,
   footer: context[#h(1fr)#counter(page).display("1/1",both:true)],
-  background: watermark(77pt),
+  foreground: watermark(77pt),
 )
 #table(columns:(40pt,50pt,60pt,100pt,50pt,50pt,140pt,45pt,100pt,100pt,1fr),stroke:.5pt,
   table.header(
