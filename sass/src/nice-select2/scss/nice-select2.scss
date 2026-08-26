@@ -110,7 +110,7 @@ $gray_dark: #444 !default;
   &.has-multiple {
     white-space: inherit;
     height: auto;
-    min-height: 36px;
+    min-height: 40px;
     line-height: 22px;
 
     span.current {
@@ -190,6 +190,7 @@ $gray_dark: #444 !default;
     padding: 0;
 
     &:hover .option:not(:hover) {
+      color: var(--bs-body-color);
       background-color: transparent !important;
     }
   }

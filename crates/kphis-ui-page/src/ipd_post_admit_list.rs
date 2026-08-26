@@ -534,16 +534,18 @@ impl IpdPostAdmitListPage {
                                     }),
                                 ])
                             })),
-                            static_pdf_btn_with_modal(
+                        ])
+                        .child_signal(page.search_result.signal_vec_cloned().to_signal_cloned().map(clone!(app => move |rows| {
+                            Some(static_pdf_btn_with_modal(
                                 "Print",
                                 "รายงานจำหน่ายผู้ป่วยใน",
                                 include_str!("../../../volume/pwa/templates/statics/ipd-post-admit-from-screen.typ"),
                                 serde_json::json!({
-                                    "rows": page.search_result.lock_ref().to_vec(),
+                                    "rows": rows,
                                 }).to_string(),
                                 app.clone(),
-                            ),
-                        ])
+                            ))
+                        })))
                     })),
                     html!("div", {
                         .class("col-sm")

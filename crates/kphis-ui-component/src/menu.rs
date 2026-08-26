@@ -543,7 +543,7 @@ impl MenuCpn {
                             .child(html!("i", {
                                 .class(class::FA_ENV)
                                 .class("fa-xl")
-                                .style("padding-top","17px")
+                                .style("padding-top","18px")
                                 .style("padding-left","5px")
                                 .style("width","28px")
                             }))
