@@ -1,4 +1,4 @@
-#import "templates/utils.typ": date_th
+#import "templates/utils.typ": date_th, watermarks
 // PRELUDE
 #let data = json("data.json")
 #let wards = data.at("ward",default: ())
@@ -18,6 +18,7 @@
 #set text(font:"TH Sarabun New",size:14pt)
 #set page(paper:"a4",margin:(x:1cm,y:1.5cm),header-ascent:5pt,footer-descent:0pt,
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
+  background: watermarks(2,55pt,33%),
 )
 #h(1fr) #text(size:20pt,weight:700,align(center,[รายงานจำนวนการใช้ Focus #ward#linebreak()ระหว่างวันที่ #date_th(data.start) ถึงวันที่ #date_th(data.end)]))#h(1fr)
 #v(-25pt)

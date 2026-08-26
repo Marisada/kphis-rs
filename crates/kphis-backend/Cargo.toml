@@ -29,6 +29,7 @@ tokio-cron-scheduler = { workspace = true }
 tower-cookies = { workspace = true }
 tracing = { workspace = true }
 tracing-appender = { workspace = true }
+tracing-rfc-5424 = { workspace = true }
 tracing-subscriber = { workspace = true }
 
 [target.'cfg(all(target_arch = "x86_64", target_env = "musl"))'.dependencies]

@@ -1,5 +1,5 @@
 #import "customs/config.typ": code-name
-#import "templates/utils.typ": api, get_patient_main, date_th, time_th
+#import "templates/utils.typ": api, get_patient_main, date_th, time_th, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -19,7 +19,8 @@
   header-ascent: 9pt,
   footer-descent: 5pt,
   header: context[#h(3fr) #text(size:16pt)[*การ​ประเมิน​สภาพ​ผู้ป่วย​แรก​รับ​และ​แบบแผน​สุข​ภาพ​ (ยกเว้น​ผู้ป่วย​เด็ก​อา​ยุ​ < 1 ปี )*] #h(1fr) #code-name\-IPD-NS-ADM #counter(page).display("1/1",both:true)],
-  footer: [#label_note([HN: ],pt.hn) #label_note([AN: ], pt.an) #label_note([ชื่อ-สกุล: ], [#pt.pname#pt.fname #pt.lname]) #label_note([อายุ: ], [#pt.age_y ปี]) #label_note([ตึก: ], pt.at("ward_name",default: none)) #label_note([เตียง: ], pt.at("bedno",default: none)) #label_note([แผนก: ], pt.at("spclty_name",default: none)) #label_note([สิทธิ: ], [(#pt.pttype) #pt.pttype_name])]
+  footer: [#label_note([HN: ],pt.hn) #label_note([AN: ], pt.an) #label_note([ชื่อ-สกุล: ], [#pt.pname#pt.fname #pt.lname]) #label_note([อายุ: ], [#pt.age_y ปี]) #label_note([ตึก: ], pt.at("ward_name",default: none)) #label_note([เตียง: ], pt.at("bedno",default: none)) #label_note([แผนก: ], pt.at("spclty_name",default: none)) #label_note([สิทธิ: ], [(#pt.pttype) #pt.pttype_name])],
+  background: watermarks(2,55pt,33%),
 )
 #set text(font: "TH Sarabun New",size: 14pt)
 // RENDER
@@ -27,7 +28,7 @@
   let is_female = {pt.sex == "2"}
   table(
     columns: (100pt,auto,1fr),stroke:.5pt,
-    table.cell(colspan:3,fill:luma(222),[#align(center)[*ประวัติผู้ป่วยแรกรับ*]]),
+    table.cell(colspan:3,fill:rgb(0,0,0,33),[#align(center)[*ประวัติผู้ป่วยแรกรับ*]]),
     [*วันที่-เวลาแรกรับ*],table.cell(colspan:2,[#date_th(note.receiver_medication_date) #time_th(note.receiver_medication_time)]),
     [*ผู้ให้ข้อมูล*],table.cell(colspan:2,
     [#checkbox_eq(note.info_patient,"Y","ผู้ป่วย")
@@ -39,7 +40,7 @@
     [*อาการสำคัญ*],table.cell(colspan:2,[#if note.chief_complaints != none {note.chief_complaints.replace(regex("\s")," ")}]),
     [*ประวัติการเจ็บป่วย*],table.cell(colspan:2,[#if note.medical_history != none {note.medical_history.replace(regex("\s")," ")}]),
     [*สัญญาณชีพแรกรับ*],table.cell(colspan:2,[#note.vs_admit]),
-    table.cell(colspan:3,fill:luma(222),[#align(center)[*สภาพร่างกายแรกรับ*]]),
+    table.cell(colspan:3,fill:rgb(0,0,0,33),[#align(center)[*สภาพร่างกายแรกรับ*]]),
     [*ความรู้สึกตัว*],table.cell(colspan:2,
     [#checkbox(note.concious,"รู้สึกตัวดี")
     #checkbox(note.concious,"สับสน")
@@ -81,7 +82,7 @@
     #checkbox(note.pain_charac,"ครั้งคราว")
     #checkbox(note.pain_charac,"ตลอดเวลา")
     #checkbox_if(note.pain_charac,"อื่นๆ",[อื่นๆ #note.pain_charac_text],"อื่นๆ")],"มี")]),
-    table.cell(colspan:3,fill:luma(222),[#align(center)[*สภาพจิตใจแรกรับ*]]),
+    table.cell(colspan:3,fill:rgb(0,0,0,33),[#align(center)[*สภาพจิตใจแรกรับ*]]),
     [*การประเมินภาวะจิตใจ*],table.cell(colspan:2,
     if note.no_mental_state == "Y" [#sym.ballot ประเมินได้ #sym.ballot.cross ประเมินไม่ได้เนื่องจาก #note.no_mental_state_text] else [#sym.ballot.cross ประเมินได้ #sym.ballot ประเมินไม่ได้]),
     [*ด้านพฤติกรรม*],table.cell(colspan:2,
@@ -111,7 +112,7 @@
     #checkbox_eq(note.spiritual_need_family,"Y","ถามถึงบุคคลในครอบครัว")
     #checkbox_eq(note.spiritual_other,"Y",[อื่นๆ #note.spiritual_other_text])\
     #checkbox_if(note.spiritual_cant_rated,"Y",[ประเมินไม่ได้ #note.spiritual_cant_rated_text],"ประเมินไม่ได้")]),
-    table.cell(colspan:3,fill:luma(222),[#align(center)[*สภาพสังคมและเศรษฐานะ*]]),
+    table.cell(colspan:3,fill:rgb(0,0,0,33),[#align(center)[*สภาพสังคมและเศรษฐานะ*]]),
     [*การศึกษา*],table.cell(colspan:2,[#checkbox(note.education,"ไม่ได้รับ") #checkbox_eq(note.education,"ได้รับ",[ได้รับ (ระบุ) #note.education_result])]),
     [*อาชีพ*],table.cell(colspan:2,[#note.occupation]),
     [*รายได้*],table.cell(colspan:2,[#checkbox(note.income,"เพียงพอ") #checkbox(note.income,"ไม่เพียงพอ")]),       
@@ -121,7 +122,7 @@
     #checkbox(note.neighbor,"เพื่อนบ้าน")\
     #checkbox_if(note.assistant_other,"Y",[อื่นๆ #note.assistant_other_text],"อื่นๆ")]),
     [*อาชีพผู้ดูแล*], table.cell(colspan:2,[#note.assistant_occupation]),
-    table.cell(colspan:3,fill:luma(222),[#align(center)[*แบบแผนสุขภาพ*]]),
+    table.cell(colspan:3,fill:rgb(0,0,0,33),[#align(center)[*แบบแผนสุขภาพ*]]),
     table.cell(rowspan:2,[*การรับรู้สุขภาพ#linebreak()และการดูแลสุขภาพ*]),
     [*การดูแลตนเอง*],
     [#checkbox_eq(note.clinic,"Y","ไป รพ./คลินิก")
@@ -227,8 +228,8 @@
     #checkbox_if(note.belief_sickness_other,"Y",[อื่นๆ #note.belief_sickness_other_text],"อื่นๆ")],
     [*สิ่งยึดเหนี่ยวด้านจิตใจ*], checkbox_toggle(note.belief_believe,"มี","","มี","ไม่มี"),
     [*ต้องการปฏิบัติกิจกรรม\ ทางศาสนา*], checkbox_toggle(note.religious_activity,"ต้องการ",[#note.religious_activity_text],"ต้องการ","ไม่ต้องการ"),
-    table.cell(fill:luma(222),[*ข้อมูลที่ให้ขณะแรกรับ*]),
-    table.cell(colspan:2,fill:luma(222),
+    table.cell(fill:rgb(0,0,0,33),[*ข้อมูลที่ให้ขณะแรกรับ*]),
+    table.cell(colspan:2,fill:rgb(0,0,0,33),
     [โรค​และ​อาการ​ปัจจุบัน​, แพทย์ผู้ดูแล, แนวทาง​การ​รักษา​พยาบาล​, สิทธิ​การ​รักษา​, การ​ลง​นาม​ยิน​ยอม, อาคาร​สถาน​ที่​ \
     การ​ปฏิบัติ​ตัว​ขณะ​เข้า​รับ​การ​รักษา​, กฎ​ระเบียบ​การ​เยี่ยม, การ​ติดต่อ​สอบ​ถาม]),
     [*ผู้ประเมิน*],table.cell(colspan:2,[#note.nurse_name #note.nurse_pos #note.nurse_licenseno]),

@@ -1,7 +1,7 @@
 .datepicker-root {
     display: flex;
     position: absolute;
-    height: 280px;
+    height: 295px;
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
     padding: .375rem;
@@ -126,13 +126,13 @@
 
         .datepicker-body {
             display: flex;
-            min-height: 235px;
+            min-height: 245px;
 
             .datepicker-hour-container,
             .datepicker-minute-container {
                 padding-left: 5px;
                 padding-right: 5px;
-                height: 237px;
+                height: 247px;
                 overflow-y: scroll;
                 scrollbar-width: none;
 

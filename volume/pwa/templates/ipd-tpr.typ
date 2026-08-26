@@ -1,6 +1,6 @@
 #import "@preview/cetz:0.5.2"
 #import "@preview/cetz-plot:0.1.4": plot
-#import "templates/utils.typ": api, vnan_is_ipd, get_patient_main, month_th, time_th, parse_d_t, parse_dt, thousands
+#import "templates/utils.typ": api, vnan_is_ipd, get_patient_main, month_th, time_th, parse_d_t, parse_dt, thousands, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -312,7 +312,8 @@
       } else []
     }),
   )
-  #text(size:33pt,weight:700,baseline:-35pt,align(center,[T.P.R.]))]
+  #text(size:33pt,weight:700,baseline:-35pt,align(center,[T.P.R.]))],
+  background: watermarks(2,55pt,33%),
 )
 #set table(
   stroke:(x,y) => (

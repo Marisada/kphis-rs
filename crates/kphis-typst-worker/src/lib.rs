@@ -17,8 +17,8 @@ use kphis_worker::{JsMessage, MessageSend};
 // try removing `kphis_worker::api! {` + `}` container to debug
 kphis_worker::api! {
 
-    pub async fn svg(template: String, data: String, token: String) -> Vec<u8> {
-        match compile(template, data, kphis_util::util::str_some(token)) {
+    pub async fn svg(template: String, data: String, user: String, token: String) -> Vec<u8> {
+        match compile(template, data, kphis_util::util::str_some(token), &user) {
             Ok(document) => {
                 let v = document.pages().iter().map(|page| {
                     let size = page.frame.size();
@@ -38,7 +38,7 @@ kphis_worker::api! {
     }
 
     pub async fn pdf(template: String, data: String, title: String, author: String, user: String, token: String) -> Vec<u8> {
-        match compile(template, data, kphis_util::util::str_some(token)) {
+        match compile(template, data, kphis_util::util::str_some(token), &user) {
             Ok(mut document) => {
                 let now = js_sys::Date::now() as i64;
                 let dt = time::OffsetDateTime::from_unix_timestamp(now / 1000).unwrap();
@@ -80,9 +80,9 @@ kphis_worker::api! {
     }
 }
 
-fn compile(template: String, data: String, token: Option<String>) -> Result<PagedDocument, String> {
+fn compile(template: String, data: String, token: Option<String>, user: &str) -> Result<PagedDocument, String> {
     let mut world = SystemWorld::new();
-    world.compile(&template, &data, load_file, token)
+    world.compile(&template, &data, load_file, token, &user)
 }
 
 fn load_file(path: PathBuf, token: &Option<String>) -> Result<Vec<u8>, FileError> {

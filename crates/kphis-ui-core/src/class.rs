@@ -579,6 +579,7 @@ pub const FLEX_C_T: [&str; 3] = ["d-flex","align-items-center","mb-2"];
 pub const FLEX_JCC: [&str; 3] = ["d-flex","justify-content-center","align-items-center"];
 pub const FLEX_JCR: [&str; 2] = ["d-flex","justify-content-end"];
 pub const FLEX_JCR_T: [&str; 3] = ["d-flex","justify-content-end","mb-2"];
+pub const FLEX_ROW_C: [&str; 3] = ["d-flex","flex-row","align-items-center"];
 pub const FLEX_WRAP: [&str; 2] = ["d-flex","flex-wrap"];
 pub const FLEX_WRAP_ROW: [&str; 3] = ["d-flex","flex-wrap","row"];
 pub const FLEX_WRAP_G3: [&str; 3] = ["d-flex","flex-wrap","gap-3"];
@@ -744,7 +745,7 @@ pub const MODAL_FOOTER_C_P0: [&str; 3] = ["modal-footer","justify-content-center
 pub const NAV_BAR_BLUE: [&str; 6] = ["navbar","navbar-expand-sm","navbar-dark","text-light","bg-primary","py-0"];
 pub const NAV_BAR_BRAND_R: [&str; 2] = ["navbar-brand","ms-2"];
 pub const NAV_BAR_TGL: [&str; 2] = ["navbar-toggler","d-lg-none"];
-pub const NAV_BAR_COLLAPSE: [&str; 2] = ["navbar-collapse","collapse"];
+pub const NAV_BAR_COLLAPSE: [&str; 3] = ["navbar-collapse","collapse","mx-1"];
 pub const NAV_BAR_NAV_LX: [&str; 3] = ["navbar-nav","mt-lg-0","me-auto"];
 
 pub const NAV_TABS_T: [&str; 3] = ["nav","nav-tabs","mb-2"];
@@ -770,10 +771,12 @@ pub const NOWRAP_C: [&str; 2] = ["text-nowrap","text-center"];
 pub const OVFA_CYANS: [&str; 2] = ["overflow-auto","bg-info-subtle"];
 pub const OVFA_T: [&str; 2] = ["overflow-auto","mb-2"];
 
-pub const RELATIVE_L: [&str; 2] = ["position-relative","me-2"];
+pub const RELATIVE_X: [&str; 2] = ["position-relative","mx-2"];
 
-pub const RESP_LG_SM: [&str; 3] = ["d-none","d-lg-inline","d-sm-none"];
-pub const RESP_XL_MD: [&str; 3] = ["d-none","d-xl-inline","d-md-none"];
+pub const RESP_MD_SM: [&str; 3] = ["d-inline","d-sm-none","d-md-inline"];
+pub const RESP_LG_SM: [&str; 3] = ["d-inline","d-sm-none","d-lg-inline"];
+pub const RESP_XL_SM: [&str; 3] = ["d-inline","d-sm-none","d-xl-inline"];
+pub const RESP_XXL_SM: [&str; 3] = ["d-inline","d-sm-none","d-xxl-inline"];
 
 pub const ROUND_WHITE: [&str; 2] = ["rounded","bg-white"];
 pub const ROUND_BOLD: [&str; 2] = ["rounded","fw-bold"];

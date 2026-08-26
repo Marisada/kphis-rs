@@ -1,4 +1,4 @@
-#import "templates/utils.typ": date_th, datetime_th, time_th
+#import "templates/utils.typ": date_th, datetime_th, time_th, watermark
 // PRELUDE
 #let data = json("data.json")
 #let rows = data.at("data",default: ())
@@ -22,6 +22,7 @@
 #set text(font:"TH Sarabun New",size:14pt)
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1cm),header-ascent:0pt,footer-descent:0pt,
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
+  background: watermark(77pt),
 )
 #h(1fr) #text(size:20pt,weight:700,align(center,[รายงาน การให้บริการจ่ายยาผ่าน Telemed#linebreak()ระหว่างวันที่ #date_th(data.start) ถึงวันที่ #date_th(data.end) (ทั้งหมด #rows.len() ราย)]))#h(1fr)
 #v(-30pt)

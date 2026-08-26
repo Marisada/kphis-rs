@@ -1,4 +1,4 @@
-#import "templates/utils.typ": api, get_patient_main, month_th, date_th, time_th, parse_d, thousands, square_bracket_to_span
+#import "templates/utils.typ": api, get_patient_main, month_th, date_th, time_th, parse_d, thousands, square_bracket_to_span, watermark
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -76,6 +76,7 @@
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[ใบ Record Intake - Output])#h(1fr)#counter(page).display("1/1",both:true)],
   footer: [#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([VN : ],pt.vn)],
+  background: watermark(77pt),
 )
 #let dates = io_data.map(io => io.shift_date).dedup()
 #table(columns:(60pt,40pt,40pt,80pt,35pt,35pt,35pt,50pt,60pt,35pt,35pt,35pt,50pt,40pt,35pt,50pt,1fr),stroke:.5pt,

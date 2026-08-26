@@ -1,5 +1,5 @@
 #import "customs/config.typ": hospital-name
-#import "templates/utils.typ": api, vnan_is_ipd, get_patient_main, date_th, time_th, datetime_th, cid
+#import "templates/utils.typ": api, vnan_is_ipd, get_patient_main, date_th, time_th, datetime_th, cid, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -50,7 +50,7 @@
   v(12pt) + dr.filter(d => d.ty == ty).map(d => text(size: 12pt, top-edge:0.2em, repeat[.])).join()
 }
 //RENDER
-#set page(margin: 1cm)
+#set page(margin: 1cm,background: watermarks(2,55pt,33%))
 #set text(fill: olive, top-edge: 0.2em)
 #place(top + center, image(width: 60pt, "statics/picture/krut-green.svg"))
 #grid(

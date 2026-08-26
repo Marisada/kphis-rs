@@ -14,7 +14,7 @@ use kphis_model::{
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::str_some;
 
 /// - GET `EndPoint::IpdDcPlanTmpDx`
@@ -37,7 +37,7 @@ pub struct SettingTemplateDcPlanPage {
     loaded_dxs: Mutable<bool>,
     dxs: Mutable<Vec<DcPlanTmpDx>>,
     dx_changed: Mutable<bool>,
-    dx_select_redraw: Mutable<bool>,
+    // dx_select_redraw: Mutable<bool>,
     dx_id: Mutable<String>,
     dx_name: Mutable<String>,
     dx_knowledge: Mutable<String>,
@@ -82,7 +82,7 @@ impl SettingTemplateDcPlanPage {
                 match DcPlanTmpDx::call_api_get(&DcPlanTmpParams::default(), app.state()).await {
                     Ok(responses) => {
                         page.dxs.set(responses);
-                        page.dx_select_redraw.set(true);
+                        // page.dx_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -462,15 +462,15 @@ impl SettingTemplateDcPlanPage {
                 }
                 async {}
             })))
-            .future(page.dx_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-                if redraw {
-                    if let Some(elm) = app.get_id("search_temp_dx") {
-                        NiceSelect::new_default_with_value(&elm, &page.dx_id.lock_ref());
-                    }
-                    page.dx_select_redraw.set(false);
-                }
-                async {}
-            })))
+            // .future(page.dx_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
+            //     if redraw {
+            //         if let Some(elm) = app.get_id("search_temp_dx") {
+            //             NiceSelect::new_default_with_value(&elm, &page.dx_id.lock_ref());
+            //         }
+            //         page.dx_select_redraw.set(false);
+            //     }
+            //     async {}
+            // })))
             .class("container-fluid")
             .child(html!("div", {
                 .children([
@@ -529,7 +529,7 @@ impl SettingTemplateDcPlanPage {
                                                     page.dx_revisit.set_neq(String::new());
                                                     page.dx_prevention.set_neq(String::new());
                                                     page.dx_changed.set_neq(false);
-                                                    page.dx_select_redraw.set(true);
+                                                    // page.dx_select_redraw.set(true);
                                                 }))
                                             }))
                                         }))

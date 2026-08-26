@@ -1,5 +1,5 @@
 #import "customs/config.typ": hospital-name
-#import "templates/utils.typ": api, vnan_is_ipd, get_patient_main, date_th, time_th, base64_to_byte, is_lab_ab
+#import "templates/utils.typ": api, vnan_is_ipd, get_patient_main, date_th, time_th, base64_to_byte, is_lab_ab, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -48,7 +48,7 @@
 }]
 // RENDER
 #set text(font:"TH Sarabun New",size:12pt)
-#set page(paper:"a4",margin:1cm)
+#set page(paper:"a4",margin:1cm,background:watermarks(2,55pt,33%))
 #if labs.len() > 0 {
   for lab in labs {render(lab)}
 }

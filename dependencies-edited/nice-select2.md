@@ -232,6 +232,15 @@ fixed match value instead of match text
   }
 ```
 
+:589 edit
+```diff
+    const focus = this.dropdown.querySelector('.focus');
+    if (focus) {
+-     focus.scrollIntoView({ block: 'center' });
++     focus.scrollIntoView({ block: 'center', container: 'nearest' });
+    }
+```
+
 :684 remove
 ```js
   #multipleListAdd(option) {
@@ -349,7 +358,7 @@ fixed match value instead of match text
 -   height: $input_height;
 -   line-height: $input_height - 2;
     outline: none;
-    padding-left: $dropdown_padding;
+-   padding-left: $dropdown_padding;
     padding-right: $dropdown_padding + 12;
     position: relative;
     text-align: left !important;
@@ -428,7 +437,7 @@ fixed match value instead of match text
     position: absolute;
     top: 100%; left: 0;
     transform-origin: 50% 0;
--   transform: scale(.75) translateY(- math.div(-$input-height, 2));
+-   transform: scale(0.75) translateY(math.div($input_height, 2));
 +   transform: scale(.75) translateY(- math.div(-$input_height, 2));
     transition: all .2s cubic-bezier(0.5, 0, 0, 1.25), opacity .15s ease-out;
     z-index: 9;
@@ -457,7 +466,8 @@ fixed match value instead of match text
       line-height: 24px;
       font-size: 14px;
       margin-bottom: 3px;
-      margin-right: 3px;
+-     margin-right: 3px;
++     margin-right: 5px;
 +     box-shadow: 3px 3px var(--bs-primary-bg-subtle);
 
 +     &:hover {
@@ -474,18 +484,18 @@ fixed match value instead of match text
   }
 ```
 
-:205
+:141
 ```diff
-    span.current {
--     border: 1px solid #CCC;
-+     border: 1px solid var(--bs-border-color);
--     background: #EEE;
-+     background: var(--bs-body-bg);
-      padding: 0 10px;
-      border-radius: 3px;
+  .nice-select-search-box {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px;
+-   pointer-events: none;
+    border-radius: 5px 5px 0 0;
+  }
 ```
 
-:145
+:197
 ```diff
   .option {
     cursor: pointer;
@@ -504,7 +514,7 @@ fixed match value instead of match text
     &:hover, &.focus, &.selected.focus {
 +     color: var(--bs-body-bg);
 -     background-color: $gray_lighter;
-+     background-color: var(--bs-secondary-color)
++     background-color: #777
     }
     &.selected {
       font-weight: bold;
@@ -516,6 +526,17 @@ fixed match value instead of match text
       cursor: default;
     }
   }
+```
+
+:205
+```diff
+    span.current {
+-     border: 1px solid #CCC;
++     border: 1px solid var(--bs-border-color);
+-     background: #EEE;
++     background: var(--bs-body-bg);
+      padding: 0 10px;
+      border-radius: 3px;
 ```
 
 :232

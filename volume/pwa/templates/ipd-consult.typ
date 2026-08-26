@@ -1,5 +1,5 @@
 #import "customs/config.typ": hospital-name
-#import "templates/utils.typ": api, get_patient_main, date_th, time_th, datetime_th, parse_d_t, explode_imgs
+#import "templates/utils.typ": api, get_patient_main, date_th, time_th, datetime_th, parse_d_t, explode_imgs, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -11,7 +11,7 @@
 #let section(c) = align(center,text(size:20pt,weight:700,c))
 #let label_note(l,n) = [#text(weight:700,l) #n]
 // RENDER
-#set page(paper:"a4",margin:1cm)
+#set page(paper:"a4",margin:1cm,background:watermarks(2,55pt,33%))
 #set text(font:"TH Sarabun New",size:14pt)
 #set grid(gutter:10pt)
 #let render(con) = [

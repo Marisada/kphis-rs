@@ -1,5 +1,5 @@
 #import "@preview/oxifmt:1.0.0": strfmt
-#import "templates/utils.typ": api, get_patient_main, date_th, time_th, explode_imgs
+#import "templates/utils.typ": api, get_patient_main, date_th, time_th, explode_imgs, watermarks
 #import "templates/scores.typ"
 // PREPARED FUNCTIONS
 #let section(c) = align(center,text(size:20pt,weight:700,c))
@@ -108,7 +108,7 @@
   )}
   // RENDER
   set text(font:"TH Sarabun New",size:14pt)
-  set page(paper:"a4",margin:1cm)
+  set page(paper:"a4",margin:1cm,background:watermarks(2,55pt,33%))
   [#section[ประวัติผู้ป่วย Emergency Room]
   #border_box[
     #label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([VN : ],pt.vn)\

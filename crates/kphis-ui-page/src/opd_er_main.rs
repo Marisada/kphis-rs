@@ -1027,28 +1027,31 @@ impl OpdErMainPage {
                             doms::nav_item_external_url(&hn_url, "Scan ")
                         })
                     })))
-                    .apply(|dom| {
-                        let route = Route::PrescriptionScreen{ hn: page.hn.get_cloned()};
-                        if route.has_permission(app.state()) {
-                            dom.child(html!("li", {
-                                .class(class::NAV_ITEM_PY)
-                                .child(html!("a", {
-                                    .class("nav-link")
-                                    .attr("href", "#")
-                                    //.attr("id", "pills-pharmacy-prescription-screen")
-                                    .attr("data-bs-toggle", "pill")
-                                    .text("ประวัติการสั่งยา ")
-                                    .child(html!("i", {.class(class::FA_DISPLAY)}))
-                                    .event_with_options(&EventOptions::preventable(), move |event: events::Click| {
-                                        event.prevent_default();
-                                        route.hard_redirect();
-                                    })
+                    .child_signal(page.hn.signal_cloned().map(clone!(app => move |hn| {
+                        if !hn.is_empty() {
+                            let route = Route::PrescriptionScreen{ hn };
+                            if route.has_permission(app.state()) {
+                                Some(html!("li", {
+                                    .class(class::NAV_ITEM_PY)
+                                    .child(html!("a", {
+                                        .class("nav-link")
+                                        .attr("href", "#")
+                                        // .attr("data-bs-toggle", "pill")
+                                        .text("ประวัติการสั่งยา ")
+                                        .child(html!("i", {.class(class::FA_DISPLAY)}))
+                                        .event_with_options(&EventOptions::preventable(), move |event: events::Click| {
+                                            event.prevent_default();
+                                            route.hard_redirect();
+                                        })
+                                    }))
                                 }))
-                            }))
+                            } else {
+                                None
+                            }
                         } else {
-                            dom
+                            None
                         }
-                    })
+                    })))
                     .apply_if(
                         app.endpoint_is_allow(&Method::GET, &EndPoint::EmrDateHn, false)
                         && app.endpoint_is_allow(&Method::GET, &EndPoint::EmrVisitVn, false),

@@ -1,5 +1,5 @@
 #import "customs/config.typ": drug_alert
-#import "templates/utils.typ": api, get_patient_main, date_th, month_th, time_th, parse_d_t, parse_d, parse_dt, dt2th, note_type, square_bracket_to_span
+#import "templates/utils.typ": api, get_patient_main, date_th, month_th, time_th, parse_d_t, parse_d, parse_dt, dt2th, note_type, square_bracket_to_span, watermarks
 #import "templates/vital_sign.typ"
 // PRELUDE
 #let data = json("data.json")
@@ -147,6 +147,7 @@
 #set page(paper:"a4",margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[รายละเอียดเหตุการณ์])#h(1fr)#counter(page).display("1/1",both:true)],
   footer: [#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([AN : ],pt.an)],
+  background: watermarks(2,55pt,33%),
 )
 #for all_d in all_ds [
   #let data = all.filter(i => i.ds == all_d).map(i => parse_all(i))

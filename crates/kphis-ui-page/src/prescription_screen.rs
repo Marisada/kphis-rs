@@ -49,6 +49,7 @@ pub struct PrescriptionScreenPage {
     pharmacy_care_changed: Mutable<bool>,
     pharmacy_care: Mutable<String>,
 
+    lab_is_last: Mutable<bool>,
     lab_history_modal: Mutable<Option<Rc<LabHistory>>>,
 }
 
@@ -97,6 +98,7 @@ impl PrescriptionScreenPage {
                             page.set_telemed_opt(&screen.visit);
                             page.pharmacy_care.set(screen.visit.as_ref().and_then(|visit| visit.pharmacy_care.clone()).unwrap_or_default());
                             page.pharmacy_care_changed.set_neq(false);
+                            page.lab_is_last.set_neq(true);
                             if screen.visit.is_some() {
                                 page.visit.set(screen.visit.map(Rc::new));
                             }
@@ -124,6 +126,7 @@ impl PrescriptionScreenPage {
                             page.set_telemed_opt(&screen.visit);
                             page.pharmacy_care.set(screen.visit.as_ref().and_then(|visit| visit.pharmacy_care.clone()).unwrap_or_default());
                             page.pharmacy_care_changed.set_neq(false);
+                            page.lab_is_last.set_neq(false);
                             if screen.visit.is_some() {
                                 page.visit.set(screen.visit.map(Rc::new));
                             }
@@ -811,7 +814,8 @@ impl PrescriptionScreenPage {
                         html!("li", {
                             .class("nav-item")
                             .child(html!("a", {
-                                .class(class::NAV_LINK_ACTIVE)
+                                .class("nav-link")
+                                .class_signal("active", page.lab_is_last.signal())
                                 .attr("id", "pills-home-tab")
                                 .attr("data-bs-toggle", "pill")
                                 .attr("href", "#pills-home")
@@ -819,12 +823,17 @@ impl PrescriptionScreenPage {
                                 .attr("aria-controls", "pills-home")
                                 .attr("aria-selected", "true")
                                 .text("LAB ล่าสุด")
+                                .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::Click| {
+                                    e.prevent_default();
+                                    page.lab_is_last.set_neq(true);
+                                }))
                             }))
                         }),
                         html!("li", {
                             .class("nav-item")
                             .child(html!("a", {
                                 .class("nav-link")
+                                .class_signal("active", not(page.lab_is_last.signal()))
                                 .attr("id", "pills-profile-tab")
                                 .attr("data-bs-toggle", "pill")
                                 .attr("href", "#pills-profile")
@@ -832,6 +841,10 @@ impl PrescriptionScreenPage {
                                 .attr("aria-controls", "pills-profile")
                                 .attr("aria-selected", "false")
                                 .text("LAB ของ Visit")
+                                .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::Click| {
+                                    e.prevent_default();
+                                    page.lab_is_last.set_neq(false);
+                                }))
                             }))
                         }),
                     ])
@@ -841,7 +854,8 @@ impl PrescriptionScreenPage {
                     //.attr("id", "pills-tabContent")
                     .children([
                         html!("div", {
-                            .class(class::TAB_FADE_SHOW_ACTIVE)
+                            .class(class::TAB_FADE)
+                            .class_signal(["show","active"], page.lab_is_last.signal())
                             .attr("id", "pills-home")
                             .attr("role", "tabpanel")
                             .attr("aria-labelledby", "pills-home-tab")
@@ -944,6 +958,7 @@ impl PrescriptionScreenPage {
                         }),
                         html!("div", {
                             .class(class::TAB_FADE)
+                            .class_signal(["show","active"], not(page.lab_is_last.signal()))
                             .attr("id", "pills-profile")
                             .attr("role", "tabpanel")
                             .attr("aria-labelledby", "pills-profile-tab")

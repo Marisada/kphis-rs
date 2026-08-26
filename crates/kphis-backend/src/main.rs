@@ -22,6 +22,7 @@ use tokio::sync::broadcast;
 use tokio_cron_scheduler::{Job, JobScheduler};
 use tracing::{debug, info, warn};
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
+use tracing_rfc_5424::transport::UdpTransport;
 use tracing_subscriber::{EnvFilter, Layer, fmt::time::OffsetTime, layer::SubscriberExt};
 // use utoipa_swagger_ui::SwaggerUi;
 // use utoipa_rapidoc::RapiDoc;
@@ -79,7 +80,7 @@ fn main() {
                 .with_timer(timer.clone())
                 .with_ansi(false)
                 .with_target(false)
-                .with_filter(EnvFilter::new(log_file)),
+                .with_filter(EnvFilter::new(log_file.clone())),
         )
         // log to console
         .with(
@@ -90,8 +91,19 @@ fn main() {
                 .with_target(true)
                 .with_filter(EnvFilter::new(log_console)),
         );
-    tracing::subscriber::set_global_default(subscriber).expect("Unable to set a global subscriber");
-    info!("Start logging");
+
+    // remote syslog 
+    if let Ok(syslog_addr) = config.get_string("log-centralize-host") {
+        let syslog_udp = UdpTransport::new(syslog_addr).expect("Can't create a UDP syslog connection");
+        tracing::subscriber::set_global_default(subscriber.with(
+            tracing_rfc_5424::layer::Layer::with_transport(syslog_udp)
+                .with_filter(EnvFilter::new(log_file)),
+        )).expect("Unable to set a global subscriber");
+        info!("Start logging with remote syslog");
+    } else {
+        tracing::subscriber::set_global_default(subscriber).expect("Unable to set a global subscriber");
+        info!("Start logging without remote syslog");
+    }
 
     // handle for loading Typst's json data by calling GET query fn internally
     let json_handle = Arc::new(RwLock::new(JsonActorHandle::new(run_api_actor)));

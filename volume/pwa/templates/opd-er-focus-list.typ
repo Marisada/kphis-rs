@@ -1,4 +1,4 @@
-#import "templates/utils.typ": api, get_patient_main, date_th, time_th
+#import "templates/utils.typ": api, get_patient_main, date_th, time_th, watermark
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -30,6 +30,7 @@
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[Focus List])#h(1fr)#counter(page).display("1/1",both:true)],
   footer: [#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([VN : ],pt.vn)],
+  background: watermark(77pt),
 )
 #table(columns:(35pt,3fr,5fr,160pt,160pt),stroke:.5pt,
   table.header(table_h[ลำดับ],table_h[Focus],table_h[เป้าหมาย / ผลลัพธ์ที่ต้องการ],table_h[วันที่เริ่มต้นปัญหา],table_h[วันที่สิ้นสุดปัญหา]),
