@@ -1,4 +1,4 @@
-## 0.4.21 (2026-08-xx)
+## 0.4.21 (2026-08-27)
 > - *(Config)* Added `log-centralize-host` for remote UDP syslog
 > - Fixed menu responsiveness
 > - Make modal backdrop darker
@@ -8,6 +8,7 @@
 > - Fixed SCSS of `date-picker`, `nice-select2` and `bootstrap`
 > - Fixed `nice-select2` to prevent `scrollIntoView` of viewport
 > - Added watermark to reports
+> - *(Schema)* Modify `kphis_extra.user_config`'s `totp_done` column to UNSIGNED BIGINT, to comply with [rfc-6238](https://datatracker.ietf.org/doc/html/rfc6238#section-5.2)
 
 ## 0.4.20 (2026-08-02)
 > - *(Config)* Added `real-ip-header` to get real client IP address behind reverse proxy

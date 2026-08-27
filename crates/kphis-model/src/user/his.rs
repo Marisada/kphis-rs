@@ -104,7 +104,7 @@ pub struct UserDb {
     pub totp: Option<String>,
     pub ts: Option<u64>,
     pub failed: Option<i8>,
-    pub totp_done: Option<bool>,
+    pub totp_done: Option<u64>,
     pub can_passcode: bool,
     pub wards: Vec<String>,
     pub spclty_ids: Vec<u32>,
@@ -157,7 +157,7 @@ impl From<UserDb> for User {
             can_passcode: item.can_passcode,
             theme: item.theme.unwrap_or(String::from("light")),
             wide_screen: item.wide_screen.unwrap_or(String::from("table")),
-            totp_done: item.totp_done,
+            totp_done: item.totp_done.map(|n| n > 0),
             wards: item.wards,
             spclty_ids: item.spclty_ids,
         }
@@ -177,7 +177,7 @@ impl From<&UserDb> for User {
             can_passcode: item.can_passcode,
             theme: item.theme.clone().unwrap_or(String::from("light")),
             wide_screen: item.wide_screen.clone().unwrap_or(String::from("table")),
-            totp_done: item.totp_done,
+            totp_done: item.totp_done.map(|n| n > 0),
             wards: item.wards.to_owned(),
             spclty_ids: item.spclty_ids.to_owned(),
         }

@@ -1434,7 +1434,7 @@ pub fn update_kphis_extra(kphis_extra: &str) -> Vec<String> {
             `totp` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',\
             `ts` BIGINT(20) UNSIGNED NULL DEFAULT NULL,\
             `failed` TINYINT(2) NULL DEFAULT NULL,\
-            `totp_done` TINYINT(1) NULL DEFAULT NULL,\
+            `totp_done` BIGINT(20) UNSIGNED NULL DEFAULT NULL,\
             `create_user` VARCHAR(250) COLLATE 'tis620_thai_ci' NOT NULL,\
             `create_datetime` DATETIME NOT NULL,\
             `update_user` VARCHAR(250) COLLATE 'tis620_thai_ci' NOT NULL,\
@@ -1568,7 +1568,7 @@ pub fn update_kphis_extra(kphis_extra: &str) -> Vec<String> {
             PRIMARY KEY (`summary_audit_id`) USING BTREE,\
             INDEX `summary_id` (`summary_id`) USING BTREE,\
             INDEX `com_dch_datetime` (`com_dch_datetime`) USING BTREE\
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;"].concat(),
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;"].concat(),
         ["CREATE TABLE IF NOT EXISTS `",kphis_extra,"`.`ipd_summary_audit_item` (\
             `summary_audit_item_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,\
             `summary_audit_id` INT(11) UNSIGNED NOT NULL,\
@@ -1589,7 +1589,7 @@ pub fn update_kphis_extra(kphis_extra: &str) -> Vec<String> {
             `version` INT(11) NOT NULL,\
             PRIMARY KEY (`summary_audit_item_id`) USING BTREE,\
             INDEX `summary_audit_id` (`summary_audit_id`) USING BTREE\
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;"].concat(),
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;"].concat(),
         ["CREATE TABLE IF NOT EXISTS `",kphis_extra,"`.`refer_note` (\
             `refernote_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,\
             `vn` VARCHAR(13) COLLATE 'tis620_thai_ci' NOT NULL,\
@@ -1617,6 +1617,9 @@ pub fn update_kphis_extra(kphis_extra: &str) -> Vec<String> {
             INDEX `ix_refer_date` (`refer_date`) USING BTREE,\
             INDEX `ix_vn` (`vn`) USING BTREE,\
             INDEX `ix_hn` (`hn`) USING BTREE\
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;"].concat(),
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;"].concat(),
+        // update 2026-08-27
+        ["ALTER TABLE `",kphis_extra,"`.`user_config` \
+            MODIFY COLUMN `totp_done` BIGINT(20) UNSIGNED NULL DEFAULT NULL;"].concat(),
     ]
 }

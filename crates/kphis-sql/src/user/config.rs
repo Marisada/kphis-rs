@@ -44,10 +44,10 @@ pub fn insert_dup_failed(kphis_extra: &str) -> String {
 
 }
 
-// UPDATE kphis_extra.user_config SET totp_done=1 WHERE loginname=? AND totp IS NOT NULL AND ts IS NOT NULL;
-/// loginname
+// UPDATE kphis_extra.user_config SET totp_done=? WHERE loginname=? AND totp IS NOT NULL AND ts IS NOT NULL;
+/// totp_done, loginname
 pub fn update_totp_done(kphis_extra: &str) -> String {
-    ["UPDATE ",kphis_extra,".user_config SET totp_done=1 WHERE loginname=? AND totp IS NOT NULL AND ts IS NOT NULL;"].concat()
+    ["UPDATE ",kphis_extra,".user_config SET totp_done=? WHERE loginname=? AND totp IS NOT NULL AND ts IS NOT NULL;"].concat()
 }
 
 // UPDATE kphis_extra.user_config SET totp=NULL,ts=NULL,totp_done=NULL,update_user=?,update_datetime=NOW(),version=(version+1) WHERE loginname=?;

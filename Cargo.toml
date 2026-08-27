@@ -3,8 +3,8 @@ members = [ "crates/*"]
 resolver = "3"
 
 [workspace.package]
-version = "0.4.20"
-rust-version = "1.96"
+version = "0.4.21"
+rust-version = "1.98"
 edition = "2024"
 authors = ["Marisada Pitakthum <p.marisada@gmail.com>"]
 description = "KPHIS ported to Rust"
@@ -105,7 +105,7 @@ tokio = { version = "1", features = [ "full" ]}
 tokio-cron-scheduler = "0.15"
 tokio-stream = "0.1"
 tokio-util = { version = "0.7", features = [ "io-util" ]}
-totp-rs = { version = "5", features = [ "gen_secret", "qr" ]}
+totp-rs = { version = "6", features = [ "gen_secret", "qr" ]}
 tower-cookies = "0.11"
 tower_governor = "0.8"
 tower-http = { version = "0.7", features = [ "fs", "compression-br", "compression-gzip", "set-header", "trace", "timeout" ]}
