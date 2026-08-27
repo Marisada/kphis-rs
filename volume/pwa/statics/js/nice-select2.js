@@ -586,7 +586,7 @@ class NiceSelect {
 
     const focus = this.dropdown.querySelector('.focus');
     if (focus) {
-      focus.scrollIntoView({ block: 'center' });
+      focus.scrollIntoView({ block: 'center', container: 'nearest' });
     }
 
     return false;

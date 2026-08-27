@@ -1,6 +1,6 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "customs/config.typ": hospcode, hospital-name
-#import "templates/utils.typ": api, get_patient_main, month_th, date_th, time_th, parse_d
+#import "templates/utils.typ": api, get_patient_main, month_th, date_th, time_th, parse_d, watermark
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -9,7 +9,7 @@
 // PREPARED FUNCTIONS
 #let section(c) = align(center,text(size:20pt,weight:700,c))
 #let label_note(l,n) = [#text(weight:700,l) #n]
-#let table_h(c) = table.cell(fill:luma(100),align(center+horizon,text(fill:white,weight:700,c)))
+#let table_h(c) = table.cell(fill:rgb(0,0,0,155),align(center+horizon,text(fill:white,weight:700,c)))
 #let cen(c) = align(center,c)
 #let percent(v,m) = if m == 0 [--] else [#strfmt("{:.2}",v * 100 / m)]
 #let notna(v) = if v == none {0} else {1}
@@ -17,7 +17,7 @@
 #let some1(v) = if v != none and v {1} else {0}
 #let exct(v) = align(center,if v == none [NA] else if v [1] else [0])
 #let chk(v) = align(center,if v [\u{2717}] else [])
-#let noinput = table.cell(fill:luma(200),[])
+#let noinput = table.cell(fill:rgb(0,0,0,55),[])
 #let sd = ("sd_1","sd_2","sd_3","sd_4","sd_5","sd_6","sd_7","sd_8","sd_9")
 #let so = ("so_1","so_2","so_3","so_4","so_5","so_6","so_7")
 #let ic = ("ic_1","ic_2","ic_3","ic_4","ic_5","ic_6","ic_7","ic_8","ic_9")
@@ -48,6 +48,7 @@
 #set text(font:"TH Sarabun New",size:14pt)
 #set page(paper:"a4",flipped:true,margin:(x:1cm,top:1.5cm,bottom:1cm),header-ascent:9pt,footer-descent:0pt,
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
+  foreground: watermark(77pt),
 )
 // Page template
 #let body(p) = box[

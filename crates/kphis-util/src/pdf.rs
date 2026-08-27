@@ -12,6 +12,7 @@ use typst_syntax::{FileId, Source};
 
 pub const INPUT_PATH: &str = "";
 pub const DATA_PATH: &str = "data.json";
+pub const WATERMARK_PATH: &str = "/watermark.txt";
 
 // add default fonts
 pub fn start_embedded_fonts() -> (FontBook, Vec<Font>) {

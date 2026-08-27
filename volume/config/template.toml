@@ -86,6 +86,9 @@ concat-with-space = false
 log-console = "debug,hyper=warn,sqlx=info"
 log-file = "debug,hyper=warn,sqlx=info"
 
+# UDP syslog, comment to disable
+# log-centralize-host = "192.168.1.100:514"
+
 #=====#
 # App #
 #=====#

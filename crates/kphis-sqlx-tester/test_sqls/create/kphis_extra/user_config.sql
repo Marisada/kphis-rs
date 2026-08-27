@@ -7,7 +7,7 @@ CREATE TABLE `kphis_extra`.`user_config` (
 	`totp` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`ts` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
 	`failed` TINYINT(2) NULL DEFAULT NULL,
-	`totp_done` TINYINT(1) NULL DEFAULT NULL,
+	`totp_done` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
     `create_user` VARCHAR(250) COLLATE 'tis620_thai_ci' NOT NULL,
 	`create_datetime` DATETIME NOT NULL,
 	`update_user` VARCHAR(250) COLLATE 'tis620_thai_ci' NOT NULL,

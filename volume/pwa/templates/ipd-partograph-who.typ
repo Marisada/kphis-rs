@@ -1,7 +1,7 @@
 #import "@preview/cetz:0.5.2"
 #import "@preview/cetz-plot:0.1.4": plot
 #import "@preview/tiptoe:0.4.0"
-#import "templates/utils.typ": api, get_patient_main, datetime_th, date_th, month_th, time_th, parse_d_t, parse_dt
+#import "templates/utils.typ": api, get_patient_main, datetime_th, date_th, month_th, time_th, parse_d_t, parse_dt, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -41,12 +41,12 @@
   else if dt.minute() < 45 {dt_hr(dt) + duration(minutes:30)}
   else {dt_hr(dt) + duration(hours:1)};vs
 }
-#let fill_1 = tiling(size:(4pt,4pt),place(dx:2pt,dy:2pt,square(size:2pt,fill:luma(120))))
+#let fill_1 = tiling(size:(4pt,4pt),place(dx:2pt,dy:2pt,square(size:2pt,fill:rgb(0,0,0,133))))
 #let fill_2 = tiling(relative:"parent",size:(3pt,3pt),line(stroke:.5pt,start:(0%,100%),end:(100%,0%)))
 #let dura_fill(d) = {
   ((d < 20,fill_1),
    (d <= 40,fill_2),
-   (true,luma(150))).find(t => t.at(0)).at(1)
+   (true,rgb(0,0,0,100))).find(t => t.at(0)).at(1)
 }
 #let max_v(ar,min) = {
   let a = ar.filter(((_,v)) => v != none).map(((_,v)) => float(v))
@@ -232,6 +232,7 @@
   margin: (x:0.7cm,top:30pt,bottom:0.5cm),
   header-ascent: 8pt,
   header: [#h(1fr) #text(size:22pt,weight:700)[*Partograph*] #h(1fr)],
+  foreground: watermarks(2,55pt,33%),
 )
 // patient info
 #table(columns:(6fr,3fr,2fr,3fr,3fr,3fr),

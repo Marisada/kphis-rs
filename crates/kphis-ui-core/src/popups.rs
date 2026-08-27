@@ -26,9 +26,10 @@ pub static MODAL_CONTENT: LazyLock<String> = LazyLock::new(|| {
         .style("background-color","var(--bs-body-bg)")
         .style("margin","auto")
         .style("padding","0")
-        .style("border","3px solid steelblue")
         .style("border-radius","9px")
         .style("max-width","1024px")
+        .style("text-align","left")
+        .style("border","3px solid steelblue")
     }
 });
 
@@ -38,9 +39,10 @@ pub static MODAL_CONTENT_ALERT: LazyLock<String> = LazyLock::new(|| {
         .style("background-color","var(--bs-body-bg)")
         .style("margin","auto")
         .style("padding","0")
-        .style("border","3px solid red")
         .style("border-radius","9px")
         .style("max-width","1024px")
+        .style("text-align","left")
+        .style("border","3px solid red")
         .style("color","red")
     }
 });

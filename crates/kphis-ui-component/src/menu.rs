@@ -369,12 +369,10 @@ impl MenuCpn {
             .children([
                 link!(Route::Info.string(), {
                     .class(class::NAV_BAR_BRAND_R)
+                    .class(class::RESP_MD_SM)
                     .text("KPHIS ")
                     .text(&app.app_status.lock_ref().as_ref().map(|state| state.code_name.clone()).unwrap_or_default())
-                    .child(html!("div", {
-                        .class(class::RESP_XL_MD)
-                        .child(html!("small", {.class("mx-1").text(env!("CARGO_PKG_VERSION"))}))
-                    }))
+                    .child(html!("small", {.class("mx-1").text(env!("CARGO_PKG_VERSION"))}))
                     .apply_if(app.is_production(), |dom| dom.child(html!("i", {.class(class::FA_USER_SHIELD)})))
                 }),
                 html!("button", {
@@ -390,114 +388,121 @@ impl MenuCpn {
                 html!("div", {
                     .class(class::NAV_BAR_COLLAPSE)
                     .attr("id", "collapsibleNavId")
-                    .child(menu_items(app.clone()))
-                    // Drug information
-                    .apply_if(
-                        app.endpoint_is_allow(&Method::GET, &EndPoint::DrugUseDuration, false)
-                        && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxMedHnText, false),
-                    |dom| dom
-                        .children([
-                            html!("div", {
-                                .class("me-2")
-                                .style("cursor","pointer")
-                                .child(html!("i", {.class(class::FA_PILLS).style("font-size","24px")}))
-                                .attr("title","Drug information")
-                                .attr("data-bs-toggle", "modal")
-                                .attr("data-bs-target", "#drugInformationModal")
-                                .event(clone!(app, menu => move |_:events::Click| {
-                                    menu.drug_details_modal.set(Some(DrugDetailModal::new(false)));
-                                }))
-                            }),
-                            html!("div", {
-                                .class("modal")
-                                .attr("id", "drugInformationModal")
-                                .attr("role", "dialog")
-                                .attr("tabindex", "-1")
-                                .child_signal(menu.drug_details_modal.signal_cloned().map(clone!(app, menu => move |opt| {
-                                    opt.map(|modal| DrugDetailModal::render(modal, menu.drug_details_modal.clone(), None, app.clone())).or(Some(blank_modal()))
-                                })))
-                            }),
-                        ])
-                    )
-                    // Confirm OrderAs
-                    .apply_if(
-                        allow_get_ipd_order_as
-                        && allow_get_opd_er_order_as
-                        && app.has_permission(Permission::IpdOrderCheck)
-                        && app.endpoint_is_allow(&Method::PATCH, &EndPoint::IpdOrderOrder, false)
-                        && app.has_permission(Permission::OpdErOrderCheck)
-                        && app.endpoint_is_allow(&Method::PATCH, &EndPoint::OpdErOrderOrder, false),
-                    |dom| {
-                        dom.children([
-                            html!("div", {
-                                .class(class::RELATIVE_L)
-                                .style("white-space","nowrap")
-                                .child(html!("button", {
-                                    .attr("type", "button")
-                                    .attr("title","ยืนยันการรับคำสั่งแพทย์ ที่บันทึกโดยพยาบาล")
-                                    .class(class::BTN_SM_WHITEO)
-                                    .child(html!("i", {.class(class::FA_MARKER)}))
+                    .children([
+                        menu_items(app.clone()),
+                        html!("div", {
+                            .class("navbar-nav")
+                            .class(class::FLEX_ROW_C)
+                            // Drug information
+                            .apply_if(
+                                app.endpoint_is_allow(&Method::GET, &EndPoint::DrugUseDuration, false)
+                                && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxMedHnText, false),
+                            |dom| dom
+                                .children([
+                                    html!("div", {
+                                        // .class("ms-2")
+                                        .style("cursor","pointer")
+                                        .child(html!("i", {.class(class::FA_PILLS).style("font-size","24px")}))
+                                        .attr("title","Drug information")
+                                        .attr("data-bs-toggle", "modal")
+                                        .attr("data-bs-target", "#drugInformationModal")
+                                        .event(clone!(app, menu => move |_:events::Click| {
+                                            menu.drug_details_modal.set(Some(DrugDetailModal::new(false)));
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("modal")
+                                        .attr("id", "drugInformationModal")
+                                        .attr("role", "dialog")
+                                        .attr("tabindex", "-1")
+                                        .child_signal(menu.drug_details_modal.signal_cloned().map(clone!(app, menu => move |opt| {
+                                            opt.map(|modal| DrugDetailModal::render(modal, menu.drug_details_modal.clone(), None, app.clone())).or(Some(blank_modal()))
+                                        })))
+                                    }),
+                                ])
+                            )
+                            // Confirm OrderAs
+                            .apply_if(
+                                allow_get_ipd_order_as
+                                && allow_get_opd_er_order_as
+                                && app.has_permission(Permission::IpdOrderCheck)
+                                && app.endpoint_is_allow(&Method::PATCH, &EndPoint::IpdOrderOrder, false)
+                                && app.has_permission(Permission::OpdErOrderCheck)
+                                && app.endpoint_is_allow(&Method::PATCH, &EndPoint::OpdErOrderOrder, false),
+                            |dom| {
+                                dom.children([
+                                    html!("div", {
+                                        .class(class::RELATIVE_X)
+                                        .style("white-space","nowrap")
+                                        .style("max-width","65px")
+                                        .child(html!("button", {
+                                            .attr("type", "button")
+                                            .attr("title","ยืนยันการรับคำสั่งแพทย์ ที่บันทึกโดยพยาบาล")
+                                            .class(class::BTN_SM_WHITEO)
+                                            .child(html!("i", {.class(class::FA_MARKER)}))
+                                            .child(html!("span", {
+                                                .class(class::RESP_XL_SM)
+                                                .text(" รคส")
+                                            }))
+                                            .attr("data-bs-toggle", "modal")
+                                            .attr("data-bs-target", "#checkOrderAsModal")
+                                        }))
+                                        .child_signal(app.count_order_as().map(doms::badge_count_red))
+                                        .child(html!("span", {
+                                            .class(class::BADGE_FIX_RB_GRAY)
+                                            .style("cursor","default")
+                                            .style("padding","5px")
+                                            .style("color","#555")
+                                            .child(html!("i", {.class(class::FA_SYNC)}))
+                                            .event_with_options(&EventOptions::preventable(), clone!(menu => move |e: events::Click| {
+                                                e.prevent_default();
+                                                menu.load_ipd_order_as.set(true);
+                                                menu.load_opd_er_order_as.set(true);
+                                            }))
+                                        }))
+                                    }),
+                                    Self::render_confirm_order_as_modal(menu.clone(), app.clone()),
+                                ])
+                            })
+                            // Summary alert
+                            .apply_if(is_allow_summary, |dom| dom
+                                .child(html!("div", {
+                                    .class(class::RELATIVE_X)
+                                    .style("max-width","65px")
+                                    .style("white-space","nowrap")
+                                    .child(html!("button", {
+                                        .attr("type", "button")
+                                        .attr("title","สรุปเวชระเบียนผู้ป่วยใน")
+                                        .class(class::BTN_SM_WHITEO)
+                                        .child(html!("i", {.class(class::FA_CLIPBOARD)}))
+                                        .child(html!("span", {
+                                            .class(class::RESP_XL_SM)
+                                            .text(" สรุป")
+                                        }))
+                                        .event(|_:events::Click| {
+                                            Route::IpdPostAdmitList { view_by: String::from("doctor") }.hard_redirect();
+                                        })
+                                    }))
+                                    .child_signal(app.post_admit_count.signal().map(|count| doms::badge_count_red(count as usize)))
                                     .child(html!("span", {
-                                        .class(class::RESP_XL_MD)
-                                        .text(" รคส")
-                                    }))
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", "#checkOrderAsModal")
-                                }))
-                                .child_signal(app.count_order_as().map(doms::badge_count_red))
-                                .child(html!("span", {
-                                    .class(class::BADGE_FIX_RB_GRAY)
-                                    .style("cursor","default")
-                                    .style("padding","5px")
-                                    .style("color","#555")
-                                    .child(html!("i", {.class(class::FA_SYNC)}))
-                                    .event_with_options(&EventOptions::preventable(), clone!(menu => move |e: events::Click| {
-                                        e.prevent_default();
-                                        menu.load_ipd_order_as.set(true);
-                                        menu.load_opd_er_order_as.set(true);
+                                        .class(class::BADGE_FIX_RB_GRAY)
+                                        .style("cursor","default")
+                                        .style("padding","5px")
+                                        .style("color","#555")
+                                        .child(html!("i", {.class(class::FA_SYNC)}))
+                                        .event_with_options(&EventOptions::preventable(), clone!(menu => move |e: events::Click| {
+                                            e.prevent_default();
+                                            menu.load_summary_count.set(true);
+                                        }))
                                     }))
                                 }))
-                            }),
-                            Self::render_confirm_order_as_modal(menu.clone(), app.clone()),
-                        ])
-                    })
-                    // Summary alert
-                    .apply_if(is_allow_summary, |dom| dom
-                        .child(html!("div", {
-                            .class(class::RELATIVE_L)
-                            .class("ms-2")
-                            .style("white-space","nowrap")
-                            .child(html!("button", {
-                                .attr("type", "button")
-                                .attr("title","สรุปเวชระเบียนผู้ป่วยใน")
-                                .class(class::BTN_SM_WHITEO)
-                                .child(html!("i", {.class(class::FA_CLIPBOARD)}))
-                                .child(html!("span", {
-                                    .class(class::RESP_XL_MD)
-                                    .text(" สรุป")
-                                }))
-                                .event(|_:events::Click| {
-                                    Route::IpdPostAdmitList { view_by: String::from("doctor") }.hard_redirect();
-                                })
-                            }))
-                            .child_signal(app.post_admit_count.signal().map(|count| doms::badge_count_red(count as usize)))
-                            .child(html!("span", {
-                                .class(class::BADGE_FIX_RB_GRAY)
-                                .style("cursor","default")
-                                .style("padding","5px")
-                                .style("color","#555")
-                                .child(html!("i", {.class(class::FA_SYNC)}))
-                                .event_with_options(&EventOptions::preventable(), clone!(menu => move |e: events::Click| {
-                                    e.prevent_default();
-                                    menu.load_summary_count.set(true);
-                                }))
-                            }))
-                        }))
-                    )
-                    // Message panel
-                    .child(Self::render_message_panel(menu.clone(), app.clone()))
-                    // User panel
-                    .child(Self::render_user_panel(menu, app))
+                            )
+                        }),
+                        // Message panel
+                        Self::render_message_panel(menu.clone(), app.clone()),
+                        // User panel
+                        Self::render_user_panel(menu, app),
+                    ])
                 }),
             ])
         })
@@ -538,7 +543,7 @@ impl MenuCpn {
                             .child(html!("i", {
                                 .class(class::FA_ENV)
                                 .class("fa-xl")
-                                .style("padding-top","17px")
+                                .style("padding-top","18px")
                                 .style("padding-left","5px")
                                 .style("width","28px")
                             }))
@@ -1225,22 +1230,24 @@ impl MenuCpn {
                                 .attr("aria-haspopup","true")
                                 .attr("aria-expanded","false")
                                 .prop_signal("title", user.user.name.signal_cloned())
-                                .child(html!("div", {
-                                    .class(class::CIRCLE_L)
-                                    .style("height","50px")
-                                    .style("width","50px")
-                                    .style("background-color","#eee")
-                                    .style("overflow","hidden")
-                                    .child(html!("img", {
-                                        .attr("src", &user.user.image.lock_ref().as_ref().image)
-                                        .attr("alt","User Image")
+                                .children([
+                                    html!("div", {
+                                        .class(class::CIRCLE_L)
+                                        .style("height","50px")
                                         .style("width","50px")
-                                    }))
-                                }))
-                                .child(html!("span", {
-                                    .class(class::RESP_XL_MD)
-                                    .text_signal(user.user.name.signal_cloned())
-                                }))
+                                        .style("background-color","#eee")
+                                        .style("overflow","hidden")
+                                        .child(html!("img", {
+                                            .attr("src", &user.user.image.lock_ref().as_ref().image)
+                                            .attr("alt","User Image")
+                                            .style("width","50px")
+                                        }))
+                                    }),
+                                    html!("span", {
+                                        .class(class::RESP_XXL_SM)
+                                        .text_signal(user.user.name.signal_cloned())
+                                    }),
+                                ])
                             }),
                             html!("div", {
                                 .class(class::DROP_MENU_END)

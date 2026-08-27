@@ -1,5 +1,5 @@
 #import "customs/config.typ": code-name, hospital-name
-#import "templates/utils.typ": api, get_patient_main, date_th, time_th, datetime_th_checked, timestamp_th, cid, explode_imgs
+#import "templates/utils.typ": api, get_patient_main, date_th, time_th, datetime_th_checked, timestamp_th, cid, explode_imgs, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -33,11 +33,12 @@
   }).join(", ")
 }
 // SET PAGE ATTRIBUTES
-#set page(margin: (y:2cm, x:1cm),header-ascent: 15pt,footer-descent: 0pt,
+#set page(paper:"a4",margin: (y:2cm, x:1cm),header-ascent: 15pt,footer-descent: 0pt,
   header: context[#h(3fr) #text(size:18pt)[*แบบบันทึกการรับใหม่ผู้ป่วยใน #hospital-name*] #h(2fr) #code-name\-IPD-DR-ADM #counter(page).display("1/1",both:true)],
   footer: [
     #table(stroke:none,columns:(1fr,auto,auto,auto), [*ชื่อ - สกุล* : #pt.pname#pt.fname #pt.lname],[*อายุ* : #pt.age_y ปี #pt.age_m เดือน #pt.age_d วัน],[*HN* : #pt.hn],[*AN* : #pt.an],)#v(-15pt)
-    #table(stroke:none,columns: 4,[*ตึก* : #pt.at("ward_name",default: none)],[*เตียง* : #pt.at("bedno",default:none)],[*แผนก* : #pt.at("spclty_name",default: none)],[*สิทธิ* : (#pt.pttype) #pt.pttype_name])]
+    #table(stroke:none,columns: 4,[*ตึก* : #pt.at("ward_name",default: none)],[*เตียง* : #pt.at("bedno",default:none)],[*แผนก* : #pt.at("spclty_name",default: none)],[*สิทธิ* : (#pt.pttype) #pt.pttype_name])],
+  foreground: watermarks(2,55pt,33%),
 )
 #set table(stroke:.5pt)
 #set text(font:"TH Sarabun New",size:14pt,baseline:2pt,top-edge:"x-height")

@@ -1,5 +1,5 @@
 #import "customs/config.typ": hospital-name
-#import "templates/utils.typ": api, get_patient_main
+#import "templates/utils.typ": api, get_patient_main, watermarks
 #import "templates/utils-order.typ": get_rows
 // PRELUDE
 #let data = json("data.json")
@@ -38,6 +38,7 @@
       thead([Progress Note]),thead([Orders For One Day]),thead([Orders For Continuation]),
     )],
   background:[#vline(14.2pt)#vline(176.1pt)#vline(378.6pt)#vline(581.1pt)],
+  foreground:watermarks(2,55pt,33%),
   footer:[#table(columns:(4fr,3fr,2fr,2fr,2fr),
     label_note([Department],pt.at("spclty_name",default: none)),
     label_note([Ward],pt.at("ward_name",default: none)),

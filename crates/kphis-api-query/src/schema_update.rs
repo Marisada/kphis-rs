@@ -67,9 +67,9 @@ mod tests {
         let mocker = MySqlMocker::new_kphis_extra().await;
 
         let success = update_kphis_extra(&mocker.db_pool, &mocker.kphis_extra).await.unwrap();
-        assert_eq!(success.len(), 29);
+        assert_eq!(success.len(), 30);
         let again = update_kphis_extra(&mocker.db_pool, &mocker.kphis_extra).await.unwrap();
-        assert_eq!(again.len(), 29);
+        assert_eq!(again.len(), 30);
     }
 
     #[tokio::test]
@@ -78,9 +78,9 @@ mod tests {
         let mut mocker = MySqlMocker::new_no_database().await;
         // this update will create kphis_extra database
         let success = update_kphis_extra(&mocker.db_pool, &mocker.kphis_extra).await.unwrap();
-        assert_eq!(success.len(), 29);
+        assert_eq!(success.len(), 30);
         let again = update_kphis_extra(&mocker.db_pool, &mocker.kphis_extra).await.unwrap();
-        assert_eq!(again.len(), 29);
+        assert_eq!(again.len(), 30);
         // for delete kphis_extra database on drop
         mocker.has_kphis_extra = true;
     }

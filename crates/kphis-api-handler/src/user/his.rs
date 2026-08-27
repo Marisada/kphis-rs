@@ -61,11 +61,12 @@ pub async fn check_login(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, head
     if user.doctorcode.is_none() {
         return Err(Source::App.to_error(403, "No doctorcode", "Check Login").with_title(ErrorTitle::Security));
     }
+
     // check password
     match verify_password(&user.passweb, &payload.password) {
         Ok(()) => {
             // reset failed tp 0
-            if user.failed.unwrap_or_default() > 0 && !user.totp_done.unwrap_or_default() {
+            if user.failed.unwrap_or_default() > 0 && user.totp_done.is_none() {
                 if config::insert_dup_failed(0, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
                     return Err(Source::App.to_error(500, "Unexpected Error", "Check Login").with_title(ErrorTitle::Security));
                 }
@@ -83,7 +84,7 @@ pub async fn check_login(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, head
     }
 
     // prepare TS for TOTP
-    let response = if user.totp_done.unwrap_or_default() {
+    let response = if user.totp_done.is_some() {
         if config::update_ts(&user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() > 0 {
             None
         } else {
@@ -154,19 +155,8 @@ pub async fn check_totp(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, heade
     if let (Some(totp_pk), Some(ts), Ok(now)) = (&user.totp, user.ts, get_timestamp_server()) {
         // check TS
         if ts.saturating_add(app.app_config.handshake_2fa_timeout_second) > now {
-            if totp::verify_totp_encoded_key(&user.loginname, &payload.token_2fa, totp_pk, "KPHIS")? {
-                // reset failed to 0
-                if user.failed.unwrap_or_default() > 0 {
-                    if config::insert_dup_failed(0, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
-                        return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
-                    }
-                }
-                // set totp_done (is_sub only)
-                if payload.is_sub {
-                    if config::update_totp_done(&user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
-                        return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
-                    }
-                }
+            if let Some(totp_done_step) = totp::verify_totp_encoded_key(&user.loginname, &payload.token_2fa, totp_pk, "KPHIS")? {
+                check_and_set_totp_done(totp_done_step, &user, &app).await?;
             // not verified
             } else {
                 tracing::warn!("user {} failed to login with wrong TOTP", user.name);
@@ -207,78 +197,6 @@ pub async fn check_totp(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, heade
 
         Ok(Json(Some(response)))
     }
-}
-
-async fn login_response(socket_addr: SocketAddr, user: &UserDb, cookies: &Cookies, app: &ApiState) -> Result<LoginResponse, AppError> {
-    // generate new state_id, access token and refresh token
-    let Ulid(state_id) = Ulid::generate();
-    let access_token = gen_token_public(
-        state_id,
-        (app.access_limit(), app.refresh_limit()),
-        None, // generate new rexp
-        TokenType::Access,
-        &app.paseto.secret,
-    )?;
-    let refresh_token = gen_token_public(
-        state_id,
-        (app.refresh_limit(), app.refresh_limit()),
-        None, // generate new rexp
-        TokenType::Refresh,
-        &app.paseto.secret,
-    )?;
-
-    // create cookie of refresh token
-    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
-    cookies.add(cookie.into());
-
-    // app_status
-    let app_status = app_status_from_api_state(&app);
-
-    // roles
-    let roles = login::get_user_roles(&user.loginname, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
-    let mut role_names: HashSet<String> = HashSet::new();
-    {
-        let all_roles = app.roles.lock().await;
-        for role in roles.iter() {
-            if let Some(with_parent) = all_roles.get(&role.role) {
-                role_names.extend(with_parent.clone());
-            }
-        }
-    }
-    let mut permissions_names: HashSet<Permission> = HashSet::new();
-    {
-        let all_roles_permissions = app.roles_permissions.lock().await;
-        for role_name in role_names {
-            if let Some(rp) = all_roles_permissions.get(&role_name) {
-                permissions_names.extend(rp.clone());
-            }
-        }
-    }
-    let permissions = permissions_names.into_iter().collect::<Vec<Permission>>();
-
-    // set backend users state
-    app.online_add(state_id, &user, &roles, &permissions, socket_addr).await;
-
-    let response = LoginResponse {
-        token: access_token,
-        timestamp: get_timestamp_server()?,
-        public: app.paseto_public.to_string(),
-        app_status,
-        user: user.into(),
-        roles,
-        permissions,
-    };
-
-    Ok(response)
-}
-
-pub fn verify_password(password: &str, hash: &str) -> Result<(), AppError> {
-    let passweb_byte = hex::decode(password).unwrap_or(password.as_bytes().to_vec());
-
-    let parsed_hash = PasswordHash::new(hash).map_err(|e| Source::PasswordHash.to_error(401, e, "Verify Password"))?;
-
-    // log when failed login
-    Argon2::default().verify_password(&passweb_byte, &parsed_hash).map_err(|e| Source::App.to_error(401, e, "Verify Password"))
 }
 
 /// /api/user
@@ -332,40 +250,6 @@ pub async fn refresh_token(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, he
     }
 }
 
-fn refresh_response(state_id: u128, user: &UserDb, roles: Vec<CurrentUserRole>, permissions: Vec<Permission>, cookies: &Cookies, app: &ApiState) -> Result<LoginResponse, AppError> {
-    // generate new access token and new refersh token
-    let access_token = gen_token_public(
-        state_id,
-        (app.access_limit(), app.refresh_limit()),
-        None, // generate new rexp
-        TokenType::Access,
-        &app.paseto.secret,
-    )?;
-    let refresh_token = gen_token_public(
-        state_id,
-        (app.refresh_limit(), app.refresh_limit()),
-        None, // generate new rexp
-        TokenType::Refresh,
-        &app.paseto.secret,
-    )?;
-    // create cookie of refresh token
-    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
-    // cookies.add() says "If a Cookie with the same name already exists, it is replaced with provided cookie."
-    cookies.add(cookie.into());
-
-    let response = LoginResponse {
-        token: access_token,
-        timestamp: get_timestamp_server()?,
-        public: app.paseto_public.to_string(),
-        app_status: app_status_from_api_state(&app),
-        user: user.into(),
-        roles,
-        permissions,
-    };
-
-    Ok(response)
-}
-
 /// /api/user
 ///
 /// Tries create a new refresh cookies, return single Login Response (Access Token insided) and new Refersh Token in Secure Cookies
@@ -384,20 +268,38 @@ pub async fn refresh_cookie(ConnectInfo(socket_addr): ConnectInfo<SocketAddr>, h
             let user_db = login::get_user(&user.loginname, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
                 .await?
                 .ok_or(AppError::app_404("Unexpected").with_title(ErrorTitle::Security))?;
-            // check TOTP
-            if user_db.totp_done.unwrap_or_default()
-                && let Some(totp_pk) = &user_db.totp
-            {
-                if !totp::verify_totp_encoded_key(&user_db.loginname, &payload.token_2fa, totp_pk, "KPHIS")? {
-                    tracing::warn!("user {} failed to login with wrong TOTP", user_db.name);
-                    return Err(AppError::app_401("Check Login").with_title(ErrorTitle::Security));
-                }
+
+            // lock with failed limit
+            if user_db.failed.unwrap_or_default() >= FAILURE_LIMIT {
+                return Err(Source::App.to_error(403, "Locked. Please contact admin to unlock.", "Check TOTP").with_title(ErrorTitle::Security));
             }
+            let mut is_failed = None;
             // check password
             if let Err(e) = verify_password(&user_db.passweb, &payload.password) {
                 tracing::warn!("user {} failed to login with {}", user_db.name, e.message);
+                is_failed = Some(e);
+            }
+            // check TOTP
+            if is_failed.is_none()
+                && user_db.totp_done.is_some()
+                && let Some(totp_pk) = &user_db.totp
+            {
+                if let Some(totp_done_step) = totp::verify_totp_encoded_key(&user_db.loginname, &payload.token_2fa, totp_pk, "KPHIS")? {
+                    check_and_set_totp_done(totp_done_step, &user_db, &app).await?;
+                } else {
+                    tracing::warn!("user {} failed to login with wrong TOTP", user_db.name);
+                    is_failed = Some(AppError::app_401("Check Login").with_title(ErrorTitle::Security));
+                }
+            }
+            // return with failed
+            if let Some(e) = is_failed {
+                // bump failed +1
+                if config::insert_dup_failed(user.failed.unwrap_or_default() + 1, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
+                    return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
+                }
                 return Err(e);
             }
+
             // check IP address
             let real_addr = app
                 .app_config
@@ -471,4 +373,131 @@ pub fn app_status_from_api_state(app: &ApiState) -> AppStatus {
         cart_vnan_url: app.app_config.cart_vnan_url.clone(),
         food_url: app.app_config.food_url.clone(),
     }
+}
+
+pub fn verify_password(password: &str, hash: &str) -> Result<(), AppError> {
+    let passweb_byte = hex::decode(password).unwrap_or(password.as_bytes().to_vec());
+
+    let parsed_hash = PasswordHash::new(hash).map_err(|e| Source::PasswordHash.to_error(401, e, "Verify Password"))?;
+
+    // log when failed login
+    Argon2::default().verify_password(&passweb_byte, &parsed_hash).map_err(|e| Source::App.to_error(401, e, "Verify Password"))
+}
+
+async fn login_response(socket_addr: SocketAddr, user: &UserDb, cookies: &Cookies, app: &ApiState) -> Result<LoginResponse, AppError> {
+    // generate new state_id, access token and refresh token
+    let Ulid(state_id) = Ulid::generate();
+    let access_token = gen_token_public(
+        state_id,
+        (app.access_limit(), app.refresh_limit()),
+        None, // generate new rexp
+        TokenType::Access,
+        &app.paseto.secret,
+    )?;
+    let refresh_token = gen_token_public(
+        state_id,
+        (app.refresh_limit(), app.refresh_limit()),
+        None, // generate new rexp
+        TokenType::Refresh,
+        &app.paseto.secret,
+    )?;
+
+    // create cookie of refresh token
+    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
+    cookies.add(cookie.into());
+
+    // app_status
+    let app_status = app_status_from_api_state(&app);
+
+    // roles
+    let roles = login::get_user_roles(&user.loginname, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
+    let mut role_names: HashSet<String> = HashSet::new();
+    {
+        let all_roles = app.roles.lock().await;
+        for role in roles.iter() {
+            if let Some(with_parent) = all_roles.get(&role.role) {
+                role_names.extend(with_parent.clone());
+            }
+        }
+    }
+    let mut permissions_names: HashSet<Permission> = HashSet::new();
+    {
+        let all_roles_permissions = app.roles_permissions.lock().await;
+        for role_name in role_names {
+            if let Some(rp) = all_roles_permissions.get(&role_name) {
+                permissions_names.extend(rp.clone());
+            }
+        }
+    }
+    let permissions = permissions_names.into_iter().collect::<Vec<Permission>>();
+
+    // set backend users state
+    app.online_add(state_id, &user, &roles, &permissions, socket_addr).await;
+
+    let response = LoginResponse {
+        token: access_token,
+        timestamp: get_timestamp_server()?,
+        public: app.paseto_public.to_string(),
+        app_status,
+        user: user.into(),
+        roles,
+        permissions,
+    };
+
+    Ok(response)
+}
+
+async fn check_and_set_totp_done(totp_done_step: u64, user: &UserDb, app: &ApiState) -> Result<(), AppError> {
+    if totp_done_step == user.totp_done.unwrap_or_default() {
+        // As per rfc-6239, a code should only be accepted once
+        Err(Source::App.to_error(403, "You can't reuse the old 2FA code", "Check TOTP").with_title(ErrorTitle::Security))
+    // success
+    } else {
+        // reset failed to 0
+        if user.failed.unwrap_or_default() > 0 {
+            if config::insert_dup_failed(0, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
+                return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
+            }
+        }
+        // set totp_done_step
+        if config::update_totp_done(totp_done_step, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
+            return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
+        }
+
+        Ok(())
+    }
+}
+
+fn refresh_response(state_id: u128, user: &UserDb, roles: Vec<CurrentUserRole>, permissions: Vec<Permission>, cookies: &Cookies, app: &ApiState) -> Result<LoginResponse, AppError> {
+    // generate new access token and new refersh token
+    let access_token = gen_token_public(
+        state_id,
+        (app.access_limit(), app.refresh_limit()),
+        None, // generate new rexp
+        TokenType::Access,
+        &app.paseto.secret,
+    )?;
+    let refresh_token = gen_token_public(
+        state_id,
+        (app.refresh_limit(), app.refresh_limit()),
+        None, // generate new rexp
+        TokenType::Refresh,
+        &app.paseto.secret,
+    )?;
+    // create cookie of refresh token
+    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
+    // cookies.add() says "If a Cookie with the same name already exists, it is replaced with provided cookie."
+    cookies.add(cookie.into());
+
+    let response = LoginResponse {
+        token: access_token,
+        timestamp: get_timestamp_server()?,
+        public: app.paseto_public.to_string(),
+        app_status: app_status_from_api_state(&app),
+        user: user.into(),
+        roles,
+        permissions,
+    };
+
+    Ok(response)
 }

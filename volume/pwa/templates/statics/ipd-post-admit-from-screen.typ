@@ -1,3 +1,4 @@
+#import "templates/utils.typ": watermark
 #let data = json("data.json")
 #let row_data = data.at("rows",default: none)
 // PREPARED FUNCTIONS
@@ -19,6 +20,7 @@
 #set page(paper:"a4",flipped:true,margin:(x:1cm,top:1cm,bottom:.5cm),
   footer-descent:-10pt,
   footer: context[#h(1fr)#counter(page).display("1/1",both:true)],
+  foreground: watermark(77pt),
 )
 #table(columns:(40pt,50pt,60pt,100pt,50pt,50pt,140pt,45pt,100pt,100pt,1fr),stroke:.5pt,
   table.header(

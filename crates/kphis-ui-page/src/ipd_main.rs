@@ -566,15 +566,15 @@ impl IpdMainPage {
                             doms::nav_item_external_url(&hn_url, "Scan ")
                         })
                     })))
-                    .apply(|dom| {
-                        if let Some(hn) = page.patient.lock_ref().patient.lock_ref().as_ref().and_then(|pt| pt.hn()) {
+                    .child_signal(page.patient.signal_cloned().map(|pt_mut| pt_mut.patient.signal_cloned()).flatten().map(clone!(app => move |pt_opt| {
+                        pt_opt.and_then(|pt| pt.hn()).and_then(|hn| {
                             let route = Route::PrescriptionScreen {hn};
                             if route.has_permission(app.state()) {
-                                dom.child(html!("li", {
+                                Some(html!("li", {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .attr("data-bs-toggle","pill")
+                                        .attr("data-bs-toggle", "pill")
                                         .attr("href","#")
                                         .text("ประวัติการสั่งยา ")
                                         .child(html!("i", {.class(class::FA_DISPLAY)}))
@@ -585,12 +585,10 @@ impl IpdMainPage {
                                     }))
                                 }))
                             } else {
-                                dom
+                                None
                             }
-                        } else {
-                            dom
-                        }
-                    })
+                        })
+                    })))
                     .apply_if(
                         app.endpoint_is_allow(&Method::GET, &EndPoint::EmrDateHn, false)
                         && app.endpoint_is_allow(&Method::GET, &EndPoint::EmrVisitVn, false),

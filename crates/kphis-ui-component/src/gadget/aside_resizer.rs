@@ -155,7 +155,11 @@ impl AsideResizerCpn {
         // GET `EndPoint::ReportRawTemplateTypeId`
         match TypstRaw::call_api_get(template.template_name(), template.report_type(), ids, app.state()).await {
             Ok(response) => {
-                let bytes = app.typst_worker().await.svg(response.typ, response.data_json, app.token().unwrap_or_default()).await;
+                let bytes = app
+                    .typst_worker()
+                    .await
+                    .svg(response.typ, response.data_json, app.user_name().unwrap_or(String::from("ไม่ระบุผู้ใช้งาน")), app.token().unwrap_or_default())
+                    .await;
                 let reports = if bytes.is_empty() {
                     vec![TypstSvg::default()]
                 } else {

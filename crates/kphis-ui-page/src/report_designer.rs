@@ -145,11 +145,13 @@ impl ReportDesignerPage {
     }
 
     fn set_demo(&self) {
-        let typst_text = r##"== START TEST #datetime.today().display()
-#import "@preview/cetz:0.5.2"
+        let typst_text = r##"#import "@preview/cetz:0.5.2"
+#import "templates/utils.typ": watermarks
+#set page(foreground: watermarks(2,55pt,33%))
+== START TEST #datetime.today().display()
 #place(dx: 127.5pt, dy: 320pt, cetz.canvas({
   import cetz.draw: *
-  circle((0,0), radius: 6.2, fill: rgb("#FFFDDD"), stroke: none)
+  circle((0,0), radius: 6.2, fill: rgb(255,255,0,55), stroke: none)
 }))
 #place(bottom + right, image(width: 300pt, "statics/picture/krut.svg"))
 #let data = json("data.json")
@@ -553,6 +555,7 @@ LIMIT 50;"#;
                     let bytes = app.typst_worker().await.svg(
                         template,
                         data,
+                        app.user_name().unwrap_or(String::from("ไม่ระบุผู้ใช้งาน")),
                         app.token().unwrap_or_default(),
                     ).await;
                     let reports = if bytes.is_empty() {

@@ -1,4 +1,4 @@
-#import "templates/utils.typ": date_th, time_th
+#import "templates/utils.typ": date_th, time_th, watermark
 // PRELUDE
 #let data = json("data.json")
 #let users = data.at("user",default: ())
@@ -35,6 +35,7 @@
 #set text(font:"TH Sarabun New",size:14pt)
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1.5cm),header-ascent:5pt,footer-descent:0pt,
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
+  foreground: watermark(77pt),
 )
 #h(1fr) #text(size:20pt,weight:700,align(center,[รายงานรายละเอียดการบันทึก Progreee Note#linebreak()ของ #user#linebreak()ระหว่างวันที่ #date_th(data.start) ถึงวันที่ #date_th(data.end)]))#h(1fr)
 #v(-25pt)

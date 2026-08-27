@@ -87,9 +87,6 @@ ul.dash > li:before {
     content: "-";
     width: 1em;
     margin-left: -1em
-}
-.modal {
-    background-color: rgba(0,0,0,0.5)
 }"#;
 
 /// - GET `EndPoint::IpdOrderOrderDateAn`

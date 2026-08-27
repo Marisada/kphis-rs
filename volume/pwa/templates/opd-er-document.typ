@@ -1,4 +1,4 @@
-#import "templates/utils.typ": api, get_patient_main
+#import "templates/utils.typ": api, get_patient_main, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -13,7 +13,7 @@
 #let table_h(c) = [#align(center,strong(c))]
 #let pad_l(c) = [#pad(left:20pt,c)]
 // RENDER
-#set page(paper:"a4",margin:1cm)
+#set page(paper:"a4",margin:1cm,foreground:watermarks(2,55pt,33%))
 #set text(font:"TH Sarabun New",size:14pt)
 #set table(stroke:.5pt)
 #align(center,text(size:20pt,weight:700,[เอกสารใบปะหน้า]))

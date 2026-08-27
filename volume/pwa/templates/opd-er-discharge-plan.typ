@@ -1,4 +1,4 @@
-#import "templates/utils.typ": api, get_patient_main, date_th, time_th, datetime_th
+#import "templates/utils.typ": api, get_patient_main, date_th, time_th, datetime_th, watermarks
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -24,7 +24,7 @@
 }
 #let list_text(s) = if s == none [] else if type(s) == str and s.contains("\n- ") [#s.trim("- ").split("\n- ").map(r => [- #r]).join()] else [- #s.trim("- ")]
 // RENDER
-#set page(paper:"a4",margin:1cm)
+#set page(paper:"a4",margin:1cm,foreground:watermarks(2,55pt,33%))
 #set text(font:"TH Sarabun New",size:14pt)
 #let render(dcp) = [
   #section[บันทึกการพยาบาลก่อนจำหน่าย (Discharge Plan)]

@@ -40,6 +40,11 @@
 - $link-hover-decoration:                   null !default;
 + $link-hover-decoration:                   underline !default;
 ```
+:1520
+```diff
+- $modal-backdrop-opacity:            .5 !default;
++ $modal-backdrop-opacity:            .7 !default;
+```
 
 ## /mixins/_table-variants.scss
 ```diff

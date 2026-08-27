@@ -1,5 +1,5 @@
 #import "customs/config.typ": drug_alert, is_inj
-#import "templates/utils.typ": api, get_patient_main, date_th, datetime_th, month_th, time_th, parse_d_t, parse_d
+#import "templates/utils.typ": api, get_patient_main, date_th, datetime_th, month_th, time_th, parse_d_t, parse_d, watermarks
 // PRELUDE
 #let eachpage = 4
 #let data = json("data.json")
@@ -126,5 +126,6 @@
 #set page(paper:"a4",margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[Medication Administration Record (eMAR)])#h(1fr)#counter(page).display("1/1",both:true)],
   footer: [#label_note([ชื่อ - สกุล : ],[#pt.pname #pt.fname #pt.lname]) #label_note([อายุ : ],[#pt.age_y ปี #pt.age_m เดือน]) #label_note([HN : ],pt.hn) #label_note([AN : ],pt.an)],
+  foreground: watermarks(2,55pt,33%),
 )
 #for ((icode,med_name,displaycolor,_)) in icodes {render_icode(icode,[\u{2022} #strong[#med_name]#h(0pt)#drug_alert_badge(displaycolor)])}

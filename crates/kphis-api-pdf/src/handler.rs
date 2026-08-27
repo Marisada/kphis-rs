@@ -326,9 +326,7 @@ fn merge_pdf(typ_raws: &[(String, String)], app: &ApiState, user: &UserState) ->
 }
 
 pub fn create_paged_document(typ_file: &str, data_json: &str, app: &ApiState, user: &UserState, world: &mut SystemWorld, read_fn: ReadFn) -> Result<PagedDocument, AppError> {
-    world
-        .compile(typ_file, data_json, read_fn, Some(app.clone()), Some(user.clone()))
-        .map_err(|e| Source::Typst.to_error(500, e, "Create PagedDocument"))
+    world.compile(typ_file, data_json, read_fn, Some(app.clone()), user.clone()).map_err(|e| Source::Typst.to_error(500, e, "Create PagedDocument"))
 }
 
 pub fn generate_pdf_file(document: &mut PagedDocument, title: &str, app: &ApiState, user: &UserState) -> Result<Vec<u8>, AppError> {

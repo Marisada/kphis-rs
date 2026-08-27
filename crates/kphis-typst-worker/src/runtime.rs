@@ -25,8 +25,8 @@ use typst_timing::timed;
 use typst_utils::{LazyHash, hash128};
 
 use kphis_util::{
-    datetime::js_now,
-    pdf::{DATA_PATH, INPUT_PATH, create_source, start_embedded_fonts},
+    datetime::{datetime_th, js_now},
+    pdf::{DATA_PATH, INPUT_PATH, WATERMARK_PATH, create_source, start_embedded_fonts},
 };
 
 // path + token -> file
@@ -74,10 +74,11 @@ impl SystemWorld {
     }
 
     /// create Document from typst syntax string
-    pub fn compile(&mut self, input: &str, data: &str, read_fn: ReadFn, token: Option<String>) -> Result<PagedDocument, String> {
+    pub fn compile(&mut self, input: &str, data: &str, read_fn: ReadFn, user: &str, token: Option<String>) -> Result<PagedDocument, String> {
         self.reset();
         let input_id = FileId::new(RootedPath::new(VirtualRoot::Project, VirtualPath::new(INPUT_PATH).unwrap()));
         let data_id = FileId::new(RootedPath::new(VirtualRoot::Project, VirtualPath::new(DATA_PATH).unwrap()));
+        let watermark_id = FileId::new(RootedPath::new(VirtualRoot::Project, VirtualPath::new(WATERMARK_PATH).unwrap()));
         self.main = Some(input_id);
 
         let mut input_slot = FileSlot::new(input_id);
@@ -87,10 +88,17 @@ impl SystemWorld {
         let mut data_slot = FileSlot::new(data_id);
         data_slot.source.set(|| Ok(data.as_bytes().to_vec()), |bytes, prev| create_source(data_id, &bytes, prev));
         data_slot.file.set(|| Ok(data.as_bytes().to_vec()), |bytes, _| Ok(Bytes::new(bytes)));
+
+        let mut matermark_slot = FileSlot::new(watermark_id);
+        let watermark = ["โดย ", user, "\n", &datetime_th(&js_now())].concat();
+        matermark_slot.source.set(|| Ok(watermark.as_bytes().to_vec()), |bytes, prev| create_source(watermark_id, &bytes, prev));
+        matermark_slot.file.set(|| Ok(watermark.as_bytes().to_vec()), |bytes, _| Ok(Bytes::new(bytes)));
+
         match self.slots.lock() {
             Ok(mut map) => {
                 map.insert(input_id, input_slot);
                 map.insert(data_id, data_slot);
+                map.insert(watermark_id, matermark_slot);
             }
             Err(_) => {
                 return Err(String::from("Locked"));

@@ -1,6 +1,6 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "customs/config.typ": hospcode, hospital-name
-#import "templates/utils.typ": api, get_patient_main, month_th, date_th, datetime_th, time_th, parse_d, parse_sex
+#import "templates/utils.typ": api, get_patient_main, month_th, date_th, datetime_th, time_th, parse_d, parse_sex, watermark
 // PRELUDE
 #let data = json("data.json")
 #assert(data.id != none, message:"no 'id' in data")
@@ -28,6 +28,7 @@
 #set text(font:"TH Sarabun New",size:12pt)
 #set page(paper:"a4",flipped:true,margin:(x:1cm,y:1.5cm),
   header: context[#h(1fr) #text(size:20pt,weight:700,[แบบบันทึกผลการตรวจสอบเวชระเบียน (Summary / Coding Audit) #hospital-name])#h(1fr)#counter(page).display("1/1",both:true)],
+  foreground: watermark(77pt),
 )
 // Page template
 #let body(b) = {

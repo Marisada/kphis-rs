@@ -1,6 +1,6 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "customs/config.typ": hospital-name
-#import "templates/utils.typ": date_th, thousands
+#import "templates/utils.typ": date_th, thousands, watermarks
 // PRELUDE
 #let data = json("data.json")
 #let ipt = data.at("data",default: ())
@@ -63,6 +63,7 @@
 #set text(font:"TH Sarabun New",size:16pt)
 #set page(paper:"a4",margin:(x:1cm,y:2cm),header-ascent:5pt,footer-descent:0pt,
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
+  foreground: watermarks(2,55pt,33%),
 )
 #h(1fr) #text(size:20pt,weight:700,align(center,[สรุปผลการตรวจสอบเวชระเบียน#hospital-name#linebreak()#audit_type Audit #ward#linebreak()ระหว่างวันที่ #date_th(data.start) ถึงวันที่ #date_th(data.end)]))#h(1fr)
 #v(-25pt)
