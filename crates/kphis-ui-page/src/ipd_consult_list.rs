@@ -1,11 +1,11 @@
-use dominator::{Dom, DomBuilder, clone, events, html, is_window_loaded, link, text, with_node};
+use dominator::{Dom, clone, events, html, is_window_loaded, link, text, with_node};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt},
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement, HtmlTableCellElement};
+use web_sys::{HtmlInputElement, HtmlSelectElement};
 
 use kphis_model::{
     ipd::consult::{IpdConsultList, IpdConsultListParams},
@@ -55,62 +55,6 @@ impl IpdConsultListPage {
             search_consult_status: Mutable::new(String::from("N")),
             ..Default::default()
         })
-    }
-
-    fn sortable_mixin(sort_by: SortBy, page: Rc<Self>) -> impl FnOnce(DomBuilder<HtmlTableCellElement>) -> DomBuilder<HtmlTableCellElement> {
-        #[inline]
-        move |dom| {
-            with_node!(dom, element => {
-                .style("cursor","pointer")
-                .child_signal(map_ref! {
-                    let is_this = page.sorted_by.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
-                    let is_desc = page.is_desc.signal() =>
-                    is_this.then(|| {
-                        html!("i", {
-                            .class("ms-1")
-                            .class(if *is_desc {
-                                class::FA_UP91
-                            } else {
-                                class::FA_DOWN19
-                            })
-                        })
-                    })
-                })
-                .event(clone!(sort_by => move |_:events::Click| {
-                    if page.sorted_by.get_cloned() != sort_by {
-                        page.sorted_by.set(sort_by.clone());
-                        page.is_desc.set_neq(false);
-                    } else {
-                        page.is_desc.set(!page.is_desc.get());
-                    }
-                    page.sort();
-                }))
-            })
-        }
-    }
-
-    fn sort(&self) {
-        let mut items = self.search_result.lock_ref().to_vec();
-        if self.is_desc.get() {
-            match self.sorted_by.get_cloned() {
-                SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
-                SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
-                SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
-                SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
-                SortBy::ConsultDateTime => items.sort_by(|a, b| datetime_from_opt(b.consult_date, b.consult_time).cmp(&datetime_from_opt(a.consult_date, a.consult_time))),
-                SortBy::ReplyDateTime => items.sort_by(|a, b| b.consult_datetime_update_reply.or(b.consult_datetime_create_reply).cmp(&a.consult_datetime_update_reply.or(a.consult_datetime_create_reply))),
-            }
-        } else {
-            match self.sorted_by.get_cloned() {
-                SortBy::BedNo => items.sort_by(|a, b| a.bedno.cmp(&b.bedno)),
-                SortBy::An => items.sort_by(|a, b| a.an.cmp(&b.an)),
-                SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
-                SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
-                SortBy::ConsultDateTime => items.sort_by(|a, b| datetime_from_opt(a.consult_date, a.consult_time).cmp(&datetime_from_opt(b.consult_date, b.consult_time))),
-                SortBy::ReplyDateTime => items.sort_by(|a, b| a.consult_datetime_update_reply.or(a.consult_datetime_create_reply).cmp(&b.consult_datetime_update_reply.or(b.consult_datetime_create_reply))),
-            }
-        }
-        self.search_result.lock_mut().replace_cloned(items);
     }
 
     // ipd-consult-list-table.php
@@ -490,6 +434,29 @@ impl IpdConsultListPage {
                     }
                     // wide screen table
                     Some(false) => {
+                        let sort_fn = clone!(page => move || {
+                            let mut items = page.search_result.lock_ref().to_vec();
+                            if page.is_desc.get() {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
+                                    SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
+                                    SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
+                                    SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
+                                    SortBy::ConsultDateTime => items.sort_by(|a, b| datetime_from_opt(b.consult_date, b.consult_time).cmp(&datetime_from_opt(a.consult_date, a.consult_time))),
+                                    SortBy::ReplyDateTime => items.sort_by(|a, b| b.consult_datetime_update_reply.or(b.consult_datetime_create_reply).cmp(&a.consult_datetime_update_reply.or(a.consult_datetime_create_reply))),
+                                }
+                            } else {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::BedNo => items.sort_by(|a, b| a.bedno.cmp(&b.bedno)),
+                                    SortBy::An => items.sort_by(|a, b| a.an.cmp(&b.an)),
+                                    SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
+                                    SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
+                                    SortBy::ConsultDateTime => items.sort_by(|a, b| datetime_from_opt(a.consult_date, a.consult_time).cmp(&datetime_from_opt(b.consult_date, b.consult_time))),
+                                    SortBy::ReplyDateTime => items.sort_by(|a, b| a.consult_datetime_update_reply.or(a.consult_datetime_create_reply).cmp(&b.consult_datetime_update_reply.or(b.consult_datetime_create_reply))),
+                                }
+                            }
+                            page.search_result.lock_mut().replace_cloned(items);
+                        });
                         doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| { table
                             .children([
                                 html!("thead", {
@@ -498,36 +465,36 @@ impl IpdConsultListPage {
                                         .children([
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("ตึกผู้ป่วย")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เตียง")
-                                                .apply(Self::sortable_mixin(SortBy::BedNo, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(Self::sortable_mixin(SortBy::An, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(Self::sortable_mixin(SortBy::Hn, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล (อายุ)")
-                                                .apply(Self::sortable_mixin(SortBy::Name, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             // html!("th", {.class("th-sm").attr("scope","col").text("อายุ")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("วันที่ Consult")
-                                                .apply(Self::sortable_mixin(SortBy::ConsultDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::ConsultDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("ตอบ")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("ด่วน")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แผนกที่รับ Consult")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์ผู้รับ")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์ผู้ตอบ")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("วันที่ตอบ")
-                                                .apply(Self::sortable_mixin(SortBy::ReplyDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::ReplyDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                             }),
                                         ])
                                     }))

@@ -1,11 +1,11 @@
-use dominator::{Dom, DomBuilder, clone, events, html, is_window_loaded, with_node};
+use dominator::{Dom, clone, events, html, is_window_loaded};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt, always},
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement, HtmlTableCellElement};
+use web_sys::{HtmlInputElement, HtmlSelectElement};
 
 use kphis_model::{
     endpoint::EndPoint,
@@ -76,58 +76,6 @@ impl IpdPreOrderListPage {
             is_desc: Mutable::new(true),
             ..Default::default()
         })
-    }
-
-    fn sortable_mixin(sort_by: SortBy, page: Rc<Self>) -> impl FnOnce(DomBuilder<HtmlTableCellElement>) -> DomBuilder<HtmlTableCellElement> {
-        #[inline]
-        move |dom| {
-            with_node!(dom, element => {
-                .style("cursor","pointer")
-                .child_signal(map_ref! {
-                    let is_this = page.sorted_by.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
-                    let is_desc = page.is_desc.signal() =>
-                    is_this.then(|| {
-                        html!("i", {
-                            .class("ms-1")
-                            .class(if *is_desc {
-                                class::FA_UP91
-                            } else {
-                                class::FA_DOWN19
-                            })
-                        })
-                    })
-                })
-                .event(clone!(sort_by => move |_:events::Click| {
-                    if page.sorted_by.get_cloned() != sort_by {
-                        page.sorted_by.set(sort_by.clone());
-                        page.is_desc.set_neq(false);
-                    } else {
-                        page.is_desc.set(!page.is_desc.get());
-                    }
-                    page.sort();
-                }))
-            })
-        }
-    }
-
-    fn sort(&self) {
-        let mut items = self.search_result.lock_ref().to_vec();
-        if self.is_desc.get() {
-            match self.sorted_by.get_cloned() {
-                SortBy::OrderDateTime => items.sort_by(|a, b| b.order_date_time.cmp(&a.order_date_time)),
-                SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
-                SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
-                SortBy::ForDate => items.sort_by(|a, b| b.order_for_date.cmp(&a.order_for_date)),
-            }
-        } else {
-            match self.sorted_by.get_cloned() {
-                SortBy::OrderDateTime => items.sort_by(|a, b| a.order_date_time.cmp(&b.order_date_time)),
-                SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
-                SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
-                SortBy::ForDate => items.sort_by(|a, b| a.order_for_date.cmp(&b.order_for_date)),
-            }
-        }
-        self.search_result.lock_mut().replace_cloned(items);
     }
 
     // ipd-dr-pre-order-list-data.php
@@ -445,8 +393,27 @@ impl IpdPreOrderListPage {
                         }),
                     ])
                 })),
-                doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| { table
-                    .children([
+                doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| {
+                    let sort_fn = clone!(page => move || {
+                        let mut items = page.search_result.lock_ref().to_vec();
+                        if page.is_desc.get() {
+                            match page.sorted_by.get_cloned() {
+                                SortBy::OrderDateTime => items.sort_by(|a, b| b.order_date_time.cmp(&a.order_date_time)),
+                                SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
+                                SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
+                                SortBy::ForDate => items.sort_by(|a, b| b.order_for_date.cmp(&a.order_for_date)),
+                            }
+                        } else {
+                            match page.sorted_by.get_cloned() {
+                                SortBy::OrderDateTime => items.sort_by(|a, b| a.order_date_time.cmp(&b.order_date_time)),
+                                SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
+                                SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
+                                SortBy::ForDate => items.sort_by(|a, b| a.order_for_date.cmp(&b.order_for_date)),
+                            }
+                        }
+                        page.search_result.lock_mut().replace_cloned(items);
+                    });
+                    table.children([
                         html!("thead", {
                             .child(html!("tr", {
                                 .class("text-center")
@@ -456,23 +423,23 @@ impl IpdPreOrderListPage {
                                     //     .attr("scope", "col")
                                     //     .text("เลขที่ใบ Order")
                                     // }),
-                                    html!("th" => HtmlTableCellElement, {
+                                    html!("th", {
                                         .attr("scope", "col").text("เวลาที่บันทึก")
-                                        .apply(Self::sortable_mixin(SortBy::OrderDateTime, page.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::OrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {.attr("scope", "col").text("ประเภทใบ Order")}),
                                     html!("th", {.attr("scope", "col").text("ผู้บันทึก")}),
-                                    html!("th" => HtmlTableCellElement, {
+                                    html!("th", {
                                         .attr("scope", "col").text("HN")
-                                        .apply(Self::sortable_mixin(SortBy::Hn, page.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
-                                    html!("th" => HtmlTableCellElement, {
+                                    html!("th", {
                                         .attr("scope", "col").text("ชื่อ-นามสกุล")
-                                        .apply(Self::sortable_mixin(SortBy::Name, page.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
-                                    html!("th" => HtmlTableCellElement, {
+                                    html!("th", {
                                         .attr("scope", "col").text("วันที่นัด/Admit")
-                                        .apply(Self::sortable_mixin(SortBy::ForDate, page.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::ForDate, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                     }),
                                     html!("th", {.attr("scope", "col").text("ใช้งาน")}),
                                     html!("th", {.attr("scope", "col").text("ชื่อ Template")}),

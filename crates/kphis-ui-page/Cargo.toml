@@ -47,7 +47,6 @@ web-sys = { workspace = true, features = [
     "HtmlInputElement",
     "HtmlOptionElement",
     "HtmlSelectElement",
-    "HtmlTableCellElement",
     "HtmlTextAreaElement",
     "Node",
     "NodeList",
