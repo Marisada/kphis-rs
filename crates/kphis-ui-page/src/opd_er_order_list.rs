@@ -1,11 +1,11 @@
-use dominator::{Dom, DomBuilder, clone, events, html, link, with_node};
+use dominator::{Dom, clone, events, html, link, with_node};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt, always},
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement, HtmlTableCellElement};
+use web_sys::{HtmlInputElement, HtmlSelectElement};
 
 use kphis_model::{
     endpoint::EndPoint,
@@ -76,80 +76,6 @@ impl OpdErOrderListPage {
             er_patient_status: Mutable::new(String::from("in_er")),
             ..Default::default()
         })
-    }
-
-    fn sortable_mixin(sort_by: SortBy, page: Rc<Self>) -> impl FnOnce(DomBuilder<HtmlTableCellElement>) -> DomBuilder<HtmlTableCellElement> {
-        #[inline]
-        move |dom| {
-            with_node!(dom, element => {
-                .style("cursor","pointer")
-                .child_signal(map_ref! {
-                    let is_this = page.sorted_by.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
-                    let is_desc = page.is_desc.signal() =>
-                    is_this.then(|| {
-                        html!("i", {
-                            .class("ms-1")
-                            .class(if *is_desc {
-                                class::FA_UP91
-                            } else {
-                                class::FA_DOWN19
-                            })
-                        })
-                    })
-                })
-                .event(clone!(sort_by => move |_:events::Click| {
-                    if page.sorted_by.get_cloned() != sort_by {
-                        page.sorted_by.set(sort_by.clone());
-                        page.is_desc.set_neq(false);
-                    } else {
-                        page.is_desc.set(!page.is_desc.get());
-                    }
-                    page.sort();
-                }))
-            })
-        }
-    }
-
-    fn sort(&self) {
-        let mut items = self.search_result.lock_ref().to_vec();
-        if self.is_desc.get() {
-            match self.sorted_by.get_cloned() {
-                SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
-                SortBy::VisitDateTime => items.sort_by(|a, b| b.vstdate_time.cmp(&a.vstdate_time)),
-                SortBy::InitDateTime => items.sort_by(|a, b| b.order_date_time.cmp(&a.order_date_time)),
-                SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
-                SortBy::Qn => items.sort_by(|a, b| b.oqueue.cmp(&a.oqueue)),
-                SortBy::Name => items.sort_by(|a, b| b.ptname.cmp(&a.ptname)),
-                SortBy::Age => items.sort_by(|a, b| b.age_y.cmp(&a.age_y).then(b.age_m.cmp(&a.age_m)).then(b.age_d.cmp(&a.age_d))),
-                SortBy::MaxOrderDateTime => items.sort_by(|a, b| b.max_order_date_time.cmp(&a.max_order_date_time)),
-                SortBy::MaxVsDateTime => items.sort_by(|a, b| {
-                    b.ews_concat
-                        .as_ref()
-                        .and_then(|concat| concat.split('|').next())
-                        .and_then(|s| datetime_8601(s))
-                        .cmp(&a.ews_concat.as_ref().and_then(|concat| concat.split('|').next()).and_then(|s| datetime_8601(s)))
-                }),
-            }
-        } else {
-            match self.sorted_by.get_cloned() {
-                SortBy::BedNo => items.sort_by(|a, b| a.bedno.cmp(&b.bedno)),
-                SortBy::VisitDateTime => items.sort_by(|a, b| a.vstdate_time.cmp(&b.vstdate_time)),
-                SortBy::InitDateTime => items.sort_by(|a, b| a.order_date_time.cmp(&b.order_date_time)),
-                SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
-                SortBy::Qn => items.sort_by(|a, b| a.oqueue.cmp(&b.oqueue)),
-                SortBy::Name => items.sort_by(|a, b| a.ptname.cmp(&b.ptname)),
-                SortBy::Age => items.sort_by(|a, b| a.age_y.cmp(&b.age_y).then(a.age_m.cmp(&b.age_m)).then(a.age_d.cmp(&b.age_d))),
-                SortBy::MaxOrderDateTime => items.sort_by(|a, b| a.max_order_date_time.cmp(&b.max_order_date_time)),
-                SortBy::MaxVsDateTime => items.sort_by(|a, b| {
-                    a.ews_concat
-                        .as_ref()
-                        .and_then(|concat| concat.split('|').next())
-                        .and_then(|s| datetime_8601(s))
-                        .cmp(&b.ews_concat.as_ref().and_then(|concat| concat.split('|').next()).and_then(|s| datetime_8601(s)))
-                }),
-            }
-        }
-        self.search_result.lock_mut().replace_cloned(items);
     }
 
     // opd-er-order-list-data.php
@@ -455,6 +381,47 @@ impl OpdErOrderListPage {
                     }
                     // wide screen table
                     Some(false) => {
+                        let sort_fn = clone!(page => move || {
+                            let mut items = page.search_result.lock_ref().to_vec();
+                            if page.is_desc.get() {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
+                                    SortBy::VisitDateTime => items.sort_by(|a, b| b.vstdate_time.cmp(&a.vstdate_time)),
+                                    SortBy::InitDateTime => items.sort_by(|a, b| b.order_date_time.cmp(&a.order_date_time)),
+                                    SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
+                                    SortBy::Qn => items.sort_by(|a, b| b.oqueue.cmp(&a.oqueue)),
+                                    SortBy::Name => items.sort_by(|a, b| b.ptname.cmp(&a.ptname)),
+                                    SortBy::Age => items.sort_by(|a, b| b.age_y.cmp(&a.age_y).then(b.age_m.cmp(&a.age_m)).then(b.age_d.cmp(&a.age_d))),
+                                    SortBy::MaxOrderDateTime => items.sort_by(|a, b| b.max_order_date_time.cmp(&a.max_order_date_time)),
+                                    SortBy::MaxVsDateTime => items.sort_by(|a, b| {
+                                        b.ews_concat
+                                            .as_ref()
+                                            .and_then(|concat| concat.split('|').next())
+                                            .and_then(|s| datetime_8601(s))
+                                            .cmp(&a.ews_concat.as_ref().and_then(|concat| concat.split('|').next()).and_then(|s| datetime_8601(s)))
+                                    }),
+                                }
+                            } else {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::BedNo => items.sort_by(|a, b| a.bedno.cmp(&b.bedno)),
+                                    SortBy::VisitDateTime => items.sort_by(|a, b| a.vstdate_time.cmp(&b.vstdate_time)),
+                                    SortBy::InitDateTime => items.sort_by(|a, b| a.order_date_time.cmp(&b.order_date_time)),
+                                    SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
+                                    SortBy::Qn => items.sort_by(|a, b| a.oqueue.cmp(&b.oqueue)),
+                                    SortBy::Name => items.sort_by(|a, b| a.ptname.cmp(&b.ptname)),
+                                    SortBy::Age => items.sort_by(|a, b| a.age_y.cmp(&b.age_y).then(a.age_m.cmp(&b.age_m)).then(a.age_d.cmp(&b.age_d))),
+                                    SortBy::MaxOrderDateTime => items.sort_by(|a, b| a.max_order_date_time.cmp(&b.max_order_date_time)),
+                                    SortBy::MaxVsDateTime => items.sort_by(|a, b| {
+                                        a.ews_concat
+                                            .as_ref()
+                                            .and_then(|concat| concat.split('|').next())
+                                            .and_then(|s| datetime_8601(s))
+                                            .cmp(&b.ews_concat.as_ref().and_then(|concat| concat.split('|').next()).and_then(|s| datetime_8601(s)))
+                                    }),
+                                }
+                            }
+                            page.search_result.lock_mut().replace_cloned(items);
+                        });
                         doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| { table
                             .children([
                                 html!("thead", {
@@ -462,42 +429,42 @@ impl OpdErOrderListPage {
                                         .class("text-center")
                                         .children([
                                             html!("th", {.attr("scope", "col").text("#")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("เตียง")
-                                                .apply(Self::sortable_mixin(SortBy::BedNo, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("เวลาส่งตรวจ")
-                                                .apply(Self::sortable_mixin(SortBy::VisitDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::VisitDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("เวลาที่มาถึง")
-                                                .apply(Self::sortable_mixin(SortBy::InitDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::InitDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("HN")
-                                                .apply(Self::sortable_mixin(SortBy::Hn, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("QN")
-                                                .apply(Self::sortable_mixin(SortBy::Qn, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Qn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("ชื่อ-นามสกุล")
-                                                .apply(Self::sortable_mixin(SortBy::Name, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("อายุ")
-                                                .apply(Self::sortable_mixin(SortBy::Age, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.attr("scope", "col").text("แพทย์เจ้าของไข้")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("เวลาล่าสุด").child(html!("br")).text("Order")
-                                                .apply(Self::sortable_mixin(SortBy::MaxOrderDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .attr("scope", "col").text("เวลาล่าสุด").child(html!("br")).text("Vital Sign")
-                                                .apply(Self::sortable_mixin(SortBy::MaxVsDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                             }),
                                             html!("th", {.attr("scope", "col").style("min-width","100px")
                                                 .text("EWS/qSOFA/SIRS")

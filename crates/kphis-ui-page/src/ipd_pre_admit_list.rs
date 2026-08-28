@@ -1,11 +1,11 @@
-use dominator::{Dom, DomBuilder, clone, events, html, is_window_loaded, link, with_node};
+use dominator::{Dom, clone, events, html, is_window_loaded, link};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt},
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlSelectElement, HtmlTableCellElement};
+use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlSelectElement};
 
 use kphis_model::{
     endpoint::EndPoint,
@@ -76,62 +76,6 @@ impl IpdPreAdmitListPage {
             is_desc: Mutable::new(true),
             ..Default::default()
         })
-    }
-
-    fn sortable_mixin(sort_by: SortBy, page: Rc<Self>) -> impl FnOnce(DomBuilder<HtmlTableCellElement>) -> DomBuilder<HtmlTableCellElement> {
-        #[inline]
-        move |dom| {
-            with_node!(dom, element => {
-                .style("cursor","pointer")
-                .child_signal(map_ref! {
-                    let is_this = page.sorted_by.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
-                    let is_desc = page.is_desc.signal() =>
-                    is_this.then(|| {
-                        html!("i", {
-                            .class("ms-1")
-                            .class(if *is_desc {
-                                class::FA_UP91
-                            } else {
-                                class::FA_DOWN19
-                            })
-                        })
-                    })
-                })
-                .event(clone!(sort_by => move |_:events::Click| {
-                    if page.sorted_by.get_cloned() != sort_by {
-                        page.sorted_by.set(sort_by.clone());
-                        page.is_desc.set_neq(false);
-                    } else {
-                        page.is_desc.set(!page.is_desc.get());
-                    }
-                    page.sort();
-                }))
-            })
-        }
-    }
-
-    fn sort(&self) {
-        let mut items = self.search_result.lock_ref().to_vec();
-        if self.is_desc.get() {
-            match self.sorted_by.get_cloned() {
-                SortBy::RegDateTime => items.sort_by(|a, b| datetime_from_opt(b.vstdate, b.vsttime).cmp(&datetime_from_opt(a.vstdate, a.vsttime))),
-                SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
-                SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
-                SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
-                SortBy::Age => items.sort_by(|a, b| b.age_y.cmp(&a.age_y).then(b.age_m.cmp(&a.age_m)).then(b.age_d.cmp(&a.age_d))),
-                SortBy::MaxOrderDateTime => items.sort_by(|a, b| b.max_order_datetime.cmp(&a.max_order_datetime)),
-            }
-        } else {
-            match self.sorted_by.get_cloned() {
-                SortBy::RegDateTime => items.sort_by(|a, b| datetime_from_opt(a.vstdate, a.vsttime).cmp(&datetime_from_opt(b.vstdate, b.vsttime))),
-                SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
-                SortBy::An => items.sort_by(|a, b| a.an.cmp(&b.an)),
-                SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
-                SortBy::Age => items.sort_by(|a, b| a.age_y.cmp(&b.age_y).then(a.age_m.cmp(&b.age_m)).then(a.age_d.cmp(&b.age_d))),
-                SortBy::MaxOrderDateTime => items.sort_by(|a, b| a.max_order_datetime.cmp(&b.max_order_datetime)),
-            }
-        }
-        self.search_result.lock_mut().replace_cloned(items);
     }
 
     // send GET method
@@ -507,6 +451,29 @@ impl IpdPreAdmitListPage {
                     }
                     // wide screen table
                     Some(false) => {
+                        let sort_fn = clone!(page => move || {
+                            let mut items = page.search_result.lock_ref().to_vec();
+                            if page.is_desc.get() {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::RegDateTime => items.sort_by(|a, b| datetime_from_opt(b.vstdate, b.vsttime).cmp(&datetime_from_opt(a.vstdate, a.vsttime))),
+                                    SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
+                                    SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
+                                    SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
+                                    SortBy::Age => items.sort_by(|a, b| b.age_y.cmp(&a.age_y).then(b.age_m.cmp(&a.age_m)).then(b.age_d.cmp(&a.age_d))),
+                                    SortBy::MaxOrderDateTime => items.sort_by(|a, b| b.max_order_datetime.cmp(&a.max_order_datetime)),
+                                }
+                            } else {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::RegDateTime => items.sort_by(|a, b| datetime_from_opt(a.vstdate, a.vsttime).cmp(&datetime_from_opt(b.vstdate, b.vsttime))),
+                                    SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
+                                    SortBy::An => items.sort_by(|a, b| a.an.cmp(&b.an)),
+                                    SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
+                                    SortBy::Age => items.sort_by(|a, b| a.age_y.cmp(&b.age_y).then(a.age_m.cmp(&b.age_m)).then(a.age_d.cmp(&b.age_d))),
+                                    SortBy::MaxOrderDateTime => items.sort_by(|a, b| a.max_order_datetime.cmp(&b.max_order_datetime)),
+                                }
+                            }
+                            page.search_result.lock_mut().replace_cloned(items);
+                        });
                         doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| { table
                             .children([
                                 html!("thead", {
@@ -514,21 +481,21 @@ impl IpdPreAdmitListPage {
                                         .class("text-center")
                                         .children([
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาที่มาถึง")
-                                                .apply(Self::sortable_mixin(SortBy::RegDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::RegDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(Self::sortable_mixin(SortBy::Hn, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                         ])
-                                        .children_signal_vec(page.status.signal_cloned().map(clone!(page => move |stts| {
+                                        .children_signal_vec(page.status.signal_cloned().map(clone!(page, sort_fn => move |stts| {
                                             if stts.as_str() == "admited" {
                                                 vec![
-                                                    html!("th" => HtmlTableCellElement, {
+                                                    html!("th", {
                                                         .class("th-sm").attr("scope","col").text("AN")
-                                                        .apply(Self::sortable_mixin(SortBy::An, page.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                                     }),
                                                     html!("th", {.class("th-sm").attr("scope","col").text("แผนก")}),
                                                 ]
@@ -537,18 +504,18 @@ impl IpdPreAdmitListPage {
                                             }
                                         })).to_signal_vec())
                                         .children([
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(Self::sortable_mixin(SortBy::Name, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(Self::sortable_mixin(SortBy::Age, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลา Order ล่าสุด")
-                                                .apply(Self::sortable_mixin(SortBy::MaxOrderDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col")
                                                 .attr("title","Med Reconciliation").text("MR")

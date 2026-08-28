@@ -1,11 +1,11 @@
-use dominator::{Dom, DomBuilder, EventOptions, clone, events, html, is_window_loaded, link, with_node};
+use dominator::{Dom, EventOptions, clone, events, html, is_window_loaded, link, with_node};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt},
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement, HtmlTableCellElement};
+use web_sys::{HtmlInputElement, HtmlSelectElement};
 
 use kphis_model::{
     route::Route,
@@ -49,66 +49,6 @@ pub struct IpdSearchPatientOtherPage {
 impl IpdSearchPatientOtherPage {
     pub fn new() -> Rc<Self> {
         Rc::new(Self::default())
-    }
-
-    fn sortable_mixin(sort_by: SortBy, page: Rc<Self>) -> impl FnOnce(DomBuilder<HtmlTableCellElement>) -> DomBuilder<HtmlTableCellElement> {
-        #[inline]
-        move |dom| {
-            with_node!(dom, element => {
-                .style("cursor","pointer")
-                .child_signal(map_ref! {
-                    let is_this = page.sorted_by.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
-                    let is_desc = page.is_desc.signal() =>
-                    is_this.then(|| {
-                        html!("i", {
-                            .class("ms-1")
-                            .class(if *is_desc {
-                                class::FA_UP91
-                            } else {
-                                class::FA_DOWN19
-                            })
-                        })
-                    })
-                })
-                .event(clone!(sort_by => move |_:events::Click| {
-                    if page.sorted_by.get_cloned() != sort_by {
-                        page.sorted_by.set(sort_by.clone());
-                        page.is_desc.set_neq(false);
-                    } else {
-                        page.is_desc.set(!page.is_desc.get());
-                    }
-                    page.sort();
-                }))
-            })
-        }
-    }
-
-    fn sort(&self) {
-        let mut items = self.search_result.lock_ref().to_vec();
-        if self.is_desc.get() {
-            match self.sorted_by.get_cloned() {
-                SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
-                SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
-                SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
-                SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
-                SortBy::Age => items.sort_by(|a, b| b.age_y.cmp(&a.age_y).then(b.age_m.cmp(&a.age_m)).then(b.age_d.cmp(&a.age_d))),
-                SortBy::MaxVsDateTime => items.sort_by(|a, b| b.max_vs_datetime.cmp(&a.max_vs_datetime)),
-                SortBy::MaxFcNoteDateTime => items.sort_by(|a, b| b.max_fcnote_datetime.cmp(&a.max_fcnote_datetime)),
-                SortBy::MaxOrderDateTime => items.sort_by(|a, b| b.max_order_datetime.cmp(&a.max_order_datetime)),
-            }
-        } else {
-            match self.sorted_by.get_cloned() {
-                SortBy::BedNo => items.sort_by(|a, b| a.bedno.cmp(&b.bedno)),
-                SortBy::An => items.sort_by(|a, b| a.an.cmp(&b.an)),
-                SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
-                SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
-                SortBy::Age => items.sort_by(|a, b| a.age_y.cmp(&b.age_y).then(a.age_m.cmp(&b.age_m)).then(a.age_d.cmp(&b.age_d))),
-                SortBy::MaxVsDateTime => items.sort_by(|a, b| a.max_vs_datetime.cmp(&b.max_vs_datetime)),
-                SortBy::MaxFcNoteDateTime => items.sort_by(|a, b| a.max_fcnote_datetime.cmp(&b.max_fcnote_datetime)),
-                SortBy::MaxOrderDateTime => items.sort_by(|a, b| a.max_order_datetime.cmp(&b.max_order_datetime)),
-            }
-        }
-        self.search_result.lock_mut().replace_cloned(items);
     }
 
     // ipd-other-search-patient-table.php
@@ -321,6 +261,33 @@ impl IpdSearchPatientOtherPage {
                     }
                     // wide screen table
                     Some(false) => {
+                        let sort_fn = clone!(page => move || {
+                            let mut items = page.search_result.lock_ref().to_vec();
+                            if page.is_desc.get() {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
+                                    SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
+                                    SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
+                                    SortBy::Name => items.sort_by(|a, b| b.fullname.cmp(&a.fullname)),
+                                    SortBy::Age => items.sort_by(|a, b| b.age_y.cmp(&a.age_y).then(b.age_m.cmp(&a.age_m)).then(b.age_d.cmp(&a.age_d))),
+                                    SortBy::MaxVsDateTime => items.sort_by(|a, b| b.max_vs_datetime.cmp(&a.max_vs_datetime)),
+                                    SortBy::MaxFcNoteDateTime => items.sort_by(|a, b| b.max_fcnote_datetime.cmp(&a.max_fcnote_datetime)),
+                                    SortBy::MaxOrderDateTime => items.sort_by(|a, b| b.max_order_datetime.cmp(&a.max_order_datetime)),
+                                }
+                            } else {
+                                match page.sorted_by.get_cloned() {
+                                    SortBy::BedNo => items.sort_by(|a, b| a.bedno.cmp(&b.bedno)),
+                                    SortBy::An => items.sort_by(|a, b| a.an.cmp(&b.an)),
+                                    SortBy::Hn => items.sort_by(|a, b| a.hn.cmp(&b.hn)),
+                                    SortBy::Name => items.sort_by(|a, b| a.fullname.cmp(&b.fullname)),
+                                    SortBy::Age => items.sort_by(|a, b| a.age_y.cmp(&b.age_y).then(a.age_m.cmp(&b.age_m)).then(a.age_d.cmp(&b.age_d))),
+                                    SortBy::MaxVsDateTime => items.sort_by(|a, b| a.max_vs_datetime.cmp(&b.max_vs_datetime)),
+                                    SortBy::MaxFcNoteDateTime => items.sort_by(|a, b| a.max_fcnote_datetime.cmp(&b.max_fcnote_datetime)),
+                                    SortBy::MaxOrderDateTime => items.sort_by(|a, b| a.max_order_datetime.cmp(&b.max_order_datetime)),
+                                }
+                            }
+                            page.search_result.lock_mut().replace_cloned(items);
+                        });
                         doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| { table
                             .children([
                                 html!("thead", {
@@ -328,38 +295,38 @@ impl IpdSearchPatientOtherPage {
                                         .class("text-center")
                                         .children([
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เตียง")
-                                                .apply(Self::sortable_mixin(SortBy::BedNo, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(Self::sortable_mixin(SortBy::An, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(Self::sortable_mixin(SortBy::Hn, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(Self::sortable_mixin(SortBy::Name, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(Self::sortable_mixin(SortBy::Age, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Vital Sign")
-                                                .apply(Self::sortable_mixin(SortBy::MaxVsDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Nurse Note")
-                                                .apply(Self::sortable_mixin(SortBy::MaxFcNoteDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxFcNoteDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
-                                            html!("th" => HtmlTableCellElement, {
+                                            html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Order")
-                                                .apply(Self::sortable_mixin(SortBy::MaxOrderDateTime, page.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                             }),
                                         ])
                                     }))

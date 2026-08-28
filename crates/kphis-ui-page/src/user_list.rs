@@ -24,6 +24,16 @@ use kphis_ui_app::App;
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::str_some;
 
+#[derive(Default, Clone, PartialEq)]
+enum SortBy {
+    Loginname,
+    Fullname,
+    Group,
+    Totp,
+    #[default]
+    Failed,
+}
+
 /// - GET `EndPoint::UserRolePrelude`
 /// - GET `EndPoint::UserRoleUser`
 /// - POST `EndPoint::UserRoleUser` (guarded, remove 'บันทึก' btn)
@@ -44,6 +54,9 @@ pub struct UserListPage {
     hosxp_group: Mutable<String>,
     account_disable: Mutable<String>,
     search_result: MutableVec<Rc<UserRole>>,
+
+    sorted_by: Mutable<SortBy>,
+    is_desc: Mutable<bool>,
 
     modal_changed: Mutable<bool>,
 
@@ -138,6 +151,8 @@ impl UserListPage {
                             let mut list_lock = page.search_result.lock_mut();
                             list_lock.clear();
                             list_lock.extend(response.user_roles.into_iter().map(Rc::new));
+                            page.sorted_by.set(SortBy::Failed);
+                            page.is_desc.set_neq(true);
                         }
                         {
                             let mut roles_lock = page.roles.lock_mut();
@@ -335,23 +350,59 @@ impl UserListPage {
                         })),
                     ])
                 })),
-                doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| { table
-                    .children([
+                doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| {
+                    let sort_fn = clone!(page => move || {
+                        let mut items = page.search_result.lock_ref().to_vec();
+                        if page.is_desc.get() {
+                            match page.sorted_by.get_cloned() {
+                                SortBy::Loginname => items.sort_by(|a, b| b.loginname.cmp(&a.loginname)),
+                                SortBy::Fullname => items.sort_by(|a, b| b.name.cmp(&a.name)),
+                                SortBy::Group => items.sort_by(|a, b| b.hosxp_group.cmp(&a.hosxp_group)),
+                                SortBy::Totp => items.sort_by(|a, b| b.totp_done.cmp(&a.totp_done)),
+                                SortBy::Failed => items.sort_by(|a, b| b.failed.cmp(&a.failed)),
+                            }
+                        } else {
+                            match page.sorted_by.get_cloned() {
+                                SortBy::Loginname => items.sort_by(|a, b| a.loginname.cmp(&b.loginname)),
+                                SortBy::Fullname => items.sort_by(|a, b| a.name.cmp(&b.name)),
+                                SortBy::Group => items.sort_by(|a, b| a.hosxp_group.cmp(&b.hosxp_group)),
+                                SortBy::Totp => items.sort_by(|a, b| a.totp_done.cmp(&b.totp_done)),
+                                SortBy::Failed => items.sort_by(|a, b| a.failed.cmp(&b.failed)),
+                            }
+                        }
+                        page.search_result.lock_mut().replace_cloned(items);
+                    });
+                    table.children([
                         html!("thead", {
                             .child(html!("tr", {
                                 .class("text-center")
                                 .children([
                                     html!("th", {.attr("scope","col").text("#")}),
-                                    html!("th", {.attr("scope","col").text("Loginname")}),
-                                    html!("th", {.attr("scope","col").text("ชื่อ - นามสกุล")}),
+                                    html!("th", {
+                                        .attr("scope","col").text("Loginname")
+                                        .apply(mixins::sortable_header_mixin(SortBy::Loginname, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                    }),
+                                    html!("th", {
+                                        .attr("scope","col").text("ชื่อ - นามสกุล")
+                                        .apply(mixins::sortable_header_mixin(SortBy::Fullname, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                    }),
                                     html!("th", {.attr("scope","col").text("Role")}),
-                                    html!("th", {.attr("scope","col").text("HOSxP Group")}),
+                                    html!("th", {
+                                        .attr("scope","col").text("HOSxP Group")
+                                        .apply(mixins::sortable_header_mixin(SortBy::Group, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                    }),
                                     html!("th", {.class("text-nowrap").attr("scope","col").text("ปิดใช้งาน")}),
                                 ])
                                 .apply_if(app.has_permission(Permission::SystemAcRoleUserEdit), |dom| { dom
                                     .children([
-                                        html!("th", {.attr("scope","col").text("2FA")}),
-                                        html!("th", {.attr("scope","col").text("Failed")}),
+                                        html!("th", {
+                                            .attr("scope","col").text("2FA")
+                                            .apply(mixins::sortable_header_mixin(SortBy::Totp, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                        }),
+                                        html!("th", {
+                                            .attr("scope","col").text("Failed")
+                                            .apply(mixins::sortable_header_mixin(SortBy::Failed, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                        }),
                                     ])
                                 })
                             }))
