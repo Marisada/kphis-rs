@@ -922,6 +922,7 @@ where
     #[inline]
     move |dom| { dom
         .style("cursor","pointer")
+        .style("white-space","nowrap")
         .child_signal(map_ref! {
             let is_this = sort_by_mutable.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
             let is_desc = is_desc_mutable.signal() =>
