@@ -48,5 +48,8 @@ web-sys = { workspace = true, features = [
     "HtmlInputElement",
     "HtmlSelectElement",
     "HtmlTextAreaElement",
+    "ScrollIntoViewOptions",
+    "ScrollIntoViewContainer",
+    "ScrollLogicalPosition",
     "SupportedType",
 ]}

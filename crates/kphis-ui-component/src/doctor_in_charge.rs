@@ -7,7 +7,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlSelectElement};
+use web_sys::{HtmlButtonElement, HtmlInputElement};
 
 use kphis_model::{
     endpoint::EndPoint,
@@ -15,7 +15,7 @@ use kphis_model::{
     ipd::doctor_in_charge::{DoctorInChargeParams, IpdDoctorInCharge},
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms::select_option, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::{str_some, zero_none};
 
 /// - GET `EndPoint::IpdDoctorInCharge`
@@ -44,13 +44,13 @@ impl DoctorInChargeCpn {
         Rc::new(Self { an, hn, ..Default::default() })
     }
 
-    fn new_form(&self, app: Rc<App>) {
-        if let Some(elm) = app.get_id("doctor") {
-            NiceSelect::new_default(&elm);
-        }
-        if let Some(elm) = app.get_id("spclty") {
-            NiceSelect::new_default(&elm);
-        }
+    fn new_form(&self) {
+        // if let Some(elm) = app.get_id("doctor") {
+        //     NiceSelect::new_default(&elm);
+        // }
+        // if let Some(elm) = app.get_id("spclty") {
+        //     NiceSelect::new_default(&elm);
+        // }
         self.doctor_in_charge_id.set_neq(0);
         self.doctor.set_neq(String::new());
         self.spclty.set_neq(String::new());
@@ -60,15 +60,15 @@ impl DoctorInChargeCpn {
         self.changed.set_neq(false);
     }
 
-    fn edit_form(&self, row: &Rc<IpdDoctorInCharge>, app: Rc<App>) {
+    fn edit_form(&self, row: &Rc<IpdDoctorInCharge>) {
         let doctor = row.doctor.clone().unwrap_or_default();
         let spclty = row.spclty.clone().unwrap_or_default();
-        if let Some(elm) = app.get_id("doctor") {
-            NiceSelect::new_default_with_value(&elm, &doctor);
-        }
-        if let Some(elm) = app.get_id("spclty") {
-            NiceSelect::new_default_with_value(&elm, &spclty);
-        }
+        // if let Some(elm) = app.get_id("doctor") {
+        //     NiceSelect::new_default_with_value(&elm, &doctor);
+        // }
+        // if let Some(elm) = app.get_id("spclty") {
+        //     NiceSelect::new_default_with_value(&elm, &spclty);
+        // }
         self.doctor_in_charge_id.set_neq(row.doctor_in_charge_id);
         self.doctor.set_neq(doctor);
         self.spclty.set_neq(spclty);
@@ -123,11 +123,11 @@ impl DoctorInChargeCpn {
                 // POST `EndPoint::IpdDoctorInCharge`
                 match saver.call_api_post(app.state()).await {
                     Ok((_id, responses)) => {
-                        app.alert_execute_responses(&responses, clone!(app => async move {
+                        app.alert_execute_responses(&responses, async move {
                             // app.alert("บันทึกข้อมูลสำเร็จ");
-                            page.new_form(app);
+                            page.new_form();
                             page.loaded_table.set_neq(false);
-                        })).await;
+                        }).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -152,10 +152,10 @@ impl DoctorInChargeCpn {
                         // DELETE `EndPoint::IpdDoctorInCharge`
                         match IpdDoctorInCharge::call_api_delete(&params, app.state()).await {
                             Ok(responses) => {
-                                app.alert_execute_responses(&responses, clone!(app => async move {
-                                    page.new_form(app);
+                                app.alert_execute_responses(&responses, async move {
+                                    page.new_form();
                                     page.loaded_table.set_neq(false);
-                                })).await;
+                                }).await;
                             }
                             Err(e) => {
                                 app.alert_app_error(&e).await;
@@ -185,12 +185,12 @@ impl DoctorInChargeCpn {
             ).for_each(clone!(app, page => move |ready| {
                 if ready {
                     Self::load_table(page.clone(), app.clone());
-                    if let Some(elm) = app.get_id("doctor") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("spclty") {
-                        NiceSelect::new_default(&elm);
-                    }
+                    // if let Some(elm) = app.get_id("doctor") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
+                    // if let Some(elm) = app.get_id("spclty") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
                     page.loaded_table.set(true);
                 }
                 async {}
@@ -261,8 +261,8 @@ impl DoctorInChargeCpn {
                                                                             .attr("type", "button")
                                                                             .class(class::BTN_SM_GRAY)
                                                                             .child(html!("i", {.class(class::FA_EDIT)}))
-                                                                            .event(clone!(app, page, row => move |_:events::Click| {
-                                                                                page.edit_form(&row, app.clone());
+                                                                            .event(clone!(page, row => move |_:events::Click| {
+                                                                                page.edit_form(&row);
                                                                             }))
                                                                         }))
                                                                     })
@@ -318,15 +318,22 @@ impl DoctorInChargeCpn {
                                                 }),
                                                 html!("div", {
                                                     .class("col-sm-6")
-                                                    .child(html!("select" => HtmlSelectElement, {
-                                                        .class("form-control")
-                                                        .attr("id", "doctor")
-                                                        .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                        .children(doctor_select_option.iter().map(|option| {
-                                                            select_option(option, "")
-                                                        }))
-                                                        .apply(mixins::string_value_select(page.doctor.clone(), page.changed.clone()))
-                                                    }))
+                                                    .child(doms::select_box(
+                                                        "doctor", Some("เลือก"), false,
+                                                        page.doctor.clone(),
+                                                        page.changed.clone(),
+                                                        |d| d.class("form-control"), || {},
+                                                        doctor_select_option,
+                                                    ))
+                                                    // .child(html!("select" => HtmlSelectElement, {
+                                                    //     .class("form-control")
+                                                    //     .attr("id", "doctor")
+                                                    //     .child(html!("option", {.attr("value", "").text("เลือก")}))
+                                                    //     .children(doctor_select_option.iter().map(|option| {
+                                                    //         select_option(option, "")
+                                                    //     }))
+                                                    //     .apply(mixins::string_value_select(page.doctor.clone(), page.changed.clone()))
+                                                    // }))
                                                 }),
                                             ])
                                         }),
@@ -349,15 +356,22 @@ impl DoctorInChargeCpn {
                                                 }),
                                                 html!("div", {
                                                     .class("col-sm-6")
-                                                    .child(html!("select" => HtmlSelectElement, {
-                                                        .class("form-control")
-                                                        .attr("id", "spclty")
-                                                        .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                        .children(spclty_select_option.iter().map(|option| {
-                                                            select_option(option, "")
-                                                        }))
-                                                        .apply(mixins::string_value_select(page.spclty.clone(), page.changed.clone()))
-                                                    }))
+                                                    .child(doms::select_box(
+                                                        "spclty", Some("เลือก"), false,
+                                                        page.spclty.clone(),
+                                                        page.changed.clone(),
+                                                        |d| d.class("form-control"), || {},
+                                                        spclty_select_option,
+                                                    ))
+                                                    // .child(html!("select" => HtmlSelectElement, {
+                                                    //     .class("form-control")
+                                                    //     .attr("id", "spclty")
+                                                    //     .child(html!("option", {.attr("value", "").text("เลือก")}))
+                                                    //     .children(spclty_select_option.iter().map(|option| {
+                                                    //         select_option(option, "")
+                                                    //     }))
+                                                    //     .apply(mixins::string_value_select(page.spclty.clone(), page.changed.clone()))
+                                                    // }))
                                                 }),
                                             ])
                                         }),
@@ -453,8 +467,8 @@ impl DoctorInChargeCpn {
                                                             .attr("type", "button")
                                                             .class(class::BTN_L_GRAY)
                                                             .text("ยกเลิก")
-                                                            .event(clone!(app, page => move |_:events::Click| {
-                                                                page.new_form(app.clone());
+                                                            .event(clone!(page => move |_:events::Click| {
+                                                                page.new_form();
                                                             }))
                                                         }),
                                                     ])

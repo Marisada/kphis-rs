@@ -1,7 +1,7 @@
 // model = kphis_model::report
 // backend = handlers::pdf
 
-use dominator::{Dom, EventOptions, clone, events, html, is_window_loaded, with_node};
+use dominator::{Dom, EventOptions, clone, events, html, with_node};
 use futures_signals::{
     map_ref,
     signal::{Mutable, Signal, SignalExt, not},
@@ -10,20 +10,19 @@ use futures_signals::{
 use std::rc::Rc;
 use strum::IntoEnumIterator;
 use wasm_bindgen::JsCast;
-use web_sys::{DomParser, HtmlButtonElement, HtmlElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement, Node, Range, SupportedType};
+use web_sys::{DomParser, HtmlButtonElement, HtmlElement, HtmlInputElement, HtmlTextAreaElement, Node, Range, SupportedType};
 
 use kphis_model::{
     A4_HEIGHT, A4_WIDTH,
     endpoint::EndPoint,
     fetch::Method,
     report::{CustomReport, ReportParam, ReportQuery, ReportTemplateParams, SystemReport, TypstRaw, TypstSvg, params_and_ids_to_json},
-    timer::Timeout,
+    select_utils::SelectOption,
 };
 use kphis_ui_app::App;
 use kphis_ui_component::modal::report::{param_editor::ReportParamEditor, param_input::ReportParamInput};
 use kphis_ui_core::{
-    binding::NiceSelect,
-    class,
+    class, doms,
     highlight::{highlight_json, highlight_sql, highlight_stylesheet, highlight_stylesheet_typ, json_pretty},
     mixins,
     pannable::PanState,
@@ -58,11 +57,11 @@ pub struct ReportDesignerPage {
     pan_state: Rc<PanState>,
 
     system_templates: MutableVec<SystemReport>,
-    renew_system_templates_select_box: Mutable<bool>,
+    // renew_system_templates_select_box: Mutable<bool>,
     selected_system_template: Mutable<Option<SystemReport>>,
 
     loaded_custom_templates_compact: Mutable<bool>,
-    renew_custom_templates_select_box: Mutable<bool>,
+    // renew_custom_templates_select_box: Mutable<bool>,
     custom_templates_compact: MutableVec<CustomReport>,
     custom_template_disabled: Mutable<Option<bool>>,
     selected_custom_template_compact: Mutable<String>,
@@ -330,26 +329,26 @@ LIMIT 50;"#;
         }
     }
 
-    fn renew_system_templates_select_box(page: Rc<Self>, app: Rc<App>) {
-        if let Some(elm) = app.get_id("system_templates") {
-            Timeout::new(
-                0,
-                clone!(page => move || {
-                    if let Some(template) = page.selected_system_template.get_cloned() {
-                        if page.system_templates.lock_ref().contains(&template) {
-                            NiceSelect::new_default_with_value(&elm, template.template_name());
-                        } else {
-                            page.selected_system_template.set(None);
-                            NiceSelect::new_default(&elm);
-                        }
-                    } else {
-                        NiceSelect::new_default(&elm);
-                    }
-                }),
-            )
-            .forget();
-        }
-    }
+    // fn renew_system_templates_select_box(page: Rc<Self>, app: Rc<App>) {
+    //     if let Some(elm) = app.get_id("system_templates") {
+    //         Timeout::new(
+    //             0,
+    //             clone!(page => move || {
+    //                 if let Some(template) = page.selected_system_template.get_cloned() {
+    //                     if page.system_templates.lock_ref().contains(&template) {
+    //                         NiceSelect::new_default_with_value(&elm, template.template_name());
+    //                     } else {
+    //                         page.selected_system_template.set(None);
+    //                         NiceSelect::new_default(&elm);
+    //                     }
+    //                 } else {
+    //                     NiceSelect::new_default(&elm);
+    //                 }
+    //             }),
+    //         )
+    //         .forget();
+    //     }
+    // }
 
     fn load_custom_templates_compact(page: Rc<Self>, app: Rc<App>) {
         app.async_load(
@@ -365,7 +364,7 @@ LIMIT 50;"#;
                     Ok(responses) => {
                         let mut lock = page.custom_templates_compact.lock_mut();
                         lock.replace_cloned(responses);
-                        page.renew_custom_templates_select_box.set(true);
+                        // page.renew_custom_templates_select_box.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -376,21 +375,21 @@ LIMIT 50;"#;
         )
     }
 
-    fn renew_custom_templates_select_box(page: Rc<Self>, app: Rc<App>) {
-        if let Some(elm) = app.get_id("custom_templates") {
-            Timeout::new(
-                0,
-                clone!(page => move || {
-                    if let Some(template) = str_some(page.selected_custom_template_compact.get_cloned()) {
-                        NiceSelect::new_default_with_value(&elm, &template);
-                    } else {
-                        NiceSelect::new_default(&elm);
-                    }
-                }),
-            )
-            .forget();
-        }
-    }
+    // fn renew_custom_templates_select_box(page: Rc<Self>, app: Rc<App>) {
+    //     if let Some(elm) = app.get_id("custom_templates") {
+    //         Timeout::new(
+    //             0,
+    //             clone!(page => move || {
+    //                 if let Some(template) = str_some(page.selected_custom_template_compact.get_cloned()) {
+    //                     NiceSelect::new_default_with_value(&elm, &template);
+    //                 } else {
+    //                     NiceSelect::new_default(&elm);
+    //                 }
+    //             }),
+    //         )
+    //         .forget();
+    //     }
+    // }
 
     fn load_custom_template(page: Rc<Self>, app: Rc<App>) {
         let template_id = page.selected_custom_template_compact.lock_ref().parse::<u32>().ok();
@@ -643,19 +642,19 @@ LIMIT 50;"#;
         app.set_title("KPHIS - Report Designer");
 
         html!("section", {
-            .future(is_window_loaded().for_each(clone!(app, page => move |ready| {
-                if ready {
-                    Self::renew_system_templates_select_box(page.clone(), app.clone());
-                }
-                async{}
-            })))
-            .future(page.renew_system_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
-                if ready {
-                    Self::renew_system_templates_select_box(page.clone(), app.clone());
-                    page.renew_system_templates_select_box.set(false);
-                }
-                async{}
-            })))
+            // .future(is_window_loaded().for_each(clone!(app, page => move |ready| {
+            //     if ready {
+            //         Self::renew_system_templates_select_box(page.clone(), app.clone());
+            //     }
+            //     async{}
+            // })))
+            // .future(page.renew_system_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
+            //     if ready {
+            //         Self::renew_system_templates_select_box(page.clone(), app.clone());
+            //         page.renew_system_templates_select_box.set(false);
+            //     }
+            //     async{}
+            // })))
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
                 let load = page.loaded_custom_templates_compact.signal() =>
@@ -680,13 +679,13 @@ LIMIT 50;"#;
                 }
                 async {}
             })))
-            .future(page.renew_custom_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
-                if ready {
-                    Self::renew_custom_templates_select_box(page.clone(), app.clone());
-                    page.renew_custom_templates_select_box.set(false);
-                }
-                async{}
-            })))
+            // .future(page.renew_custom_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
+            //     if ready {
+            //         Self::renew_custom_templates_select_box(page.clone(), app.clone());
+            //         page.renew_custom_templates_select_box.set(false);
+            //     }
+            //     async{}
+            // })))
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
                 let load = page.load_system_template.signal() =>
@@ -921,7 +920,7 @@ LIMIT 50;"#;
                         .child_signal(page.designer_mode.signal_cloned().map(clone!(app, page => move |designer_mode| {
                             match designer_mode {
                                 DesignerMode::System => {
-                                    page.renew_system_templates_select_box.set(true);
+                                    // page.renew_system_templates_select_box.set(true);
                                     Some(html!("div", {
                                         .class("col-12")
                                         .child(html!("div", {
@@ -934,20 +933,27 @@ LIMIT 50;"#;
                                                 }),
                                                 html!("div", {
                                                     .class(class::FLEX_W100)
-                                                    .child(html!("select" => HtmlSelectElement, {
-                                                        .class(class::FORM_CTRL_SM)
-                                                        .attr("id", "system_templates")
-                                                        .child(html!("option", {.attr("value","").text("เลือกรายงาน")}))
-                                                        .children_signal_vec(page.system_templates.signal_vec_cloned().map(|template| {
-                                                            html!("option", {
-                                                                .attr("value", template.template_name())
-                                                                .text(template.title())
-                                                            })
-                                                        }))
-                                                        .prop_signal("value", page.selected_system_template.signal_cloned().map(|opt| opt.as_ref().map(|selected| selected.template_name().to_owned()).unwrap_or_default()))
-                                                        .with_node!(element => {
-                                                            .event(clone!(page => move |_: events::Change| {
-                                                                let report_opt = SystemReport::new(&element.value());
+                                                    .child_signal(page.system_templates.signal_vec_cloned().to_signal_cloned().map(clone!(page => move |templates| {
+                                                        let options = templates.iter().map(|template| {
+                                                            SelectOption {
+                                                                key: template.template_name().to_owned(),
+                                                                value: template.title().to_owned(),
+                                                            }
+                                                        }).collect();
+                                                        let temp_value = Mutable::new(String::new());
+                                                        Some(doms::select_box(
+                                                            "system_templates", Some("เลือกรายงาน"), false,
+                                                            temp_value.clone(),
+                                                            Mutable::new(true),
+                                                            |d| d.class(class::FORM_CTRL_SM)
+                                                                .future(page.selected_system_template.signal_cloned().for_each(clone!(temp_value => move |opt| {
+                                                                    if let Some(template) = opt {
+                                                                        temp_value.set_neq(template.title().to_owned());
+                                                                    }
+                                                                    async {}
+                                                                }))),
+                                                            clone!(page, temp_value => move || {
+                                                                let report_opt = SystemReport::new(&temp_value.lock_ref());
                                                                 if let Some(report) = report_opt.as_ref() {
                                                                     let params = ReportParam::from_cap_pipe(report.key_param()).iter().map(ReportParamInput::new).collect::<Vec<Rc<ReportParamInput>>>();
                                                                     page.param_inputs.lock_mut().replace_cloned(params);
@@ -956,9 +962,35 @@ LIMIT 50;"#;
                                                                 page.selected_system_template.set(report_opt);
                                                                 page.report_param_editor_modal.set(None);
                                                                 page.show_report_param_input_modal.set_neq(false);
-                                                            }))
-                                                        })
-                                                    }))
+                                                            }),
+                                                            options,
+                                                        ))
+                                                    })))
+                                                    // .child(html!("select" => HtmlSelectElement, {
+                                                    //     .class(class::FORM_CTRL_SM)
+                                                    //     .attr("id", "system_templates")
+                                                    //     .child(html!("option", {.attr("value","").text("เลือกรายงาน")}))
+                                                    //     .children_signal_vec(page.system_templates.signal_vec_cloned().map(|template| {
+                                                    //         html!("option", {
+                                                    //             .attr("value", template.template_name())
+                                                    //             .text(template.title())
+                                                    //         })
+                                                    //     }))
+                                                    //     .prop_signal("value", page.selected_system_template.signal_cloned().map(|opt| opt.as_ref().map(|selected| selected.template_name().to_owned()).unwrap_or_default()))
+                                                    //     .with_node!(element => {
+                                                    //         .event(clone!(page => move |_: events::Change| {
+                                                    //             let report_opt = SystemReport::new(&element.value());
+                                                    //             if let Some(report) = report_opt.as_ref() {
+                                                    //                 let params = ReportParam::from_cap_pipe(report.key_param()).iter().map(ReportParamInput::new).collect::<Vec<Rc<ReportParamInput>>>();
+                                                    //                 page.param_inputs.lock_mut().replace_cloned(params);
+                                                    //             }
+                                                    //             page.ids.set_neq(String::new());
+                                                    //             page.selected_system_template.set(report_opt);
+                                                    //             page.report_param_editor_modal.set(None);
+                                                    //             page.show_report_param_input_modal.set_neq(false);
+                                                    //         }))
+                                                    //     })
+                                                    // }))
                                                 }),
                                             ])
                                         }))
@@ -1005,17 +1037,31 @@ LIMIT 50;"#;
                                                 } else {
                                                     Some(html!("div", {
                                                         .class(class::FLEX_W100)
-                                                        .child(html!("select" => HtmlSelectElement, {
-                                                            .class(class::FORM_CTRL_SM)
-                                                            .attr("id", "custom_templates")
-                                                            .children_signal_vec(page.custom_templates_compact.signal_vec_cloned().map(|template| {
-                                                                html!("option", {
-                                                                    .attr("value", &template.template_id.to_string())
-                                                                    .text(&template.template_name)
-                                                                })
-                                                            }))
-                                                            .apply(mixins::string_value_select(page.selected_custom_template_compact.clone(), page.custom_template_changed.clone()))
-                                                        }))
+                                                        .child_signal(page.custom_templates_compact.signal_vec_cloned().to_signal_cloned().map(clone!(page => move |templates| {
+                                                            let options = templates.iter().map(|template| {
+                                                                SelectOption {
+                                                                    key: template.template_id.to_string(),
+                                                                    value: template.template_name.to_owned(),
+                                                                }
+                                                            }).collect();
+                                                            Some(doms::select_box(
+                                                                "custom_templates", None, false,
+                                                                page.selected_custom_template_compact.clone(), page.custom_template_changed.clone(),
+                                                                |d| d.class(class::FORM_CTRL_SM), || {},
+                                                                options,
+                                                            ))
+                                                        })))
+                                                        // .child(html!("select" => HtmlSelectElement, {
+                                                        //     .class(class::FORM_CTRL_SM)
+                                                        //     .attr("id", "custom_templates")
+                                                        //     .children_signal_vec(page.custom_templates_compact.signal_vec_cloned().map(|template| {
+                                                        //         html!("option", {
+                                                        //             .attr("value", &template.template_id.to_string())
+                                                        //             .text(&template.template_name)
+                                                        //         })
+                                                        //     }))
+                                                        //     .apply(mixins::string_value_select(page.selected_custom_template_compact.clone(), page.custom_template_changed.clone()))
+                                                        // }))
                                                     }))
                                                 }
                                             })))

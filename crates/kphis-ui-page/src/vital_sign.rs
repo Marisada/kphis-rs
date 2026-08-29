@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement};
+use web_sys::HtmlInputElement;
 
 use kphis_model::{
     app::VisitTypeId,
@@ -19,7 +19,7 @@ use kphis_ui_component::{
     show_patient_main::ShowPatientMainCpn,
     vital_sign::{vital_sign_data::VitalSignDataCpn, vital_sign_form::VitalSignFormCpn},
 };
-use kphis_ui_core::{binding::NiceSelect, class, doms};
+use kphis_ui_core::{class, doms};
 use kphis_util::util::{str_some, zero_none};
 
 /// - GET `EndPoint::AvatarIpd`
@@ -138,11 +138,11 @@ impl VitalSignPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |loaded| {
                 if loaded {
-                    if page.is_ipd {
-                        if let Some(elm) = app.get_id("wards") {
-                            NiceSelect::new_default(&elm);
-                        }
-                    }
+                    // if page.is_ipd {
+                    //     if let Some(elm) = app.get_id("wards") {
+                    //         NiceSelect::new_default(&elm);
+                    //     }
+                    // }
                     page.search_changed.set(true);
                 }
                 async {}
@@ -214,21 +214,29 @@ impl VitalSignPage {
                                         doms::span_group_text("Ward"),
                                         html!("div", {
                                             .class(class::FLEX_W100)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_CTRL_SM)
-                                                .attr("id", "wards")
-                                                .children(ward_select_option.iter().map(|option| {
-                                                    doms::select_option(option, &page.ward.lock_ref())
-                                                }))
-                                                .prop_signal("value", page.ward.signal_cloned())
-                                                .with_node!(element => {
-                                                    .event(clone!(app, page, element => move |_: events::Change| {
-                                                        page.ward.set_neq(element.value());
-                                                        app.to_local_storage();
-                                                        page.search_changed.set_neq(true);
-                                                    }))
-                                                })
-                                            }))
+                                            .child(doms::select_box(
+                                                "wards", None, false,
+                                                page.ward.clone(),
+                                                page.search_changed.clone(),
+                                                |d| d.class(class::FORM_CTRL_SM),
+                                                clone!(app => move || app.to_local_storage()),
+                                                ward_select_option,
+                                            ))
+                                            // .child(html!("select" => HtmlSelectElement, {
+                                            //     .class(class::FORM_CTRL_SM)
+                                            //     .attr("id", "wards")
+                                            //     .children(ward_select_option.iter().map(|option| {
+                                            //         doms::select_option(option, &page.ward.lock_ref())
+                                            //     }))
+                                            //     .prop_signal("value", page.ward.signal_cloned())
+                                            //     .with_node!(element => {
+                                            //         .event(clone!(app, page, element => move |_: events::Change| {
+                                            //             page.ward.set_neq(element.value());
+                                            //             app.to_local_storage();
+                                            //             page.search_changed.set_neq(true);
+                                            //         }))
+                                            //     })
+                                            // }))
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
@@ -238,9 +246,9 @@ impl VitalSignPage {
                                                 let no_ward = page.ward.lock_ref().is_empty();
                                                 if !no_ward {
                                                     page.ward.set(String::new());
-                                                    if let Some(elm) = app.get_id("wards") {
-                                                        NiceSelect::new_default(&elm);
-                                                    }
+                                                    // if let Some(elm) = app.get_id("wards") {
+                                                    //     NiceSelect::new_default(&elm);
+                                                    // }
                                                     page.search_changed.set_neq(true);
                                                 }
                                             }))

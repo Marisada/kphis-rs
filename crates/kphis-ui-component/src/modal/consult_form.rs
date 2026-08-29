@@ -15,11 +15,12 @@ use kphis_model::{
     ipd::consult::{Consult, ConsultParams, ConsultSave, DoctorCodeSave},
     patient_info::PatientInfo,
     route::Route,
+    select_utils::SelectOption,
     sse::SsePostMessage,
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{JsTime, date_8601, datetime_8601, datetime_str_th, js_now, time_8601},
     util::{str_some, zero_none},
@@ -112,17 +113,17 @@ impl ConsultForm {
                                 let consult_ward = consult.consult_ward.unwrap_or_default();
                                 let consult_doctorcode_mention = consult.consult_doctorcode_mention.unwrap_or_default();
                                 let consult_spclty = consult.consult_spclty.unwrap_or_default();
-                                if matches!(modal.consult_mode, ConsultFormMode::Edit) {
-                                    if let Some(elm) = app.get_id("consult_ward") {
-                                        NiceSelect::new_default_with_value(&elm, &consult_ward);
-                                    }
-                                    if let Some(elm) = app.get_id("consult_doctorcode_mention") {
-                                        NiceSelect::new_default_with_value(&elm, &consult_doctorcode_mention);
-                                    }
-                                    if let Some(elm) = app.get_id("consult_spclty") {
-                                        NiceSelect::new_default_with_value(&elm, &consult_spclty);
-                                    }
-                                }
+                                // if matches!(modal.consult_mode, ConsultFormMode::Edit) {
+                                //     if let Some(elm) = app.get_id("consult_ward") {
+                                //         NiceSelect::new_default_with_value(&elm, &consult_ward);
+                                //     }
+                                //     if let Some(elm) = app.get_id("consult_doctorcode_mention") {
+                                //         NiceSelect::new_default_with_value(&elm, &consult_doctorcode_mention);
+                                //     }
+                                //     if let Some(elm) = app.get_id("consult_spclty") {
+                                //         NiceSelect::new_default_with_value(&elm, &consult_spclty);
+                                //     }
+                                // }
 
                                 modal.an.set_neq(consult.an);
                                 modal.consult_id.set_neq(consult.consult_id);
@@ -378,19 +379,27 @@ impl ConsultForm {
                                                         .attr("for", "consult_ward")
                                                         .text("Ward")
                                                     }),
-                                                    html!("select" => HtmlSelectElement, {
-                                                        .class("form-control")
-                                                        .attr("id", "consult_ward")
-                                                        .child(html!("option", {
-                                                            .attr("value", "")
-                                                            .text("เลือก")
-                                                        }))
-                                                        .children(ward_select_option.iter().map(|option| {
-                                                            doms::select_option(option, "")
-                                                        }))
-                                                        .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
-                                                        .apply(mixins::string_value_select(modal.consult_ward.clone(), modal.changed.clone()))
-                                                    }),
+                                                    doms::select_box(
+                                                        "consult_ward", Some("เลือก"), false,
+                                                        modal.consult_ward.clone(),
+                                                        modal.changed.clone(),
+                                                        |d| d.class("form-control").apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |c| c.class("disabled")),
+                                                        || {},
+                                                        ward_select_option,
+                                                    ),
+                                                    // html!("select" => HtmlSelectElement, {
+                                                    //     .class("form-control")
+                                                    //     .attr("id", "consult_ward")
+                                                    //     .child(html!("option", {
+                                                    //         .attr("value", "")
+                                                    //         .text("เลือก")
+                                                    //     }))
+                                                    //     .children(ward_select_option.iter().map(|option| {
+                                                    //         doms::select_option(option, "")
+                                                    //     }))
+                                                    //     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
+                                                    //     .apply(mixins::string_value_select(modal.consult_ward.clone(), modal.changed.clone()))
+                                                    // }),
                                                 ])
                                             }))
                                         }),
@@ -496,17 +505,25 @@ impl ConsultForm {
                                                                         .attr("for", "consult_spclty")
                                                                         .text("แผนกที่ Consult")
                                                                     }),
-                                                                    html!("select" => HtmlSelectElement, {
-                                                                        .class(class::FORM_CTRL_T)
-                                                                        .attr("id", "consult_spclty")
-                                                                        .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                                        .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
-                                                                        .children(spclty_kphis_select_option.iter().map(|option| {
-                                                                            doms::select_option(option, "")
-                                                                        }))
-                                                                        .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
-                                                                        .apply(mixins::string_value_select(modal.consult_spclty.clone(), modal.changed.clone()))
-                                                                    }),
+                                                                    doms::select_box(
+                                                                        "consult_spclty", Some("เลือก"), false,
+                                                                        modal.consult_spclty.clone(),
+                                                                        modal.changed.clone(),
+                                                                        |d| d.class(class::FORM_CTRL_T).apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |c| c.class("disabled")),
+                                                                        || {},
+                                                                        spclty_kphis_select_option,
+                                                                    ),
+                                                                    // html!("select" => HtmlSelectElement, {
+                                                                    //     .class(class::FORM_CTRL_T)
+                                                                    //     .attr("id", "consult_spclty")
+                                                                    //     .child(html!("option", {.attr("value", "").text("เลือก")}))
+                                                                    //     .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
+                                                                    //     .children(spclty_kphis_select_option.iter().map(|option| {
+                                                                    //         doms::select_option(option, "")
+                                                                    //     }))
+                                                                    //     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
+                                                                    //     .apply(mixins::string_value_select(modal.consult_spclty.clone(), modal.changed.clone()))
+                                                                    // }),
                                                                 ])
                                                             }))
                                                         }),
@@ -518,19 +535,27 @@ impl ConsultForm {
                                                                         .attr("for", "consult_doctorcode_mention")
                                                                         .text("แพทย์ Staff (Optional)")
                                                                     }),
-                                                                    html!("select" => HtmlSelectElement, {
-                                                                        .class(class::FORM_CTRL_T)
-                                                                        .attr("id", "consult_doctorcode_mention")
-                                                                        .child(html!("option", {
-                                                                            .attr("value", "")
-                                                                            .text("เลือก")
-                                                                        }))
-                                                                        .children(doctor_select_option.iter().map(|option| {
-                                                                            doms::select_option(option, "")
-                                                                        }))
-                                                                        .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
-                                                                        .apply(mixins::string_value_select(modal.consult_doctorcode_mention.clone(), modal.changed.clone()))
-                                                                    }),
+                                                                    doms::select_box(
+                                                                        "consult_doctorcode_mention", Some("เลือก"), false,
+                                                                        modal.consult_doctorcode_mention.clone(),
+                                                                        modal.changed.clone(),
+                                                                        |d| d.class(class::FORM_CTRL_T).apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |c| c.class("disabled")),
+                                                                        || {},
+                                                                        [vec![SelectOption {key: String::from("0"), value: String::from("ฝ่ายเภสัชกรรม")}], doctor_select_option].concat(),
+                                                                    ),
+                                                                    // html!("select" => HtmlSelectElement, {
+                                                                    //     .class(class::FORM_CTRL_T)
+                                                                    //     .attr("id", "consult_doctorcode_mention")
+                                                                    //     .child(html!("option", {
+                                                                    //         .attr("value", "")
+                                                                    //         .text("เลือก")
+                                                                    //     }))
+                                                                    //     .children(doctor_select_option.iter().map(|option| {
+                                                                    //         doms::select_option(option, "")
+                                                                    //     }))
+                                                                    //     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
+                                                                    //     .apply(mixins::string_value_select(modal.consult_doctorcode_mention.clone(), modal.changed.clone()))
+                                                                    // }),
                                                                 ])
                                                             }))
                                                         }),

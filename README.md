@@ -943,7 +943,6 @@ ex: "This is \[RED\] text" will be "This is <span style="color:red;font-weight:7
 ### Resources needed to update/edit manually
 - `bootstrap` sass [[bootstrap](https://github.com/twbs/bootstrap)]
 - `Font Awesome` sass [[Font Awesome](https://github.com/FortAwesome/Font-Awesome)]
-- `nice-select2` sass/js [[nice-select2](https://github.com/bluzky/nice-select2)]
 - `chart-js-rs` Rust Chart.js connector [[chart-js-rs](https://github.com/Billy-Sheppard/chart-js-rs)]
 - `cryptography-rs` Rust implementation of Cryptographic Message Syntax (CMS) [[cryptography-rs](https://github.com/indygreg/cryptography-rs)]
 - `Dominator` Rust declarative DOM library [[rust-dominator](https://github.com/Pauan/rust-dominator)]

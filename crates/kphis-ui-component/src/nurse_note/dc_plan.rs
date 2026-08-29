@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement};
+use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlTextAreaElement};
 
 use kphis_model::{
     app::VisitTypeId,
@@ -15,10 +15,11 @@ use kphis_model::{
     ipd::dc_plan_tmp::{DcPlanTmpDiet, DcPlanTmpDx, DcPlanTmpEnv, DcPlanTmpMed, DcPlanTmpParams, DcPlanTmpTx},
     patient_info::PatientInfo,
     report::{SystemReport, TypstReport},
+    select_utils::SelectOption,
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{JsTime, date_8601, datetime_8601, datetime_from_opt, js_now, time_8601},
     util::{str_some, zero_none},
@@ -1089,36 +1090,19 @@ impl DcPlanCpn {
                     .text("D : Diagnosis")
                 }),
                 doms::form_inline_group_sm(clone!(page, app => move |group| { group
-                    .children([
-                        doms::label_group_for("dx_select","ชื่อโรคที่เจ็บป่วย"),
-                        html!("div", {
-                            .class(class::FLEX_GROW1)
-                            .style("max-width", "640px")
-                            .future(page.redraw_dx_selector.signal().for_each(clone!(page, app => move |redraw| {
-                                if redraw {
-                                    if let Some(elm) = app.get_id("dx_select") {
-                                        NiceSelect::new_default_with_value(&elm, &page.dx_id.lock_ref());
-                                    }
-                                    page.redraw_dx_selector.set_neq(false);
-                                }
-                                async {}
-                            })))
-                            .child(html!("select" => HtmlSelectElement, {
-                                .class(class::FORM_CTRL_SM)
-                                .attr("id", "dx_select")
-                                .children([
-                                    html!("option", {
-                                        .attr("value", "")
-                                        .text("เลือก")
-                                    }),
-                                ])
-                                .children_signal_vec(page.all_dxs.signal_vec_cloned().map(|dx| {
-                                    html!("option", {
-                                        .attr("value", &dx.dx_id.to_string())
-                                        .text(&dx.dx_name.clone().unwrap_or_default())
-                                    })
-                                }))
-                                .apply(mixins::string_value_select(page.dx_id.clone(), page.changed.clone()))
+                    .child(doms::label_group_for("dx_select","ชื่อโรคที่เจ็บป่วย"))
+                    .child_signal(page.all_dxs.signal_vec_cloned().map(|dx| {
+                        SelectOption {
+                            key: dx.dx_id.to_string(),
+                            value: dx.dx_name.clone().unwrap_or_default(),
+                        }
+                    }).to_signal_cloned().map(clone!(page => move |all_dxs| {
+                        Some(doms::select_box(
+                            "dx_select", Some("เลือก"), false,
+                            page.dx_id.clone(),
+                            page.changed.clone(),
+                            |d| d.class(class::FORM_CTRL_SM)
+                                .style("max-width", "640px")
                                 .future(page.dx_id.signal_cloned().for_each(clone!(page => move |dx_id_str| {
                                     if let Some(dx_id) = dx_id_str.parse::<u32>().ok() {
                                         if let Some(dx) = page.all_dxs.lock_ref().iter().find(|dx| dx.dx_id == dx_id) {
@@ -1128,10 +1112,52 @@ impl DcPlanCpn {
                                         }
                                     }
                                     async {}
-                                })))
-                            }))
-                        }),
-                    ])
+                                }))),
+                            || {},
+                            all_dxs,
+                        ))
+                    })))
+                    //     html!("div", {
+                    //         .class(class::FLEX_GROW1)
+                    //         .style("max-width", "640px")
+                    //         .future(page.redraw_dx_selector.signal().for_each(clone!(page, app => move |redraw| {
+                    //             if redraw {
+                    //                 if let Some(elm) = app.get_id("dx_select") {
+                    //                     NiceSelect::new_default_with_value(&elm, &page.dx_id.lock_ref());
+                    //                 }
+                    //                 page.redraw_dx_selector.set_neq(false);
+                    //             }
+                    //             async {}
+                    //         })))
+                    //         .child(html!("select" => HtmlSelectElement, {
+                    //             .class(class::FORM_CTRL_SM)
+                    //             .attr("id", "dx_select")
+                    //             .children([
+                    //                 html!("option", {
+                    //                     .attr("value", "")
+                    //                     .text("เลือก")
+                    //                 }),
+                    //             ])
+                    //             .children_signal_vec(page.all_dxs.signal_vec_cloned().map(|dx| {
+                    //                 html!("option", {
+                    //                     .attr("value", &dx.dx_id.to_string())
+                    //                     .text(&dx.dx_name.clone().unwrap_or_default())
+                    //                 })
+                    //             }))
+                    //             .apply(mixins::string_value_select(page.dx_id.clone(), page.changed.clone()))
+                    //             .future(page.dx_id.signal_cloned().for_each(clone!(page => move |dx_id_str| {
+                    //                 if let Some(dx_id) = dx_id_str.parse::<u32>().ok() {
+                    //                     if let Some(dx) = page.all_dxs.lock_ref().iter().find(|dx| dx.dx_id == dx_id) {
+                    //                         page.dx_knowledge.set_neq(dx.dx_knowledge.clone().unwrap_or_default());
+                    //                         page.dx_revisit.set_neq(dx.dx_revisit.clone().unwrap_or_default());
+                    //                         page.dx_prevention.set_neq(dx.dx_prevention.clone().unwrap_or_default());
+                    //                     }
+                    //                 }
+                    //                 async {}
+                    //             })))
+                    //         }))
+                    //     }),
+                    // ])
                 })),
                 html!("div", {
                     .class(class::BOLD_Y)

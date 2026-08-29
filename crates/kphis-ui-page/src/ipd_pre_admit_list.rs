@@ -21,7 +21,7 @@ use kphis_ui_component::{
     gadget::searchbox::opd_visit::OpdVisitSearchboxCpn,
     modal::{blank_modal, pre_admit_new::PreAdmitNew},
 };
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_th_opt_relative, datetime_from_opt, datetime_th_opt_relative, datetime_th_relative, time_hm_opt},
     util::str_some,
@@ -168,9 +168,9 @@ impl IpdPreAdmitListPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("doctor_in_charge") {
-                        NiceSelect::new_default(&elm);
-                    }
+                    // if let Some(elm) = app.get_id("doctor_in_charge") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
                     page.changed.set(true);
                 }
                 async {}
@@ -256,21 +256,27 @@ impl IpdPreAdmitListPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "doctor_in_charge")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, &page.doctor_in_charge.lock_ref())
-                                            }))
-                                            .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "doctor_in_charge", Some("ทั้งหมด"), false,
+                                        page.doctor_in_charge.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        doctor_select_option,
+                                    ),
+                                    // html!("div", {
+                                    //     .class(class::FLEX_GROW1)
+                                    //     .child(html!("select" => HtmlSelectElement, {
+                                    //         .class(class::FORM_CTRL_SM)
+                                    //         .attr("id", "doctor_in_charge")
+                                    //         .child(html!("option", {
+                                    //             .attr("value","")
+                                    //             .text("ทั้งหมด")
+                                    //         }))
+                                    //         .children(doctor_select_option.iter().map(|option| {
+                                    //             doms::select_option(option, &page.doctor_in_charge.lock_ref())
+                                    //         }))
+                                    //         .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
+                                    //     }))
+                                    // }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -279,9 +285,9 @@ impl IpdPreAdmitListPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = page.doctor_in_charge.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                    NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                }
+                                                // if let Some(elm) = app.get_id("doctor_in_charge") {
+                                                //     NiceSelect::new_default_with_value(&elm, &doctor_code);
+                                                // }
                                                 page.doctor_in_charge.set_neq(doctor_code);
                                                 page.changed.set_neq(true);
                                             }
@@ -295,9 +301,9 @@ impl IpdPreAdmitListPage {
                                             let no_doctor = page.doctor_in_charge.lock_ref().is_empty();
                                             if !no_doctor {
                                                 page.doctor_in_charge.set_neq(String::new());
-                                                if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                    NiceSelect::new_default_with_value(&elm, "");
-                                                }
+                                                // if let Some(elm) = app.get_id("doctor_in_charge") {
+                                                //     NiceSelect::new_default_with_value(&elm, "");
+                                                // }
                                                 page.changed.set_neq(true);
                                             }
                                         }))

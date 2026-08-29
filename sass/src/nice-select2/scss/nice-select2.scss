@@ -26,7 +26,7 @@ $gray_dark: #444 !default;
   font-weight: normal;
   outline: none;
   // padding-left: $dropdown_padding;
-  padding-right: $dropdown_padding + 12;
+  padding-right: $dropdown_padding + 12 !important;
   position: relative;
   text-align: left !important;
   transition: all 0.2s ease-in-out;
@@ -112,7 +112,6 @@ $gray_dark: #444 !default;
     height: auto;
     min-height: 40px;
     line-height: 22px;
-    padding-top: 6px;
 
     span.current {
       border: 1px solid var(--bs-border-color);
@@ -179,8 +178,11 @@ $gray_dark: #444 !default;
     transition: all 0.2s cubic-bezier(0.5, 0, 0, 1.25), opacity 0.15s ease-out;
     z-index: 9;
     opacity: 0;
-    max-height: 230px;
-    overflow-y: scroll;
+  }
+
+  .nice-select-list {
+    max-height: 222px;
+    overflow-y: auto;
     overflow-x: hidden;
   }
 

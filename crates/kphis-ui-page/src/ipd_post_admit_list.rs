@@ -19,7 +19,7 @@ use kphis_model::{
 };
 use kphis_ui_app::App;
 use kphis_ui_component::{gadget::pdf_button::static_pdf_btn_with_modal, modal::ipd_passcode::IpdPasscodeForm};
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_8601, date_th_opt_relative, datetime_from_opt, datetime_th_opt_relative, datetime_th_relative, js_now, time_hm_opt},
     util::str_some,
@@ -116,12 +116,12 @@ impl IpdPostAdmitListPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("adm_doctor") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("dch_doctor") {
-                        NiceSelect::new_default(&elm);
-                    }
+                    // if let Some(elm) = app.get_id("adm_doctor") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
+                    // if let Some(elm) = app.get_id("dch_doctor") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
                     page.changed.set(true);
                 }
                 async {}
@@ -275,31 +275,43 @@ impl IpdPostAdmitListPage {
                             doms::form_inline_group_sm(clone!(app, page, doctor_select_option => move |group| { group
                                 .children([
                                     doms::label_group_for("adm_doctor","แพทย์ผู้ Admit"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "adm_doctor")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, &app.adm_doctor_select.lock_ref())
-                                            }))
-                                            //.apply(mixins::string_value_select(page.adm_doctor.clone(), page.changed.clone()))
-                                            .prop_signal("value", app.adm_doctor_select.signal_cloned())
-                                            .with_node!(element => {
-                                                .event(clone!(app, page, element => move |_: events::Change| {
-                                                    app.adm_doctor_select.set_neq(element.value());
-                                                    if page.view_by.lock_ref().as_str() == "doctor" {
-                                                        app.to_local_storage();
-                                                    }
-                                                    page.changed.set_neq(true);
-                                                }))
-                                            })
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "adm_doctor", Some("ทั้งหมด"), false,
+                                        app.adm_doctor_select.clone(),
+                                        page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM),
+                                        clone!(app, page => move || {
+                                            if page.view_by.lock_ref().as_str() == "doctor" {
+                                                app.to_local_storage();
+                                            }
+                                        }),
+                                        doctor_select_option,
+                                    ),
+                                    // html!("div", {
+                                    //     .class(class::FLEX_GROW1)
+                                    //     .child(html!("select" => HtmlSelectElement, {
+                                    //         .class(class::FORM_CTRL_SM)
+                                    //         .attr("id", "adm_doctor")
+                                    //         .child(html!("option", {
+                                    //             .attr("value","")
+                                    //             .text("ทั้งหมด")
+                                    //         }))
+                                    //         .children(doctor_select_option.iter().map(|option| {
+                                    //             doms::select_option(option, &app.adm_doctor_select.lock_ref())
+                                    //         }))
+                                    //         //.apply(mixins::string_value_select(page.adm_doctor.clone(), page.changed.clone()))
+                                    //         .prop_signal("value", app.adm_doctor_select.signal_cloned())
+                                    //         .with_node!(element => {
+                                    //             .event(clone!(app, page, element => move |_: events::Change| {
+                                    //                 app.adm_doctor_select.set_neq(element.value());
+                                    //                 if page.view_by.lock_ref().as_str() == "doctor" {
+                                    //                     app.to_local_storage();
+                                    //                 }
+                                    //                 page.changed.set_neq(true);
+                                    //             }))
+                                    //         })
+                                    //     }))
+                                    // }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -308,9 +320,9 @@ impl IpdPostAdmitListPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = app.adm_doctor_select.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                if let Some(elm) = app.get_id("adm_doctor") {
-                                                    NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                }
+                                                // if let Some(elm) = app.get_id("adm_doctor") {
+                                                //     NiceSelect::new_default_with_value(&elm, &doctor_code);
+                                                // }
                                                 app.adm_doctor_select.set_neq(doctor_code);
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();
@@ -326,9 +338,9 @@ impl IpdPostAdmitListPage {
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let no_doctor = app.adm_doctor_select.lock_ref().is_empty();
                                             if !no_doctor {
-                                                if let Some(elm) = app.get_id("adm_doctor") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
+                                                // if let Some(elm) = app.get_id("adm_doctor") {
+                                                //     NiceSelect::new_default_with_value(&elm,"");
+                                                // }
                                                 app.adm_doctor_select.set_neq(String::new());
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();
@@ -343,31 +355,43 @@ impl IpdPostAdmitListPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("dch_doctor","แพทย์ผู้ Discharge"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "dch_doctor")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, &app.dch_doctor_select.lock_ref())
-                                            }))
-                                            //.apply(mixins::string_value_select(page.dch_doctor.clone(), page.changed.clone()))
-                                            .prop_signal("value", app.dch_doctor_select.signal_cloned())
-                                            .with_node!(element => {
-                                                .event(clone!(app, page, element => move |_: events::Change| {
-                                                    app.dch_doctor_select.set_neq(element.value());
-                                                    if page.view_by.lock_ref().as_str() == "doctor" {
-                                                        app.to_local_storage();
-                                                    }
-                                                    page.changed.set_neq(true);
-                                                }))
-                                            })
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "dch_doctor", Some("ทั้งหมด"), false,
+                                        app.dch_doctor_select.clone(),
+                                        page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM),
+                                        clone!(app, page => move || {
+                                            if page.view_by.lock_ref().as_str() == "doctor" {
+                                                app.to_local_storage();
+                                            }
+                                        }),
+                                        doctor_select_option,
+                                    ),
+                                    // html!("div", {
+                                    //     .class(class::FLEX_GROW1)
+                                    //     .child(html!("select" => HtmlSelectElement, {
+                                    //         .class(class::FORM_CTRL_SM)
+                                    //         .attr("id", "dch_doctor")
+                                    //         .child(html!("option", {
+                                    //             .attr("value","")
+                                    //             .text("ทั้งหมด")
+                                    //         }))
+                                    //         .children(doctor_select_option.iter().map(|option| {
+                                    //             doms::select_option(option, &app.dch_doctor_select.lock_ref())
+                                    //         }))
+                                    //         //.apply(mixins::string_value_select(page.dch_doctor.clone(), page.changed.clone()))
+                                    //         .prop_signal("value", app.dch_doctor_select.signal_cloned())
+                                    //         .with_node!(element => {
+                                    //             .event(clone!(app, page, element => move |_: events::Change| {
+                                    //                 app.dch_doctor_select.set_neq(element.value());
+                                    //                 if page.view_by.lock_ref().as_str() == "doctor" {
+                                    //                     app.to_local_storage();
+                                    //                 }
+                                    //                 page.changed.set_neq(true);
+                                    //             }))
+                                    //         })
+                                    //     }))
+                                    // }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -376,9 +400,9 @@ impl IpdPostAdmitListPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = app.dch_doctor_select.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                if let Some(elm) = app.get_id("dch_doctor") {
-                                                    NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                }
+                                                // if let Some(elm) = app.get_id("dch_doctor") {
+                                                //     NiceSelect::new_default_with_value(&elm, &doctor_code);
+                                                // }
                                                 app.dch_doctor_select.set_neq(doctor_code);
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();
@@ -394,9 +418,9 @@ impl IpdPostAdmitListPage {
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let no_doctor = app.dch_doctor_select.lock_ref().is_empty();
                                             if !no_doctor {
-                                                if let Some(elm) = app.get_id("dch_doctor") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
+                                                // if let Some(elm) = app.get_id("dch_doctor") {
+                                                //     NiceSelect::new_default_with_value(&elm,"");
+                                                // }
                                                 app.dch_doctor_select.set_neq(String::new());
                                                 if page.view_by.lock_ref().as_str() == "doctor" {
                                                     app.to_local_storage();

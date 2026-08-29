@@ -17,11 +17,12 @@ use kphis_model::{
     index_plan::{IndexPlan, IndexPlanSave},
     order::{OrderItem, OrderItemPatch, OrderItemPatchAction, OrderParams},
     patient_info::PatientInfo,
+    select_utils::SelectOption,
     user::permission::Permission,
     vital_sign::{VitalSignParams, VitalSignSave},
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{JsTime, date_8601, date_th, date_th_opt, datetime_8601, datetime_from_opt, datetime_th_opt, datetime_th_opt_relative, datetime_th_relative, js_now, time_8601, time_hm_opt},
     error::CONTACT_ADMIN,
@@ -80,7 +81,7 @@ pub struct IndexPlanActionForm {
 
     check_datetime: Mutable<String>,
     check_person: Mutable<String>,
-    redraw_check_person: Mutable<bool>,
+    // redraw_check_person: Mutable<bool>,
 
     action_date: Mutable<String>,
     action_time: Mutable<String>,
@@ -90,8 +91,8 @@ pub struct IndexPlanActionForm {
     action_blood_had: Mutable<String>,
     action_person_1: Mutable<String>,
     action_person_2: Mutable<String>,
-    redraw_person_1: Mutable<bool>,
-    redraw_person_2: Mutable<bool>,
+    // redraw_person_1: Mutable<bool>,
+    // redraw_person_2: Mutable<bool>,
 
     monitor_id: Mutable<Option<u32>>,
     monitor_datetime: Mutable<String>,
@@ -2148,35 +2149,42 @@ impl IndexPlanActionForm {
                                                 .text("ลงชื่อ")
                                                 .event(clone!(app, modal => move |_: events::Click| {
                                                     let doctorcode = app.doctor_code().unwrap_or_default();
-                                                    if let Some(elm) = app.get_id("index-check-person") {
-                                                        NiceSelect::new_default_with_value(&elm, &doctorcode);
-                                                    }
+                                                    // if let Some(elm) = app.get_id("index-check-person") {
+                                                    //     NiceSelect::new_default_with_value(&elm, &doctorcode);
+                                                    // }
                                                     modal.check_person.set_neq(doctorcode);
                                                 }))
                                             }),
                                             html!("div", {
                                                 .class(class::FLEX_GROW1)
-                                                .future(modal.redraw_check_person.signal().for_each(clone!(app, modal => move |redraw| {
-                                                    if redraw {
-                                                        if let Some(elm) = app.get_id("index-check-person") {
-                                                            NiceSelect::new_default_with_value(&elm, &modal.check_person.lock_ref());
-                                                        }
-                                                        modal.redraw_check_person.set_neq(false);
-                                                    }
-                                                    async {}
-                                                })))
-                                                .child(html!("select" => HtmlSelectElement, {
-                                                    .class("form-control")
-                                                    .attr("id", "index-check-person")
-                                                    .child(html!("option", {
-                                                        .attr("value", "")
-                                                        .text("เลือก")
-                                                    }))
-                                                    .children(all_doctor_select_option.iter().map(|option| {
-                                                        doms::select_option(option, &modal.check_person.lock_ref())
-                                                    }))
-                                                    .apply(mixins::string_value_select(modal.check_person.clone(), modal.changed.clone()))
-                                                }))
+                                                // .future(modal.redraw_check_person.signal().for_each(clone!(app, modal => move |redraw| {
+                                                //     if redraw {
+                                                //         if let Some(elm) = app.get_id("index-check-person") {
+                                                //             NiceSelect::new_default_with_value(&elm, &modal.check_person.lock_ref());
+                                                //         }
+                                                //         modal.redraw_check_person.set_neq(false);
+                                                //     }
+                                                //     async {}
+                                                // })))
+                                                .child(doms::select_box(
+                                                    "index-check-person", Some("เลือก"), false,
+                                                    modal.check_person.clone(),
+                                                    modal.changed.clone(),
+                                                    |d| d.class("form-control"), || {},
+                                                    all_doctor_select_option.clone(),
+                                                ))
+                                                // .child(html!("select" => HtmlSelectElement, {
+                                                //     .class("form-control")
+                                                //     .attr("id", "index-check-person")
+                                                //     .child(html!("option", {
+                                                //         .attr("value", "")
+                                                //         .text("เลือก")
+                                                //     }))
+                                                //     .children(all_doctor_select_option.iter().map(|option| {
+                                                //         doms::select_option(option, &modal.check_person.lock_ref())
+                                                //     }))
+                                                //     .apply(mixins::string_value_select(modal.check_person.clone(), modal.changed.clone()))
+                                                // }))
                                             }),
                                         ])
                                     }))
@@ -2462,35 +2470,42 @@ impl IndexPlanActionForm {
                                                             .text("ลงชื่อ")
                                                             .event(clone!(app, modal => move |_: events::Click| {
                                                                 let doctorcode = app.doctor_code().unwrap_or_default();
-                                                                if let Some(elm) = app.get_id("index-action-person-1") {
-                                                                    NiceSelect::new_default_with_value(&elm, &doctorcode);
-                                                                }
+                                                                // if let Some(elm) = app.get_id("index-action-person-1") {
+                                                                //     NiceSelect::new_default_with_value(&elm, &doctorcode);
+                                                                // }
                                                                 modal.action_person_1.set_neq(doctorcode);
                                                             }))
                                                         }),
                                                         html!("div", {
                                                             .class(class::FLEX_GROW1)
-                                                            .future(modal.redraw_person_1.signal().for_each(clone!(app, modal => move |redraw| {
-                                                                if redraw {
-                                                                    if let Some(elm) = app.get_id("index-action-person-1") {
-                                                                        NiceSelect::new_default_with_value(&elm, &modal.action_person_1.lock_ref());
-                                                                    }
-                                                                    modal.redraw_person_1.set_neq(false);
-                                                                }
-                                                                async {}
-                                                            })))
-                                                            .child(html!("select" => HtmlSelectElement, {
-                                                                .class("form-control")
-                                                                .attr("id", "index-action-person-1")
-                                                                .child(html!("option", {
-                                                                    .attr("value", "")
-                                                                    .text("เลือก")
-                                                                }))
-                                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                                    doms::select_option(option, &modal.action_person_1.lock_ref())
-                                                                }))
-                                                                .apply(mixins::string_value_select(modal.action_person_1.clone(), modal.changed.clone()))
-                                                            }))
+                                                            // .future(modal.redraw_person_1.signal().for_each(clone!(app, modal => move |redraw| {
+                                                            //     if redraw {
+                                                            //         if let Some(elm) = app.get_id("index-action-person-1") {
+                                                            //             NiceSelect::new_default_with_value(&elm, &modal.action_person_1.lock_ref());
+                                                            //         }
+                                                            //         modal.redraw_person_1.set_neq(false);
+                                                            //     }
+                                                            //     async {}
+                                                            // })))
+                                                            .child(doms::select_box(
+                                                                "index-action-person-1", Some("เลือก"), false,
+                                                                modal.action_person_1.clone(),
+                                                                modal.changed.clone(),
+                                                                |d| d.class("form-control"), || {},
+                                                                all_doctor_select_option.clone(),
+                                                            ))
+                                                            // .child(html!("select" => HtmlSelectElement, {
+                                                            //     .class("form-control")
+                                                            //     .attr("id", "index-action-person-1")
+                                                            //     .child(html!("option", {
+                                                            //         .attr("value", "")
+                                                            //         .text("เลือก")
+                                                            //     }))
+                                                            //     .children(all_doctor_select_option.iter().map(|option| {
+                                                            //         doms::select_option(option, &modal.action_person_1.lock_ref())
+                                                            //     }))
+                                                            //     .apply(mixins::string_value_select(modal.action_person_1.clone(), modal.changed.clone()))
+                                                            // }))
                                                         }),
                                                     ])
                                                 }))
@@ -2505,41 +2520,53 @@ impl IndexPlanActionForm {
                                                         doms::label_group_for("index-action-person-2","ลงชื่อ 2"),
                                                         html!("div", {
                                                             .class(class::FLEX_GROW1)
-                                                            .future(map_ref! {
-                                                                let had = modal.action_blood_had.signal_cloned(),
-                                                                let redraw = modal.redraw_person_2.signal() =>
-                                                                had.as_str() == "Y" || *redraw
-                                                            }.for_each(clone!(app, modal => move |redraw| {
-                                                                if redraw {
-                                                                    if let Some(elm) = app.get_id("index-action-person-2") {
-                                                                        NiceSelect::new_default_with_value(&elm, &modal.action_person_2.lock_ref());
+                                                            // .future(map_ref! {
+                                                            //     let had = modal.action_blood_had.signal_cloned(),
+                                                            //     let redraw = modal.redraw_person_2.signal() =>
+                                                            //     had.as_str() == "Y" || *redraw
+                                                            // }.for_each(clone!(app, modal => move |redraw| {
+                                                            //     if redraw {
+                                                            //         if let Some(elm) = app.get_id("index-action-person-2") {
+                                                            //             NiceSelect::new_default_with_value(&elm, &modal.action_person_2.lock_ref());
+                                                            //         }
+                                                            //         modal.redraw_person_2.set_neq(false);
+                                                            //     }
+                                                            //     async {}
+                                                            // })))
+                                                            .child(doms::select_box(
+                                                                "index-action-person-2", Some("เลือก"), false,
+                                                                modal.action_person_2.clone(),
+                                                                modal.changed.clone(),
+                                                                |d| d.class("form-control"), || {},
+                                                                all_doctor_select_option.iter().map(|option| {
+                                                                    SelectOption {
+                                                                        key: option.key.to_owned(),
+                                                                        value: [&option.key, " : ", &option.value].concat(),
                                                                     }
-                                                                    modal.redraw_person_2.set_neq(false);
-                                                                }
-                                                                async {}
-                                                            })))
-                                                            .child(html!("select" => HtmlSelectElement, {
-                                                                .class("form-control")
-                                                                .attr("id", "index-action-person-2")
-                                                                .child(html!("option", {
-                                                                    .attr("value", "")
-                                                                    .text("เลือก")
-                                                                }))
-                                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                                    // doms::select_option(option, &modal.action_person_2.lock_ref())
-                                                                    let selected_value = modal.action_person_2.lock_ref();
-                                                                    html!("option", {
-                                                                        .attr("value", &option.key.to_owned())
-                                                                        .apply_if(!selected_value.is_empty() && selected_value.as_str() == option.key.as_str(), |dom| { dom
-                                                                            .attr("selected","")
-                                                                        })
-                                                                        .text(&option.key)
-                                                                        .text(" : ")
-                                                                        .text(&option.value)
-                                                                    })
-                                                                }))
-                                                                .apply(mixins::string_value_select(modal.action_person_2.clone(), modal.changed.clone()))
-                                                            }))
+                                                                }).collect(),
+                                                            ))
+                                                            // .child(html!("select" => HtmlSelectElement, {
+                                                            //     .class("form-control")
+                                                            //     .attr("id", "index-action-person-2")
+                                                            //     .child(html!("option", {
+                                                            //         .attr("value", "")
+                                                            //         .text("เลือก")
+                                                            //     }))
+                                                            //     .children(all_doctor_select_option.iter().map(|option| {
+                                                            //         // doms::select_option(option, &modal.action_person_2.lock_ref())
+                                                            //         let selected_value = modal.action_person_2.lock_ref();
+                                                            //         html!("option", {
+                                                            //             .attr("value", &option.key.to_owned())
+                                                            //             .apply_if(!selected_value.is_empty() && selected_value.as_str() == option.key.as_str(), |dom| { dom
+                                                            //                 .attr("selected","")
+                                                            //             })
+                                                            //             .text(&option.key)
+                                                            //             .text(" : ")
+                                                            //             .text(&option.value)
+                                                            //         })
+                                                            //     }))
+                                                            //     .apply(mixins::string_value_select(modal.action_person_2.clone(), modal.changed.clone()))
+                                                            // }))
                                                         })
                                                     ])
                                                 }))
@@ -3195,15 +3222,15 @@ impl IndexPlanActionForm {
         self.action_person_1.set_neq(action.action_person_1.clone().unwrap_or_default());
         self.action_person_2.set_neq(action.action_person_2.clone().unwrap_or_default());
 
-        if action.check_person.is_some() {
-            self.redraw_check_person.set(true);
-        }
-        if action.action_person_1.is_some() {
-            self.redraw_person_1.set(true);
-        }
-        if action.action_blood_had == Some(String::from("Y")) && action.action_person_2.is_some() {
-            self.redraw_person_2.set(true);
-        }
+        // if action.check_person.is_some() {
+        //     self.redraw_check_person.set(true);
+        // }
+        // if action.action_person_1.is_some() {
+        //     self.redraw_person_1.set(true);
+        // }
+        // if action.action_blood_had == Some(String::from("Y")) && action.action_person_2.is_some() {
+        //     self.redraw_person_2.set(true);
+        // }
 
         self.changed.set_neq(false);
     }

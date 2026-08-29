@@ -1,12 +1,12 @@
 use dominator::{Dom, EventOptions, clone, events, html, is_window_loaded, link, with_node};
 use futures_signals::{
     map_ref,
-    signal::{Mutable, SignalExt},
+    signal::{Mutable, SignalExt, option},
     signal_vec::SignalVecExt,
 };
 use std::rc::Rc;
 use wasm_bindgen::JsCast;
-use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlOptionElement, HtmlSelectElement, HtmlTextAreaElement};
+use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlTextAreaElement};
 
 use kphis_model::{
     app::{AppState, VisitTypeId},
@@ -14,6 +14,7 @@ use kphis_model::{
     fetch::Method,
     order::{Order, OrderItem, OrderPatch, OrderPatchAction, OrderTypeName},
     route::Route,
+    select_utils::SelectOption,
     sse::{SseData, SseMenuTab, SsePostMessage},
     tab::Tab,
     user::{
@@ -23,7 +24,7 @@ use kphis_model::{
     },
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins, pin_code::PinCode};
+use kphis_ui_core::{class, doms, mixins, pin_code::PinCode};
 use kphis_util::{
     datetime::{date_th, datetime_th, datetime_th_opt, datetime_th_opt_relative, time_hm},
     util::str_some,
@@ -73,22 +74,22 @@ impl MenuCpn {
         Rc::new(Self::default())
     }
 
-    fn clear_compose_msg(&self, app: Rc<App>) {
+    fn clear_compose_msg(&self) {
         self.msg_ref.set(None);
         self.msg_message.set(String::new());
         self.msg_target_user.set(String::new());
         self.msg_target_ward.set(String::new());
         self.msg_target_spclty.set(String::new());
         self.msg_route.set(String::new());
-        if let Some(elm) = app.get_id("msg-target-user-select") {
-            NiceSelect::new_default(&elm);
-        }
-        if let Some(elm) = app.get_id("msg-target-ward-select") {
-            NiceSelect::new_default(&elm);
-        }
-        if let Some(elm) = app.get_id("msg-target-spclty-select") {
-            NiceSelect::new_default(&elm);
-        }
+        // if let Some(elm) = app.get_id("msg-target-user-select") {
+        //     NiceSelect::new_default(&elm);
+        // }
+        // if let Some(elm) = app.get_id("msg-target-ward-select") {
+        //     NiceSelect::new_default(&elm);
+        // }
+        // if let Some(elm) = app.get_id("msg-target-spclty-select") {
+        //     NiceSelect::new_default(&elm);
+        // }
     }
 
     fn read_single_msg(&self, message_id: u32, tab: SseMenuTab, app: Rc<App>) {
@@ -613,10 +614,10 @@ impl MenuCpn {
                                         .class_signal("btn-outline-primary", menu.active_tab.signal_cloned().map(|tab| tab != SseMenuTab::Compose))
                                         .child(html!("i", {.class(class::FA_EDIT)}))
                                         .attr("title", SseMenuTab::Compose.as_str())
-                                        .event(clone!(app, menu => move |_: events::Click| {
+                                        .event(clone!(menu => move |_: events::Click| {
                                             // menu.read_all_current_tab_msg(app.clone());
                                             menu.active_tab.set_neq(SseMenuTab::Compose);
-                                            menu.clear_compose_msg(app.clone());
+                                            menu.clear_compose_msg();
                                         }))
                                     }),
                                     html!("button", {
@@ -912,15 +913,15 @@ impl MenuCpn {
         html!("div", {
             .future(is_window_loaded().for_each(clone!(app, menu => move |loaded| {
                 if loaded {
-                    if let Some(elm) = app.get_id("msg-target-user-select") {
-                        NiceSelect::new_default_with_value(&elm, &menu.msg_target_user.lock_ref());
-                    }
-                    if let Some(elm) = app.get_id("msg-target-ward-select") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("msg-target-spclty-select") {
-                        NiceSelect::new_default(&elm);
-                    }
+                    // if let Some(elm) = app.get_id("msg-target-user-select") {
+                    //     NiceSelect::new_default_with_value(&elm, &menu.msg_target_user.lock_ref());
+                    // }
+                    // if let Some(elm) = app.get_id("msg-target-ward-select") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
+                    // if let Some(elm) = app.get_id("msg-target-spclty-select") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
                     if let Some(elm) = app.get_id("msg-message").and_then(|elm| elm.dyn_into::<HtmlTextAreaElement>().ok()) {
                         elm.focus().unwrap();
                     }
@@ -962,59 +963,77 @@ impl MenuCpn {
                             .class(class::INPUT_GROUP_SM_T)
                             .children([
                                 doms::label_group_for("msg-target-user-select","ถึงเจ้าหน้าที่"),
-                                html!("div", {
-                                    .class(class::FLEX_GROW1)
-                                    .child(html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_CTRL_SM)
-                                        .attr("id", "msg-target-user-select")
-                                        .child(html!("option", {
-                                            .attr("value", "")
-                                            .text("เลือก")
-                                        }))
-                                        .children(all_doctor_select_option.iter().map(|option| {
-                                            doms::select_option(option, "")
-                                        }))
-                                        .apply(mixins::string_value_select(menu.msg_target_user.clone(), Mutable::new(false)))
-                                    }))
-                                }),
+                                doms::select_box(
+                                    "msg-target-user-select", Some("เลือก"), false,
+                                    menu.msg_target_user.clone(), Mutable::new(false),
+                                    |d| d.class(class::FORM_CTRL_SM), || {},
+                                    all_doctor_select_option,
+                                ),
+                                // html!("div", {
+                                //     .class(class::FLEX_GROW1)
+                                //     .child(html!("select" => HtmlSelectElement, {
+                                //         .class(class::FORM_CTRL_SM)
+                                //         .attr("id", "msg-target-user-select")
+                                //         .child(html!("option", {
+                                //             .attr("value", "")
+                                //             .text("เลือก")
+                                //         }))
+                                //         .children(all_doctor_select_option.iter().map(|option| {
+                                //             doms::select_option(option, "")
+                                //         }))
+                                //         .apply(mixins::string_value_select(menu.msg_target_user.clone(), Mutable::new(false)))
+                                //     }))
+                                // }),
                             ])
                         }),
                         html!("div", {
                             .class(class::INPUT_GROUP_SM_T)
                             .children([
                                 doms::label_group_for("msg-target-ward-select","ถึงหอผู้ป่วย"),
-                                html!("div", {
-                                    .class(class::FLEX_GROW1)
-                                    .child(html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_CTRL_SM)
-                                        .attr("id", "msg-target-ward-select")
-                                        .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                        .child(html!("option", {.attr("value", "00").text("ER")}))
-                                        .children(ward_select_option.iter().map(|option| {
-                                            doms::select_option(option, "")
-                                        }))
-                                        .apply(mixins::string_value_select(menu.msg_target_ward.clone(), Mutable::new(false)))
-                                    }))
-                                }),
+                                doms::select_box(
+                                    "msg-target-ward-select", Some("เลือก"), false,
+                                    menu.msg_target_ward.clone(), Mutable::new(false),
+                                    |d| d.class(class::FORM_CTRL_SM), || {},
+                                    [vec![SelectOption {key: String::from("00"), value: String::from("ER")}], ward_select_option].concat(),
+                                ),
+                                // html!("div", {
+                                //     .class(class::FLEX_GROW1)
+                                //     .child(html!("select" => HtmlSelectElement, {
+                                //         .class(class::FORM_CTRL_SM)
+                                //         .attr("id", "msg-target-ward-select")
+                                //         .child(html!("option", {.attr("value", "").text("เลือก")}))
+                                //         .child(html!("option", {.attr("value", "00").text("ER")}))
+                                //         .children(ward_select_option.iter().map(|option| {
+                                //             doms::select_option(option, "")
+                                //         }))
+                                //         .apply(mixins::string_value_select(menu.msg_target_ward.clone(), Mutable::new(false)))
+                                //     }))
+                                // }),
                             ])
                         }),
                         html!("div", {
                             .class(class::INPUT_GROUP_SM_T)
                             .children([
                                 doms::label_group_for("msg-target-spclty-select","ถึงแผนก"),
-                                html!("div", {
-                                    .class(class::FLEX_GROW1)
-                                    .child(html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_CTRL_SM)
-                                        .attr("id", "msg-target-spclty-select")
-                                        .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                        .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
-                                        .children(spclty_kphis_select_option.iter().map(|option| {
-                                            doms::select_option(option, "")
-                                        }))
-                                        .apply(mixins::string_value_select(menu.msg_target_spclty.clone(), Mutable::new(false)))
-                                    }))
-                                }),
+                                doms::select_box(
+                                    "msg-target-spclty-select", Some("เลือก"), false,
+                                    menu.msg_target_spclty.clone(), Mutable::new(false),
+                                    |d| d.class(class::FORM_CTRL_SM), || {},
+                                    [vec![SelectOption {key: String::from("0"), value: String::from("ฝ่ายเภสัชกรรม")}], spclty_kphis_select_option].concat(),
+                                ),
+                                // html!("div", {
+                                //     .class(class::FLEX_GROW1)
+                                //     .child(html!("select" => HtmlSelectElement, {
+                                //         .class(class::FORM_CTRL_SM)
+                                //         .attr("id", "msg-target-spclty-select")
+                                //         .child(html!("option", {.attr("value", "").text("เลือก")}))
+                                //         .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
+                                //         .children(spclty_kphis_select_option.iter().map(|option| {
+                                //             doms::select_option(option, "")
+                                //         }))
+                                //         .apply(mixins::string_value_select(menu.msg_target_spclty.clone(), Mutable::new(false)))
+                                //     }))
+                                // }),
                             ])
                         }),
                         html!("div", {
@@ -1082,7 +1101,7 @@ impl MenuCpn {
                                         route: (!matches!(route, Route::NotFound { path: _ } | Route::UnAuthorized { hash: _ })).then_some(route),
                                         reference: menu.msg_ref.get_cloned(),
                                     };
-                                    menu.clear_compose_msg(app.clone());
+                                    menu.clear_compose_msg();
                                     app.send_sse(message);
                                 }))
                             }))
@@ -1103,24 +1122,26 @@ impl MenuCpn {
         };
 
         html!("div", {
-            .future(is_window_loaded().for_each(clone!(app => move |loaded| {
-                if loaded {
-                    if let Some(user) = app.user.lock_ref().as_ref() {
-                        if let Some(elm) = app.get_id("msg-ward-select") {
-                            NiceSelect::new_default_with_value(&elm, &user.user.wards.lock_ref().join(","));
-                        }
-                        if let Some(elm) = app.get_id("msg-spclty-select") {
-                            NiceSelect::new_default_with_value(&elm, &user.user.spclty_ids.lock_ref().iter().map(|u| u.to_string()).collect::<Vec<String>>().join(","));
-                        }
-                    }
-                }
-                async {}
-            })))
+            // .future(is_window_loaded().for_each(clone!(app => move |loaded| {
+            //     if loaded {
+            //         if let Some(user) = app.user.lock_ref().as_ref() {
+            //             if let Some(elm) = app.get_id("msg-ward-select") {
+            //                 NiceSelect::new_default_with_value(&elm, &user.user.wards.lock_ref().join(","));
+            //             }
+            //             if let Some(elm) = app.get_id("msg-spclty-select") {
+            //                 NiceSelect::new_default_with_value(&elm, &user.user.spclty_ids.lock_ref().iter().map(|u| u.to_string()).collect::<Vec<String>>().join(","));
+            //             }
+            //         }
+            //     }
+            //     async {}
+            // })))
             .class(class::ROW_TC)
             .class("m-0")
             .apply(|dom| {
-                if app.doctor_code().is_some() { dom
-                    .children([
+                if app.doctor_code().is_some() {
+                    let temp_ward_select = Mutable::new(String::new());
+                    let temp_spclty_select = Mutable::new(String::new());
+                    dom.children([
                         html!("div", {
                             .children([
                                 html!("label", {
@@ -1128,68 +1149,120 @@ impl MenuCpn {
                                     .class("form-label")
                                     .text("รับข่าวสารของหอผู้ป่วย")
                                 }),
-                                html!("div", {
-                                    .class(class::FLEX_GROW1)
-                                    .child(html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_CTRL_SM)
-                                        .attr("id", "msg-ward-select")
-                                        .attr("multiple", "multiple")
-                                        .child(html!("option", {.attr("value", "00").text("ER")}))
-                                        .children(ward_select_option.iter().map(|option| {
-                                            doms::select_option(option, "")
-                                        }))
-                                        .with_node!(element => {
-                                            .event(clone!(app => move |_: events::Change| {
-                                                let options = element.selected_options();
-                                                let mut values = Vec::new();
-                                                for j in 0..options.length() {
-                                                    if let Some(item) = options.item(j) {
-                                                        if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
-                                                            values.push(option.value());
-                                                        }
-                                                    }
+                                doms::select_box(
+                                    "msg-ward-select", None, true,
+                                    temp_ward_select.clone(),
+                                    Mutable::new(true),
+                                    |d| d.class(class::FORM_CTRL_SM)
+                                        .future(app.user.signal_cloned().map(|opt| {
+                                            option(opt.map(|user| user.user.wards.signal_cloned()))
+                                        }).flatten().for_each(clone!(temp_ward_select => move |opt| {
+                                            if let Some(mut wards) = opt {
+                                                wards.sort();
+                                                let new = wards.join(",");
+                                                let is_neq = temp_ward_select.lock_ref().as_str() != &new;
+                                                if is_neq {
+                                                    temp_ward_select.set(new);
                                                 }
-                                                if let Some(user) = app.user.lock_ref().as_ref() {
-                                                    user.user.wards.set(values);
-                                                }
-                                            }))
-                                        })
-                                    }))
-                                }),
+                                            }
+                                            async {}
+                                        }))),
+                                    clone!(app, temp_ward_select => move || {
+                                        let values = temp_ward_select.lock_ref().split(',').map(|s| s.to_owned()).collect();
+                                        if let Some(user) = app.user.lock_ref().as_ref() {
+                                            user.user.wards.set(values);
+                                        }
+                                    }),
+                                    [vec![SelectOption {key: String::from("00"), value: String::from("ER")}], ward_select_option].concat(),
+                                ),
+                                // html!("div", {
+                                //     .class(class::FLEX_GROW1)
+                                //     .child(html!("select" => HtmlSelectElement, {
+                                //         .class(class::FORM_CTRL_SM)
+                                //         .attr("id", "msg-ward-select")
+                                //         .attr("multiple", "multiple")
+                                //         .child(html!("option", {.attr("value", "00").text("ER")}))
+                                //         .children(ward_select_option.iter().map(|option| {
+                                //             doms::select_option(option, "")
+                                //         }))
+                                //         .with_node!(element => {
+                                //             .event(clone!(app => move |_: events::Change| {
+                                //                 let options = element.selected_options();
+                                //                 let mut values = Vec::new();
+                                //                 for j in 0..options.length() {
+                                //                     if let Some(item) = options.item(j) {
+                                //                         if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
+                                //                             values.push(option.value());
+                                //                         }
+                                //                     }
+                                //                 }
+                                //                 if let Some(user) = app.user.lock_ref().as_ref() {
+                                //                     user.user.wards.set(values);
+                                //                 }
+                                //             }))
+                                //         })
+                                //     }))
+                                // }),
                                 html!("div", {.class(class::FORM_TEXT_R).text("สามารถเลือกได้หลายหอผู้ป่วย")}),
                                 html!("label", {
                                     .attr("for", "msg-splcty-select")
                                     .class("form-label")
                                     .text("รับข่าวสารของแผนก")
                                 }),
-                                html!("div", {
-                                    .class(class::FLEX_GROW1)
-                                    .child(html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_CTRL_SM)
-                                        .attr("id", "msg-spclty-select")
-                                        .attr("multiple", "multiple")
-                                        .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
-                                        .children(spclty_kphis_select_option.iter().map(|option| {
-                                            doms::select_option(option, "")
-                                        }))
-                                        .with_node!(element => {
-                                            .event(clone!(app => move |_: events::Change| {
-                                                let options = element.selected_options();
-                                                let mut values = Vec::new();
-                                                for j in 0..options.length() {
-                                                    if let Some(item) = options.item(j) {
-                                                        if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
-                                                            values.push(option.value());
-                                                        }
-                                                    }
+                                doms::select_box(
+                                    "msg-spclty-select", None, true,
+                                    temp_spclty_select.clone(),
+                                    Mutable::new(true),
+                                    |d| d.class(class::FORM_CTRL_SM)
+                                        .future(app.user.signal_cloned().map(|opt| {
+                                            option(opt.map(|user| user.user.spclty_ids.signal_cloned()))
+                                        }).flatten().for_each(clone!(temp_spclty_select => move |opt| {
+                                            if let Some(mut spclty_ids) = opt {
+                                                spclty_ids.sort();
+                                                let new = spclty_ids.iter().map(|u| u.to_string()).collect::<Vec<String>>().join(",");
+                                                let is_neq = temp_spclty_select.lock_ref().as_str() != &new;
+                                                if is_neq {
+                                                    temp_spclty_select.set(new);
                                                 }
-                                                if let Some(user) = app.user.lock_ref().as_ref() {
-                                                    user.user.spclty_ids.set(values.iter().filter_map(|s| s.parse::<u32>().ok()).collect::<Vec<u32>>());
-                                                }
-                                            }))
-                                        })
-                                    }))
-                                }),
+                                            }
+                                            async {}
+                                        }))),
+                                    clone!(app, temp_spclty_select => move || {
+                                        let values = temp_spclty_select.lock_ref().split(',').filter_map(|s| s.parse::<u32>().ok()).collect::<Vec<u32>>();
+                                        if let Some(user) = app.user.lock_ref().as_ref() {
+                                            user.user.spclty_ids.set(values);
+                                        }
+                                    }),
+                                    [vec![SelectOption {key: String::from("0"), value: String::from("ฝ่ายเภสัชกรรม")}], spclty_kphis_select_option].concat(),
+                                ),
+                                // html!("div", {
+                                //     .class(class::FLEX_GROW1)
+                                //     .child(html!("select" => HtmlSelectElement, {
+                                //         .class(class::FORM_CTRL_SM)
+                                //         .attr("id", "msg-spclty-select")
+                                //         .attr("multiple", "multiple")
+                                //         .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
+                                //         .children(spclty_kphis_select_option.iter().map(|option| {
+                                //             doms::select_option(option, "")
+                                //         }))
+                                //         .with_node!(element => {
+                                //             .event(clone!(app => move |_: events::Change| {
+                                //                 let options = element.selected_options();
+                                //                 let mut values = Vec::new();
+                                //                 for j in 0..options.length() {
+                                //                     if let Some(item) = options.item(j) {
+                                //                         if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
+                                //                             values.push(option.value());
+                                //                         }
+                                //                     }
+                                //                 }
+                                //                 if let Some(user) = app.user.lock_ref().as_ref() {
+                                //                     user.user.spclty_ids.set(values.iter().filter_map(|s| s.parse::<u32>().ok()).collect::<Vec<u32>>());
+                                //                 }
+                                //             }))
+                                //         })
+                                //     }))
+                                // }),
                                 html!("div", {.class(class::FORM_TEXT_R).text("สามารถเลือกได้หลายแผนก")}),
                                 html!("div", {
                                     .child(html!("button" => HtmlButtonElement, {

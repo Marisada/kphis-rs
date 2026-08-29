@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use wasm_bindgen::JsValue;
+use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{DomParser, EventTarget, HtmlButtonElement, HtmlElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement, SupportedType};
 
 use kphis_model::{
@@ -897,6 +897,37 @@ pub fn drag_start_only(drag_start_state: Mutable<Option<DragStartState>>) -> imp
                 drag_start_state.set(Some(DragStartState::Text(element.text_content().unwrap_or_default())));
                 if let Some(data_transfer) = event.data_transfer() {
                     data_transfer.set_data("text", &element.text_content().unwrap_or_default()).unwrap();
+                }
+            })
+        })
+    }
+}
+
+//============//
+//  Dropdown  //
+//============//
+
+pub fn dropdown_closing_mixin<T>(close_state: Mutable<T>) -> impl FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>
+where
+    T: Default + Clone + PartialEq + 'static,
+{
+    #[inline]
+    move |dom| {
+        with_node!(dom, wrapper => {
+            .global_event(clone!(close_state => move |e: events::KeyDown| {
+                if close_state.get_cloned() != T::default() && e.key() == "Escape" {
+                    close_state.set(T::default());
+                }
+            }))
+            .global_event(move |e: events::Click| {
+                if close_state.get_cloned() != T::default() {
+                    let outside = e.target().and_then(|t| t.dyn_into::<web_sys::Node>().ok())
+                        .map(|node| !wrapper.contains(Some(&node)))
+                        .unwrap_or(true);
+
+                    if outside {
+                        close_state.set(T::default());
+                    }
                 }
             })
         })

@@ -1,20 +1,21 @@
-use dominator::{Dom, clone, events, html, with_node};
+use dominator::{Dom, clone, events, html};
 use futures_signals::{
     map_ref,
     signal::{Mutable, Signal, SignalExt, not},
     signal_vec::SignalVecExt,
 };
 use std::rc::Rc;
-use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlSelectElement};
+use web_sys::{HtmlButtonElement, HtmlInputElement};
 
 use kphis_model::{
     endpoint::EndPoint,
     fetch::Method,
     ipd::tmp::{TmpDlc, TmpFocus, TmpGoal, TmpGroup, TmpIntvt, TmpParams, TmpSubGroup},
+    select_utils::SelectOption,
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::str_some;
 
 /// - GET `EndPoint::IpdTmpGroup`
@@ -40,7 +41,7 @@ pub struct SettingTemplateNurseNotePage {
     loaded_groups: Mutable<bool>,
     groups: Mutable<Vec<TmpGroup>>,
     group_changed: Mutable<bool>,
-    group_select_redraw: Mutable<bool>,
+    // group_select_redraw: Mutable<bool>,
     smp_id: Mutable<String>,
     smp_name: Mutable<String>,
     // smp_group: Mutable<Option<i16>>,
@@ -50,7 +51,7 @@ pub struct SettingTemplateNurseNotePage {
     loaded_subgroups: Mutable<bool>,
     subgroups: Mutable<Vec<TmpSubGroup>>,
     subgroup_changed: Mutable<bool>,
-    subgroup_select_redraw: Mutable<bool>,
+    // subgroup_select_redraw: Mutable<bool>,
     // subgroup_smp_id: Mutable<String>,
     subgroup: Mutable<String>,
     subgroup_name: Mutable<String>,
@@ -62,7 +63,7 @@ pub struct SettingTemplateNurseNotePage {
     loaded_focuses: Mutable<bool>,
     focuses: Mutable<Vec<TmpFocus>>,
     focus_changed: Mutable<bool>,
-    focus_select_redraw: Mutable<bool>,
+    // focus_select_redraw: Mutable<bool>,
     focus_id: Mutable<String>,
     // focus_smp_id: Mutable<String>,
     // focus_subgroup: Mutable<String>,
@@ -134,7 +135,7 @@ impl SettingTemplateNurseNotePage {
                 match TmpGroup::call_api_get(&TmpParams::default(), app.state()).await {
                     Ok(responses) => {
                         page.groups.set(responses);
-                        page.group_select_redraw.set(true);
+                        // page.group_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -210,7 +211,7 @@ impl SettingTemplateNurseNotePage {
                     match TmpSubGroup::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.subgroups.set(responses);
-                            page.subgroup_select_redraw.set(true);
+                            // page.subgroup_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -337,7 +338,7 @@ impl SettingTemplateNurseNotePage {
                     match TmpFocus::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.focuses.set(responses);
-                            page.focus_select_redraw.set(true);
+                            // page.focus_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -711,24 +712,24 @@ impl SettingTemplateNurseNotePage {
                 }
                 async {}
             })))
-            .future(page.group_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-                if redraw {
-                    if let Some(elm) = app.get_id("search_temp_smp") {
-                        NiceSelect::new_default_with_value(&elm, &page.smp_id.lock_ref());
-                    }
-                    page.group_select_redraw.set(false);
-                }
-                async {}
-            })))
-            .future(page.subgroup_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-                if redraw {
-                    if let Some(elm) = app.get_id("search_temp_subgroup") {
-                        NiceSelect::new_default_with_value(&elm, &page.subgroup.lock_ref());
-                    }
-                    page.subgroup_select_redraw.set(false);
-                }
-                async {}
-            })))
+            // .future(page.group_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
+            //     if redraw {
+            //         if let Some(elm) = app.get_id("search_temp_smp") {
+            //             NiceSelect::new_default_with_value(&elm, &page.smp_id.lock_ref());
+            //         }
+            //         page.group_select_redraw.set(false);
+            //     }
+            //     async {}
+            // })))
+            // .future(page.subgroup_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
+            //     if redraw {
+            //         if let Some(elm) = app.get_id("search_temp_subgroup") {
+            //             NiceSelect::new_default_with_value(&elm, &page.subgroup.lock_ref());
+            //         }
+            //         page.subgroup_select_redraw.set(false);
+            //     }
+            //     async {}
+            // })))
             .class("container-fluid")
             .child(html!("div", {
                 .children([
@@ -775,29 +776,51 @@ impl SettingTemplateNurseNotePage {
                                         .class("col-4")
                                         .child(html!("div", {
                                             //.attr("id", "dropdown_data_smp")
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class("form-control")
-                                                .attr("id", "search_temp_smp")
-                                                .child(html!("option", {.attr("value","").text("เลือก")}))
-                                                .children_signal_vec(page.groups.signal_cloned().to_signal_vec().map(|group| {
-                                                    html!("option", {
-                                                        .attr("value", &group.smp_id.to_string())
-                                                        .text(&group.smp_name.unwrap_or_default())
-                                                    })
-                                                }))
-                                                .prop_signal("value", page.smp_id.signal_cloned())
-                                                .with_node!(element => {
-                                                    .event(clone!(page => move |_: events::Change| {
-                                                        page.smp_id.set_neq(element.value());
+                                            .child_signal(page.groups.signal_cloned().map(clone!(page => move |groups| {
+                                                let options = groups.iter().map(|group| {
+                                                    SelectOption {
+                                                        key: group.smp_id.to_string(),
+                                                        value: group.smp_name.clone().unwrap_or_default(),
+                                                    }
+                                                }).collect();
+                                                Some(doms::select_box(
+                                                    "search_temp_smp", Some("เลือก"), false,
+                                                    page.smp_id.clone(),
+                                                    Mutable::new(true),
+                                                    |d| d.class("form-control"),
+                                                    clone!(page => move || {
                                                         page.subgroup.set_neq(String::new());
                                                         page.focuses.lock_mut().clear();
                                                         page.goals.lock_mut().clear();
                                                         page.intvts.lock_mut().clear();
                                                         page.loaded_subgroups.set(false);
-                                                    }))
-                                                })
-                                                // onchange="table_data_seting_temp_smp_search()
-                                            }))
+                                                    }),
+                                                    options,
+                                                ))
+                                            })))
+                                            // .child(html!("select" => HtmlSelectElement, {
+                                            //     .class("form-control")
+                                            //     .attr("id", "search_temp_smp")
+                                            //     .child(html!("option", {.attr("value","").text("เลือก")}))
+                                            //     .children_signal_vec(page.groups.signal_cloned().to_signal_vec().map(|group| {
+                                            //         html!("option", {
+                                            //             .attr("value", &group.smp_id.to_string())
+                                            //             .text(&group.smp_name.unwrap_or_default())
+                                            //         })
+                                            //     }))
+                                            //     .prop_signal("value", page.smp_id.signal_cloned())
+                                            //     .with_node!(element => {
+                                            //         .event(clone!(page => move |_: events::Change| {
+                                            //             page.smp_id.set_neq(element.value());
+                                            //             page.subgroup.set_neq(String::new());
+                                            //             page.focuses.lock_mut().clear();
+                                            //             page.goals.lock_mut().clear();
+                                            //             page.intvts.lock_mut().clear();
+                                            //             page.loaded_subgroups.set(false);
+                                            //         }))
+                                            //     })
+                                            //     // onchange="table_data_seting_temp_smp_search()
+                                            // }))
                                         }))
                                     }))
                                     // SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
@@ -816,7 +839,7 @@ impl SettingTemplateNurseNotePage {
                                                 // page.smp_order.set_neq(None);
                                                 page.smp_status.set_neq(String::from("Y"));
                                                 page.group_changed.set_neq(false);
-                                                page.group_select_redraw.set(true);
+                                                // page.group_select_redraw.set(true);
                                             }))
                                             // .attr("onclick", "add_setting_template_nurse_note_smp()")
                                         }))
@@ -1020,26 +1043,48 @@ impl SettingTemplateNurseNotePage {
                                         .class("col-4")
                                         .child(html!("div", {
                                             //.attr("id", "dropdown_data_subgroup")
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class("form-control")
-                                                .attr("id", "search_temp_subgroup")
-                                                .child(html!("option", {.attr("value","").text("เลือก")}))
-                                                .children_signal_vec(page.subgroups.signal_cloned().to_signal_vec().map(|subgroup| {
-                                                    html!("option", {
-                                                        .attr("value", &subgroup.subgroup.to_string())
-                                                        .text(&subgroup.subgroup_name.unwrap_or_default())
-                                                    })
-                                                }))
-                                                .child(html!("option", {.attr("value","0").class("fw-bold").text("**ไม่ระบุ(แสดงเสมอ)**")}))
-                                                .prop_signal("value", page.subgroup.signal_cloned())
-                                                .with_node!(element => {
-                                                    .event(clone!(page => move |_: events::Change| {
-                                                        page.subgroup.set_neq(element.value());
-                                                        page.loaded_focus_goal_intvt.set(false);
-                                                    }))
-                                                })
-                                                // table_data_seting_temp_subgroup_search()
-                                            }))
+                                            .child_signal(page.subgroups.signal_cloned().map(clone!(page => move |subgroups| {
+                                                let mut options = subgroups.iter().map(|subgroup| {
+                                                    SelectOption {
+                                                        key: subgroup.subgroup.to_string(),
+                                                        value: subgroup.subgroup_name.clone().unwrap_or_default(),
+                                                    }
+                                                }).collect::<Vec<SelectOption>>();
+                                                options.push(SelectOption {
+                                                    key: String::from("0"),
+                                                    value: String::from("**ไม่ระบุ(แสดงเสมอ)**")
+                                                });
+                                                Some(doms::select_box(
+                                                    "search_temp_subgroup", Some("เลือก"), false,
+                                                    page.subgroup.clone(),
+                                                    Mutable::new(true),
+                                                    |d| d.class("form-control"),
+                                                    clone!(page => move || {
+                                                        page.loaded_focus_goal_intvt.set(false)
+                                                    }),
+                                                    options,
+                                                ))
+                                            })))
+                                            // .child(html!("select" => HtmlSelectElement, {
+                                            //     .class("form-control")
+                                            //     .attr("id", "search_temp_subgroup")
+                                            //     .child(html!("option", {.attr("value","").text("เลือก")}))
+                                            //     .children_signal_vec(page.subgroups.signal_cloned().to_signal_vec().map(|subgroup| {
+                                            //         html!("option", {
+                                            //             .attr("value", &subgroup.subgroup.to_string())
+                                            //             .text(&subgroup.subgroup_name.unwrap_or_default())
+                                            //         })
+                                            //     }))
+                                            //     .child(html!("option", {.attr("value","0").class("fw-bold").text("**ไม่ระบุ(แสดงเสมอ)**")}))
+                                            //     .prop_signal("value", page.subgroup.signal_cloned())
+                                            //     .with_node!(element => {
+                                            //         .event(clone!(page => move |_: events::Change| {
+                                            //             page.subgroup.set_neq(element.value());
+                                            //             page.loaded_focus_goal_intvt.set(false);
+                                            //         }))
+                                            //     })
+                                            //     // table_data_seting_temp_subgroup_search()
+                                            // }))
                                         }))
                                     }))
                                     // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
@@ -1057,7 +1102,7 @@ impl SettingTemplateNurseNotePage {
                                                 page.subgroup_order.set_neq(None);
                                                 page.subgroup_status.set_neq(String::from("Y"));
                                                 page.subgroup_changed.set_neq(false);
-                                                page.subgroup_select_redraw.set(true);
+                                                // page.subgroup_select_redraw.set(true);
                                             }))
                                             // .attr("onclick", "add_setting_template_nurse_note_subgroup()")
                                         }))

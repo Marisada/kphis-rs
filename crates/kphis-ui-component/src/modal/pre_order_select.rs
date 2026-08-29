@@ -9,12 +9,9 @@ use futures_signals::{
 use std::rc::Rc;
 use web_sys::{HtmlInputElement, HtmlSelectElement};
 
-use kphis_model::{
-    pre_order::master::{PreOrderMaster, PreOrderMasterParams},
-    timer::Timeout,
-};
+use kphis_model::pre_order::master::{PreOrderMaster, PreOrderMasterParams};
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_8601, date_th_opt, datetime_th_opt},
     util::{pre_order_type_display, str_some, zero_none},
@@ -32,7 +29,7 @@ pub struct PreOrderSelect {
 
     loaded_list: Mutable<bool>,
     changed: Mutable<bool>,
-    redraw: Mutable<bool>,
+    // redraw: Mutable<bool>,
 
     caller_id: Mutable<String>, // an(order) OR pre_order_master_id(pre_order)
     hn: Mutable<String>,
@@ -99,7 +96,7 @@ impl PreOrderSelect {
                                 Some(pre_order_master_id) => Some(PreOrderPreview::render(
                                     PreOrderPreview::new(pre_order_master_id, modal.caller_id.clone(), modal.to_order_type.clone()),
                                     app.clone(),
-                                    modal.redraw.clone(),
+                                    // modal.redraw.clone(),
                                     modal.pre_order_master_id.clone(),
                                     parent_date_loaded.clone(),
                                     parent_count_loaded.clone(),
@@ -202,7 +199,7 @@ impl PreOrderType {
                 if ready {
                     Self::load_list(modal.clone(), app.clone());
                     modal.loaded_list.set_neq(true);
-                    modal.redraw.set_neq(true);
+                    // modal.redraw.set_neq(true);
                 }
                 async {}
             })))
@@ -214,28 +211,36 @@ impl PreOrderType {
                                 doms::form_inline_group_sm(clone!(modal => move |group| { group
                                     .children([
                                         doms::label_group_for("order_doctor","ผู้บันทึก"),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_CTRL_SM)
-                                                .attr("id", "order_doctor")
-                                                .child(html!("option", {
-                                                    .attr("value", "")
-                                                    .text("ทั้งหมด")
-                                                }))
-                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                    doms::select_option(option, &modal.order_doctor.lock_ref())
-                                                }))
-                                                .prop_signal("value", modal.order_doctor.signal_cloned())
-                                                .with_node!(element => {
-                                                    .event(clone!(element, modal => move |_: events::Change| {
-                                                        modal.order_doctor.set_neq(element.value());
-                                                        modal.changed.set_neq(true);
-                                                        modal.loaded_list.set(false);
-                                                    }))
-                                                })
-                                            }))
-                                        }),
+                                        doms::select_box(
+                                            "order_doctor", Some("ทั้งหมด"), false,
+                                            modal.order_doctor.clone(),
+                                            modal.changed.clone(),
+                                            |d| d.class(class::FORM_CTRL_SM),
+                                            clone!(modal => move || modal.loaded_list.set(false)),
+                                            all_doctor_select_option,
+                                        ),
+                                        // html!("div", {
+                                        //     .class(class::FLEX_GROW1)
+                                        //     .child(html!("select" => HtmlSelectElement, {
+                                        //         .class(class::FORM_CTRL_SM)
+                                        //         .attr("id", "order_doctor")
+                                        //         .child(html!("option", {
+                                        //             .attr("value", "")
+                                        //             .text("ทั้งหมด")
+                                        //         }))
+                                        //         .children(all_doctor_select_option.iter().map(|option| {
+                                        //             doms::select_option(option, &modal.order_doctor.lock_ref())
+                                        //         }))
+                                        //         .prop_signal("value", modal.order_doctor.signal_cloned())
+                                        //         .with_node!(element => {
+                                        //             .event(clone!(element, modal => move |_: events::Change| {
+                                        //                 modal.order_doctor.set_neq(element.value());
+                                        //                 modal.changed.set_neq(true);
+                                        //                 modal.loaded_list.set(false);
+                                        //             }))
+                                        //         })
+                                        //     }))
+                                        // }),
                                     ])
                                 })),
                                 doms::form_inline_group_sm(clone!(app, modal => move |group| { group
@@ -406,17 +411,17 @@ impl PreOrderType {
                         }),
                         html!("tbody", {
                             //.attr("id", "pre_order_master_table_body")
-                            .future(modal.redraw.signal_cloned().for_each(clone!(app, modal => move |redraw| {
-                                if redraw {
-                                    if let Some(elm) = app.get_id("order_doctor") {
-                                        Timeout::new(0, clone!(modal => move || {
-                                            NiceSelect::new_default(&elm);
-                                            modal.redraw.set(false);
-                                        })).forget();
-                                    }
-                                }
-                                async {}
-                            })))
+                            // .future(modal.redraw.signal_cloned().for_each(clone!(app, modal => move |redraw| {
+                            //     if redraw {
+                            //         if let Some(elm) = app.get_id("order_doctor") {
+                            //             Timeout::new(0, clone!(modal => move || {
+                            //                 NiceSelect::new_default(&elm);
+                            //                 modal.redraw.set(false);
+                            //             })).forget();
+                            //         }
+                            //     }
+                            //     async {}
+                            // })))
                             .children_signal_vec(modal.preorders.signal_vec_cloned().map(clone!(modal => move |preorder| {
                                 html!("tr", {
                                     .style("cursor","pointer")

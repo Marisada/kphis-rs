@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement};
+use web_sys::HtmlInputElement;
 
 use kphis_model::{
     endpoint::EndPoint,
@@ -17,7 +17,7 @@ use kphis_model::{
 };
 use kphis_ui_app::App;
 use kphis_ui_component::modal::ipd_passcode::IpdPasscodeForm;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{datetime_th_opt_relative, datetime_th_relative},
     util::str_some,
@@ -102,15 +102,15 @@ impl IpdSearchPatientDrPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("ward") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("doctor_in_charge") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("consult_dr_search") {
-                        NiceSelect::new_default(&elm);
-                    }
+                    // if let Some(elm) = app.get_id("ward") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
+                    // if let Some(elm) = app.get_id("doctor_in_charge") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
+                    // if let Some(elm) = app.get_id("consult_dr_search") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
                     page.changed.set(true);
                 }
                 async {}
@@ -135,21 +135,28 @@ impl IpdSearchPatientDrPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("ward","แผนก"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "ward")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(ward_select_option.iter().map(|option| {
-                                                doms::select_option(option, &app.ward_select.lock_ref())
-                                            }))
-                                            .apply(mixins::string_value_select(app.ward_select.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "ward", Some("ทั้งหมด"), false,
+                                        app.ward_select.clone(),
+                                        page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        ward_select_option,
+                                    ),
+                                    // html!("div", {
+                                    //     .class(class::FLEX_GROW1)
+                                    //     .child(html!("select" => HtmlSelectElement, {
+                                    //         .class(class::FORM_CTRL_SM)
+                                    //         .attr("id", "ward")
+                                    //         .child(html!("option", {
+                                    //             .attr("value","")
+                                    //             .text("ทั้งหมด")
+                                    //         }))
+                                    //         .children(ward_select_option.iter().map(|option| {
+                                    //             doms::select_option(option, &app.ward_select.lock_ref())
+                                    //         }))
+                                    //         .apply(mixins::string_value_select(app.ward_select.clone(), page.changed.clone()))
+                                    //     }))
+                                    // }),
                                 ])
                             })),
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
@@ -194,21 +201,27 @@ impl IpdSearchPatientDrPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "doctor_in_charge")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, &page.doctor_in_charge.lock_ref())
-                                            }))
-                                            .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "doctor_in_charge", Some("ทั้งหมด"), false,
+                                        page.doctor_in_charge.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        doctor_select_option,
+                                    ),
+                                    // html!("div", {
+                                    //     .class(class::FLEX_GROW1)
+                                    //     .child(html!("select" => HtmlSelectElement, {
+                                    //         .class(class::FORM_CTRL_SM)
+                                    //         .attr("id", "doctor_in_charge")
+                                    //         .child(html!("option", {
+                                    //             .attr("value","")
+                                    //             .text("ทั้งหมด")
+                                    //         }))
+                                    //         .children(doctor_select_option.iter().map(|option| {
+                                    //             doms::select_option(option, &page.doctor_in_charge.lock_ref())
+                                    //         }))
+                                    //         .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
+                                    //     }))
+                                    // }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -217,9 +230,9 @@ impl IpdSearchPatientDrPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = page.doctor_in_charge.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                    NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                }
+                                                // if let Some(elm) = app.get_id("doctor_in_charge") {
+                                                //     NiceSelect::new_default_with_value(&elm, &doctor_code);
+                                                // }
                                                 page.doctor_in_charge.set_neq(doctor_code);
                                                 page.changed.set_neq(true);
                                             }
@@ -234,9 +247,9 @@ impl IpdSearchPatientDrPage {
                                             let no_doctor = page.doctor_in_charge.lock_ref().is_empty();
                                             if !no_doctor {
                                                 page.doctor_in_charge.set_neq(String::new());
-                                                if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
+                                                // if let Some(elm) = app.get_id("doctor_in_charge") {
+                                                //     NiceSelect::new_default_with_value(&elm,"");
+                                                // }
                                                 page.changed.set_neq(true);
                                             }
                                         }))
@@ -248,21 +261,27 @@ impl IpdSearchPatientDrPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("consult_dr_search","แพทย์ผู้ตอบ Consult"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "consult_dr_search")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(all_doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, "")
-                                            }))
-                                            .apply(mixins::string_value_select(page.consult_dr_search.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "consult_dr_search", Some("ทั้งหมด"), false,
+                                        page.consult_dr_search.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        all_doctor_select_option,
+                                    ),
+                                    // html!("div", {
+                                    //     .class(class::FLEX_GROW1)
+                                    //     .child(html!("select" => HtmlSelectElement, {
+                                    //         .class(class::FORM_CTRL_SM)
+                                    //         .attr("id", "consult_dr_search")
+                                    //         .child(html!("option", {
+                                    //             .attr("value","")
+                                    //             .text("ทั้งหมด")
+                                    //         }))
+                                    //         .children(all_doctor_select_option.iter().map(|option| {
+                                    //             doms::select_option(option, "")
+                                    //         }))
+                                    //         .apply(mixins::string_value_select(page.consult_dr_search.clone(), page.changed.clone()))
+                                    //     }))
+                                    // }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -271,9 +290,9 @@ impl IpdSearchPatientDrPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = page.consult_dr_search.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                if let Some(elm) = app.get_id("consult_dr_search") {
-                                                    NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                }
+                                                // if let Some(elm) = app.get_id("consult_dr_search") {
+                                                //     NiceSelect::new_default_with_value(&elm, &doctor_code);
+                                                // }
                                                 page.consult_dr_search.set_neq(doctor_code);
                                                 page.changed.set_neq(true);
                                             }
@@ -287,9 +306,9 @@ impl IpdSearchPatientDrPage {
                                             let no_doctor = page.consult_dr_search.lock_ref().is_empty();
                                             if !no_doctor {
                                                 page.consult_dr_search.set_neq(String::new());
-                                                if let Some(elm) = app.get_id("consult_dr_search") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
+                                                // if let Some(elm) = app.get_id("consult_dr_search") {
+                                                //     NiceSelect::new_default_with_value(&elm,"");
+                                                // }
                                                 page.changed.set_neq(true);
                                             }
                                         }))

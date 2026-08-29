@@ -3,94 +3,94 @@ use serde_derive::{Deserialize, Serialize};
 use wasm_bindgen::{JsValue, closure::Closure, prelude::wasm_bindgen};
 use web_sys::Element;
 
-// https://github.com/bluzky/nice-select2/
-// NiceSelect will create new Element for render NiceSelect
-// old select element will set height, width, pading, border, opacity to 0
-// new() will auto-remove old NiceSelect element
-#[wasm_bindgen(raw_module = "/statics/js/nice-select2.js")]
-extern "C" {
+// // https://github.com/bluzky/nice-select2/
+// // NiceSelect will create new Element for render NiceSelect
+// // old select element will set height, width, pading, border, opacity to 0
+// // new() will auto-remove old NiceSelect element
+// #[wasm_bindgen(raw_module = "/statics/js/nice-select2.js")]
+// extern "C" {
 
-    // #[wasm_bindgen(js_name = NiceSelect)]
-    pub type NiceSelect;
+//     // #[wasm_bindgen(js_name = NiceSelect)]
+//     pub type NiceSelect;
 
-    // // Using as import in webpack
-    // // = new NiceSelect(document.getElementById("a-select"), { .. });
-    // #[wasm_bindgen(constructor)]
-    // pub fn new(_: &Element, _: &JsValue) -> NiceSelect;
+//     // // Using as import in webpack
+//     // // = new NiceSelect(document.getElementById("a-select"), { .. });
+//     // #[wasm_bindgen(constructor)]
+//     // pub fn new(_: &Element, _: &JsValue) -> NiceSelect;
 
-    // - NiceSelect.bind(document.getElementById("a-select"), { .. });
-    #[wasm_bindgen]
-    pub fn bind(_: &Element, _: &JsValue) -> NiceSelect;
+//     // - NiceSelect.bind(document.getElementById("a-select"), { .. });
+//     #[wasm_bindgen]
+//     pub fn bind(_: &Element, _: &JsValue) -> NiceSelect;
 
-    #[wasm_bindgen(method, js_name = renderValue)]
-    pub fn render_value(this: &NiceSelect, value: &JsValue);
+//     #[wasm_bindgen(method, js_name = renderValue)]
+//     pub fn render_value(this: &NiceSelect, value: &JsValue);
 
-    #[wasm_bindgen(method)]
-    pub fn update(this: &NiceSelect);
+//     #[wasm_bindgen(method)]
+//     pub fn update(this: &NiceSelect);
 
-    #[wasm_bindgen(method)]
-    pub fn focus(this: &NiceSelect);
+//     #[wasm_bindgen(method)]
+//     pub fn focus(this: &NiceSelect);
 
-    #[wasm_bindgen(method)]
-    pub fn disable(this: &NiceSelect);
+//     #[wasm_bindgen(method)]
+//     pub fn disable(this: &NiceSelect);
 
-    #[wasm_bindgen(method)]
-    pub fn enable(this: &NiceSelect);
+//     #[wasm_bindgen(method)]
+//     pub fn enable(this: &NiceSelect);
 
-    #[wasm_bindgen(method)]
-    pub fn destroy(this: &NiceSelect);
+//     #[wasm_bindgen(method)]
+//     pub fn destroy(this: &NiceSelect);
 
-    #[wasm_bindgen(method)]
-    pub fn clear(this: &NiceSelect);
-}
+//     #[wasm_bindgen(method)]
+//     pub fn clear(this: &NiceSelect);
+// }
+
+// // impl NiceSelect {
+// //     pub fn new_default(elm: &Element) -> NiceSelect {
+// //         NiceSelect::new(elm, &NiceSelectOption::default().to_value())
+// //     }
+// //     pub fn new_default_with_value(elm: &Element, value: &str) -> NiceSelect {
+// //         let select = NiceSelect::new(elm, &NiceSelectOption::default().to_value());
+// //         select.render_value(&JsValue::from_str(value));
+// //         select
+// //     }
+// // }
 
 // impl NiceSelect {
 //     pub fn new_default(elm: &Element) -> NiceSelect {
-//         NiceSelect::new(elm, &NiceSelectOption::default().to_value())
+//         bind(elm, &NiceSelectOption::default().to_value())
 //     }
 //     pub fn new_default_with_value(elm: &Element, value: &str) -> NiceSelect {
-//         let select = NiceSelect::new(elm, &NiceSelectOption::default().to_value());
+//         let select = bind(elm, &NiceSelectOption::default().to_value());
 //         select.render_value(&JsValue::from_str(value));
 //         select
 //     }
 // }
 
-impl NiceSelect {
-    pub fn new_default(elm: &Element) -> NiceSelect {
-        bind(elm, &NiceSelectOption::default().to_value())
-    }
-    pub fn new_default_with_value(elm: &Element, value: &str) -> NiceSelect {
-        let select = bind(elm, &NiceSelectOption::default().to_value());
-        select.render_value(&JsValue::from_str(value));
-        select
-    }
-}
+// #[derive(Deserialize, Serialize)]
+// #[serde(rename_all = "camelCase")]
+// pub struct NiceSelectOption {
+//     pub searchable: bool,
+//     pub placeholder: String,
+//     pub searchtext: String,
+//     pub show_selected_items: bool,
+// }
 
-#[derive(Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct NiceSelectOption {
-    pub searchable: bool,
-    pub placeholder: String,
-    pub searchtext: String,
-    pub show_selected_items: bool,
-}
+// impl NiceSelectOption {
+//     pub fn to_value(&self) -> JsValue {
+//         serde_wasm_bindgen::to_value(self).unwrap()
+//     }
+// }
 
-impl NiceSelectOption {
-    pub fn to_value(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(self).unwrap()
-    }
-}
-
-impl Default for NiceSelectOption {
-    fn default() -> Self {
-        Self {
-            searchable: true,
-            placeholder: String::from("เลือก"),
-            searchtext: String::from("ค้นหา"),
-            show_selected_items: true,
-        }
-    }
-}
+// impl Default for NiceSelectOption {
+//     fn default() -> Self {
+//         Self {
+//             searchable: true,
+//             placeholder: String::from("เลือก"),
+//             searchtext: String::from("ค้นหา"),
+//             show_selected_items: true,
+//         }
+//     }
+// }
 
 #[wasm_bindgen]
 extern "C" {

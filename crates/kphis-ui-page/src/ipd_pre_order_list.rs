@@ -19,7 +19,7 @@ use kphis_ui_component::{
     gadget::searchbox::patient::PatientSearchboxCpn,
     modal::{blank_modal, pre_order_new::PreOrderNew},
 };
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_8601, date_th_opt, datetime_th_opt_relative},
     util::{pre_order_type_display, str_some},
@@ -121,9 +121,9 @@ impl IpdPreOrderListPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("order_doctor") {
-                        NiceSelect::new_default(&elm);
-                    }
+                    // if let Some(elm) = app.get_id("order_doctor") {
+                    //     NiceSelect::new_default(&elm);
+                    // }
                     page.changed.set(true);
                 }
                 async {}
@@ -187,18 +187,24 @@ impl IpdPreOrderListPage {
                                 doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("order_doctor","ผู้บันทึก"),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_CTRL_SM)
-                                                .attr("id", "order_doctor")
-                                                .child(html!("option", {.attr("value", "").text("ทั้งหมด")}))
-                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                    doms::select_option(option, &page.order_doctor.lock_ref())
-                                                }))
-                                                .apply(mixins::string_value_select(page.order_doctor.clone(), page.changed.clone()))
-                                            }))
-                                        }),
+                                        doms::select_box(
+                                            "order_doctor", Some("ทั้งหมด"), false,
+                                            page.order_doctor.clone(), page.changed.clone(),
+                                            |d| d.class(class::FORM_CTRL_SM), || {},
+                                            all_doctor_select_option,
+                                        ),
+                                        // html!("div", {
+                                        //     .class(class::FLEX_GROW1)
+                                        //     .child(html!("select" => HtmlSelectElement, {
+                                        //         .class(class::FORM_CTRL_SM)
+                                        //         .attr("id", "order_doctor")
+                                        //         .child(html!("option", {.attr("value", "").text("ทั้งหมด")}))
+                                        //         .children(all_doctor_select_option.iter().map(|option| {
+                                        //             doms::select_option(option, &page.order_doctor.lock_ref())
+                                        //         }))
+                                        //         .apply(mixins::string_value_select(page.order_doctor.clone(), page.changed.clone()))
+                                        //     }))
+                                        // }),
                                         html!("button", {
                                             .attr("type", "button")
                                             .class(class::BTN_SM_GRAY)
@@ -207,9 +213,9 @@ impl IpdPreOrderListPage {
                                                 let doctor_code = app.doctor_code().unwrap_or_default();
                                                 let neq = page.order_doctor.lock_ref().as_str() != doctor_code.as_str();
                                                 if neq {
-                                                    if let Some(elm) = app.get_id("order_doctor") {
-                                                        NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                    }
+                                                    // if let Some(elm) = app.get_id("order_doctor") {
+                                                    //     NiceSelect::new_default_with_value(&elm, &doctor_code);
+                                                    // }
                                                     page.order_doctor.set_neq(doctor_code);
                                                     page.changed.set_neq(true);
                                                 }
@@ -223,9 +229,9 @@ impl IpdPreOrderListPage {
                                                 let no_doctor = page.order_doctor.lock_ref().is_empty();
                                                 if !no_doctor {
                                                     page.order_doctor.set_neq(String::new());
-                                                    if let Some(elm) = app.get_id("order_doctor") {
-                                                        NiceSelect::new_default_with_value(&elm,"");
-                                                    }
+                                                    // if let Some(elm) = app.get_id("order_doctor") {
+                                                    //     NiceSelect::new_default_with_value(&elm,"");
+                                                    // }
                                                     page.changed.set_neq(true);
                                                 }
                                             }))

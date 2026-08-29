@@ -3,15 +3,17 @@ pub use time_datepicker_core::{
     dialog_view_type::DialogViewType,
 };
 
-use dominator::{Dom, DomBuilder, clone, events, html, svg, text, traits::MultiStr, window_offset, window_size};
+use dominator::{Dom, DomBuilder, EventOptions, clone, events, html, svg, text, traits::MultiStr, window_offset, window_size, with_node};
 use futures_signals::{
     map_ref,
-    signal::{Mutable, Signal, SignalExt},
+    signal::{Mutable, Signal, SignalExt, not},
+    signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
 use time::PrimitiveDateTime;
 use time_datepicker_core::config::{PickerConfig, date_constraints::DateConstraints};
-use web_sys::{DomRect, HtmlElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement};
+use wasm_bindgen::JsCast;
+use web_sys::{DomRect, HtmlElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement, ScrollIntoViewContainer, ScrollIntoViewOptions, ScrollLogicalPosition};
 
 use kphis_model::{
     DEFAULT_USER_IMAGE, PATH_PREFIX_PATIENT_IMAGE,
@@ -1457,5 +1459,350 @@ pub fn td_text_value_u8_opt_match(mutable: Mutable<Option<u8>>, colspan: &str, i
         .event(move |_:events::Click| {
             mutable.set(Some(score));
         })
+    })
+}
+
+
+//============//
+// Select Box //
+//============//
+
+struct SelectBox<F: Fn() + 'static> {
+    is_multiple: bool,
+    mutable: Mutable<String>,
+    changed: Mutable<bool>,
+    finish_fn: F,
+    // value
+    search_input: Mutable<String>,
+    options: Vec<SelectOption>,
+    search_result: MutableVec<SelectOption>,
+    // value
+    result_value: Mutable<String>,
+    // (key, value)
+    result_pairs: MutableVec<(String, String)>,
+    // (key, value)
+    focused_pair: Mutable<(String, String)>,
+    is_opened: Mutable<bool>,
+}
+
+impl<F: Fn() + 'static> SelectBox<F> {
+    fn new(null_text_opt: Option<&'static str>, is_multiple: bool, mutable: Mutable<String>, changed: Mutable<bool>, finish_fn: F, options_tail: Vec<SelectOption>) -> Rc<Self> {
+        let options = if let Some(null_text) = null_text_opt {
+            [
+                vec![SelectOption {
+                    key: String::new(),
+                    value: String::from(null_text),
+                }],
+                options_tail,
+            ]
+            .concat()
+        } else {
+            options_tail
+        };
+
+        Rc::new(Self {
+            is_multiple,
+            mutable,
+            changed,
+            finish_fn,
+            search_input: Mutable::new(String::new()),
+            search_result: MutableVec::new_with_values(options.clone()),
+            options,
+            result_value: Mutable::new(String::new()),
+            result_pairs: MutableVec::new(),
+            focused_pair: Mutable::new((String::new(), String::new())),
+            is_opened: Mutable::new(false),
+        })
+    }
+    fn set_key(&self, key: String) {
+        self.mutable.set(key);
+        (self.finish_fn)();
+        self.changed.set_neq(true);
+    }
+    fn set_focus(&self, key: &str, and_set_result: bool) {
+        if self.is_multiple {
+            let mut new_pairs = Vec::new();
+            for k in key.split(',') {
+                if let Some(option) = self.options.iter().find(|opt| opt.key == k) {
+                    new_pairs.push((k.to_owned(), option.value.clone()));
+                }
+            }
+            self.focused_pair.set(new_pairs.first().cloned().unwrap_or_default());
+            if and_set_result {
+                self.result_pairs.lock_mut().replace_cloned(new_pairs);
+            }
+        } else {
+            let new_pair = if key.is_empty() {
+                (String::new(), String::new())
+            } else if let Some(option) = self.options.iter().find(|opt| opt.key == key) {
+                (option.key.clone(), option.value.clone())
+            } else {
+                (String::new(), String::new())
+            };
+            if and_set_result {
+                self.result_value.set_neq(new_pair.1.clone());
+            }
+            self.focused_pair.set(new_pair);
+        }
+    }
+}
+
+pub fn select_box<B, F>(input_id: &'static str, null_text_opt: Option<&'static str>, is_multiple: bool, mutable: Mutable<String>, changed: Mutable<bool>, container_mixin: B, finish_fn: F, options_tail: Vec<SelectOption>) -> Dom
+where
+    B: FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>,
+    F: Fn() + 'static,
+{
+    let state = SelectBox::new(null_text_opt, is_multiple, mutable, changed, finish_fn, options_tail);
+
+    html!("div", {
+        .future(state.mutable.signal_cloned().dedupe_cloned().for_each(clone!(state => move |key| {
+            state.set_focus(&key, true);
+            async {}
+        })))
+        .class("nice-select")
+        .apply_if(state.is_multiple, |d| d.class("has-multiple"))
+        .class_signal("open", state.is_opened.signal())
+        .apply(container_mixin)
+        .attr("tabindex","0")
+        .apply(|d| {
+            if state.is_multiple { d
+                .child_signal(state.result_pairs.signal_vec_cloned().is_empty().map(clone!(state => move |is_empty| {
+                    if is_empty {
+                        Some(html!("span", {
+                            .class("multiple-options")
+                            .style("pointer-events", "none")
+                            .style("vertical-align", "middle")
+                            .text("เลือก")
+                        }))
+                    } else {
+                        Some(html!("span", {
+                            .class("multiple-options")
+                            .style("pointer-events", "none")
+                            .children_signal_vec(state.result_pairs.signal_vec_cloned().map(clone!(state => move |(k, v)| {
+                                html!("span", {
+                                    .class("current")
+                                    .style("pointer-events", "auto")
+                                    .text(&v)
+                                    .event(clone!(state => move |_:events::Click| {
+                                        state.result_pairs.lock_mut().retain(|(tk, _)| *tk != k);
+                                    }))
+                                })
+                            })))
+                        }))
+                    }
+                })))
+            } else { d
+                .child(html!("span", {
+                    .class("current")
+                    .style("pointer-events", "none")
+                    .text_signal(state.result_value.signal_cloned().map(|v| if v.is_empty() {String::from("เลือก")} else {v}))
+                }))
+            }
+        })
+        .child(html!("div", {
+            .class("nice-select-dropdown")
+            .children([
+                html!("div", {
+                    .class("nice-select-search-box")
+                    .child(html!("input" => HtmlInputElement, {
+                        .attr("type", "text")
+                        .attr("id", input_id)
+                        .class("nice-select-search")
+                        .attr("placeholder", "ค้นหา...")
+                        .attr("title", "search")
+                        .focused_signal(state.is_opened.signal())
+                        .prop_signal("value", state.search_input.signal_cloned())
+                        .with_node!(element => {
+                            .event(clone!(state => move |_: events::Input| {
+                                let value = element.value();
+                                let results = state.options.iter().filter(|option| option.value.contains(&value)).cloned().collect();
+                                state.search_input.set(value);
+                                state.search_result.lock_mut().replace_cloned(results);
+                            }))
+                        })
+                        .event_with_options(&EventOptions::preventable(), clone!(state => move |e: events::KeyDown| {
+                            match e.key().as_str() {
+                                "Enter" => {
+                                    if state.is_opened.get() {
+                                        let (rk, rv) = state.focused_pair.get_cloned();
+                                        if state.is_multiple {
+                                            let pos_opt = state.result_pairs.lock_ref().iter().position(|(k, _)| k == &rk);
+                                            if let Some(pos) = pos_opt {
+                                                state.result_pairs.lock_mut().remove(pos);
+                                            } else {
+                                                state.result_pairs.lock_mut().push_cloned((rk, rv));
+                                            }
+                                        } else {
+                                            let is_neq = state.mutable.lock_ref().as_str() != &rk;
+                                            if is_neq {
+                                                state.set_key(rk);
+                                                state.is_opened.set(false);
+                                            }
+                                        }
+                                    }
+                                }
+                                "Escape" => {
+                                    if state.is_opened.get() {
+                                        if state.is_multiple {
+                                            let pairs = state.result_pairs.lock_ref();
+                                            let mut unsorted = pairs.iter().map(|(k,_)| k.as_str()).collect::<Vec<&str>>();
+                                            unsorted.sort();
+                                            let new = unsorted.join(",");
+                                            let is_neq = state.mutable.lock_ref().as_str() != &new;
+                                            if is_neq {
+                                                state.set_focus(&new, false);
+                                                state.set_key(new);
+                                            }
+                                        } else {
+                                            state.set_focus("", false);
+                                        }
+                                        state.is_opened.set(false);
+                                    }
+                                }
+                                "ArrowUp" => {
+                                    if state.is_opened.get() {
+                                        let lock = state.search_result.lock_ref();
+                                        let new_pos = match lock.iter().position(|option| {
+                                            state.focused_pair.lock_ref().0.as_str() == &option.key
+                                        }) {
+                                            Some(pos) => {
+                                                if pos == 0  {
+                                                    lock.len().saturating_sub(1)
+                                                } else {
+                                                    pos.saturating_sub(1)
+                                                }
+                                            }
+                                            None => 0,
+                                        };
+                                        if let Some(new_option) = lock.get(new_pos) {
+                                            e.prevent_default();
+                                            state.focused_pair.set((new_option.key.to_owned(), new_option.value.to_owned()));
+                                        }
+                                    }
+                                }
+                                "ArrowDown" => {
+                                    if state.is_opened.get() {
+                                        let lock = state.search_result.lock_ref();
+                                        let new_pos = match lock.iter().position(|option| {
+                                            state.focused_pair.lock_ref().0.as_str() == &option.key
+                                        }) {
+                                            Some(pos) => {
+                                                if pos < lock.len().saturating_sub(1) {
+                                                    pos.saturating_add(1)
+                                                } else {
+                                                    0
+                                                }
+                                            }
+                                            None => 0,
+                                        };
+                                        if let Some(new_option) = lock.get(new_pos) {
+                                            e.prevent_default();
+                                            state.focused_pair.set((new_option.key.to_owned(), new_option.value.to_owned()));
+                                        }
+                                    }
+                                }
+                                _ => {}
+                            }
+                        }))
+                    }))
+                }),
+                html!("div", {
+                    .class("nice-select-list")
+                    .child(html!("ul", {
+                        .class("list")
+                        .children_signal_vec(state.search_result.signal_vec_cloned().map(clone!(state => move |option| {
+                            let key = option.key.to_owned();
+                            html!("li" => HtmlElement, {
+                                .class("option")
+                                .apply(|d| {
+                                    if state.is_multiple { d
+                                        .class_signal("selected", not(state.result_pairs.signal_vec_cloned().filter(clone!(key => move |(k, _)| *k == key)).is_empty()))
+                                    } else { d
+                                        .class_signal("selected", state.mutable.signal_ref(clone!(key => move |k| *k == key)))
+                                    }
+                                })
+                                .class_signal("focus", state.focused_pair.signal_ref(clone!(key => move |(k, _)| *k == key)))
+                                .text(&option.value)
+                                .event(clone!(state, option => move |_: events::Click| {
+                                    if state.is_multiple {
+                                        let pos_opt = state.result_pairs.lock_ref().iter().position(|(k, _)| k == &option.key);
+                                        if let Some(pos) = pos_opt {
+                                            state.result_pairs.lock_mut().remove(pos);
+                                        } else {
+                                            state.result_pairs.lock_mut().push_cloned((option.key.clone(), option.value.clone()));
+                                        }
+                                    } else {
+                                        let is_eq = state.mutable.lock_ref().as_str() == &option.key;
+                                        if !is_eq {
+                                            state.set_key(option.key.to_owned());
+
+                                            state.focused_pair.set((option.key.to_owned(), option.value.to_owned()));
+                                            state.is_opened.set(false);
+                                        }
+                                    }
+                                }))
+                                .with_node!(element => {
+                                    .future(state.focused_pair.signal_cloned().for_each(clone!(key => move |(k, _)| {
+                                        if k == key {
+                                            let scroll_option = ScrollIntoViewOptions::new();
+                                            scroll_option.set_block(ScrollLogicalPosition::Center);
+                                            scroll_option.set_container(ScrollIntoViewContainer::Nearest);
+                                            element.scroll_into_view_with_scroll_into_view_options(&scroll_option);
+                                        }
+                                        async {}
+                                    })))
+                                })
+                            })
+                        })))
+                    }))
+                }),
+            ])
+
+        }))
+        // click outside dropdown list or escape keypress event
+        .with_node!(wrapper => {
+            .global_event(clone!(state => move |e: events::KeyDown| {
+                if state.is_opened.get() && e.key() == "Escape" {
+                    if state.is_multiple {
+                        let pairs = state.result_pairs.lock_ref();
+                        let mut unsorted = pairs.iter().map(|(k,_)| k.as_str()).collect::<Vec<&str>>();
+                        unsorted.sort();
+                        let new = unsorted.join(",");
+                        let is_neq = state.mutable.lock_ref().as_str() != &new;
+                        if is_neq {
+                            state.set_key(new);
+                        }
+                    }
+                    state.set_focus(&state.mutable.lock_ref(), false);
+                    state.is_opened.set(false);
+                }
+            }))
+            .global_event(clone!(state => move |e: events::Click| {
+                if state.is_opened.get() {
+                    let is_outside = e.target().and_then(|t| t.dyn_into::<web_sys::Node>().ok())
+                        .map(|node| {
+                            !wrapper.contains(Some(&node))
+                        })
+                        .unwrap_or(true);
+
+                    if is_outside {
+                        state.set_focus(&state.mutable.lock_ref(), false);
+                        state.is_opened.set(false);
+                    }
+                }
+            }))
+        })
+        .event(clone!(state=> move  |e: events::Click| {
+            if e.target().and_then(|target| target.dyn_into::<web_sys::Element>().ok()).map(|elm| {
+                elm.class_list().contains("nice-select")
+            }).unwrap_or_default() {
+                let is_opened = state.is_opened.get();
+                if !is_opened {
+                    state.search_input.set_neq(String::new());
+                    state.search_result.lock_mut().replace_cloned(state.options.clone());
+                }
+                state.is_opened.set(!is_opened);
+            }
+        }))
     })
 }
