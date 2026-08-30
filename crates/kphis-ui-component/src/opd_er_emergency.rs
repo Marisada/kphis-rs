@@ -1024,14 +1024,21 @@ impl OpdErEmergencyCpn {
                             .class("col-md-12")
                             .children([
                                 html!("lable", {
-                                    .class("fw-bold")
+                                    .class(class::BOLD_L2)
                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                     .text(" Trauma")
                                 }),
                                 html!("button", {
                                     .attr("type", "button")
                                     .class(class::BTN_R_BLUE)
-                                    .child(html!("i", {.class(class::FA_EYE)}))
+                                    .child_signal(page.trauma_visible.signal().map(|is_visible| {
+                                        if is_visible {
+                                            Some(html!("i", {.class(class::FA_EYE_SLASH)}))
+                                        } else {
+                                            Some(html!("i", {.class(class::FA_EYE)}))
+                                        }
+                                    }))
+                                    .text_signal(page.trauma_visible.signal().map(|is_visible| if is_visible {" ซ่อน"} else {" แสดง"}))
                                     .event(clone!(page => move |_:events::Click| {
                                         page.trauma_visible.set(!page.trauma_visible.get());
                                     }))
@@ -1040,623 +1047,618 @@ impl OpdErEmergencyCpn {
                         }))
                     }),
                     html!("div", {
-                        // .attr("id", "opd_er_dr_pe")
+                        .visible_signal(page.trauma_visible.signal())
                         .children([
+                            html!("hr"),
                             html!("div", {
-                                // .attr("id", "trauma_div")
-                                .visible_signal(page.trauma_visible.signal())
+                                .class(class::ROW)
+                                .child(html!("div", {
+                                    .class("col-md-12")
+                                    .child(html!("lable", {
+                                        .text("A: Airway & restriction c-spine")
+                                    }))
+                                }))
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
                                 .children([
                                     html!("div", {
-                                        .class(class::ROW)
+                                        .class(class::COL_MD2_OFSM1_Y1)
                                         .child(html!("div", {
-                                            .class("col-md-12")
-                                            .child(html!("lable", {
-                                                .text("A: Airway & restriction c-spine")
-                                            }))
+                                            .class("form-check")
+                                            .children([
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "radio")
+                                                    .attr("id", "arc_patent")
+                                                    .attr("value", "1")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::radio_match(page.arc.clone(), page.trauma_changed.clone(), "1"))
+                                                }),
+                                                doms::label_check_for("arc_patent","Patent"),
+                                            ])
                                         }))
                                     }),
                                     html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "radio")
-                                                            .attr("id", "arc_patent")
-                                                            .attr("value", "1")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::radio_match(page.arc.clone(), page.trauma_changed.clone(), "1"))
-                                                        }),
-                                                        doms::label_check_for("arc_patent","Patent"),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class(class::COLA_MY1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "radio")
-                                                            .attr("id", "arc_csp")
-                                                            .attr("value", "2")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::radio_match(page.arc.clone(), page.trauma_changed.clone(), "2"))
-                                                        }),
-                                                        doms::label_check_for("arc_csp","C-spine protection"),
-                                                    ])
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD4_OFSM1_Y1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "radio")
-                                                            .attr("id", "arc_npc")
-                                                            .attr("value", "3")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::radio_match(page.arc.clone(), page.trauma_changed.clone(), "3"))
-                                                        }),
-                                                        doms::label_check_for("arc_npc","Non-patent : Clinical"),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-7")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(map_ref!{
-                                                        let is_doctor = page.is_doctor(),
-                                                        let arc = page.arc.signal_cloned() =>
-                                                        !is_doctor || arc.as_str() != "3"
-                                                    }))
-                                                    .apply(mixins::string_value(page.arc_npc_text.clone(), page.trauma_changed.clone()))
-                                                    .future(page.arc.signal_cloned().for_each(clone!(page => move |arc| {
-                                                        if arc.as_str() != "3" {
-                                                            page.arc_npc_text.set_neq(String::new());
-                                                        }
-                                                        async {}
-                                                    })))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
+                                        .class(class::COLA_MY1)
                                         .child(html!("div", {
-                                            .class("col-md-12")
-                                            .child(html!("lable", {
-                                                .text("B: Breathing")
-                                            }))
+                                            .class("form-check")
+                                            .children([
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "radio")
+                                                    .attr("id", "arc_csp")
+                                                    .attr("value", "2")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::radio_match(page.arc.clone(), page.trauma_changed.clone(), "2"))
+                                                }),
+                                                doms::label_check_for("arc_csp","C-spine protection"),
+                                            ])
                                         }))
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1)
-                                                .child(html!("lable", {
-                                                    .text("Chest wall")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-9")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.breathing_chest_wall.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1)
-                                                .child(html!("lable", {
-                                                    .text("Lung")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-9")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.breathing_lung.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .child(html!("div", {
-                                            .class("col-md-4")
-                                            .child(html!("lable", {
-                                                .text("C: Circulation")
-                                            }))
-                                        }))
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "radio")
-                                                            .attr("id", "circulation_stable")
-                                                            .attr("value", "1")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::radio_match(page.circulation_shock.clone(), page.trauma_changed.clone(), "1"))
-                                                        }),
-                                                        doms::label_check_for("circulation_stable","Stable"),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class(class::COL_MD2_Y1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "radio")
-                                                            .attr("id", "circulation_shock")
-                                                            .attr("value", "2")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::radio_match(page.circulation_shock.clone(), page.trauma_changed.clone(), "2"))
-                                                        }),
-                                                        doms::label_check_for("circulation_shock","Shock"),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-7")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(map_ref!{
-                                                        let is_doctor = page.is_doctor(),
-                                                        let circulation_shock = page.circulation_shock.signal_cloned() =>
-                                                        !is_doctor || circulation_shock.as_str() != "2"
-                                                    }))
-                                                    .apply(mixins::string_value(page.circulation_shock_text.clone(), page.trauma_changed.clone()))
-                                                    .future(page.circulation_shock.signal_cloned().for_each(clone!(page => move |circulation_shock| {
-                                                        if circulation_shock.as_str() != "2" {
-                                                            page.circulation_shock_text.set_neq(String::new());
-                                                        }
-                                                        async {}
-                                                    })))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "checkbox")
-                                                            .attr("id", "circulation_other")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::checkbox_toggle(page.circulation_other.clone(), page.trauma_changed.clone(), "Y", ""))
-                                                        }),
-                                                        doms::label_check_for("circulation_other","อื่นๆ"),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-9")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(map_ref!{
-                                                        let is_doctor = page.is_doctor(),
-                                                        let circulation_other = page.circulation_other.signal_cloned() =>
-                                                        !is_doctor || circulation_other.as_str() != "Y"
-                                                    }))
-                                                    .apply(mixins::string_value(page.circulation_other_text.clone(), page.trauma_changed.clone()))
-                                                    .future(page.circulation_other.signal_cloned().for_each(clone!(page => move |circulation_other| {
-                                                        if circulation_other.as_str() != "Y" {
-                                                            page.circulation_other_text.set_neq(String::new());
-                                                        }
-                                                        async {}
-                                                    })))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("eFAST Time")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-sm-6")
-                                                .child(html!("div", {
-                                                    .class(class::INPUT_GROUP)
-                                                    .children([
-                                                        doms::date_picker(
-                                                            page.circulation_efast_date.clone(),
-                                                            page.trauma_changed.clone(), not(page.is_doctor()), None,
-                                                            |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                                            |d| d.class(class::COL_SM8_RE0),
-                                                            |d| d.class(class::COL_SM8_RE0),
-                                                            |s| s, always(None),
-                                                        ),
-                                                        doms::time_picker(
-                                                            page.circulation_efast_time.clone(),
-                                                            page.trauma_changed.clone(), not(page.is_doctor()), None,
-                                                            |d| d.class(class::FLEX_GROW1).style("min-width","95px"),
-                                                            |d| d.class(class::COL_SM4_RE0),
-                                                            |d| d.class(class::COL_SM4_RE0),
-                                                            |s| s, always(None),
-                                                        ),
-                                                        html!("button" => HtmlButtonElement, {
-                                                            .class(class::BTN_GRAY)
-                                                            .attr("type", "button")
-                                                            .attr("title", "ใช้วันที่-เวลา ปัจจุบัน")
-                                                            .child(html!("i", {.class(class::FA_CLOCK)}))
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .event(clone!(page => move |_:events::Click| {
-                                                                let now = js_now();
-                                                                page.circulation_efast_date.set(now.date().to_string());
-                                                                page.circulation_efast_time.set(now.time().js_string());
-                                                                page.trauma_changed.set_neq(true);
-                                                            }))
-                                                        }),
-                                                    ])
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("eFAST Doctor")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-9")
-                                                .child(html!("div", {
-                                                    .class("mb-3")
-                                                    .child(html!("select" => HtmlSelectElement, {
-                                                        .class("form-select")
-                                                        .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                        .children(doctor_select_option.iter().map(|option| {
-                                                            doms::select_option(option, "")
-                                                        }))
-                                                        .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                        .apply(mixins::string_value_select(page.circulation_doctor.clone(), page.trauma_changed.clone()))
-                                                    }))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "radio")
-                                                            .attr("id", "circulation_negative")
-                                                            .attr("value", "N")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::radio_match(page.circulation.clone(), page.trauma_changed.clone(), "N"))
-                                                        }),
-                                                        doms::label_check_for("circulation_negative","Negative"),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class(class::COL_MD2_Y1)
-                                                .child(html!("div", {
-                                                    .class("form-check")
-                                                    .children([
-                                                        html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
-                                                            .attr("type", "radio")
-                                                            .attr("id", "circulation_positive")
-                                                            .attr("value", "P")
-                                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                            .apply(mixins::radio_match(page.circulation.clone(), page.trauma_changed.clone(), "P"))
-                                                            // .attr("onchange", "onchangeDisabledInput_circulation('P')")
-                                                        }),
-                                                        doms::label_check_for("circulation_positive","Positive at"),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-7")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(map_ref!{
-                                                        let is_doctor = page.is_doctor(),
-                                                        let circulation = page.circulation.signal_cloned() =>
-                                                        !is_doctor || circulation.as_str() != "P"
-                                                    }))
-                                                    .apply(mixins::string_value(page.circulation_positive_text.clone(), page.trauma_changed.clone()))
-                                                    .future(page.circulation.signal_cloned().for_each(clone!(page => move |circulation| {
-                                                        if circulation.as_str() != "P" {
-                                                            page.circulation_positive_text.set_neq(String::new());
-                                                        }
-                                                        async {}
-                                                    })))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .child(html!("div", {
-                                            .class("col-md-3")
-                                            .child(html!("lable", {
-                                                .text("D: Disability")
-                                            }))
-                                        }))
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("E")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-2")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.disability_e.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class(class::COL_MD1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("V")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-2")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.disability_v.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class(class::COL_MD1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("M")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-2")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.disability_m.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("Pupil Rt")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-2")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.disability_pupil_rt.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class(class::COL_MD2_Y1)
-                                                .child(html!("lable", {
-                                                    .text("mm")
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("Pupil Lt")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-2")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.disability_pupil_lt.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class(class::COLA_MY1)
-                                                .child(html!("lable", {
-                                                    .text("mm")
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class(class::COL_MD2_OFSM1_Y1)
-                                                .child(html!("lable", {
-                                                    .text("อื่นๆ")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-9")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.disability_other.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class(class::ROW)
-                                        .children([
-                                            html!("div", {
-                                                .class("col-md-3")
-                                                .child(html!("lable", {
-                                                    .text("E: Exposure")
-                                                }))
-                                            }),
-                                            html!("div", {
-                                                .class("col-md-9")
-                                                .child(html!("input" => HtmlInputElement, {
-                                                    .attr("type", "text")
-                                                    .class("form-control")
-                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
-                                                    .apply(mixins::string_value(page.exposure.clone(), page.trauma_changed.clone()))
-                                                }))
-                                            }),
-                                        ])
                                     }),
                                 ])
-                                .child_signal(page.trauma_doctor_name.signal_cloned().map(|name| {
-                                    (!name.is_empty()).then(|| {
-                                        html!("div", {
-                                            .class(class::ROW)
-                                            .child(html!("label", {
-                                                .class(class::COL_MD12_R)
-                                                // .attr("id", "opd_er_pe_doctor_name")
-                                                .text("บันทึกโดย : ")
-                                                .text(&name)
-                                            }))
-                                        })
-                                    })
-                                }))
-                                .child_signal(page.trauma_save_result.signal_cloned().map(|result| {
-                                    result.map(|success| {
-                                        let class = if success {"text-success"} else {"text-danger"};
-                                        let text = if success {"บันทึกข้อมูลสำเร็จ"} else {"บันทึกข้อมูลไม่สำเร็จ"};
-                                        html!("div", {
-                                            .class(class::ROW)
-                                            .child(html!("div", {
-                                                .class("col-md-12")
-                                                .children([
-                                                    html!("small", {
-                                                        .class("fw-bold")
-                                                        .class(class)
-                                                        // .attr("id", "lable_show_save_er_DR_PE")
-                                                        .child(html!("i", {.class(class::FA_CHECK_CIRCLE)}))
-                                                        .text(text)
-                                                    }),
-                                                ])
-                                            }))
-                                        })
-                                    })
-                                }))
-                                .apply_if(app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErMedicalHistoryTrauma, false), |dom| dom
-                                    .child(html!("div", {
-                                        .class("row")
-                                        .visible_signal(page.is_doctor())
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD4_OFSM1_Y1)
                                         .child(html!("div", {
-                                            .class(class::COL_MD12_R)
+                                            .class("form-check")
                                             .children([
-                                                html!("button" => HtmlButtonElement, {
-                                                    .attr("type", "button")
-                                                    // .attr("id", "SaveDR_PE")
-                                                    .class("btn")
-                                                    .class_signal("btn-primary", page.trauma_changed.signal())
-                                                    .class_signal("btn-secondary", not(page.trauma_changed.signal()))
-                                                    .child(html!("i", {.class(class::FA_SAVE)}))
-                                                    .text(" Save ")
-                                                    .child(html!("span", {
-                                                        .class(class::SPIN_SM_BLUE)
-                                                        .attr("role", "status")
-                                                        // .attr("id", "spinnerER_SaveDR_PE")
-                                                        .visible_signal(map_ref!{
-                                                            let loading = app.loader_is_loading(),
-                                                            let saving = page.trauma_saving.signal() =>
-                                                            *loading && *saving
-                                                        })
-                                                    }))
-                                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                        Self::save_trauma(page.clone(), app.clone());
-                                                    }), not(page.trauma_changed.signal()), app.state()))
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "radio")
+                                                    .attr("id", "arc_npc")
+                                                    .attr("value", "3")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::radio_match(page.arc.clone(), page.trauma_changed.clone(), "3"))
                                                 }),
-                                                html!("button", {
+                                                doms::label_check_for("arc_npc","Non-patent : Clinical"),
+                                            ])
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-7")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(map_ref!{
+                                                let is_doctor = page.is_doctor(),
+                                                let arc = page.arc.signal_cloned() =>
+                                                !is_doctor || arc.as_str() != "3"
+                                            }))
+                                            .apply(mixins::string_value(page.arc_npc_text.clone(), page.trauma_changed.clone()))
+                                            .future(page.arc.signal_cloned().for_each(clone!(page => move |arc| {
+                                                if arc.as_str() != "3" {
+                                                    page.arc_npc_text.set_neq(String::new());
+                                                }
+                                                async {}
+                                            })))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .child(html!("div", {
+                                    .class("col-md-12")
+                                    .child(html!("lable", {
+                                        .text("B: Breathing")
+                                    }))
+                                }))
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1)
+                                        .child(html!("lable", {
+                                            .text("Chest wall")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-9")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.breathing_chest_wall.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1)
+                                        .child(html!("lable", {
+                                            .text("Lung")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-9")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.breathing_lung.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .child(html!("div", {
+                                    .class("col-md-4")
+                                    .child(html!("lable", {
+                                        .text("C: Circulation")
+                                    }))
+                                }))
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("div", {
+                                            .class("form-check")
+                                            .children([
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "radio")
+                                                    .attr("id", "circulation_stable")
+                                                    .attr("value", "1")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::radio_match(page.circulation_shock.clone(), page.trauma_changed.clone(), "1"))
+                                                }),
+                                                doms::label_check_for("circulation_stable","Stable"),
+                                            ])
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class(class::COL_MD2_Y1)
+                                        .child(html!("div", {
+                                            .class("form-check")
+                                            .children([
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "radio")
+                                                    .attr("id", "circulation_shock")
+                                                    .attr("value", "2")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::radio_match(page.circulation_shock.clone(), page.trauma_changed.clone(), "2"))
+                                                }),
+                                                doms::label_check_for("circulation_shock","Shock"),
+                                            ])
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-7")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(map_ref!{
+                                                let is_doctor = page.is_doctor(),
+                                                let circulation_shock = page.circulation_shock.signal_cloned() =>
+                                                !is_doctor || circulation_shock.as_str() != "2"
+                                            }))
+                                            .apply(mixins::string_value(page.circulation_shock_text.clone(), page.trauma_changed.clone()))
+                                            .future(page.circulation_shock.signal_cloned().for_each(clone!(page => move |circulation_shock| {
+                                                if circulation_shock.as_str() != "2" {
+                                                    page.circulation_shock_text.set_neq(String::new());
+                                                }
+                                                async {}
+                                            })))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("div", {
+                                            .class("form-check")
+                                            .children([
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "checkbox")
+                                                    .attr("id", "circulation_other")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::checkbox_toggle(page.circulation_other.clone(), page.trauma_changed.clone(), "Y", ""))
+                                                }),
+                                                doms::label_check_for("circulation_other","อื่นๆ"),
+                                            ])
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-9")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(map_ref!{
+                                                let is_doctor = page.is_doctor(),
+                                                let circulation_other = page.circulation_other.signal_cloned() =>
+                                                !is_doctor || circulation_other.as_str() != "Y"
+                                            }))
+                                            .apply(mixins::string_value(page.circulation_other_text.clone(), page.trauma_changed.clone()))
+                                            .future(page.circulation_other.signal_cloned().for_each(clone!(page => move |circulation_other| {
+                                                if circulation_other.as_str() != "Y" {
+                                                    page.circulation_other_text.set_neq(String::new());
+                                                }
+                                                async {}
+                                            })))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("lable", {
+                                            .text("eFAST Time")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-sm-6")
+                                        .child(html!("div", {
+                                            .class(class::INPUT_GROUP)
+                                            .children([
+                                                doms::date_picker(
+                                                    page.circulation_efast_date.clone(),
+                                                    page.trauma_changed.clone(), not(page.is_doctor()), None,
+                                                    |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
+                                                    |d| d.class(class::COL_SM8_RE0),
+                                                    |d| d.class(class::COL_SM8_RE0),
+                                                    |s| s, always(None),
+                                                ),
+                                                doms::time_picker(
+                                                    page.circulation_efast_time.clone(),
+                                                    page.trauma_changed.clone(), not(page.is_doctor()), None,
+                                                    |d| d.class(class::FLEX_GROW1).style("min-width","95px"),
+                                                    |d| d.class(class::COL_SM4_RE0),
+                                                    |d| d.class(class::COL_SM4_RE0),
+                                                    |s| s, always(None),
+                                                ),
+                                                html!("button" => HtmlButtonElement, {
+                                                    .class(class::BTN_GRAY)
                                                     .attr("type", "button")
-                                                    // .attr("id", "CancalDR_PE")
-                                                    .class(class::BTN_R_GRAY)
-                                                    .child(html!("i", {.class(class::FA_X)}))
-                                                    .text(" Cancel")
+                                                    .attr("title", "ใช้วันที่-เวลา ปัจจุบัน")
+                                                    .child(html!("i", {.class(class::FA_CLOCK)}))
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                                     .event(clone!(page => move |_:events::Click| {
-                                                        if page.trauma_changed.get() {
-                                                            page.trauma_loaded.set(false);
-                                                        }
+                                                        let now = js_now();
+                                                        page.circulation_efast_date.set(now.date().to_string());
+                                                        page.circulation_efast_time.set(now.time().js_string());
+                                                        page.trauma_changed.set_neq(true);
                                                     }))
                                                 }),
                                             ])
                                         }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("lable", {
+                                            .text("eFAST Doctor")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-9")
+                                        .child(html!("div", {
+                                            .class("mb-3")
+                                            .child(html!("select" => HtmlSelectElement, {
+                                                .class("form-select")
+                                                .child(html!("option", {.attr("value", "").text("เลือก")}))
+                                                .children(doctor_select_option.iter().map(|option| {
+                                                    doms::select_option(option, "")
+                                                }))
+                                                .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                .apply(mixins::string_value_select(page.circulation_doctor.clone(), page.trauma_changed.clone()))
+                                            }))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("div", {
+                                            .class("form-check")
+                                            .children([
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "radio")
+                                                    .attr("id", "circulation_negative")
+                                                    .attr("value", "N")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::radio_match(page.circulation.clone(), page.trauma_changed.clone(), "N"))
+                                                }),
+                                                doms::label_check_for("circulation_negative","Negative"),
+                                            ])
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class(class::COL_MD2_Y1)
+                                        .child(html!("div", {
+                                            .class("form-check")
+                                            .children([
+                                                html!("input" => HtmlInputElement, {
+                                                    .class("form-check-input")
+                                                    .attr("type", "radio")
+                                                    .attr("id", "circulation_positive")
+                                                    .attr("value", "P")
+                                                    .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                                    .apply(mixins::radio_match(page.circulation.clone(), page.trauma_changed.clone(), "P"))
+                                                    // .attr("onchange", "onchangeDisabledInput_circulation('P')")
+                                                }),
+                                                doms::label_check_for("circulation_positive","Positive at"),
+                                            ])
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-7")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(map_ref!{
+                                                let is_doctor = page.is_doctor(),
+                                                let circulation = page.circulation.signal_cloned() =>
+                                                !is_doctor || circulation.as_str() != "P"
+                                            }))
+                                            .apply(mixins::string_value(page.circulation_positive_text.clone(), page.trauma_changed.clone()))
+                                            .future(page.circulation.signal_cloned().for_each(clone!(page => move |circulation| {
+                                                if circulation.as_str() != "P" {
+                                                    page.circulation_positive_text.set_neq(String::new());
+                                                }
+                                                async {}
+                                            })))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .child(html!("div", {
+                                    .class("col-md-3")
+                                    .child(html!("lable", {
+                                        .text("D: Disability")
                                     }))
-                                )
+                                }))
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("lable", {
+                                            .text("E")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-2")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.disability_e.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class(class::COL_MD1_Y1)
+                                        .child(html!("lable", {
+                                            .text("V")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-2")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.disability_v.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class(class::COL_MD1_Y1)
+                                        .child(html!("lable", {
+                                            .text("M")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-2")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.disability_m.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("lable", {
+                                            .text("Pupil Rt")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-2")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.disability_pupil_rt.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class(class::COL_MD2_Y1)
+                                        .child(html!("lable", {
+                                            .text("mm")
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("lable", {
+                                            .text("Pupil Lt")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-2")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.disability_pupil_lt.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class(class::COLA_MY1)
+                                        .child(html!("lable", {
+                                            .text("mm")
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class(class::COL_MD2_OFSM1_Y1)
+                                        .child(html!("lable", {
+                                            .text("อื่นๆ")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-9")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.disability_other.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class(class::ROW)
+                                .children([
+                                    html!("div", {
+                                        .class("col-md-3")
+                                        .child(html!("lable", {
+                                            .text("E: Exposure")
+                                        }))
+                                    }),
+                                    html!("div", {
+                                        .class("col-md-9")
+                                        .child(html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class("form-control")
+                                            .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
+                                            .apply(mixins::string_value(page.exposure.clone(), page.trauma_changed.clone()))
+                                        }))
+                                    }),
+                                ])
                             }),
                         ])
+                        .child_signal(page.trauma_doctor_name.signal_cloned().map(|name| {
+                            (!name.is_empty()).then(|| {
+                                html!("div", {
+                                    .class(class::ROW)
+                                    .child(html!("label", {
+                                        .class(class::COL_MD12_R)
+                                        // .attr("id", "opd_er_pe_doctor_name")
+                                        .text("บันทึกโดย : ")
+                                        .text(&name)
+                                    }))
+                                })
+                            })
+                        }))
+                        .child_signal(page.trauma_save_result.signal_cloned().map(|result| {
+                            result.map(|success| {
+                                let class = if success {"text-success"} else {"text-danger"};
+                                let text = if success {"บันทึกข้อมูลสำเร็จ"} else {"บันทึกข้อมูลไม่สำเร็จ"};
+                                html!("div", {
+                                    .class(class::ROW)
+                                    .child(html!("div", {
+                                        .class("col-md-12")
+                                        .children([
+                                            html!("small", {
+                                                .class("fw-bold")
+                                                .class(class)
+                                                // .attr("id", "lable_show_save_er_DR_PE")
+                                                .child(html!("i", {.class(class::FA_CHECK_CIRCLE)}))
+                                                .text(text)
+                                            }),
+                                        ])
+                                    }))
+                                })
+                            })
+                        }))
+                        .apply_if(app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErMedicalHistoryTrauma, false), |dom| dom
+                            .child(html!("div", {
+                                .class("row")
+                                .visible_signal(page.is_doctor())
+                                .child(html!("div", {
+                                    .class(class::COL_MD12_R)
+                                    .children([
+                                        html!("button" => HtmlButtonElement, {
+                                            .attr("type", "button")
+                                            // .attr("id", "SaveDR_PE")
+                                            .class("btn")
+                                            .class_signal("btn-primary", page.trauma_changed.signal())
+                                            .class_signal("btn-secondary", not(page.trauma_changed.signal()))
+                                            .child(html!("i", {.class(class::FA_SAVE)}))
+                                            .text(" Save ")
+                                            .child(html!("span", {
+                                                .class(class::SPIN_SM_BLUE)
+                                                .attr("role", "status")
+                                                // .attr("id", "spinnerER_SaveDR_PE")
+                                                .visible_signal(map_ref!{
+                                                    let loading = app.loader_is_loading(),
+                                                    let saving = page.trauma_saving.signal() =>
+                                                    *loading && *saving
+                                                })
+                                            }))
+                                            .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                                Self::save_trauma(page.clone(), app.clone());
+                                            }), not(page.trauma_changed.signal()), app.state()))
+                                        }),
+                                        html!("button", {
+                                            .attr("type", "button")
+                                            // .attr("id", "CancalDR_PE")
+                                            .class(class::BTN_R_GRAY)
+                                            .child(html!("i", {.class(class::FA_X)}))
+                                            .text(" Cancel")
+                                            .event(clone!(page => move |_:events::Click| {
+                                                if page.trauma_changed.get() {
+                                                    page.trauma_loaded.set(false);
+                                                }
+                                            }))
+                                        }),
+                                    ])
+                                }))
+                            }))
+                        )
                     }),
                 ])
             }))
@@ -1714,14 +1716,21 @@ impl OpdErEmergencyCpn {
                                 .class("col-md-12")
                                 .children([
                                     html!("lable", {
-                                        .class("fw-bold")
+                                        .class(class::BOLD_L2)
                                         .child(html!("i", {.class(class::FA_CAPSULE)}))
                                         .text(" ประวัติการแพ้ยา")
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_R_BLUE)
-                                        .child(html!("i", {.class(class::FA_EYE)}))
+                                        .child_signal(page.allergy_visible.signal().map(|is_visible| {
+                                            if is_visible {
+                                                Some(html!("i", {.class(class::FA_EYE_SLASH)}))
+                                            } else {
+                                                Some(html!("i", {.class(class::FA_EYE)}))
+                                            }
+                                        }))
+                                        .text_signal(page.allergy_visible.signal().map(|is_visible| if is_visible {" ซ่อน"} else {" แสดง"}))
                                         .event(clone!(page => move |_:events::Click| {
                                             page.allergy_visible.set(!page.allergy_visible.get());
                                         }))
@@ -1732,13 +1741,14 @@ impl OpdErEmergencyCpn {
                         html!("div", {
                             // .attr("id", "er_allergy_history_div")
                             .visible_signal(page.allergy_visible.signal())
+                            .child(html!("hr"))
                             .apply_if(app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErMedicalHistoryAllergy, false), |dom| dom
                                 .child(html!("div", {
                                     .class(class::ROW)
                                     .child(html!("div", {
                                         .class("col-md-12")
                                         .children([
-                                            html!("lable", {.text("เพิ่มประวัติการแพ้ยา")}),
+                                            html!("lable", {.class("me-2").text("เพิ่มประวัติการแพ้ยา")}),
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_R_BLUE)
@@ -2302,14 +2312,21 @@ impl OpdErEmergencyCpn {
                                 .class("col-md-12")
                                 .children([
                                     html!("lable", {
-                                        .class("fw-bold")
+                                        .class(class::BOLD_L2)
                                         .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                         .text(" Consult")
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_R_BLUE)
-                                        .child(html!("i", {.class(class::FA_EYE)}))
+                                        .child_signal(page.consult_visible.signal().map(|is_visible| {
+                                            if is_visible {
+                                                Some(html!("i", {.class(class::FA_EYE_SLASH)}))
+                                            } else {
+                                                Some(html!("i", {.class(class::FA_EYE)}))
+                                            }
+                                        }))
+                                        .text_signal(page.consult_visible.signal().map(|is_visible| if is_visible {" ซ่อน"} else {" แสดง"}))
                                         .event(clone!(page => move |_:events::Click| {
                                             page.consult_visible.set(!page.consult_visible.get());
                                         }))
@@ -2320,15 +2337,14 @@ impl OpdErEmergencyCpn {
                         html!("div", {
                             // .attr("id", "consult_card")
                             .visible_signal(page.consult_visible.signal())
+                            .child(html!("hr"))
                             .apply_if(app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErMedicalHistoryConsult, false), |dom| dom
                                 .child(html!("div", {
                                     .class(class::ROW)
                                     .child(html!("div", {
                                         .class("col-md-12")
                                         .children([
-                                            html!("lable", {
-                                                .text("เพิ่มฟอร์ม Consult")
-                                            }),
+                                            html!("lable", {.class("me-2").text("เพิ่มฟอร์ม Consult")}),
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_R_BLUE)
@@ -2452,14 +2468,21 @@ impl OpdErEmergencyCpn {
                             .class("col-md-12")
                             .children([
                                 html!("lable", {
-                                    .class("fw-bold")
+                                    .class(class::BOLD_L2)
                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                     .text(" ประสานงาน Set Fast Track")
                                 }),
                                 html!("button", {
                                     .attr("type", "button")
                                     .class(class::BTN_R_BLUE)
-                                    .child(html!("i", {.class(class::FA_EYE)}))
+                                    .child_signal(page.ft_visible.signal().map(|is_visible| {
+                                        if is_visible {
+                                            Some(html!("i", {.class(class::FA_EYE_SLASH)}))
+                                        } else {
+                                            Some(html!("i", {.class(class::FA_EYE)}))
+                                        }
+                                    }))
+                                    .text_signal(page.ft_visible.signal().map(|is_visible| if is_visible {" ซ่อน"} else {" แสดง"}))
                                     .event(clone!(page => move |_:events::Click| {
                                         page.ft_visible.set(!page.ft_visible.get());
                                     }))
@@ -2471,6 +2494,7 @@ impl OpdErEmergencyCpn {
                         // .attr("id", "opd_er_set_fact_track")
                         .visible_signal(page.ft_visible.signal())
                         .children([
+                            html!("hr"),
                             html!("div", {
                                 // .attr("id", "set_ft_card")
                                 .children([

@@ -15,11 +15,13 @@ use time::{Date, PrimitiveDateTime, Time};
 
 use kphis_model::lab::{LabItem, LabItemParams};
 use kphis_ui_app::App;
-use kphis_ui_core::{class, doms};
+use kphis_ui_core::class;
 use kphis_util::{
     datetime::{date_8601, date_th_opt, datetime_ts, js_now, time_hm_opt},
     util::{str_some, zero_none},
 };
+
+use crate::modal::modal_show_option_mixins;
 
 /// - GET `EndPoint::LabItem`
 #[derive(Default)]
@@ -104,7 +106,14 @@ impl LabHistory {
         )
     }
 
-    pub fn render(modal: Rc<Self>, app: Rc<App>, parent_lab_order_number: Option<Mutable<i32>>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_lab_order_number: Option<Mutable<i32>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), parent_lab_order_number.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_lab_order_number: Option<Mutable<i32>>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -135,7 +144,15 @@ impl LabHistory {
                                     }))
                                 }))
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -195,7 +212,7 @@ impl LabHistory {
                                         }),
                                         html!("tbody", {
                                             .class("lab_history_lab_items_table_tbody")
-                                            .children_signal_vec(modal.lab_items.signal_vec_cloned().map(clone!(modal => move |item| {
+                                            .children_signal_vec(modal.lab_items.signal_vec_cloned().map(clone!(app, display, modal => move |item| {
                                                 let (lab_datetime, lab_datetime_type) = if item.report_date.is_some() {
                                                     ([date_th_opt(&item.report_date), time_hm_opt(&item.report_time)].join(" "), "")
                                                 } else if item.receive_date.is_some() {
@@ -240,16 +257,17 @@ impl LabHistory {
                                                                     ])
                                                                 }))
                                                             })
-                                                            .apply_if(parent_lab_order_number.is_some(), clone!(parent_lab_order_number => move |dom| {
+                                                            .apply_if(parent_lab_order_number.is_some(), clone!(app, display, parent_lab_order_number => move |dom| {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM_FR_GRAY)
-                                                                    .attr("data-bs-dismiss", "modal")
                                                                     .text("ดูผลอื่นๆ")
-                                                                    .event(clone!(parent_lab_order_number => move |_:events::Click| {
+                                                                    .event(clone!(app, display, parent_lab_order_number => move |_:events::Click| {
                                                                         if let (Some(number), Some(parent)) = (item.lab_order_number, parent_lab_order_number.as_ref()) {
                                                                             parent.set_neq(number);
                                                                         }
+                                                                        app.clear_modal_backdrop();
+                                                                        display.set(None);
                                                                     }))
                                                                 }))
                                                             }))
@@ -268,8 +286,12 @@ impl LabHistory {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
-                            .text("Close")
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

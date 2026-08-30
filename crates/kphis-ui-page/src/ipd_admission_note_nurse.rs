@@ -19,11 +19,7 @@ use kphis_model::{
     },
 };
 use kphis_ui_app::App;
-use kphis_ui_component::{
-    gadget::pdf_button::PdfButtons,
-    modal::{blank_modal, vs_selector::VsSelector},
-    show_patient_main::ShowPatientMainCpn,
-};
+use kphis_ui_component::{gadget::pdf_button::PdfButtons, modal::vs_selector::VsSelector, show_patient_main::ShowPatientMainCpn};
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::{str_some, zero_none};
 
@@ -761,16 +757,15 @@ impl IpdAdmissionNoteNursePage {
                                 .child(html!("button", {
                                     .attr("type", "button")
                                     .class(class::BTN_SM_RT_BLUE)
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", "#vsSelectorModal")
                                     .child(html!("i", {.class(class::FA_HEARTBEAT)}))
-                                    .event(clone!(page => move |_: events::Click| {
+                                    .event(clone!(app, page => move |_: events::Click| {
                                         page.vs_selector_modal.set(Some(VsSelector::new(
                                             false,
                                             page.patient.lock_ref().patient.clone(),
                                             page.vs_admit.clone(),
                                             page.changed.clone(),
                                         )));
+                                        app.show_modal_backdrop();
                                     }))
                                 }))
                             )
@@ -786,17 +781,9 @@ impl IpdAdmissionNoteNursePage {
                     ])
                 }),
             ])
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "vsSelectorModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app => move |opt| {
-                    opt.as_ref().map(clone!(app => move |modal| {
-                        VsSelector::render(modal.clone(), app)
-                    })).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone()))
+            })))
         })
     }
 

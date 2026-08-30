@@ -31,7 +31,7 @@ use crate::{
         pdf_button::PdfButtons,
         searchbox::med::{MedSearchboxCpn, search_drugusage},
     },
-    modal::{blank_modal, med_reconcile_remed::MedReconcileRemed},
+    modal::med_reconcile_remed::MedReconcileRemed,
     order::{MedSearchable, OrderItemMutable},
 };
 
@@ -503,31 +503,33 @@ impl MedReconcileCpn {
                                                         None
                                                     }
                                                 })))
-                                                .children(MedSearchboxCpn::render_modals(med_search_box))
-                                                .child(doms::form_inline_group_sm(clone!(page => move |group| { group
-                                                    .attr("id", "old_drugusage_input_group")
-                                                    .children([
-                                                        doms::label_group_for("old_drugusage","วิธีใช้"),
-                                                        html!("input" => HtmlInputElement, {
-                                                            .attr("type", "text")
-                                                            .class("form-control")
-                                                            .style("width","410px")
-                                                            .attr("id", "old_drugusage")
-                                                            .attr("placeholder", "เช่น 13pt หรือ ระบุวิธีใช้ยา")
-                                                            .attr("required", "")
-                                                            .apply(mixins::string_value(page.old_drugusage.clone(), page.changed.clone()))
-                                                        }),
-                                                        html!("button", {
-                                                            .class(class::BTN_SM_GRAY)
-                                                            .attr("type", "button")
-                                                            .child(html!("i", {.class(class::FA_X)}))
-                                                            .event(clone!(page => move |_: events::Click| {
-                                                                page.old_drugusage.set_neq(String::new());
-                                                                page.changed.set_neq(false);
-                                                            }))
-                                                        }),
-                                                    ])
-                                                })))
+                                                .children([
+                                                    MedSearchboxCpn::render_modals(med_search_box, app.clone()),
+                                                    doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                                        .attr("id", "old_drugusage_input_group")
+                                                        .children([
+                                                            doms::label_group_for("old_drugusage","วิธีใช้"),
+                                                            html!("input" => HtmlInputElement, {
+                                                                .attr("type", "text")
+                                                                .class("form-control")
+                                                                .style("width","410px")
+                                                                .attr("id", "old_drugusage")
+                                                                .attr("placeholder", "เช่น 13pt หรือ ระบุวิธีใช้ยา")
+                                                                .attr("required", "")
+                                                                .apply(mixins::string_value(page.old_drugusage.clone(), page.changed.clone()))
+                                                            }),
+                                                            html!("button", {
+                                                                .class(class::BTN_SM_GRAY)
+                                                                .attr("type", "button")
+                                                                .child(html!("i", {.class(class::FA_X)}))
+                                                                .event(clone!(page => move |_: events::Click| {
+                                                                    page.old_drugusage.set_neq(String::new());
+                                                                    page.changed.set_neq(false);
+                                                                }))
+                                                            }),
+                                                        ])
+                                                    })),
+                                                ])
                                                 .child_signal(page.old_drugusage.signal_cloned().map(clone!(app, page => move |old_drugusage| {
                                                     if old_drugusage.is_empty() || old_drugusage.chars().any(|c| !c.is_ascii()) {
                                                         None
@@ -618,13 +620,12 @@ impl MedReconcileCpn {
                                                                 html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_L_BLUE)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target","#medReconciliationRemedModal")
                                                                     .child(html!("i", {.class(class::FA_PLUS_L)}))
                                                                     .child(html!("i", {.class(class::FA_SEARCH)}))
                                                                     .text(" Remed")
-                                                                    .event(clone!(page => move |_:events::Click| {
+                                                                    .event(clone!(app, page => move |_:events::Click| {
                                                                         page.show_remed_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 })
                                                             })
@@ -700,23 +701,17 @@ impl MedReconcileCpn {
                 }
             })))
             // ipd-dr-med-reconcile-remed.php
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "medReconciliationRemedModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.show_remed_modal.signal_cloned().map(clone!(app, page => move |show| {
-                    show.then(|| {
-                        let modal = MedReconcileRemed::new(
-                            page.patient.clone(),
-                            page.show_remed_modal.clone(),
-                            page.loaded.clone(),
-                            page.loaded_med_reconciliation_has_data.clone(),
-                        );
-                        MedReconcileRemed::render(modal, app.clone())
-                    }).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.show_remed_modal.signal_cloned().map(clone!(app, page => move |show| {
+                show.then(|| {
+                    let modal = MedReconcileRemed::new(
+                        page.patient.clone(),
+                        page.show_remed_modal.clone(),
+                        page.loaded.clone(),
+                        page.loaded_med_reconciliation_has_data.clone(),
+                    );
+                    MedReconcileRemed::render_modal(modal, app.clone())
+                })
+            })))
         })
     }
 }

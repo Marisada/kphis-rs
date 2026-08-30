@@ -17,18 +17,28 @@ use kphis_model::{
     index_plan::{IndexPlan, IndexPlanSave},
     order::{OrderItem, OrderItemPatch, OrderItemPatchAction, OrderParams},
     patient_info::PatientInfo,
+    select_utils::SelectOption,
     user::permission::Permission,
     vital_sign::{VitalSignParams, VitalSignSave},
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{JsTime, date_8601, date_th, date_th_opt, datetime_8601, datetime_from_opt, datetime_th_opt, datetime_th_opt_relative, datetime_th_relative, js_now, time_8601, time_hm_opt},
     error::CONTACT_ADMIN,
     util::{find_decimal_in_text, opt_zero_none, str_some, zero_none},
 };
 
-use crate::show_patient_main::{load_patient_info, render_patient_info};
+#[derive(Clone)]
+enum PlanTimeShow {
+    Hours,
+    Single,
+}
+
+use crate::{
+    modal::modal_show_option_mixins,
+    show_patient_main::{load_patient_info, render_patient_info},
+};
 
 /// - GET `EndPoint::IpdOrderItem`
 /// - GET `EndPoint::OpdErOrderItem`
@@ -80,8 +90,7 @@ pub struct IndexPlanActionForm {
 
     check_datetime: Mutable<String>,
     check_person: Mutable<String>,
-    redraw_check_person: Mutable<bool>,
-
+    // redraw_check_person: Mutable<bool>,
     action_date: Mutable<String>,
     action_time: Mutable<String>,
     action_report_back: Mutable<String>,
@@ -90,9 +99,8 @@ pub struct IndexPlanActionForm {
     action_blood_had: Mutable<String>,
     action_person_1: Mutable<String>,
     action_person_2: Mutable<String>,
-    redraw_person_1: Mutable<bool>,
-    redraw_person_2: Mutable<bool>,
-
+    // redraw_person_1: Mutable<bool>,
+    // redraw_person_2: Mutable<bool>,
     monitor_id: Mutable<Option<u32>>,
     monitor_datetime: Mutable<String>,
     monitor_abnormal: Mutable<Option<String>>,
@@ -700,7 +708,14 @@ impl IndexPlanActionForm {
         )
     }
 
-    pub fn render(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), parent_reload.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
         html!("div", {
             .apply_if(
                 app.endpoint_is_allow(&Method::GET, &EndPoint::IpdShowPatientMainAn, false)
@@ -748,12 +763,12 @@ impl IndexPlanActionForm {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class("btn-close")
-                            .attr("data-bs-dismiss", "modal")
                             .attr("aria-label", "Close")
-                            .event(clone!(modal, display, parent_reload => move |_: events::Click| {
+                            .event(clone!(app, modal, display, parent_reload => move |_: events::Click| {
                                 if let Some(reload) = &parent_reload {
                                     reload.set_neq(modal.parent_need_reload.get());
                                 }
+                                app.clear_modal_backdrop();
                                 display.set(None);
                             }))
                         }))
@@ -908,13 +923,13 @@ impl IndexPlanActionForm {
                             .child(html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_FR_GRAY)
-                                .attr("data-bs-dismiss", "modal")
                                 .child(html!("i", {.class(class::FA_X)}))
                                 .text(" ปิด")
                                 .event(clone!(modal, parent_reload => move |_: events::Click| {
                                     if let Some(reload) = &parent_reload {
                                         reload.set_neq(modal.parent_need_reload.get());
                                     }
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }))
@@ -1221,8 +1236,7 @@ impl IndexPlanActionForm {
                 // Time tab
                 html!("a", {
                     .class(class::NAV_ITEM_LINK)
-                    .class_signal("active", modal.active_tab.signal_cloned().map(|tab| matches!(tab, PlanTab::Time)))
-                    .attr("data-bs-toggle", "tab")
+                    .class_signal("active", modal.active_tab.signal_ref(|tab| matches!(tab, PlanTab::Time)))
                     .attr("href", "#")
                     .attr("role", "tab")
                     .text("ตั้งเวลา")
@@ -1245,8 +1259,7 @@ impl IndexPlanActionForm {
                 // Date tab
                 html!("a", {
                     .class(class::NAV_ITEM_LINK)
-                    .class_signal("active", modal.active_tab.signal_cloned().map(|tab| matches!(tab, PlanTab::Date)))
-                    .attr("data-bs-toggle", "tab")
+                    .class_signal("active", modal.active_tab.signal_ref(|tab| matches!(tab, PlanTab::Date)))
                     .attr("href", "#")
                     .attr("role", "tab")
                     .text("ไม่ระบุเวลา (PRN)")
@@ -1272,8 +1285,7 @@ impl IndexPlanActionForm {
                 is_stat.then(|| {
                     html!("a", {
                         .class(class::NAV_ITEM_LINK)
-                        .class_signal("active", modal.active_tab.signal_cloned().map(|tab| matches!(tab, PlanTab::Stat)))
-                        .attr("data-bs-toggle", "tab")
+                        .class_signal("active", modal.active_tab.signal_ref(|tab| matches!(tab, PlanTab::Stat)))
                         .attr("href", "#")
                         .attr("role", "tab")
                         .text("ทันที (STAT)")
@@ -1376,6 +1388,7 @@ impl IndexPlanActionForm {
     }
 
     fn render_plan_sch_time(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
+        let accordion = Mutable::new(PlanTimeShow::Hours);
         html!("div", {
             .class("accordion")
             .attr("id", "plan-sch-time-container")
@@ -1388,17 +1401,24 @@ impl IndexPlanActionForm {
                             .child(html!("button", {
                                 .attr("type", "button")
                                 .class(class::ACCORDION_BTN_CYANS_P2)
-                                .attr("data-bs-toggle","collapse")
-                                .attr("data-bs-target","#plan-sch-time-hours")
-                                .attr("aria-expanded","true")
+                                .class_signal("collapsed", accordion.signal_ref(|acc| !matches!(acc, PlanTimeShow::Hours)))
+                                .prop_signal("aria-expanded", accordion.signal_ref(|acc| if matches!(acc, PlanTimeShow::Hours) {"true"} else {"false"}))
                                 .attr("aria-controls","plan-sch-time-hours")
                                 .text("กำหนดเวลา")
+                                .event(clone!(accordion => move |_:events::Click| {
+                                    let eq = matches!(accordion.get_cloned(), PlanTimeShow::Hours);
+                                    if eq {
+                                        accordion.set(PlanTimeShow::Single);
+                                    } else {
+                                        accordion.set(PlanTimeShow::Hours);
+                                    }
+                                }))
                             }))
                         }),
                         html!("div", {
-                            .class(class::ACCORDION_COLLAPSE_SHOW)
+                            .class(class::ACCORDION_COLLAPSE)
+                            .class_signal("show", accordion.signal_ref(|acc| matches!(acc, PlanTimeShow::Hours)))
                             .attr("id", "plan-sch-time-hours")
-                            .attr("data-bs-parent","#plan-sch-time-container")
                             .child(html!("div", {
                                 .class("accordion-body")
                                 .child(Self::render_plan_sch_time_multiple(time_plans.clone(), modal.clone(), app.clone()))
@@ -1413,18 +1433,25 @@ impl IndexPlanActionForm {
                             .class("accordion-header")
                             .child(html!("button", {
                                 .attr("type", "button")
-                                .class(class::ACCORDION_BTN_COLLAPSED_CYANS_P2)
-                                .attr("data-bs-toggle","collapse")
-                                .attr("data-bs-target","#plan-sch-time-single")
-                                .attr("aria-expanded","false")
+                                .class(class::ACCORDION_BTN_CYANS_P2)
+                                .class_signal("collapsed", accordion.signal_ref(|acc| matches!(acc, PlanTimeShow::Hours)))
+                                .prop_signal("aria-expanded", accordion.signal_ref(|acc| if matches!(acc, PlanTimeShow::Single) {"true"} else {"false"}))
                                 .attr("aria-controls","plan-sch-time-single")
                                 .text("รายละเอียด")
+                                .event(clone!(accordion => move |_:events::Click| {
+                                    let eq = matches!(accordion.get_cloned(), PlanTimeShow::Single);
+                                    if eq {
+                                        accordion.set(PlanTimeShow::Hours);
+                                    } else {
+                                        accordion.set(PlanTimeShow::Single);
+                                    }
+                                }))
                             }))
                         }),
                         html!("div", {
                             .class(class::ACCORDION_COLLAPSE)
+                            .class_signal("show", accordion.signal_ref(|acc| matches!(acc, PlanTimeShow::Single)))
                             .attr("id", "plan-sch-time-single")
-                            .attr("data-bs-parent","#plan-sch-time-container")
                             .child(html!("div", {
                                 .class("accordion-body")
                                 .child(Self::render_plan_sch_time_single(time_plans, modal.clone(), app.clone()))
@@ -1750,11 +1777,8 @@ impl IndexPlanActionForm {
     }
 
     fn render_actions_list(allow_all: bool, plan_id_opt: Option<u32>, order_item_opt: Option<Rc<OrderItem>>, modal: Rc<Self>) -> Option<Dom> {
-        let (container_id, container_hash, gut_id, gut_hash, title) = if plan_id_opt.is_some() {
-            ("modal-actions-list-container", "#modal-actions-list-container", "modal-actions-list", "#modal-actions-list", "")
-        } else {
-            ("modal-all-actions-list-container", "#modal-all-actions-list-container", "modal-all-actions-list", "#modal-all-actions-list", "ทั้งหมด")
-        };
+        let (gut_id, title) = if plan_id_opt.is_some() { ("modal-actions-list", "") } else { ("modal-all-actions-list", "ทั้งหมด") };
+        let accordion_opened = Mutable::new(false);
         modal.plan_actions(plan_id_opt, order_item_opt.clone(), allow_all).and_then(|actions| {
             let actions_len = actions.len();
             (actions_len > 0).then(|| {
@@ -1762,7 +1786,6 @@ impl IndexPlanActionForm {
                     .class("mb-2")
                     .child(html!("div", {
                         .class("accordion")
-                        .attr("id",container_id)
                         .child(html!("div", {
                             .class("accordion-item")
                             .children([
@@ -1770,22 +1793,24 @@ impl IndexPlanActionForm {
                                     .class("accordion-header")
                                     .child(html!("button", {
                                         .attr("type", "button")
-                                        .class(class::ACCORDION_BTN_COLLAPSED_GOLD_P2)
-                                        .attr("data-bs-toggle","collapse")
-                                        .attr("data-bs-target",gut_hash)
-                                        .attr("aria-expanded","false")
+                                        .class(class::ACCORDION_BTN_GOLD_P2)
+                                        .class_signal("collapsed", not(accordion_opened.signal()))
+                                        .prop_signal("aria-expanded", accordion_opened.signal().map(|opened| if opened {"true"} else {"false"}))
                                         .attr("aria-controls",gut_id)
                                         .text("แสดง Action ")
                                         .text(title)
                                         .text(" (")
                                         .text(&actions_len.to_string())
                                         .text(" รายการ)")
+                                        .event(clone!(accordion_opened => move |_:events::Click| {
+                                            accordion_opened.set(!accordion_opened.get());
+                                        }))
                                     }))
                                 }),
                                 html!("div", {
                                     .attr("id",gut_id)
                                     .class(class::ACCORDION_COLLAPSE)
-                                    .attr("data-bs-parent",container_hash)
+                                    .class_signal("show", accordion_opened.signal())
                                     .child(html!("ul", {
                                         .class(class::LIST_GROUP_FLUSH_OVFA)
                                         .style("max-height","124px")
@@ -2147,36 +2172,18 @@ impl IndexPlanActionForm {
                                                 .class(class::BTN_BLUE)
                                                 .text("ลงชื่อ")
                                                 .event(clone!(app, modal => move |_: events::Click| {
-                                                    let doctorcode = app.doctor_code().unwrap_or_default();
-                                                    if let Some(elm) = app.get_id("index-check-person") {
-                                                        NiceSelect::new_default_with_value(&elm, &doctorcode);
-                                                    }
-                                                    modal.check_person.set_neq(doctorcode);
+                                                    modal.check_person.set_neq(app.doctor_code().unwrap_or_default());
                                                 }))
                                             }),
                                             html!("div", {
                                                 .class(class::FLEX_GROW1)
-                                                .future(modal.redraw_check_person.signal().for_each(clone!(app, modal => move |redraw| {
-                                                    if redraw {
-                                                        if let Some(elm) = app.get_id("index-check-person") {
-                                                            NiceSelect::new_default_with_value(&elm, &modal.check_person.lock_ref());
-                                                        }
-                                                        modal.redraw_check_person.set_neq(false);
-                                                    }
-                                                    async {}
-                                                })))
-                                                .child(html!("select" => HtmlSelectElement, {
-                                                    .class("form-control")
-                                                    .attr("id", "index-check-person")
-                                                    .child(html!("option", {
-                                                        .attr("value", "")
-                                                        .text("เลือก")
-                                                    }))
-                                                    .children(all_doctor_select_option.iter().map(|option| {
-                                                        doms::select_option(option, &modal.check_person.lock_ref())
-                                                    }))
-                                                    .apply(mixins::string_value_select(modal.check_person.clone(), modal.changed.clone()))
-                                                }))
+                                                .child(doms::select_box(
+                                                    "index-check-person", Some("เลือก"), false,
+                                                    modal.check_person.clone(),
+                                                    modal.changed.clone(),
+                                                    |d| d.class("form-control"), || {},
+                                                    all_doctor_select_option.clone(),
+                                                ))
                                             }),
                                         ])
                                     }))
@@ -2461,36 +2468,18 @@ impl IndexPlanActionForm {
                                                             .class(class::BTN_BLUE)
                                                             .text("ลงชื่อ")
                                                             .event(clone!(app, modal => move |_: events::Click| {
-                                                                let doctorcode = app.doctor_code().unwrap_or_default();
-                                                                if let Some(elm) = app.get_id("index-action-person-1") {
-                                                                    NiceSelect::new_default_with_value(&elm, &doctorcode);
-                                                                }
-                                                                modal.action_person_1.set_neq(doctorcode);
+                                                                modal.action_person_1.set_neq(app.doctor_code().unwrap_or_default());
                                                             }))
                                                         }),
                                                         html!("div", {
                                                             .class(class::FLEX_GROW1)
-                                                            .future(modal.redraw_person_1.signal().for_each(clone!(app, modal => move |redraw| {
-                                                                if redraw {
-                                                                    if let Some(elm) = app.get_id("index-action-person-1") {
-                                                                        NiceSelect::new_default_with_value(&elm, &modal.action_person_1.lock_ref());
-                                                                    }
-                                                                    modal.redraw_person_1.set_neq(false);
-                                                                }
-                                                                async {}
-                                                            })))
-                                                            .child(html!("select" => HtmlSelectElement, {
-                                                                .class("form-control")
-                                                                .attr("id", "index-action-person-1")
-                                                                .child(html!("option", {
-                                                                    .attr("value", "")
-                                                                    .text("เลือก")
-                                                                }))
-                                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                                    doms::select_option(option, &modal.action_person_1.lock_ref())
-                                                                }))
-                                                                .apply(mixins::string_value_select(modal.action_person_1.clone(), modal.changed.clone()))
-                                                            }))
+                                                            .child(doms::select_box(
+                                                                "index-action-person-1", Some("เลือก"), false,
+                                                                modal.action_person_1.clone(),
+                                                                modal.changed.clone(),
+                                                                |d| d.class("form-control"), || {},
+                                                                all_doctor_select_option.clone(),
+                                                            ))
                                                         }),
                                                     ])
                                                 }))
@@ -2505,41 +2494,18 @@ impl IndexPlanActionForm {
                                                         doms::label_group_for("index-action-person-2","ลงชื่อ 2"),
                                                         html!("div", {
                                                             .class(class::FLEX_GROW1)
-                                                            .future(map_ref! {
-                                                                let had = modal.action_blood_had.signal_cloned(),
-                                                                let redraw = modal.redraw_person_2.signal() =>
-                                                                had.as_str() == "Y" || *redraw
-                                                            }.for_each(clone!(app, modal => move |redraw| {
-                                                                if redraw {
-                                                                    if let Some(elm) = app.get_id("index-action-person-2") {
-                                                                        NiceSelect::new_default_with_value(&elm, &modal.action_person_2.lock_ref());
+                                                            .child(doms::select_box(
+                                                                "index-action-person-2", Some("เลือก"), false,
+                                                                modal.action_person_2.clone(),
+                                                                modal.changed.clone(),
+                                                                |d| d.class("form-control"), || {},
+                                                                all_doctor_select_option.iter().map(|option| {
+                                                                    SelectOption {
+                                                                        key: option.key.to_owned(),
+                                                                        value: [&option.key, " : ", &option.value].concat(),
                                                                     }
-                                                                    modal.redraw_person_2.set_neq(false);
-                                                                }
-                                                                async {}
-                                                            })))
-                                                            .child(html!("select" => HtmlSelectElement, {
-                                                                .class("form-control")
-                                                                .attr("id", "index-action-person-2")
-                                                                .child(html!("option", {
-                                                                    .attr("value", "")
-                                                                    .text("เลือก")
-                                                                }))
-                                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                                    // doms::select_option(option, &modal.action_person_2.lock_ref())
-                                                                    let selected_value = modal.action_person_2.lock_ref();
-                                                                    html!("option", {
-                                                                        .attr("value", &option.key.to_owned())
-                                                                        .apply_if(!selected_value.is_empty() && selected_value.as_str() == option.key.as_str(), |dom| { dom
-                                                                            .attr("selected","")
-                                                                        })
-                                                                        .text(&option.key)
-                                                                        .text(" : ")
-                                                                        .text(&option.value)
-                                                                    })
-                                                                }))
-                                                                .apply(mixins::string_value_select(modal.action_person_2.clone(), modal.changed.clone()))
-                                                            }))
+                                                                }).collect(),
+                                                            ))
                                                         })
                                                     ])
                                                 }))
@@ -2820,19 +2786,13 @@ impl IndexPlanActionForm {
     }
 
     fn plan_dom(plan: Rc<IndexPlan>, modal: Rc<Self>, custom_label: Option<String>) -> Dom {
+        let plan_id = plan.plan_id;
         let label = custom_label.unwrap_or([date_th_opt(&plan.plan_date), time_hm_opt(&plan.plan_time)].join(" "));
         let actions_len = modal.plan_actions(Some(plan.plan_id), modal.order_item.get_cloned(), false).map(|actions| actions.len()).unwrap_or_default();
-        let is_same_plan_id = modal.plan_id.get().map(|id| id == plan.plan_id).unwrap_or_default();
         html!("a", {
-            .apply(|dom| {
-                if is_same_plan_id {
-                    dom.class(class::NAV_ITEM_LINK_ACTIVE)
-                } else {
-                    dom.class(class::NAV_ITEM_LINK)
-                }
-            })
+            .class(class::NAV_ITEM_LINK)
+            .class_signal("active", modal.plan_id.signal_ref(move |opt| opt.map(|id| id == plan_id).unwrap_or_default()))
             .class(class::BORDER_LT_BLUE)
-            .attr("data-bs-toggle", "pill")
             .attr("href", "#")
             .text(&label)
             .apply_if(actions_len > 0, |dom| {
@@ -2862,7 +2822,6 @@ impl IndexPlanActionForm {
         html!("a", {
             .class(class::NAV_ITEM_LINK_R)
             .class(class::TXT_BG_BLUE_RT)
-            .attr("data-bs-toggle", "pill")
             .attr("href", "#")
             .child(html!("i", {.class(class::FA_PLUS_L)}))
             .text("เพิ่ม")
@@ -3195,15 +3154,15 @@ impl IndexPlanActionForm {
         self.action_person_1.set_neq(action.action_person_1.clone().unwrap_or_default());
         self.action_person_2.set_neq(action.action_person_2.clone().unwrap_or_default());
 
-        if action.check_person.is_some() {
-            self.redraw_check_person.set(true);
-        }
-        if action.action_person_1.is_some() {
-            self.redraw_person_1.set(true);
-        }
-        if action.action_blood_had == Some(String::from("Y")) && action.action_person_2.is_some() {
-            self.redraw_person_2.set(true);
-        }
+        // if action.check_person.is_some() {
+        //     self.redraw_check_person.set(true);
+        // }
+        // if action.action_person_1.is_some() {
+        //     self.redraw_person_1.set(true);
+        // }
+        // if action.action_blood_had == Some(String::from("Y")) && action.action_person_2.is_some() {
+        //     self.redraw_person_2.set(true);
+        // }
 
         self.changed.set_neq(false);
     }

@@ -23,6 +23,7 @@ use kphis_util::{
 
 use crate::{
     gadget::searchbox::{dec_to_color, med::search_drugusage},
+    modal::modal_show_option_mixins,
     order::{OffOrderItem, OrderCpn},
 };
 
@@ -184,7 +185,14 @@ impl MedPlanForm {
         self.display_ivfluid_searchbox.set(false);
     }
 
-    pub fn render(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         let injections = app.app_status.lock_ref().as_ref().map(|status| status.hosxp_injection_dosageforms.clone()).unwrap_or_default();
         html!("div", {
             .future(map_ref!(
@@ -207,7 +215,15 @@ impl MedPlanForm {
                         .class("modal-header")
                         .children([
                             html!("h5", {.class("modal-title").text("ปรับปรุงแผนการจ่ายยาใน HOSxP")}),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -522,17 +538,22 @@ impl MedPlanForm {
                             html!("button" => HtmlButtonElement, {
                                 .attr("type", "button")
                                 .class(class::BTN_L_BLUE)
-                                .attr("data-bs-dismiss", "modal")
                                 .text("ดำเนินการต่อ")
-                                .apply(mixins::click_with_loader_checked(clone!(app, modal => move || {
+                                .apply(mixins::click_with_loader_checked(clone!(app, modal, display => move || {
                                     OrderCpn::patch_order(OrderPatchAction::PharmacistAccept, modal.order.clone(), time_8601(&modal.order_time_mutable.lock_ref()), None, modal.is_oneday, modal.parent.clone(), app.clone());
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
                                 }), app.state()))
                             }),
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_GRAY)
-                                .attr("data-bs-dismiss", "modal")
-                                .text("ยกเลิก")
+                                .child(html!("i", {.class(class::FA_X)}))
+                                .text(" ปิด")
+                                .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                })
                             }),
                         ])
                     }),

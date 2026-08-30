@@ -544,7 +544,7 @@ impl EmrCpn {
                                         .apply_if(visit.image_exists.has_scan, |dom| {
                                             dom.child(html!("a", {
                                                 .class("nav-link")
-                                                .attr("data-bs-toggle","pill")
+                                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Opd)))
                                                 .attr("href","#")
                                                 .text("OPD Scan")
                                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -560,7 +560,7 @@ impl EmrCpn {
                                         .apply_if(visit.image_exists.has_er, |dom| {
                                             dom.child(html!("a", {
                                                 .class("nav-link")
-                                                .attr("data-bs-toggle","pill")
+                                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Er)))
                                                 .attr("href","#")
                                                 .text("ER Image")
                                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -576,7 +576,7 @@ impl EmrCpn {
                                         .apply_if(visit.image_exists.has_pe, |dom| {
                                             dom.child(html!("a", {
                                                 .class("nav-link")
-                                                .attr("data-bs-toggle","pill")
+                                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Pe)))
                                                 .attr("href","#")
                                                 .text("PE Image")
                                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -592,7 +592,7 @@ impl EmrCpn {
                                         .apply_if(visit.image_exists.has_lab, |dom| {
                                             dom.child(html!("a", {
                                                 .class("nav-link")
-                                                .attr("data-bs-toggle","pill")
+                                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Lab)))
                                                 .attr("href","#")
                                                 .text("Lab Image")
                                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {

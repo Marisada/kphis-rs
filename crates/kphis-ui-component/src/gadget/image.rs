@@ -29,7 +29,7 @@ use kphis_ui_app::App;
 use kphis_ui_core::{binding::Viewer, class, mixins};
 use kphis_util::{datetime::datetime_th_relative, util::str_some};
 
-use crate::modal::{blank_modal, report::preview::ReportPreview};
+use crate::modal::report::preview::ReportPreview;
 
 static IMAGE_CPN_ID: AtomicUsize = AtomicUsize::new(1);
 
@@ -386,32 +386,19 @@ impl ImageCpn {
                                         html!("button", {
                                             .attr("type","button")
                                             .class(class::BTN_SM_L_BLUE)
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", &["#camera-capture-modal-", &page.id.to_string()].concat())
                                             .style_signal("opacity", app.loader_is_loading().map(|loading| {
                                                 if loading {"0.7"} else {"1"}
                                             }))
                                             .child(html!("i", {.class(class::FA_CAMERA)}))
-                                            .event(clone!(page => move |_:events::Click| {
+                                            .event(clone!(app, page => move |_:events::Click| {
                                                 page.show_capture_modal.set_neq(true);
-                                            }))
-                                        }),
-                                        html!("div", {
-                                            .class("modal")
-                                            .attr("id", &["camera-capture-modal-", &page.id.to_string()].concat())
-                                            .attr("role", "dialog")
-                                            .attr("tabindex", "-1")
-                                            .child(html!("div", {
-                                                .class(class::MODAL_DIALOG_LG)
-                                                .attr("role", "document")
-                                                .child_signal(page.show_capture_modal.signal().map(clone!(page, app => move |is_show| {
-                                                    is_show.then(|| {
-                                                        Self::render_capture_modal(page.clone(), app.clone())
-                                                    })
-                                                })))
+                                                app.show_modal_backdrop();
                                             }))
                                         }),
                                     ])
+                                    .child_signal(page.show_capture_modal.signal().map(clone!(page, app => move |is_show| {
+                                        is_show.then(|| Self::render_capture_modal(page.clone(), app.clone()))
+                                    })))
                                 })
                                 .child_signal(page.is_empty_signal().map(clone!(app, page => move |is_empty| {
                                     (!is_empty).then(|| {
@@ -500,7 +487,6 @@ impl ImageCpn {
                             html!("div", {
                                 .child_signal(page.has_selected_signal().map(clone!(app, page => move |has_selected| {
                                     (has_selected).then(|| {
-                                        let modal_id = ["reportModal-img-",&page.id.to_string()].concat();
                                         let report_modal: Mutable<Option<Rc<ReportPreview>>> = Mutable::new(None);
                                         html!("span", {
                                             .child(html!("button", {
@@ -524,21 +510,15 @@ impl ImageCpn {
                                             }))
                                             .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false), |dom| dom
                                                 .children([
-                                                    Self::pdf_btn(1, &modal_id, report_modal.clone(), page.clone(), app.clone()),
-                                                    Self::pdf_btn(2, &modal_id, report_modal.clone(), page.clone(), app.clone()),
-                                                    Self::pdf_btn(4, &modal_id, report_modal.clone(), page.clone(), app.clone()),
+                                                    Self::pdf_btn(1, report_modal.clone(), page.clone(), app.clone()),
+                                                    Self::pdf_btn(2, report_modal.clone(), page.clone(), app.clone()),
+                                                    Self::pdf_btn(4, report_modal.clone(), page.clone(), app.clone()),
                                                 ])
-                                                .child(html!("div", {
-                                                    .class("modal")
-                                                    .attr("id", &modal_id)
-                                                    .attr("role", "dialog")
-                                                    .attr("tabindex", "-1")
-                                                    .child_signal(report_modal.signal_cloned().map(clone!(app => move |opt| {
-                                                        opt.as_ref().map(clone!(app => move |modal| {
-                                                            ReportPreview::render(modal.clone(), app)
-                                                        })).or(Some(blank_modal()))
-                                                    })))
-                                                }))
+                                                .child_signal(report_modal.signal_cloned().map(clone!(app, report_modal => move |opt| {
+                                                    opt.map(|modal| {
+                                                        ReportPreview::render_modal(modal.clone(), report_modal.clone(), app.clone())
+                                                    })
+                                                })))
                                             )
                                             .apply_if(page.is_editable && if page.is_with_key() {allow_delete_usage} else {true}, |dom| { dom
                                                 .child(html!("button" => HtmlButtonElement, {
@@ -848,7 +828,7 @@ impl ImageCpn {
         })
     }
 
-    fn pdf_btn(per_page: u8, modal_id: &str, report_modal: Mutable<Option<Rc<ReportPreview>>>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    fn pdf_btn(per_page: u8, report_modal: Mutable<Option<Rc<ReportPreview>>>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let pdf_title = match per_page {
             1 => "Full",
             2 => "Half",
@@ -857,8 +837,6 @@ impl ImageCpn {
         html!("button" => HtmlButtonElement, {
             .attr("type", "button")
             .class(class::BTN_SM_L_BLUE)
-            .attr("data-bs-toggle", "modal")
-            .attr("data-bs-target", &["#",&modal_id].concat())
             .child(html!("i", {.class(class::FA_FILE_PDF_L)}))
             .text(pdf_title)
             .event(clone!(report_modal, page => move |_: events::Click| {
@@ -878,6 +856,7 @@ impl ImageCpn {
                         false,
                         str_some(page.pdf_title.clone()),
                     )));
+                    app.show_modal_backdrop();
                 } else if let Some(vnan) = &page.vnan {
                     let id = [vnan, "||", &per_page.to_string()].concat();
                     let data_json = serde_json::json!({
@@ -891,6 +870,7 @@ impl ImageCpn {
                         false,
                         str_some(page.pdf_title.clone()),
                     )));
+                    app.show_modal_backdrop();
                 }
             }))
         })
@@ -975,7 +955,52 @@ impl ImageCpn {
         }
     }
 
+    // please check `kphis-ui-component::modal::modal_show_bool_mixins` for modal mechanic
     fn render_capture_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_SHOW)
+            .attr("role", "dialog")
+            .attr("aria-modal", "true")
+            .attr("tabindex", "-1")
+            .child(Self::render_capture_modal_dialog(page.clone(), app.clone()))
+            // Add global escape key listener
+            .global_event(clone!(app, page => move |e: events::KeyDown| {
+                if e.key() == "Escape" {
+                    let capture_video_id = ["capture-video-", &page.id.to_string()].concat();
+                    if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
+                        if let Err(e) = stop_video(video_elm) {
+                            let error = js_sys::Error::from(e);
+                            let message: String = error.to_js_string().into();
+                            app.alert_error("Error stop_video", &message);
+                        }
+                    }
+
+                    app.clear_modal_backdrop();
+                    page.show_capture_modal.set(false);
+                }
+            }))
+            // Click outside modal
+            .event(move |e :events::Click| {
+                if let Some(target) = e.target().and_then(|target| target.dyn_into::<web_sys::Element>().ok()) {
+                    if target.class_list().contains("modal") {
+                        let capture_video_id = ["capture-video-", &page.id.to_string()].concat();
+                        if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
+                            if let Err(e) = stop_video(video_elm) {
+                                let error = js_sys::Error::from(e);
+                                let message: String = error.to_js_string().into();
+                                app.alert_error("Error stop_video", &message);
+                            }
+                        }
+
+                        app.clear_modal_backdrop();
+                        page.show_capture_modal.set(false);
+                    }
+                }
+            })
+        })
+    }
+
+    fn render_capture_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
         let capture_button = dominator::class! {
             .pseudo!(":hover", {
                 .style("color","pink")
@@ -993,86 +1018,44 @@ impl ImageCpn {
         let capture_canvas_id = ["capture-canvas-", &page.id.to_string()].concat();
 
         html!("div", {
-            .class("modal-content")
-            .children([
-                html!("div", {
-                    .class("modal-body")
-                    .future(page.devices_loaded.signal().for_each(clone!(app, page => move |loaded| {
-                        clone!(app, page => async move {
-                            if !loaded {
-                                match app.window.with(|w| w.navigator().media_devices()) {
-                                    Ok(media_devices) => {
-                                        init_media_user(&media_devices).await;
-                                        match media_devices.enumerate_devices() {
-                                            Ok(promise) => {
-                                                match JsFuture::from(promise).await {
-                                                    Ok(devices_future) => {
-                                                        let devices_js = Array::from(&devices_future);
-                                                        let media_infos = devices_js.into_iter().map(|dv| MediaDeviceInfo::from(dv)).filter(|dv| matches!(dv.kind(), MediaDeviceKind::Videoinput)).collect::<Vec<MediaDeviceInfo>>();
-                                                        page.selected_info.set(media_infos.first().cloned());
-                                                        {
-                                                            let mut lock = page.media_devices_info.lock_mut();
-                                                            lock.clear();
-                                                            lock.extend(media_infos);
-                                                        }
-                                                    }
-                                                    Err(e) => {
-                                                        let error = js_sys::Error::from(e);
-                                                        let message: String = error.to_js_string().into();
-                                                        app.alert_error_with_closed("Error await numerate_devices: ", &message).await;
-                                                    }
-                                                }
-                                            }
-                                            Err(e) => {
-                                                let error = js_sys::Error::from(e);
-                                                let message: String = error.to_js_string().into();
-                                                app.alert_error_with_closed("Error numerate_devices", &message).await;
-                                            }
-                                        }
-                                    }
-                                    Err(e) => {
-                                        let error = js_sys::Error::from(e);
-                                        let message: String = error.to_js_string().into();
-                                        app.alert_error_with_closed("Error media_devices", &message).await;
-                                    }
-                                }
-                                page.devices_loaded.set(true);
-                            }
-                        })
-                    })))
-                    .future(page.selected_info.signal_cloned().for_each(clone!(app, capture_video_id => move |media_info_opt| {
-                        clone!(app, capture_video_id => async move {
-                            if media_info_opt.is_some() {
-                                if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
+            .class(class::MODAL_DIALOG_LG)
+            .attr("role", "document")
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-body")
+                        .future(page.devices_loaded.signal().for_each(clone!(app, page => move |loaded| {
+                            clone!(app, page => async move {
+                                if !loaded {
                                     match app.window.with(|w| w.navigator().media_devices()) {
                                         Ok(media_devices) => {
-                                            if let Some(media_info) = media_info_opt {
-                                                match get_stream(media_info, media_devices).await {
-                                                    Ok(stream) => {
-                                                        video_elm.set_src_object(Some(&stream));
-                                                        match video_elm.play() {
-                                                            Ok(promise) => {
-                                                                if let Err(e) = JsFuture::from(promise).await {
-                                                                    let error = js_sys::Error::from(e);
-                                                                    let message: String = error.to_js_string().into();
-                                                                    app.alert_error_with_closed("Error await play video", &message).await;
-                                                                }
-                                                            }
-                                                            Err(e) => {
-                                                                let error = js_sys::Error::from(e);
-                                                                let message: String = error.to_js_string().into();
-                                                                app.alert_error_with_closed("Error play video", &message).await;
+                                            init_media_user(&media_devices).await;
+                                            match media_devices.enumerate_devices() {
+                                                Ok(promise) => {
+                                                    match JsFuture::from(promise).await {
+                                                        Ok(devices_future) => {
+                                                            let devices_js = Array::from(&devices_future);
+                                                            let media_infos = devices_js.into_iter().map(|dv| MediaDeviceInfo::from(dv)).filter(|dv| matches!(dv.kind(), MediaDeviceKind::Videoinput)).collect::<Vec<MediaDeviceInfo>>();
+                                                            page.selected_info.set(media_infos.first().cloned());
+                                                            {
+                                                                let mut lock = page.media_devices_info.lock_mut();
+                                                                lock.clear();
+                                                                lock.extend(media_infos);
                                                             }
                                                         }
-                                                    }
-                                                    Err(message) => {
-                                                        app.alert_error_with_closed("Error get_stream", &message).await;
+                                                        Err(e) => {
+                                                            let error = js_sys::Error::from(e);
+                                                            let message: String = error.to_js_string().into();
+                                                            app.alert_error_with_closed("Error await numerate_devices: ", &message).await;
+                                                        }
                                                     }
                                                 }
-                                            } else if let Err(e) = stop_video(video_elm) {
-                                                let error = js_sys::Error::from(e);
-                                                let message: String = error.to_js_string().into();
-                                                app.alert_error_with_closed("Error stop_video", &message).await;
+                                                Err(e) => {
+                                                    let error = js_sys::Error::from(e);
+                                                    let message: String = error.to_js_string().into();
+                                                    app.alert_error_with_closed("Error numerate_devices", &message).await;
+                                                }
                                             }
                                         }
                                         Err(e) => {
@@ -1081,200 +1064,246 @@ impl ImageCpn {
                                             app.alert_error_with_closed("Error media_devices", &message).await;
                                         }
                                     }
+                                    page.devices_loaded.set(true);
                                 }
-                            }
-                        })
-                    })))
-                    .children([
-                        html!("div", {
-                            .style("position","relative")
-                            .style("width", "100%")
-                            .children([
-                                html!("div", {
-                                    .class("mb-2")
-                                    .child(html!("i", {
-                                        .class(class::FA_SYNC)
-                                        .class("me-1")
-                                        .style("cursor","pointer")
-                                        .event(clone!(page => move |_:events::Click| {
-                                            page.devices_loaded.set(false);
-                                        }))
-                                    }))
-                                    .children_signal_vec(page.media_devices_info.signal_vec_cloned().map(clone!(page => move |device_info| {
-                                        html!("button", {
-                                            .attr("type","button")
-                                            .class(class::BTN_SM_R_BLUEO)
-                                            .text(&device_info.label())
-                                            .event(clone!(page, device_info => move |_:events::Click| {
-                                                page.selected_info.set(Some(device_info.clone()));
-                                            }))
-                                        })
-                                    })))
-                                }),
-                                html!("video" => HtmlVideoElement, {
-                                    .attr("id", &capture_video_id)
-                                    .attr("crossorigin","anonymous")
-                                    .style("width", "100%")
-                                    .text("Video stream not available.")
-                                    .with_node!(element => {
-                                        .after_inserted(clone!(element => move |_| {
-                                            let canplay_cs = Closure::<dyn FnMut(_)>::new(clone!(element => move |_: Event| {
-                                                let width = element.parent_element().map(|parent| parent.client_width() as u32).unwrap_or(700);
-                                                let video_height = element.video_height();
-                                                let video_width = element.video_width();
-                                                let height = video_height * width / video_width;
-                                                element.set_width(width);
-                                                element.set_height(height);
-                                            }));
-
-                                            element.set_oncanplay(Some(&canplay_cs.as_ref().unchecked_ref()));
-                                            canplay_cs.forget();
-                                        }))
-                                    })
-                                }),
-                                html!("canvas", {
-                                    .attr("id", &capture_canvas_id)
-                                    .visible(false)
-                                }),
-                                html!("button", {
-                                    .attr("type","button")
-                                    .attr("data-bs-dismiss", "modal")
-                                    .class(capture_button)
-                                    .child(html!("i", {.class(class::FA_CIRCLE_NOTCH)}))
-                                    .event(clone!(page, app, capture_video_id => move|_: events::Click| {
-                                        let video_elm_opt = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok());
-                                        let canvas_elm_opt = app.get_id(&capture_canvas_id).and_then(|elm| elm.dyn_into::<HtmlCanvasElement>().ok());
-                                        if let (Some(canvas_elm), Some(video_elm)) = (canvas_elm_opt, video_elm_opt) {
-                                            let width = video_elm.video_width();
-                                            let height = video_elm.video_height();
-                                            if width > 0 && height > 0 {
-                                                canvas_elm.set_width(width);
-                                                canvas_elm.set_height(height);
-
-                                                if let Some(ctx) = canvas_elm.get_context("2d").ok().flatten().and_then(|obj| obj.dyn_into::<CanvasRenderingContext2d>().ok()) {
-                                                    // MacOS Safari in Guest mode will prevent writing video to canvas, result in zero-size image in both
-                                                    // elm.toDataURL() and elm.toBlob() method below without any error
-                                                    if let Err(e) = ctx.draw_image_with_html_video_element_and_dw_and_dh(&video_elm, 0.0, 0.0, width as f64, height as f64) {
-                                                        let error = js_sys::Error::from(e);
-                                                        let message: String = error.to_js_string().into();
-                                                        app.alert_error("ไม่สามารถจับภาพได้", &message);
-                                                    }
-
-                                                    // // elm.toDataURL() method
-                                                    // log::debug!("Before to_data_url_with_type");
-                                                    // match canvas_elm.to_data_url_with_type("image/png") {
-                                                    //     Ok(data_url) => {
-                                                    //         log::debug!("data_url size: {}", data_url.len());
-                                                    //         match DataUrl::process(&data_url) {
-                                                    //             Ok(url) => {
-                                                    //                 match url.decode_to_vec() {
-                                                    //                     Ok((data, _fragment)) => {
-                                                    //                         log::debug!("data size: {}", data.len());
-                                                    //                         match bytes_to_blob(&data, "image/png") {
-                                                    //                             Ok(blob) => {
-                                                    //                                 // still 0
-                                                    //                                 log::debug!("Blob size: {}", blob.size());
-                                                    //                                 let options = FilePropertyBag::new();
-                                                    //                                 options.set_type("image/png");
-                                                    //                                 let arr = Array::new();
-                                                    //                                 arr.push(&blob);
-                                                    //                                 match File::new_with_blob_sequence_and_options(&arr, "captured.png", &options) {
-                                                    //                                     Ok(file) => {
-                                                    //                                         log::debug!("File {} size: {}", file.name(), file.size());
-                                                    //                                         page.file_list.lock_mut().push(file);
-                                                    //                                     }
-                                                    //                                     Err(e) => {
-                                                    //                                         let error = js_sys::Error::from(e);
-                                                    //                                         let message: String = error.to_js_string().into();
-                                                    //                                         app.alert_error("Error create file from blob", &message);
-                                                    //                                     }
-                                                    //                                 }
-                                                    //                             }
-                                                    //                             Err(e) => {
-                                                    //                                 let error = js_sys::Error::from(e);
-                                                    //                                 let message: String = error.to_js_string().into();
-                                                    //                                 app.alert_error("Error bytes_to_blob", &message);
-                                                    //                             }
-                                                    //                         }
-                                                    //                     }
-                                                    //                     Err(e) => {
-                                                    //                         app.alert_error("Error decode_to_vec", &e.to_string());
-                                                    //                     }
-                                                    //                 }
-                                                    //             }
-                                                    //             Err(e) => {
-                                                    //                 app.alert_error("Error process DataUrl", &e.to_string());
-                                                    //             }
-                                                    //         }
-                                                    //     }
-                                                    //     Err(e) => {
-                                                    //         let error = js_sys::Error::from(e);
-                                                    //         let message: String = error.to_js_string().into();
-                                                    //         app.alert_error("Error to_data_url_with_type: ", &message);
-                                                    //     }
-                                                    // }
-
-                                                    // elm.toBlob() method
-                                                    let upload_cs = Closure::<dyn FnMut(_)>::new(clone!(app, page => move |blob: Blob| {
-                                                        // log::debug!("Blob size: {}", blob.size());
-                                                        let options = FilePropertyBag::new();
-                                                        options.set_type("image/png");
-                                                        let arr = Array::new();
-                                                        arr.push(&blob);
-                                                        match File::new_with_blob_sequence_and_options(&arr, "captured.png", &options) {
-                                                            Ok(file) => {
-                                                                // log::debug!("File {} size: {}", file.name(), file.size());
-                                                                page.file_list.lock_mut().push(file);
-                                                            }
-                                                            Err(e) => {
-                                                                let error = js_sys::Error::from(e);
-                                                                let message: String = error.to_js_string().into();
-                                                                app.alert_error("Error create file from blob", &message);
+                            })
+                        })))
+                        .future(page.selected_info.signal_cloned().for_each(clone!(app, capture_video_id => move |media_info_opt| {
+                            clone!(app, capture_video_id => async move {
+                                if media_info_opt.is_some() {
+                                    if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
+                                        match app.window.with(|w| w.navigator().media_devices()) {
+                                            Ok(media_devices) => {
+                                                if let Some(media_info) = media_info_opt {
+                                                    match get_stream(media_info, media_devices).await {
+                                                        Ok(stream) => {
+                                                            video_elm.set_src_object(Some(&stream));
+                                                            match video_elm.play() {
+                                                                Ok(promise) => {
+                                                                    if let Err(e) = JsFuture::from(promise).await {
+                                                                        let error = js_sys::Error::from(e);
+                                                                        let message: String = error.to_js_string().into();
+                                                                        app.alert_error_with_closed("Error await play video", &message).await;
+                                                                    }
+                                                                }
+                                                                Err(e) => {
+                                                                    let error = js_sys::Error::from(e);
+                                                                    let message: String = error.to_js_string().into();
+                                                                    app.alert_error_with_closed("Error play video", &message).await;
+                                                                }
                                                             }
                                                         }
-                                                    }));
-                                                    // log::debug!("Canvas element size: {}x{}", canvas_elm.width(), canvas_elm.height());
-                                                    if let Err(e) = canvas_elm.to_blob_with_type(&upload_cs.as_ref().unchecked_ref(), "image/png") {
-                                                        let error = js_sys::Error::from(e);
-                                                        let message: String = error.to_js_string().into();
-                                                        app.alert_error("Error canvas to blob", &message);
+                                                        Err(message) => {
+                                                            app.alert_error_with_closed("Error get_stream", &message).await;
+                                                        }
                                                     }
-                                                    upload_cs.forget();
+                                                } else if let Err(e) = stop_video(video_elm) {
+                                                    let error = js_sys::Error::from(e);
+                                                    let message: String = error.to_js_string().into();
+                                                    app.alert_error_with_closed("Error stop_video", &message).await;
                                                 }
                                             }
-                                            if let Err(e) = stop_video(video_elm) {
+                                            Err(e) => {
                                                 let error = js_sys::Error::from(e);
                                                 let message: String = error.to_js_string().into();
-                                                app.alert_error("Error stop_video", &message);
+                                                app.alert_error_with_closed("Error media_devices", &message).await;
                                             }
-                                            page.show_capture_modal.set_neq(false);
                                         }
-                                    }))
-                                }),
-                            ])
-                        }),
-                    ])
-                }),
-                html!("div", {
-                    .class("modal-footer")
-                    .child(html!("button", {
-                        .attr("type", "button")
-                        .class(class::BTN_GRAY)
-                        .attr("data-bs-dismiss", "modal")
-                        .text("Close")
-                        .event(clone!(page => move |_:events::Click| {
-                            if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
-                                if let Err(e) = stop_video(video_elm) {
-                                    let error = js_sys::Error::from(e);
-                                    let message: String = error.to_js_string().into();
-                                    app.alert_error("Error stop_video", &message);
+                                    }
                                 }
-                            }
-                            page.show_capture_modal.set_neq(false);
+                            })
+                        })))
+                        .children([
+                            html!("div", {
+                                .style("position","relative")
+                                .style("width", "100%")
+                                .children([
+                                    html!("div", {
+                                        .class("mb-2")
+                                        .child(html!("i", {
+                                            .class(class::FA_SYNC)
+                                            .class("me-1")
+                                            .style("cursor","pointer")
+                                            .event(clone!(page => move |_:events::Click| {
+                                                page.devices_loaded.set(false);
+                                            }))
+                                        }))
+                                        .children_signal_vec(page.media_devices_info.signal_vec_cloned().map(clone!(page => move |device_info| {
+                                            html!("button", {
+                                                .attr("type","button")
+                                                .class(class::BTN_SM_R_BLUEO)
+                                                .text(&device_info.label())
+                                                .event(clone!(page, device_info => move |_:events::Click| {
+                                                    page.selected_info.set(Some(device_info.clone()));
+                                                }))
+                                            })
+                                        })))
+                                    }),
+                                    html!("video" => HtmlVideoElement, {
+                                        .attr("id", &capture_video_id)
+                                        .attr("crossorigin","anonymous")
+                                        .style("width", "100%")
+                                        .text("Video stream not available.")
+                                        .with_node!(element => {
+                                            .after_inserted(clone!(element => move |_| {
+                                                let canplay_cs = Closure::<dyn FnMut(_)>::new(clone!(element => move |_: Event| {
+                                                    let width = element.parent_element().map(|parent| parent.client_width() as u32).unwrap_or(700);
+                                                    let video_height = element.video_height();
+                                                    let video_width = element.video_width();
+                                                    let height = video_height * width / video_width;
+                                                    element.set_width(width);
+                                                    element.set_height(height);
+                                                }));
+
+                                                element.set_oncanplay(Some(&canplay_cs.as_ref().unchecked_ref()));
+                                                canplay_cs.forget();
+                                            }))
+                                        })
+                                    }),
+                                    html!("canvas", {
+                                        .attr("id", &capture_canvas_id)
+                                        .visible(false)
+                                    }),
+                                    html!("button", {
+                                        .attr("type","button")
+                                        .class(capture_button)
+                                        .child(html!("i", {.class(class::FA_CIRCLE_NOTCH)}))
+                                        .event(clone!(page, app, capture_video_id => move|_: events::Click| {
+                                            let video_elm_opt = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok());
+                                            let canvas_elm_opt = app.get_id(&capture_canvas_id).and_then(|elm| elm.dyn_into::<HtmlCanvasElement>().ok());
+                                            if let (Some(canvas_elm), Some(video_elm)) = (canvas_elm_opt, video_elm_opt) {
+                                                let width = video_elm.video_width();
+                                                let height = video_elm.video_height();
+                                                if width > 0 && height > 0 {
+                                                    canvas_elm.set_width(width);
+                                                    canvas_elm.set_height(height);
+
+                                                    if let Some(ctx) = canvas_elm.get_context("2d").ok().flatten().and_then(|obj| obj.dyn_into::<CanvasRenderingContext2d>().ok()) {
+                                                        // MacOS Safari in Guest mode will prevent writing video to canvas, result in zero-size image in both
+                                                        // elm.toDataURL() and elm.toBlob() method below without any error
+                                                        if let Err(e) = ctx.draw_image_with_html_video_element_and_dw_and_dh(&video_elm, 0.0, 0.0, width as f64, height as f64) {
+                                                            let error = js_sys::Error::from(e);
+                                                            let message: String = error.to_js_string().into();
+                                                            app.alert_error("ไม่สามารถจับภาพได้", &message);
+                                                        }
+
+                                                        // // elm.toDataURL() method
+                                                        // log::debug!("Before to_data_url_with_type");
+                                                        // match canvas_elm.to_data_url_with_type("image/png") {
+                                                        //     Ok(data_url) => {
+                                                        //         log::debug!("data_url size: {}", data_url.len());
+                                                        //         match DataUrl::process(&data_url) {
+                                                        //             Ok(url) => {
+                                                        //                 match url.decode_to_vec() {
+                                                        //                     Ok((data, _fragment)) => {
+                                                        //                         log::debug!("data size: {}", data.len());
+                                                        //                         match bytes_to_blob(&data, "image/png") {
+                                                        //                             Ok(blob) => {
+                                                        //                                 // still 0
+                                                        //                                 log::debug!("Blob size: {}", blob.size());
+                                                        //                                 let options = FilePropertyBag::new();
+                                                        //                                 options.set_type("image/png");
+                                                        //                                 let arr = Array::new();
+                                                        //                                 arr.push(&blob);
+                                                        //                                 match File::new_with_blob_sequence_and_options(&arr, "captured.png", &options) {
+                                                        //                                     Ok(file) => {
+                                                        //                                         log::debug!("File {} size: {}", file.name(), file.size());
+                                                        //                                         page.file_list.lock_mut().push(file);
+                                                        //                                     }
+                                                        //                                     Err(e) => {
+                                                        //                                         let error = js_sys::Error::from(e);
+                                                        //                                         let message: String = error.to_js_string().into();
+                                                        //                                         app.alert_error("Error create file from blob", &message);
+                                                        //                                     }
+                                                        //                                 }
+                                                        //                             }
+                                                        //                             Err(e) => {
+                                                        //                                 let error = js_sys::Error::from(e);
+                                                        //                                 let message: String = error.to_js_string().into();
+                                                        //                                 app.alert_error("Error bytes_to_blob", &message);
+                                                        //                             }
+                                                        //                         }
+                                                        //                     }
+                                                        //                     Err(e) => {
+                                                        //                         app.alert_error("Error decode_to_vec", &e.to_string());
+                                                        //                     }
+                                                        //                 }
+                                                        //             }
+                                                        //             Err(e) => {
+                                                        //                 app.alert_error("Error process DataUrl", &e.to_string());
+                                                        //             }
+                                                        //         }
+                                                        //     }
+                                                        //     Err(e) => {
+                                                        //         let error = js_sys::Error::from(e);
+                                                        //         let message: String = error.to_js_string().into();
+                                                        //         app.alert_error("Error to_data_url_with_type: ", &message);
+                                                        //     }
+                                                        // }
+
+                                                        // elm.toBlob() method
+                                                        let upload_cs = Closure::<dyn FnMut(_)>::new(clone!(app, page => move |blob: Blob| {
+                                                            // log::debug!("Blob size: {}", blob.size());
+                                                            let options = FilePropertyBag::new();
+                                                            options.set_type("image/png");
+                                                            let arr = Array::new();
+                                                            arr.push(&blob);
+                                                            match File::new_with_blob_sequence_and_options(&arr, "captured.png", &options) {
+                                                                Ok(file) => {
+                                                                    // log::debug!("File {} size: {}", file.name(), file.size());
+                                                                    page.file_list.lock_mut().push(file);
+                                                                }
+                                                                Err(e) => {
+                                                                    let error = js_sys::Error::from(e);
+                                                                    let message: String = error.to_js_string().into();
+                                                                    app.alert_error("Error create file from blob", &message);
+                                                                }
+                                                            }
+                                                        }));
+                                                        // log::debug!("Canvas element size: {}x{}", canvas_elm.width(), canvas_elm.height());
+                                                        if let Err(e) = canvas_elm.to_blob_with_type(&upload_cs.as_ref().unchecked_ref(), "image/png") {
+                                                            let error = js_sys::Error::from(e);
+                                                            let message: String = error.to_js_string().into();
+                                                            app.alert_error("Error canvas to blob", &message);
+                                                        }
+                                                        upload_cs.forget();
+                                                    }
+                                                }
+                                                if let Err(e) = stop_video(video_elm) {
+                                                    let error = js_sys::Error::from(e);
+                                                    let message: String = error.to_js_string().into();
+                                                    app.alert_error("Error stop_video", &message);
+                                                }
+                                                app.clear_modal_backdrop();
+                                                page.show_capture_modal.set_neq(false);
+                                            }
+                                        }))
+                                    }),
+                                ])
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .text("Close")
+                            .event(clone!(page => move |_:events::Click| {
+                                if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
+                                    if let Err(e) = stop_video(video_elm) {
+                                        let error = js_sys::Error::from(e);
+                                        let message: String = error.to_js_string().into();
+                                        app.alert_error("Error stop_video", &message);
+                                    }
+                                }
+                                app.clear_modal_backdrop();
+                                page.show_capture_modal.set_neq(false);
+                            }))
                         }))
-                    }))
-                }),
-            ])
+                    }),
+                ])
+            }))
         })
     }
 }

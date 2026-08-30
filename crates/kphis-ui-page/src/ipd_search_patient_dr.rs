@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement};
+use web_sys::HtmlInputElement;
 
 use kphis_model::{
     endpoint::EndPoint,
@@ -17,7 +17,7 @@ use kphis_model::{
 };
 use kphis_ui_app::App;
 use kphis_ui_component::modal::ipd_passcode::IpdPasscodeForm;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{datetime_th_opt_relative, datetime_th_relative},
     util::str_some,
@@ -47,9 +47,10 @@ pub struct IpdSearchPatientDrPage {
     search_result: MutableVec<Rc<IpdSearchPatientDrResponse>>,
 
     sorted_by: Mutable<SortBy>,
-    is_desc: Mutable<bool>,
+    is_asc: Mutable<bool>,
 
     changed: Mutable<bool>,
+    show_passcode_modal: Mutable<bool>,
 }
 
 impl IpdSearchPatientDrPage {
@@ -77,7 +78,7 @@ impl IpdSearchPatientDrPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::BedNo);
-                        page.is_desc.set_neq(false);
+                        page.is_asc.set_neq(false);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -102,15 +103,6 @@ impl IpdSearchPatientDrPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("ward") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("doctor_in_charge") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("consult_dr_search") {
-                        NiceSelect::new_default(&elm);
-                    }
                     page.changed.set(true);
                 }
                 async {}
@@ -135,21 +127,13 @@ impl IpdSearchPatientDrPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("ward","แผนก"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "ward")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(ward_select_option.iter().map(|option| {
-                                                doms::select_option(option, &app.ward_select.lock_ref())
-                                            }))
-                                            .apply(mixins::string_value_select(app.ward_select.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "ward", Some("ทั้งหมด"), false,
+                                        app.ward_select.clone(),
+                                        page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        ward_select_option,
+                                    ),
                                 ])
                             })),
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
@@ -182,10 +166,10 @@ impl IpdSearchPatientDrPage {
                                     dom.child(html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_BLUE)
-                                        .attr("data-bs-toggle","modal")
-                                        .attr("data-bs-target","#passcodeModal")
-                                        .child(html!("i", {
-                                            .class(class::FA_COG)
+                                        .child(html!("i", {.class(class::FA_COG)}))
+                                        .event(clone!(app, page => move |_: events::Click| {
+                                            page.show_passcode_modal.set(true);
+                                            app.show_modal_backdrop();
                                         }))
                                     }))
                                 })
@@ -194,21 +178,12 @@ impl IpdSearchPatientDrPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "doctor_in_charge")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, &page.doctor_in_charge.lock_ref())
-                                            }))
-                                            .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "doctor_in_charge", Some("ทั้งหมด"), false,
+                                        page.doctor_in_charge.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        doctor_select_option,
+                                    ),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -217,9 +192,6 @@ impl IpdSearchPatientDrPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = page.doctor_in_charge.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                    NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                }
                                                 page.doctor_in_charge.set_neq(doctor_code);
                                                 page.changed.set_neq(true);
                                             }
@@ -234,9 +206,6 @@ impl IpdSearchPatientDrPage {
                                             let no_doctor = page.doctor_in_charge.lock_ref().is_empty();
                                             if !no_doctor {
                                                 page.doctor_in_charge.set_neq(String::new());
-                                                if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
                                                 page.changed.set_neq(true);
                                             }
                                         }))
@@ -248,21 +217,12 @@ impl IpdSearchPatientDrPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("consult_dr_search","แพทย์ผู้ตอบ Consult"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "consult_dr_search")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(all_doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, "")
-                                            }))
-                                            .apply(mixins::string_value_select(page.consult_dr_search.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "consult_dr_search", Some("ทั้งหมด"), false,
+                                        page.consult_dr_search.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        all_doctor_select_option,
+                                    ),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -271,9 +231,6 @@ impl IpdSearchPatientDrPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = page.consult_dr_search.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                if let Some(elm) = app.get_id("consult_dr_search") {
-                                                    NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                }
                                                 page.consult_dr_search.set_neq(doctor_code);
                                                 page.changed.set_neq(true);
                                             }
@@ -287,9 +244,6 @@ impl IpdSearchPatientDrPage {
                                             let no_doctor = page.consult_dr_search.lock_ref().is_empty();
                                             if !no_doctor {
                                                 page.consult_dr_search.set_neq(String::new());
-                                                if let Some(elm) = app.get_id("consult_dr_search") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
                                                 page.changed.set_neq(true);
                                             }
                                         }))
@@ -330,13 +284,11 @@ impl IpdSearchPatientDrPage {
             })))
             // /kphis-config-ipd-ward-passcode.php
             .apply_if(allow_passcode, |dom| { dom
-                .child(html!("div", {
-                    .class("modal")
-                    .attr("id", "passcodeModal")
-                    .attr("role","dialog")
-                    .attr("tabindex", "-1")
-                    .child(IpdPasscodeForm::render(IpdPasscodeForm::new(), app.clone()))
-                }))
+                .child_signal(page.show_passcode_modal.signal().map(clone!(app, page => move |show| {
+                    show.then(|| {
+                        IpdPasscodeForm::render_modal(IpdPasscodeForm::new(), page.show_passcode_modal.clone(), app.clone())
+                    })
+                })))
             })
             .child_signal(app.is_wide_screen_card_or_table().map(clone!(app, page => move |is_wide_card| {
                 Some(match is_wide_card {
@@ -362,7 +314,7 @@ impl IpdSearchPatientDrPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_desc.get() {
+                            if page.is_asc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
                                     SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
@@ -386,12 +338,6 @@ impl IpdSearchPatientDrPage {
                             page.search_result.lock_mut().replace_cloned(items);
                         });
                         doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| { table
-                            .attr("id", "admit_table")
-                            .attr("data-filter", "false")
-                            .attr("data-info", "false")
-                            .attr("data-paging", "false")
-                            // .attr("data-scroll-collapse","true")
-                            // .attr("data-scroll-y","50vh")
                             .children([
                                 html!("thead", {
                                     .child(html!("tr", {
@@ -401,23 +347,23 @@ impl IpdSearchPatientDrPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("แผนก")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เตียง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์ผู้ตอบ Consult")}),
@@ -427,11 +373,11 @@ impl IpdSearchPatientDrPage {
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("Severity")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxFcNoteType, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxFcNoteType, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลา Order ล่าสุด")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col")
                                                 .attr("title","มีผลแลปที่ยังไม่ได้อ่าน")

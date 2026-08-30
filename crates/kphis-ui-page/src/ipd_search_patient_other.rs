@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement};
+use web_sys::HtmlInputElement;
 
 use kphis_model::{
     route::Route,
@@ -13,7 +13,7 @@ use kphis_model::{
     tab::Tab,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{datetime_th_opt_relative, datetime_th_relative},
     util::str_some,
@@ -41,7 +41,7 @@ pub struct IpdSearchPatientOtherPage {
     search_result: MutableVec<Rc<IpdSearchPatientOtherResponse>>,
 
     sorted_by: Mutable<SortBy>,
-    is_desc: Mutable<bool>,
+    is_asc: Mutable<bool>,
 
     changed: Mutable<bool>,
 }
@@ -70,7 +70,7 @@ impl IpdSearchPatientOtherPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::BedNo);
-                        page.is_desc.set_neq(false);
+                        page.is_asc.set_neq(false);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -88,12 +88,6 @@ impl IpdSearchPatientOtherPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("ward") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("doctor_in_charge") {
-                        NiceSelect::new_default(&elm);
-                    }
                     page.changed.set(true);
                 }
                 async {}
@@ -118,29 +112,14 @@ impl IpdSearchPatientOtherPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("ward","แผนก"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "ward")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(ward_select_option.iter().map(|option| {
-                                                doms::select_option(option, &app.ward_select.lock_ref())
-                                            }))
-                                            // .apply(mixins::string_value_select(page.ward.clone(), page.changed.clone()))
-                                            .prop_signal("value", app.ward_select.signal_cloned())
-                                            .with_node!(element => {
-                                                .event(clone!(app, page, element => move |_: events::Change| {
-                                                    app.ward_select.set_neq(element.value());
-                                                    app.to_local_storage();
-                                                    page.changed.set_neq(true);
-                                                }))
-                                            })
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "ward", Some("ทั้งหมด"), false,
+                                        app.ward_select.clone(),
+                                        page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM),
+                                        clone!(app => move || app.to_local_storage()),
+                                        ward_select_option,
+                                    ),
                                 ])
                             })),
                             doms::form_inline_group_sm(clone!(page => move |group| { group
@@ -174,21 +153,12 @@ impl IpdSearchPatientOtherPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "doctor_in_charge")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, "")
-                                            }))
-                                            .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "doctor_in_charge", Some("ทั้งหมด"), false,
+                                        page.doctor_in_charge.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        doctor_select_option,
+                                    ),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_RED)
@@ -197,9 +167,6 @@ impl IpdSearchPatientOtherPage {
                                             let no_doctor = page.doctor_in_charge.lock_ref().is_empty();
                                             if !no_doctor {
                                                 page.doctor_in_charge.set_neq(String::new());
-                                                if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
                                                 page.changed.set_neq(true);
                                             }
                                         }))
@@ -263,7 +230,7 @@ impl IpdSearchPatientOtherPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_desc.get() {
+                            if page.is_asc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
                                     SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
@@ -297,36 +264,36 @@ impl IpdSearchPatientOtherPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เตียง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Vital Sign")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Nurse Note")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxFcNoteDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxFcNoteDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Order")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
                                             }),
                                         ])
                                     }))

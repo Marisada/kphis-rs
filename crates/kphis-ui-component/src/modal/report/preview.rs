@@ -20,11 +20,13 @@ use kphis_model::{
     timer::Timeout,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{class, doms, mixins, pannable::PanState};
+use kphis_ui_core::{class, mixins, pannable::PanState};
 use kphis_util::{
     error::CONTACT_ADMIN,
     util::{str_some, zoom_step},
 };
+
+use crate::modal::modal_show_option_mixins;
 
 static NEXT_ID: AtomicU32 = AtomicU32::new(1);
 
@@ -232,7 +234,14 @@ impl ReportPreview {
         }
     }
 
-    pub fn render(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -308,7 +317,15 @@ impl ReportPreview {
                                 .class("modal-title")
                                 .text(&modal.title())
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -466,8 +483,12 @@ impl ReportPreview {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
-                            .text("ปิด")
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

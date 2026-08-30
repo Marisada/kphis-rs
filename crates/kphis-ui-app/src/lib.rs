@@ -15,7 +15,7 @@ use std::{
 };
 use wasm_bindgen::{JsCast, closure::Closure};
 use wasm_bindgen_futures::JsFuture;
-use web_sys::{Event, EventSource, MessageEvent};
+use web_sys::{Event, EventSource, HtmlElement, MessageEvent};
 
 use kphis_drg_worker::{Thread as DrgThread, drg::model::I10vx};
 use kphis_model::{
@@ -147,6 +147,53 @@ impl App {
                 None
             }
         }
+    }
+
+    /// Add Bootstrap `modal-backdrop` by
+    /// - add <div class="modal-backdrop"></div> to body
+    /// - add: class="modal-open" to body
+    /// - add: style="overflow: hidden;" to body
+    pub fn show_modal_backdrop(&self) {
+        self.window.with(|w| {
+            let document = w.document().unwrap();
+            if document.get_elements_by_class_name("modal-backdrop").length() == 0 {
+                // if document.get_element_by_id("bootstrap-modal-backdrop").is_none() {
+                let body = document.body().unwrap();
+                let backdrop = document.create_element("div").unwrap().dyn_into::<HtmlElement>().unwrap();
+                // backdrop.set_attribute("id", "bootstrap-modal-backdrop").unwrap();
+                backdrop.set_class_name("modal-backdrop show");
+                body.append_child(&backdrop).unwrap();
+                let classes = body.class_list();
+                classes.add_1("modal-open").unwrap();
+                let style = body.style();
+                style.set_property("overflow", "hidden").unwrap();
+                // style.set_property("padding-right", "15px").unwrap();
+            }
+        });
+    }
+
+    /// Clear Bootstrap `modal-backdrop` if exists by
+    /// - remove <div class="modal-backdrop"></div>
+    /// - remove: class="modal-open" from body
+    /// - remove: style="overflow: hidden;" from body
+    /// - remove: style="padding-right: 15px;" from body
+    pub fn clear_modal_backdrop(&self) {
+        self.window.with(|w| {
+            if let Some(backdrop) = w.document().unwrap().get_elements_by_class_name("modal-backdrop").item(0) {
+                // if let Some(backdrop) = w.document().unwrap().get_element_by_id("bootstrap-modal-backdrop") {
+                if let Some(backdrop_parent) = backdrop.parent_node() {
+                    backdrop_parent.remove_child(&backdrop).unwrap();
+                }
+                let body = w.document().unwrap().body().unwrap();
+                let classes = body.class_list();
+                if classes.contains("modal-open") {
+                    classes.remove_1("modal-open").unwrap();
+                }
+                let style = body.style();
+                style.remove_property("overflow").unwrap();
+                style.remove_property("padding-right").unwrap();
+            }
+        });
     }
 
     pub async fn set_clipboard(&self, message: &str) {

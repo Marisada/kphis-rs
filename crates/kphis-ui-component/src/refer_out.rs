@@ -32,7 +32,7 @@ use kphis_util::{
 use crate::{
     gadget::{pdf_button::PdfButtons, searchbox::hosp::HospSearchboxCpn},
     lab,
-    modal::{blank_modal, lab_selector::LabSelector, vs_selector::VsSelector},
+    modal::{lab_selector::LabSelector, vs_selector::VsSelector},
 };
 
 #[derive(Clone, Default, PartialEq)]
@@ -1061,7 +1061,6 @@ impl ReferOutCpn {
                                 .class(class::NAV_ITEM_LINK_P2)
                                 .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::ReferOut)))
                                 .attr("id", "nav-refer-out-tab")
-                                .attr("data-bs-toggle","pill")
                                 .attr("href","#")
                                 .text("Refer Out")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -1078,7 +1077,6 @@ impl ReferOutCpn {
                                 .class(class::NAV_ITEM_LINK_P2)
                                 .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::ReferNote)))
                                 .attr("id", "nav-refer-note-tab")
-                                .attr("data-bs-toggle","pill")
                                 .attr("href","#")
                                 .text("บันทึกข้อความ")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -1107,29 +1105,13 @@ impl ReferOutCpn {
                         })
                     })))
                 }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "vsSelectorModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app => move |opt| {
-                        opt.as_ref().map(clone!(app => move |modal| {
-                            VsSelector::render(modal.clone(), app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "labSelectorModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.lab_selector_modal.signal_cloned().map(clone!(app => move |opt| {
-                        opt.as_ref().map(clone!(app => move |modal| {
-                            LabSelector::render(modal.clone(), app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone()))
+            })))
+            .child_signal(page.lab_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| LabSelector::render_modal(modal.clone(), page.lab_selector_modal.clone(), app.clone()))
+            })))
         })
     }
 
@@ -1856,16 +1838,15 @@ impl ReferOutCpn {
                                 dom.child(html!("button", {
                                     .attr("type", "button")
                                     .class(class::BTN_SM_RT_BLUE)
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", "#vsSelectorModal")
                                     .child(html!("i", {.class(class::FA_HEARTBEAT)}))
-                                    .event(clone!(page => move |_: events::Click| {
+                                    .event(clone!(app, page => move |_: events::Click| {
                                         page.vs_selector_modal.set(Some(VsSelector::new(
                                             true,
                                             page.patient.clone(),
                                             page.hpi.clone(),
                                             page.changed.clone(),
                                         )));
+                                        app.show_modal_backdrop();
                                     }))
                                 }))
                             } else {
@@ -1906,16 +1887,15 @@ impl ReferOutCpn {
                                         html!("button", {
                                             .attr("type", "button")
                                             .class(class::BTN_SM_RT_BLUE)
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", "#labSelectorModal")
                                             .child(html!("i", {.class(class::FA_FLASK)}))
-                                            .event(clone!(page => move |_: events::Click| {
+                                            .event(clone!(app, page => move |_: events::Click| {
                                                 page.lab_selector_modal.set(Some(LabSelector::new(
                                                     true,
                                                     page.patient.clone(),
                                                     page.lab_text.clone(),
                                                     page.changed.clone(),
                                                 )));
+                                                app.show_modal_backdrop();
                                             }))
                                         }),
                                         html!("button", {

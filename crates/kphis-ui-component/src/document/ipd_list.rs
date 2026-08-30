@@ -22,7 +22,7 @@ use kphis_ui_core::{class, mixins};
 use kphis_util::util::str_some;
 
 use super::{PdfInner, PdfSource, check_used, check_used_group, opd_er_list::OpdErDocumentListCpn};
-use crate::modal::{blank_modal, report::preview::ReportPreview};
+use crate::modal::report::preview::ReportPreview;
 
 /// - GET `EndPoint::IpdDocumentListVnAn`
 /// - GET `EndPoint::ReportTemplateTypeId` (guarded, remove `รวม xxx` btns)
@@ -102,9 +102,10 @@ impl IpdDocumentListCpn {
         }
     }
 
-    fn set_report_modal(&self) {
+    fn set_report_modal(&self, app: Rc<App>) {
         if let Some(inner) = self.pdf_path.get_cloned() {
             self.report_modal.set(Some(ReportPreview::new(inner.report, inner.ids, None, true, inner.title)));
+            app.show_modal_backdrop();
         }
     }
 
@@ -144,9 +145,9 @@ impl IpdDocumentListCpn {
                 let busy = app.loader_is_loading(),
                 let render = page.render_pdf.signal() =>
                 !busy && *render
-            ).for_each(clone!(page => move |ready| {
+            ).for_each(clone!(app, page => move |ready| {
                 if ready {
-                    page.set_report_modal();
+                    page.set_report_modal(app.clone());
                     //Self::pdf_cert(page.clone(), app.clone());
                     page.render_pdf.set_neq(false);
                 }
@@ -199,8 +200,6 @@ impl IpdDocumentListCpn {
                             .child(html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_GRAY)
-                                .attr("data-bs-toggle", "modal")
-                                .attr("data-bs-target", "#ipd-doc-report-modal")
                                 .child(html!("i", {.class(class::FA_PRINT)}))
                                 .text(" พิมพ์เอกสารใบปะหน้า")
                                 .event(clone!(app, page => move |_: events::Click| {
@@ -249,65 +248,65 @@ impl IpdDocumentListCpn {
                             .child(html!("ul", {
                                 .class(class::LIST_GROUP_FLUSH_OVFA)
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_summary2).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Discharge Summary", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Discharge Summary", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdSummary, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_consent).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "ใบยินยอม", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "ใบยินยอม", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|1|1"].concat(), Some(DocumentType::InformedConsent.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_refer_in).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "ใบ Refer-In", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "ใบ Refer-In", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|3|1"].concat(), Some(DocumentType::ReferIn.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| (res.has_data_refer_out, res.has_scan_refer_out)).map(clone!(app, page, scan_template => move |(is_used, has_scan)| {
-                                    (page.is_full || is_used || has_scan).then(|| check_used(0, "#ipd-doc-report-modal", "ใบ Refer-Out", vec![
+                                    (page.is_full || is_used || has_scan).then(|| check_used(0, "ใบ Refer-Out", vec![
                                         PdfSource::HosXp(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::ReferOut, &app.state().report_coercions()), an, None)), ""),
                                         PdfSource::Scan(has_scan, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|4|1"].concat(), Some(DocumentType::ReferOut.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_dr_admission_note).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "แบบประเมินแรกรับใหม่ผู้ป่วยใน", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "แบบประเมินแรกรับใหม่ผู้ป่วยใน", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdAdmissionNoteDr, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_nurse_admission_note).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "ใบการประเมินสภาพผู้ป่วยแรกรับและแผนสุขภาพ", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "ใบการประเมินสภาพผู้ป่วยแรกรับและแผนสุขภาพ", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdAdmissionNoteNurse, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(clone!(app, page => move |res| {
-                                    (page.is_full || res.has_data_med_reconciliation || res.has_data_med_reconciliation_hosxp).then(|| check_used(0, "#ipd-doc-report-modal", "Med Reconciliation", vec![
+                                    (page.is_full || res.has_data_med_reconciliation || res.has_data_med_reconciliation_hosxp).then(|| check_used(0, "Med Reconciliation", vec![
                                         PdfSource::HosXp(res.has_data_med_reconciliation_hosxp, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdMedReconciliationHosXp, &app.state().report_coercions()), an, None)), ""),
                                         PdfSource::Kphis(res.has_data_med_reconciliation, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdMedReconciliation, &app.state().report_coercions()), an, None)), ""),
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_order || res.has_data_progress_note).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Order and Progress Note", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Order and Progress Note", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdOrder, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_dr_consult).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Consulation Report", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Consulation Report", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdConsult, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| (res.has_data_operation, res.has_scan_oper)).map(clone!(app, page, scan_template => move |(is_used, has_scan)| {
-                                    (page.is_full || is_used || has_scan).then(|| check_used(0, "#ipd-doc-report-modal", "Operative Report", vec![
+                                    (page.is_full || is_used || has_scan).then(|| check_used(0, "Operative Report", vec![
                                         PdfSource::HosXp(is_used, None, ""),
                                         PdfSource::Scan(has_scan, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|12|1"].concat(), Some(DocumentType::Operation.label().to_owned()))), ""),
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_anes).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Anesthetic Report", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Anesthetic Report", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|13|1"].concat(), Some(DocumentType::Anesthesia.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| (res.has_scan_labour, res.has_data_vital_sign)).map(clone!(app, page, scan_template => move |(is_scan, is_vs)| {
-                                    (page.is_full || (is_scan || is_vs)).then(|| check_used(0, "#ipd-doc-report-modal", "Labour Record", vec![
+                                    (page.is_full || (is_scan || is_vs)).then(|| check_used(0, "Labour Record", vec![
                                         PdfSource::Scan(is_scan, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|14|1"].concat(), Some(DocumentType::Labour.label().to_owned()))), ""),
                                         PdfSource::Kphis(is_vs, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdPartographWho, &app.state().report_coercions()), an, None)), "Partograph WHO"),
                                         PdfSource::Kphis(is_vs, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdPartograph, &app.state().report_coercions()), an, None)), "Partograph"),
@@ -319,7 +318,7 @@ impl IpdDocumentListCpn {
                                     (page.is_full || is_used).then(|| check_used_group(0, "Paramedical Section", is_used))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_physio).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "Physiotherapy Sheet (กายภาพบำบัด)", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "Physiotherapy Sheet (กายภาพบำบัด)", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|15|1"].concat(), Some(DocumentType::Physiotherapy.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
@@ -331,41 +330,41 @@ impl IpdDocumentListCpn {
                                     (page.is_full || is_used).then(|| check_used_group(0, "Pathology, Laboratory, X-rays Report", is_used))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_culture).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "ผลการเพาะเชื้อ/ชิ้นเนื้อ", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "ผลการเพาะเชื้อ/ชิ้นเนื้อ", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|5|1"].concat(), Some(DocumentType::CulturePatho.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_lab).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "Laboratory Report", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "Laboratory Report", vec![
                                         PdfSource::HosXp(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::Lab, &app.state().report_coercions()), an, None)), ""),
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::LabSummary, &app.state().report_coercions()), an, None)), "Lab summary"),
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_ekg).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "Electrocardiogram Report", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "Electrocardiogram Report", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|8|1"].concat(), Some(DocumentType::EKG.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| (res.has_data_xray, res.has_scan_xray)).map(clone!(app, page, scan_template => move |(is_used, has_scan)| {
-                                    (page.is_full || is_used || has_scan).then(|| check_used(1, "#ipd-doc-report-modal", "X-rays Report", vec![
+                                    (page.is_full || is_used || has_scan).then(|| check_used(1, "X-rays Report", vec![
                                         PdfSource::HosXp(is_used, None, ""),
                                         PdfSource::Scan(has_scan, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|9|1"].concat(), Some(DocumentType::Xray.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| (res.has_data_ct, res.has_scan_ct)).map(clone!(app, page, scan_template => move |(is_used, has_scan)| {
-                                    (page.is_full || is_used || has_scan).then(|| check_used(1, "#ipd-doc-report-modal", "CT scan", vec![
+                                    (page.is_full || is_used || has_scan).then(|| check_used(1, "CT scan", vec![
                                         PdfSource::HosXp(is_used, None, ""),
                                         PdfSource::Scan(has_scan, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|10|1"].concat(), Some(DocumentType::CT.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| (res.has_data_mri, res.has_scan_mri)).map(clone!(app, page, scan_template => move |(is_used, has_scan)| {
-                                    (page.is_full || is_used || has_scan).then(|| check_used(1, "#ipd-doc-report-modal", "MRI", vec![
+                                    (page.is_full || is_used || has_scan).then(|| check_used(1, "MRI", vec![
                                         PdfSource::HosXp(is_used, None, ""),
                                         PdfSource::Scan(has_scan, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|11|1"].concat(), Some(DocumentType::MRI.label().to_owned()))), ""),
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_special).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "ผลตรวจพิเศษ", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "ผลตรวจพิเศษ", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|7|1"].concat(), Some(DocumentType::SpecialLab.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
@@ -375,23 +374,23 @@ impl IpdDocumentListCpn {
                                     (page.is_full || is_used).then(|| check_used_group(0, "Nursing Section", is_used))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_focus_list).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "Focus List", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "Focus List", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdFocusList, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_focus_note).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "Nurses' Notes", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "Nurses' Notes", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdFocusNote, &app.state().report_coercions()), an, None)), ""),
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdDischargePlan, &app.state().report_coercions()), an, None)), "Discharge plan"),
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_index_plan).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "Index (Nurse Planning)", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "Index (Nurse Planning)", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdIndexPlan, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_vital_sign).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(1, "#ipd-doc-report-modal", "Vital Sign Record", vec![
+                                    (page.is_full || is_used).then(|| check_used(1, "Vital Sign Record", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdVitalSignGeneral, &app.state().report_coercions()), an, None)), "V/S"),
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdVitalSignNeuro, &app.state().report_coercions()), an, None)), "Neuro"),
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdVitalSignLabour, &app.state().report_coercions()), an, None)), "LR"),
@@ -399,64 +398,64 @@ impl IpdDocumentListCpn {
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_vital_sign).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Graphic (T.P.R.) Chart", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Graphic (T.P.R.) Chart", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdTPR, &app.state().report_coercions()), an, None)), ""),
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_io).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Fluid Balance Summary", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Fluid Balance Summary", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdIo, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_data_index_plan).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Medication Administration Record (eMAR)", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Medication Administration Record (eMAR)", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdMAR, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_blood).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Blood transfusion Report (ใบของห้องเลือด)", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Blood transfusion Report (ใบของห้องเลือด)", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|6|1"].concat(), Some(DocumentType::Blood.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_opd_card).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "OPD card", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "OPD card", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|20|1"].concat(), Some(DocumentType::OPDcard.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_insure).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "ใบตรวจสอบสิทธิ์", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "ใบตรวจสอบสิทธิ์", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|2|1"].concat(), Some(DocumentType::InsureCheck.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_alt_med).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "บันทึกการแพทย์ทางเลือก", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "บันทึกการแพทย์ทางเลือก", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|16|1"].concat(), Some(DocumentType::AlternativeRx.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_nutrition).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "บันทึกโภชนาการ", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "บันทึกโภชนาการ", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|17|1"].concat(), Some(DocumentType::Nutrition.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_other_sp_clinic).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Other Special Clinical Report", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Other Special Clinical Report", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|19|1"].concat(), Some(DocumentType::OtherSpClinic.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_others).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "เอกสารอื่นๆ", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "เอกสารอื่นๆ", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|18|1"].concat(), Some(DocumentType::Others.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| res.has_scan_finance).map(clone!(app, page, scan_template => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "เอกสารใบค่าใช้จ่าย", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "เอกสารใบค่าใช้จ่าย", vec![
                                         PdfSource::Scan(is_used, page.an.as_ref().map(|an| PdfInner::new(scan_template.clone(), [an,"|21|1"].concat(), Some(DocumentType::Finance.label().to_owned()))), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
                                 .child_signal(page.result.signal_cloned().map(|res| {
                                     res.has_data_order || res.has_data_progress_note || res.has_data_dr_consult || res.has_data_index_plan || res.has_data_vital_sign || res.has_data_io || res.has_data_lab
                                 }).map(clone!(app, page => move |is_used| {
-                                    (page.is_full || is_used).then(|| check_used(0, "#ipd-doc-report-modal", "Event Logs", vec![
+                                    (page.is_full || is_used).then(|| check_used(0, "Event Logs", vec![
                                         PdfSource::Kphis(is_used, page.an.clone().map(|an| PdfInner::new(TypstReport::from_system_with_coercion(SystemReport::IpdEventLog, &app.state().report_coercions()), an, None)), "")
                                     ], page.pdf_path.clone(), page.render_pdf.clone(), app.clone()))
                                 })))
@@ -464,19 +463,13 @@ impl IpdDocumentListCpn {
                         }),
                     ])
                 }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "ipd-doc-report-modal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.report_modal.signal_cloned().map(clone!(app => move |opt| {
-                        opt.as_ref().map(clone!(app => move |modal| {
-                            // GET `EndPoint::ReportRawTemplateTypeId`
-                            ReportPreview::render(modal.clone(), app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.report_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    // GET `EndPoint::ReportRawTemplateTypeId`
+                    ReportPreview::render_modal(modal, page.report_modal.clone(), app.clone())
+                })
+            })))
         })
     }
 }

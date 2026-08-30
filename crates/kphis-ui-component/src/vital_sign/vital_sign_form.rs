@@ -31,7 +31,6 @@ use kphis_util::{
 };
 
 use crate::modal::{
-    blank_modal,
     lab_wbc::LabWbc,
     scoring::{
         aggression_oas::AggressionOAS, alcohol_aws::AlcoholAws, alcohol_ciwa_ar::AlcoholCiwaAr, amphetamine_awq::AmphetamineAwqV2, barthel_index::BarthelIndex, braden::Braden, depress_2q::Depress2Q, depress_9q::Depress9Q,
@@ -747,9 +746,9 @@ impl VitalSignFormCpn {
                                             .attr("role", "tablist")
                                             .children([
                                                 html!("a", {
-                                                    .class(class::NAV_ITEM_LINK_ACTIVE_P2)
                                                     .attr("id", "nav-vitalsign-tab")
-                                                    .attr("data-bs-toggle", "pill")
+                                                    .class(class::NAV_ITEM_LINK_P2)
+                                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::VitalSign)))
                                                     .attr("href", "#")
                                                     .text("VS")
                                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -758,9 +757,9 @@ impl VitalSignFormCpn {
                                                     }))
                                                 }),
                                                 html!("a", {
-                                                    .class(class::NAV_ITEM_LINK_P2)
                                                     .attr("id", "nav-neuro-tab")
-                                                    .attr("data-bs-toggle", "pill")
+                                                    .class(class::NAV_ITEM_LINK_P2)
+                                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::NeuroSign)))
                                                     .attr("href", "#")
                                                     .text("NS")
                                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -769,9 +768,9 @@ impl VitalSignFormCpn {
                                                     }))
                                                 }),
                                                 html!("a", {
-                                                    .class(class::NAV_ITEM_LINK_P2)
                                                     .attr("id", "nav-score-tab")
-                                                    .attr("data-bs-toggle", "pill")
+                                                    .class(class::NAV_ITEM_LINK_P2)
+                                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Score)))
                                                     .attr("href", "#")
                                                     .text("Score")
                                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -780,9 +779,9 @@ impl VitalSignFormCpn {
                                                     }))
                                                 }),
                                                 html!("a", {
-                                                    .class(class::NAV_ITEM_LINK_P2)
                                                     .attr("id", "nav-had-tab")
-                                                    .attr("data-bs-toggle", "pill")
+                                                    .class(class::NAV_ITEM_LINK_P2)
+                                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Had)))
                                                     .attr("href", "#")
                                                     .text("HAD")
                                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -791,9 +790,9 @@ impl VitalSignFormCpn {
                                                     }))
                                                 }),
                                                 html!("a", {
-                                                    .class(class::NAV_ITEM_LINK_P2)
                                                     .attr("id", "nav-o2-tab")
-                                                    .attr("data-bs-toggle", "pill")
+                                                    .class(class::NAV_ITEM_LINK_P2)
+                                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::O2)))
                                                     .attr("href", "#")
                                                     .text("O")
                                                     .child(html!("sub",{.text("2")}))
@@ -803,9 +802,9 @@ impl VitalSignFormCpn {
                                                     }))
                                                 }),
                                                 html!("a", {
-                                                    .class(class::NAV_ITEM_LINK_P2)
                                                     .attr("id", "nav-lr-tab")
-                                                    .attr("data-bs-toggle", "pill")
+                                                    .class(class::NAV_ITEM_LINK_P2)
+                                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Lr)))
                                                     .attr("href", "#")
                                                     .text("LR")
                                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -814,9 +813,9 @@ impl VitalSignFormCpn {
                                                     }))
                                                 }),
                                                 html!("a", {
-                                                    .class(class::NAV_ITEM_LINK_P2)
                                                     .attr("id", "nav-other-tab")
-                                                    .attr("data-bs-toggle", "pill")
+                                                    .class(class::NAV_ITEM_LINK_P2)
+                                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Other)))
                                                     .attr("href", "#")
                                                     .text("Other")
                                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -915,107 +914,39 @@ impl VitalSignFormCpn {
                                 }))
                             }))
                             // modals
-                            .children([
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "selectLabWBCModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.wbc_modal.signal_cloned().map(clone!(app => move |opt| {
-                                        opt.as_ref().map(clone!(app => move |modal| LabWbc::render(modal.clone(), app))).or(Some(blank_modal()))
-                                    })))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "aggressionOASModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.aggression_oas_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| AggressionOAS::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "bradenModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.braden_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| Braden::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "maasModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.maas_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| MotorActivityMaas::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "barthelIndexModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.barthel_index_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| BarthelIndex::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "amphetamineAwqModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.amphetamine_awq_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| AmphetamineAwqV2::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "alcoholAiwaArModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.alcohol_ciwa_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| AlcoholCiwaAr::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "alcoholAwsModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.alcohol_aws_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| AlcoholAws::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "depress2QModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.depress_2q_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| Depress2Q::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "depress9QModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.depress_9q_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| Depress9Q::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "suicide8QModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.suicide_8q_modal.signal_cloned().map(|opt| {
-                                        opt.as_ref().map(|modal| Suicide8Q::render(modal.clone())).or(Some(blank_modal()))
-                                    }))
-                                }),
-                            ])
+                            .child_signal(page.wbc_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| LabWbc::render_modal(modal.clone(), page.wbc_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.aggression_oas_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| AggressionOAS::render_modal(modal.clone(), page.aggression_oas_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.braden_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| Braden::render_modal(modal.clone(), page.braden_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.maas_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.as_ref().map(|modal| MotorActivityMaas::render_modal(modal.clone(), page.maas_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.barthel_index_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| BarthelIndex::render_modal(modal.clone(), page.barthel_index_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.amphetamine_awq_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| AmphetamineAwqV2::render_modal(modal.clone(), page.amphetamine_awq_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.alcohol_ciwa_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| AlcoholCiwaAr::render_modal(modal.clone(), page.alcohol_ciwa_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.alcohol_aws_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| AlcoholAws::render_modal(modal.clone(), page.alcohol_aws_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.depress_2q_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| Depress2Q::render_modal(modal.clone(), page.depress_2q_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.depress_9q_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| Depress9Q::render_modal(modal.clone(), page.depress_9q_modal.clone(), app.clone()))
+                            })))
+                            .child_signal(page.suicide_8q_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| Suicide8Q::render_modal(modal.clone(), page.suicide_8q_modal.clone(), app.clone()))
+                            })))
                         }))
                     }))
                 }))
@@ -1318,10 +1249,8 @@ impl VitalSignFormCpn {
                                     .child(html!("button", {
                                         .class(class::BTN_GRAY)
                                         .attr("type", "button")
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#selectLabWBCModal")
                                         .child(html!("i", {.class(class::FA_FLASK)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             if let Some(patient) = page.patient.lock_ref().as_ref() {
                                                 // HosXp store `an` and `vn` in the same column `vn`
                                                 page.wbc_modal.set(Some(LabWbc::new(
@@ -1331,6 +1260,7 @@ impl VitalSignFormCpn {
                                                     page.band.clone(),
                                                     page.changed.clone(),
                                                 )));
+                                                app.show_modal_backdrop();
                                             }
                                         }))
                                     }))
@@ -1467,14 +1397,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#aggressionOASModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.aggression_oas_modal.set(Some(AggressionOAS::new(
                                                 page.aggression_oas.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                 ])
@@ -1666,14 +1595,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#maasModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.maas_modal.set(Some(MotorActivityMaas::new(
                                                 page.mass_id.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                 ])
@@ -1693,14 +1621,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#bradenModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.braden_modal.set(Some(Braden::new(
                                                 page.braden.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -1742,14 +1669,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#barthelIndexModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.barthel_index_modal.set(Some(BarthelIndex::new(
                                                 page.barthel_index.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -1791,14 +1717,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#amphetamineAwqModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.amphetamine_awq_modal.set(Some(AmphetamineAwqV2::new(
                                                 page.amphetamine_awq.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -1864,14 +1789,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#depress2QModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.depress_2q_modal.set(Some(Depress2Q::new(
                                                 page.depress_2q.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -1909,14 +1833,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#depress9QModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.depress_9q_modal.set(Some(Depress9Q::new(
                                                 page.depress_9q.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -1956,14 +1879,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#suicide8QModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.suicide_8q_modal.set(Some(Suicide8Q::new(
                                                 page.suicide_8q.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -2003,14 +1925,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#aggressionOASModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.aggression_oas_modal.set(Some(AggressionOAS::new(
                                                 page.aggression_oas.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -2075,14 +1996,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#alcoholAiwaArModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.alcohol_ciwa_modal.set(Some(AlcoholCiwaAr::new(
                                                 page.alcohol_ciwa.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {
@@ -2122,14 +2042,13 @@ impl VitalSignFormCpn {
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#alcoholAwsModal")
                                         .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(page => move |_:events::Click| {
+                                        .event(clone!(app, page => move |_:events::Click| {
                                             page.alcohol_aws_modal.set(Some(AlcoholAws::new(
                                                 page.alcohol_aws.clone(),
                                                 page.changed.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     }),
                                     html!("div", {

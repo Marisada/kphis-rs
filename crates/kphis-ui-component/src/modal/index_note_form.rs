@@ -1,6 +1,6 @@
 // ipd-nurse-index-note-form.php
 
-use dominator::{Dom, clone, html};
+use dominator::{Dom, clone, events, html};
 use futures_signals::signal::{Mutable, SignalExt};
 use std::rc::Rc;
 use web_sys::{HtmlButtonElement, HtmlTextAreaElement};
@@ -11,8 +11,10 @@ use kphis_model::{
     {ipd::index_note::IndexNote, user::permission::Permission},
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{class, doms, mixins};
+use kphis_ui_core::{class, mixins};
 use kphis_util::util::str_some;
+
+use crate::modal::modal_show_option_mixins;
 
 /// - POST `EndPoint::IpdIndexNote` (guarded, remove Save btn)
 /// - DELETE `EndPoint::IpdIndexNoteId` (guarded, remove Delete btn)
@@ -46,7 +48,7 @@ impl IndexNoteForm {
     // ipd-nurse-index-note-save.php
     /// nurse_index_note_id == 0 then create new note<br>
     /// or else => edit exists note
-    pub fn edit_index_plan(parent_reload: Option<Mutable<bool>>, modal: Rc<Self>, app: Rc<App>) {
+    pub fn edit_index_plan(parent_reload: Option<Mutable<bool>>, modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) {
         app.async_load(
             true,
             clone!(app, modal => async move {
@@ -63,6 +65,8 @@ impl IndexNoteForm {
                             if let Some(loaded) = parent_reload {
                                 loaded.set(true);
                             }
+                            app.clear_modal_backdrop();
+                            display.set(None);
                         }
                     }
                     Err(e) => {
@@ -100,12 +104,14 @@ impl IndexNoteForm {
         )
     }
 
-    pub fn render(
-        modal: Rc<Self>,
-        // display: Mutable<Option<Rc<Self>>>,
-        parent_reload: Option<Mutable<bool>>,
-        app: Rc<App>,
-    ) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), parent_reload.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
         let is_pre_admit = app.is_pre_admit(&modal.an.lock_ref());
 
         html!("div", {
@@ -121,7 +127,15 @@ impl IndexNoteForm {
                                 .class("modal-title")
                                 .text("Note")
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -156,14 +170,14 @@ impl IndexNoteForm {
                                     .class(class::BTN_LX_RED)
                                     //.attr("id", "index-note-delete-button")
                                     .child(html!("i", {.class(class::FA_TRASH)}))
-                                    .text(" Delete")
+                                    .text(" ลบ")
                                     .apply(mixins::click_with_loader_checked(clone!(app, modal, parent_reload => move || {
                                         Self::delete_index_note(parent_reload.clone(), modal.clone(), app.clone());
                                     }), app.state()))
                                 })
                             })
                         })))
-                        .child_signal(modal.nurse_index_note_id.signal_cloned().map(clone!(app, modal, parent_reload => move |id| {
+                        .child_signal(modal.nurse_index_note_id.signal_cloned().map(clone!(app, modal, display, parent_reload => move |id| {
                             (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdIndexNote, is_pre_admit)
                             && if id == 0 {
                                 app.has_permission(Permission::IpdNurseIndexNoteAdd) || app.has_permission(Permission::OpdErNurseIndexNoteAdd)
@@ -174,10 +188,9 @@ impl IndexNoteForm {
                                     .attr("type", "button")
                                     .class(class::BTN_BLUE)
                                     .child(html!("i", {.class(class::FA_SAVE)}))
-                                    .attr("data-bs-dismiss", "modal")
-                                    .text(" Save")
-                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, modal, parent_reload => move || {
-                                        Self::edit_index_plan(parent_reload.clone(), modal.clone(), app.clone());
+                                    .text(" บันทึก")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, modal, display, parent_reload => move || {
+                                        Self::edit_index_plan(parent_reload.clone(), modal.clone(), display.clone(), app.clone());
                                     }), modal.an.signal_cloned().map(|an| an.is_empty()), app.state()))
                                 })
                             })
@@ -185,9 +198,12 @@ impl IndexNoteForm {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
                             .child(html!("i", {.class(class::FA_X)}))
-                            .text(" Cancel")
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

@@ -7,7 +7,7 @@ use futures_signals::{
 use std::{ops::Deref, rc::Rc};
 use time::PrimitiveDateTime;
 use wasm_bindgen::JsCast;
-use web_sys::{HtmlAudioElement, HtmlButtonElement, HtmlInputElement, HtmlOptionElement, HtmlSelectElement};
+use web_sys::{HtmlAudioElement, HtmlButtonElement, HtmlInputElement, HtmlSelectElement};
 
 use kphis_model::{
     ipd::pharmacy_monitor::{IpdOrderPharmacy, IpdOrderPharmacyMonitor, IpdOrderPharmacyParams, PharmacyIpt},
@@ -15,7 +15,7 @@ use kphis_model::{
     tab::Tab,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms};
 use kphis_util::{
     datetime::{date_8601, datetime_th, datetime_th_opt, js_now},
     util::{opt_zero_none, str_some},
@@ -78,12 +78,6 @@ impl IpdOrderPharmacyPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("ward") {
-                        NiceSelect::new_default_with_value(&elm, &app.ward_multiple_select.lock_ref());
-                    }
-                    if let Some(elm) = app.get_id("doctor_in_charge") {
-                        NiceSelect::new_default(&elm);
-                    }
                     page.test_audio(app.clone());
                     page.changed.set(true);
                 }
@@ -140,34 +134,14 @@ impl IpdOrderPharmacyPage {
                                 doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("ward","แผนก"),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_CTRL_SM)
-                                                .attr("id", "ward")
-                                                .attr("multiple", "multiple")
-                                                .children(ward_select_option.iter().map(|option| {
-                                                    doms::select_option(option, "")
-                                                }))
-                                                .with_node!(element => {
-                                                    .event(clone!(app, page => move |_: events::Change| {
-                                                        let options = element.selected_options();
-                                                        let mut values = Vec::new();
-                                                        for j in 0..options.length() {
-                                                            if let Some(item) = options.item(j) {
-                                                                if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
-                                                                    values.push(option.value());
-                                                                }
-                                                            }
-                                                        }
-                                                        app.ward_multiple_select.set_neq(values.join(","));
-                                                        app.to_local_storage();
-                                                        page.changed.set_neq(true);
-                                                    }))
-                                                })
-                                                //.attr("onchange", "onchange_select_ward()")
-                                            }))
-                                        }),
+                                        doms::select_box(
+                                            "ward", None, true,
+                                            app.ward_multiple_select.clone(),
+                                            page.changed.clone(),
+                                            |d| d.class(class::FORM_CTRL_SM),
+                                            clone!(app => move || app.to_local_storage()),
+                                            ward_select_option,
+                                        ),
                                     ])
                                 })),
                                 doms::form_inline_radio(clone!(app, page => move |check| { check
@@ -228,21 +202,12 @@ impl IpdOrderPharmacyPage {
                                 doms::form_inline_group_sm(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_CTRL_SM)
-                                                .attr("id", "doctor_in_charge")
-                                                .child(html!("option", {
-                                                    .attr("value", "")
-                                                    .text("เลือก")
-                                                }))
-                                                .children(doctor_select_option.iter().map(|option| {
-                                                    doms::select_option(option, "")
-                                                }))
-                                                .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
-                                            }))
-                                        }),
+                                        doms::select_box(
+                                            "doctor_in_charge", Some("เลือก"), false,
+                                            page.doctor_in_charge.clone(), page.changed.clone(),
+                                            |d| d.class(class::FORM_CTRL_SM), || {},
+                                            doctor_select_option,
+                                        ),
                                     ])
                                 })),
                                 html!("div", {

@@ -1,8 +1,12 @@
 use dominator::{Dom, clone, events, html};
 use futures_signals::signal::Mutable;
+use std::rc::Rc;
 
 use kphis_model::search::searchbox::DrugInteractionCheck;
+use kphis_ui_app::App;
 use kphis_ui_core::class;
+
+use crate::modal::modal_show_option_mixins;
 
 // ipd-dr-order-item-drug-interaction-modal.php
 #[derive(Clone, Default)]
@@ -12,17 +16,21 @@ pub struct DrugInteraction {
 }
 
 impl DrugInteraction {
-    pub fn new(
-        // med_name: &str,
-        interactions: &[DrugInteractionCheck],
-    ) -> Self {
-        Self {
+    pub fn new(interactions: &[DrugInteractionCheck]) -> Rc<Self> {
+        Rc::new(Self {
             // med_name: String::from(med_name),
             interactions: interactions.to_vec(),
-        }
+        })
     }
 
-    pub fn render(&self, display: Mutable<Option<Self>>, allowed: Mutable<bool>) -> Dom {
+    pub fn render_modal(&self, display: Mutable<Option<Rc<Self>>>, allowed: Mutable<bool>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(self.render_dialog(display.clone(), allowed.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(&self, display: Mutable<Option<Rc<Self>>>, allowed: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::MODAL_DIALOG_LG)
             // .class(["mw-100","w-75"])
@@ -40,9 +48,9 @@ impl DrugInteraction {
                             html!("button", {
                                 .attr("type", "button")
                                 .class("btn-close")
-                                .attr("data-bs-dismiss", "modal")
                                 .attr("aria-label", "Close")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }),
@@ -127,10 +135,9 @@ impl DrugInteraction {
                             dom.child(html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_BLUE)
-                                //.attr("id", "drugInteractionModalOkButton")
-                                .attr("data-bs-dismiss", "modal")
                                 .text("ตกลง")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                     allowed.set_neq(true);
                                 }))
@@ -139,10 +146,9 @@ impl DrugInteraction {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            //.attr("id", "drugInteractionModalDismissButton")
-                            .attr("data-bs-dismiss", "modal")
                             .text("ปิด")
                             .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
                                 display.set(None);
                             })
                         }))

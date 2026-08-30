@@ -10,7 +10,7 @@ use kphis_model::{
 use kphis_ui_app::App;
 use kphis_ui_core::{class, doms, mixins};
 
-use crate::gadget::searchbox::opd_visit::OpdVisitSearchboxCpn;
+use crate::{gadget::searchbox::opd_visit::OpdVisitSearchboxCpn, modal::modal_show_option_mixins};
 
 /// - POST `EndPoint::IpdPreAdmit`
 /// - GET `EndPoint::SearchBoxOpdVisitModeText` (OpdVisitSearchboxCpn)
@@ -32,7 +32,14 @@ impl PreAdmitNew {
         self.new_vn.signal_cloned().map(|new_vn| !new_vn.is_empty())
     }
 
-    pub fn render(modal: Rc<Self>, view_by: Mutable<String>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, view_by: Mutable<String>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, view_by, display.clone(), changed, app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, view_by: Mutable<String>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .class("modal-dialog")
             .attr("role", "document")
@@ -49,9 +56,9 @@ impl PreAdmitNew {
                             html!("button", {
                                 .attr("type", "button")
                                 .class("btn-close")
-                                .attr("data-bs-dismiss", "modal")
                                 .attr("aria-label", "Close")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }),
@@ -128,7 +135,6 @@ impl PreAdmitNew {
                                 .class("btn")
                                 .class_signal("btn-primary", modal.changed.signal())
                                 .class_signal("btn-secondary", not(modal.changed.signal()))
-                                .attr("data-bs-dismiss", "modal")
                                 .text("บันทึก")
                                 .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, modal, display => move || {
                                     Self::submit(modal.clone(), view_by.clone(), display.clone(), changed.clone(), app.clone());
@@ -138,9 +144,10 @@ impl PreAdmitNew {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_GRAY)
-                                .attr("data-bs-dismiss", "modal")
-                                .text("ยกเลิก")
+                                .child(html!("i", {.class(class::FA_X)}))
+                                .text(" ปิด")
                                 .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 })
                             }),
@@ -163,6 +170,7 @@ impl PreAdmitNew {
                     Ok(response) => {
                         app.alert_execute_response(&response, clone!(app => async move {
                             changed.set_neq(true);
+                            app.clear_modal_backdrop();
                             display.set(None);
                             let route = Route::IpdMain {
                                 view_by: view_by.get_cloned(),

@@ -9,18 +9,18 @@ use futures_signals::{
 use std::rc::Rc;
 use web_sys::{HtmlInputElement, HtmlSelectElement};
 
-use kphis_model::{
-    pre_order::master::{PreOrderMaster, PreOrderMasterParams},
-    timer::Timeout,
-};
+use kphis_model::pre_order::master::{PreOrderMaster, PreOrderMasterParams};
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_8601, date_th_opt, datetime_th_opt},
     util::{pre_order_type_display, str_some, zero_none},
 };
 
-use crate::modal::pre_order_preview::{PreOrderPreview, ToOrderType};
+use crate::modal::{
+    modal_show_option_mixins,
+    pre_order_preview::{PreOrderPreview, ToOrderType},
+};
 
 /// - GET `EndPoint::IpdPreOrderMaster` (self/PreOrderPreview)
 /// - GET `EndPoint::IpdPreOrderOrder` (PreOrderPreview)
@@ -32,8 +32,7 @@ pub struct PreOrderSelect {
 
     loaded_list: Mutable<bool>,
     changed: Mutable<bool>,
-    redraw: Mutable<bool>,
-
+    // redraw: Mutable<bool>,
     caller_id: Mutable<String>, // an(order) OR pre_order_master_id(pre_order)
     hn: Mutable<String>,
     order_doctor: Mutable<String>,
@@ -66,7 +65,14 @@ impl PreOrderSelect {
         self.preorder_type.signal_cloned().map(|ty| matches!(ty, PreOrderType::PreOrder(_)))
     }
 
-    pub fn render(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_date_loaded: Option<Mutable<bool>>, parent_count_loaded: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_date_loaded: Option<Mutable<bool>>, parent_count_loaded: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), parent_date_loaded, parent_count_loaded, app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_date_loaded: Option<Mutable<bool>>, parent_count_loaded: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::MODAL_DIALOG_LG)
             .attr("role", "document")
@@ -83,9 +89,9 @@ impl PreOrderSelect {
                             html!("button", {
                                 .attr("type", "button")
                                 .class("btn-close")
-                                .attr("data-bs-dismiss", "modal")
                                 .attr("aria-label", "Close")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }),
@@ -94,12 +100,13 @@ impl PreOrderSelect {
                     html!("div", {
                         .class("modal-body")
                         //.attr("id", "selectPreOrderModalBody")
-                        .child_signal(modal.pre_order_master_id.signal_cloned().map(clone!(app, modal, parent_date_loaded, parent_count_loaded => move |opt| {
+                        .child_signal(modal.pre_order_master_id.signal_cloned().map(clone!(app, modal, parent_date_loaded, parent_count_loaded, display => move |opt| {
                             match opt {
                                 Some(pre_order_master_id) => Some(PreOrderPreview::render(
                                     PreOrderPreview::new(pre_order_master_id, modal.caller_id.clone(), modal.to_order_type.clone()),
+                                    display.clone(),
                                     app.clone(),
-                                    modal.redraw.clone(),
+                                    // modal.redraw.clone(),
                                     modal.pre_order_master_id.clone(),
                                     parent_date_loaded.clone(),
                                     parent_count_loaded.clone(),
@@ -114,11 +121,12 @@ impl PreOrderSelect {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
-                            .text("ปิด")
-                            .event(clone!(display => move |_: events::Click| {
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
                                 display.set(None);
-                            }))
+                            })
                         }))
                     }),
                 ])
@@ -202,7 +210,7 @@ impl PreOrderType {
                 if ready {
                     Self::load_list(modal.clone(), app.clone());
                     modal.loaded_list.set_neq(true);
-                    modal.redraw.set_neq(true);
+                    // modal.redraw.set_neq(true);
                 }
                 async {}
             })))
@@ -214,28 +222,14 @@ impl PreOrderType {
                                 doms::form_inline_group_sm(clone!(modal => move |group| { group
                                     .children([
                                         doms::label_group_for("order_doctor","ผู้บันทึก"),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_CTRL_SM)
-                                                .attr("id", "order_doctor")
-                                                .child(html!("option", {
-                                                    .attr("value", "")
-                                                    .text("ทั้งหมด")
-                                                }))
-                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                    doms::select_option(option, &modal.order_doctor.lock_ref())
-                                                }))
-                                                .prop_signal("value", modal.order_doctor.signal_cloned())
-                                                .with_node!(element => {
-                                                    .event(clone!(element, modal => move |_: events::Change| {
-                                                        modal.order_doctor.set_neq(element.value());
-                                                        modal.changed.set_neq(true);
-                                                        modal.loaded_list.set(false);
-                                                    }))
-                                                })
-                                            }))
-                                        }),
+                                        doms::select_box(
+                                            "order_doctor", Some("ทั้งหมด"), false,
+                                            modal.order_doctor.clone(),
+                                            modal.changed.clone(),
+                                            |d| d.class(class::FORM_CTRL_SM),
+                                            clone!(modal => move || modal.loaded_list.set(false)),
+                                            all_doctor_select_option,
+                                        ),
                                     ])
                                 })),
                                 doms::form_inline_group_sm(clone!(app, modal => move |group| { group
@@ -406,17 +400,6 @@ impl PreOrderType {
                         }),
                         html!("tbody", {
                             //.attr("id", "pre_order_master_table_body")
-                            .future(modal.redraw.signal_cloned().for_each(clone!(app, modal => move |redraw| {
-                                if redraw {
-                                    if let Some(elm) = app.get_id("order_doctor") {
-                                        Timeout::new(0, clone!(modal => move || {
-                                            NiceSelect::new_default(&elm);
-                                            modal.redraw.set(false);
-                                        })).forget();
-                                    }
-                                }
-                                async {}
-                            })))
                             .children_signal_vec(modal.preorders.signal_vec_cloned().map(clone!(modal => move |preorder| {
                                 html!("tr", {
                                     .style("cursor","pointer")

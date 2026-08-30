@@ -24,7 +24,6 @@ use kphis_ui_component::{
     ipd_pre_order::IpdPreOrderCpn,
     lab::LabCpn,
     modal::{
-        blank_modal,
         pre_order_preview::ToOrderType,
         pre_order_select::{PreOrderSelect, PreOrderType},
     },
@@ -218,7 +217,7 @@ impl IpdPreOrderPage {
                         html!("li", {
                             .class("nav-item")
                             .child(html!("a", {
-                                .class(class::NAV_LINK_ACTIVE)
+                                .class("nav-link")
                                 .attr("href", "#")
                                 .attr("role", "tab")
                                 .child(html!("i", {.class(class::FA_L_ARROW)}))
@@ -447,12 +446,11 @@ impl IpdPreOrderPage {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_SM_L_GRAY)
-                            .attr("data-bs-toggle", "modal")
-                            .attr("data-bs-target", "#selectPreOrderModal")
                             .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                             .text(" Template")
-                            .event(clone!(page => move |_: events::Click| {
+                            .event(clone!(app, page => move |_: events::Click| {
                                 page.pre_order_select_modal.set(Some(PreOrderSelect::new(PreOrderType::Template, &page.pre_order_master_id.get().to_string(), ToOrderType::PreOrder)));
+                                app.show_modal_backdrop();
                             }))
                         }))
                     )
@@ -516,8 +514,7 @@ impl IpdPreOrderPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Order)))
-                                .attr("data-bs-toggle","pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Order)))
                                 .attr("href","#")
                                 .text("Order")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -532,8 +529,7 @@ impl IpdPreOrderPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Lab)))
-                                .attr("data-bs-toggle","pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Lab)))
                                 .attr("href","#pills-lab")
                                 .text("Lab")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -567,7 +563,6 @@ impl IpdPreOrderPage {
                                     .child(html!("a", {
                                         .class("nav-link")
                                         .attr("href", "#")
-                                        // .attr("data-bs-toggle", "pill")
                                         .text("ประวัติการสั่งยา ")
                                         .child(html!("i", {.class(class::FA_DISPLAY)}))
                                         .event_with_options(&EventOptions::preventable(), move |event: events::Click| {
@@ -591,8 +586,7 @@ impl IpdPreOrderPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Emr)))
-                                .attr("data-bs-toggle","pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Emr)))
                                 .attr("href","#")
                                 .text("EMR")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -633,18 +627,12 @@ impl IpdPreOrderPage {
                         })
                     })))
                 }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "selectPreOrderModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.pre_order_select_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                        opt.as_ref().map(clone!(app, page => move |modal| {
-                            PreOrderSelect::render(modal.clone(), page.pre_order_select_modal.clone(), page.tab_order_loaded.get_cloned(), None, app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.pre_order_select_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    PreOrderSelect::render_modal(modal, page.pre_order_select_modal.clone(), page.tab_order_loaded.get_cloned(), None, app.clone())
+                })
+            })))
         })
     }
 }

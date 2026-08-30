@@ -17,7 +17,7 @@ use kphis_util::{
     util::{set_day_last, set_days_next},
 };
 
-use crate::lab::full_text;
+use crate::{lab::full_text, modal::modal_show_option_mixins};
 
 /// GET `EndPoint::LabHead`
 #[derive(Default)]
@@ -99,7 +99,14 @@ impl LabSelector {
         }
     }
 
-    pub fn render(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -132,7 +139,15 @@ impl LabSelector {
                         .class("modal-header")
                         .children([
                             html!("h5", {.class("modal-title").text("เลือกผลการตรวจทางห้องปฏิบัติการ")}),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -241,7 +256,7 @@ impl LabSelector {
                             html!("div", {
                                 .style("overflow-y","auto")
                                 .style("max-height","50vh")
-                                .child(doms::table_responsive(class::TABLE_STRIP, clone!(modal => move |table| { table
+                                .child(doms::table_responsive(class::TABLE_STRIP, clone!(app, display, modal => move |table| { table
                                     .children([
                                         html!("thead", {
                                             .child(html!("tr", {
@@ -253,11 +268,10 @@ impl LabSelector {
                                             }))
                                         }),
                                         html!("tbody", {
-                                            .children_signal_vec(modal.lab_result.signal_cloned().to_signal_vec().map(move |row| {
+                                            .children_signal_vec(modal.lab_result.signal_cloned().to_signal_vec().map(clone!(app, display, modal => move |row| {
                                                 let lab_text = full_text(&row);
                                                 html!("tr", {
                                                     .style("cursor","pointer")
-                                                    .attr("data-bs-dismiss", "modal")
                                                     .children([
                                                         html!("td", {
                                                             .class("text-nowrap")
@@ -269,7 +283,7 @@ impl LabSelector {
                                                         html!("td", {.text(&row.lab_name_cc.clone().unwrap_or_default())}),
                                                         html!("td", {.text(&lab_text)}),
                                                     ])
-                                                    .event(clone!(modal => move |_:events::Click| {
+                                                    .event(clone!(app, display, modal => move |_:events::Click| {
                                                         let old_text = modal.parent_result.get_cloned();
                                                         let spacer = match (old_text.is_empty(), modal.with_datetime) {
                                                             (true, true) => ["- [", &date_th_opt(&row.report_date.or(row.order_date)), " ", &time_hm_opt(&row.report_time.or(row.order_time)), "] "].concat(),
@@ -281,9 +295,11 @@ impl LabSelector {
                                                             old_text.as_str(), spacer.as_str(), &lab_text
                                                         ].concat());
                                                         modal.parent_changed.set(true);
+                                                        app.clear_modal_backdrop();
+                                                        display.set(None);
                                                     }))
                                                 })
-                                            }))
+                                            })))
                                         }),
                                     ])
                                 })))
@@ -295,8 +311,12 @@ impl LabSelector {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
-                            .text("ปิด")
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

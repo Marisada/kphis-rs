@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use wasm_bindgen::JsValue;
+use wasm_bindgen::{JsCast, JsValue};
 use web_sys::{DomParser, EventTarget, HtmlButtonElement, HtmlElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement, SupportedType};
 
 use kphis_model::{
@@ -903,6 +903,38 @@ pub fn drag_start_only(drag_start_state: Mutable<Option<DragStartState>>) -> imp
     }
 }
 
+//============//
+//  Dropdown  //
+//============//
+
+/// apply on "dropdown" or container element
+pub fn dropdown_closing_mixin<T>(close_state: Mutable<T>) -> impl FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>
+where
+    T: Default + Clone + PartialEq + 'static,
+{
+    #[inline]
+    move |dom| {
+        with_node!(dom, wrapper => {
+            .global_event(clone!(close_state => move |e: events::KeyDown| {
+                if close_state.get_cloned() != T::default() && e.key() == "Escape" {
+                    close_state.set(T::default());
+                }
+            }))
+            .global_event(move |e: events::Click| {
+                if close_state.get_cloned() != T::default() {
+                    let outside = e.target().and_then(|t| t.dyn_into::<web_sys::Node>().ok())
+                        .map(|node| !wrapper.contains(Some(&node)))
+                        .unwrap_or(true);
+
+                    if outside {
+                        close_state.set(T::default());
+                    }
+                }
+            })
+        })
+    }
+}
+
 //=============//
 //  DataTable  //
 //=============//
@@ -911,10 +943,10 @@ pub fn drag_start_only(drag_start_state: Mutable<Option<DragStartState>>) -> imp
 /// 1. SortBy enum with #[derive(Clone, Default, PartialEq)]
 /// 2. State's
 ///     - sorted_by: Mutable<SortBy>
-///     - is_desc: Mutable<bool>
+///     - is_asc: Mutable<bool>
 /// 3. `sort_fn` closure
-/// 4. Optional reset `sorted_by` and `is_desc` to default value at some function
-pub fn sortable_header_mixin<E, F>(sort_by: E, sort_by_mutable: Mutable<E>, is_desc_mutable: Mutable<bool>, sort_fn: F) -> impl FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>
+/// 4. Optional reset `sorted_by` and `is_asc` to default value at some function
+pub fn sortable_header_mixin<E, F>(sort_by: E, sort_by_mutable: Mutable<E>, is_asc_mutable: Mutable<bool>, sort_fn: F) -> impl FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>
 where
     E: PartialEq + Clone + 'static,
     F: Fn() + 'static,
@@ -925,11 +957,11 @@ where
             .style("white-space", "nowrap")
             .child_signal(map_ref! {
                 let is_this = sort_by_mutable.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
-                let is_desc = is_desc_mutable.signal() =>
+                let is_asc = is_asc_mutable.signal() =>
                 if *is_this {
                     Some(html!("i", {
                         .class("ms-1")
-                        .class(if *is_desc {
+                        .class(if *is_asc {
                             class::FA_UP
                         } else {
                             class::FA_DOWN
@@ -945,10 +977,10 @@ where
             .event(clone!(sort_by => move |_:events::Click| {
                 let is_eq = sort_by_mutable.lock_ref().eq(&sort_by);
                 if is_eq {
-                    is_desc_mutable.set(!is_desc_mutable.get());
+                    is_asc_mutable.set(!is_asc_mutable.get());
                 } else {
                     sort_by_mutable.set(sort_by.clone());
-                    is_desc_mutable.set_neq(false);
+                    is_asc_mutable.set_neq(false);
                 }
                 sort_fn();
             }))

@@ -1,4 +1,4 @@
-use dominator::{Dom, clone, events, html, is_window_loaded, link, text, with_node};
+use dominator::{Dom, clone, events, html, is_window_loaded, link, text};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt},
@@ -13,7 +13,7 @@ use kphis_model::{
     tab::Tab,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_th_opt_relative, datetime_from_opt, datetime_th_opt_relative, datetime_th_relative, time_hm_opt},
     util::{opt_empty_none, str_some},
@@ -43,7 +43,7 @@ pub struct IpdConsultListPage {
     search_result: MutableVec<Rc<IpdConsultList>>,
 
     sorted_by: Mutable<SortBy>,
-    is_desc: Mutable<bool>,
+    is_asc: Mutable<bool>,
 
     changed: Mutable<bool>,
 }
@@ -78,7 +78,7 @@ impl IpdConsultListPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::ConsultDateTime);
-                        page.is_desc.set_neq(false);
+                        page.is_asc.set_neq(false);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -102,15 +102,6 @@ impl IpdConsultListPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("spclty") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("consult_dr_search") {
-                        NiceSelect::new_default(&elm);
-                    }
-                    if let Some(elm) = app.get_id("consult_dr_reply_search") {
-                        NiceSelect::new_default(&elm);
-                    }
                     page.changed.set(true);
                 }
                 async {}
@@ -146,54 +137,26 @@ impl IpdConsultListPage {
                                     doms::label_group_for("spclty","แผนกที่รับ Consult"),
                                     html!("div", {
                                         .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "spclty")
-                                            .children([
-                                                html!("option", {
-                                                    .attr("value", "000")
-                                                    .text("เลือก")
-                                                }),
-                                                html!("option", {
-                                                    .attr("value", "")
-                                                    .text("ทั้งหมด")
-                                                }),
-                                            ])
-                                            .children(spclty_kphis_select_option.iter().map(|option| {
-                                                doms::select_option(option, "")
-                                            }))
-                                            .prop_signal("value", app.spclty_select.signal_cloned())
-                                            .with_node!(element => {
-                                                .event(clone!(app, page, element => move |_: events::Change| {
-                                                    app.spclty_select.set_neq(element.value());
-                                                    app.to_local_storage();
-                                                    page.changed.set_neq(true);
-                                                }))
-                                                //.attr("onchange", "onchange_select_spclty()")
-                                            })
-                                        }))
+                                        .child(doms::select_box(
+                                            "spclty", Some("ทั้งหมด"), false,
+                                            app.spclty_select.clone(),
+                                            page.changed.clone(),
+                                            |d| d.class(class::FORM_CTRL_SM),
+                                            clone!(app => move || app.to_local_storage()),
+                                            spclty_kphis_select_option,
+                                        ))
                                     }),
                                 ])
                             })),
                             doms::form_inline_group_sm(clone!(app, page, all_doctor_select_option => move |group| { group
                                 .children([
                                     doms::label_group_for("consult_dr_search","แพทย์ผู้รับ Consult"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "consult_dr_search")
-                                            .child(html!("option", {
-                                                .attr("value", "")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(all_doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, "")
-                                            }))
-                                            .apply(mixins::string_value_select(page.consult_dr_search.clone(), page.changed.clone()))
-                                            // .attr("onchange", "onchange_select_consult_dr_search()")
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "consult_dr_search", Some("ทั้งหมด"), false,
+                                        page.consult_dr_search.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        all_doctor_select_option,
+                                    ),
                                 ])
                                 .child_signal(page.view_by.signal_cloned().map(|view_by| view_by == "doctor").map(clone!(app, page => move |is_doctor| {
                                     is_doctor.then(|| {
@@ -205,9 +168,6 @@ impl IpdConsultListPage {
                                                 let doctor_code = app.doctor_code().unwrap_or_default();
                                                 let neq = page.consult_dr_search.lock_ref().as_str() != doctor_code.as_str();
                                                 if neq {
-                                                    if let Some(elm) = app.get_id("consult_dr_search") {
-                                                        NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                    }
                                                     page.consult_dr_search.set_neq(doctor_code);
                                                     page.changed.set_neq(true);
                                                 }
@@ -223,9 +183,6 @@ impl IpdConsultListPage {
                                         .event(clone!(app, page => move |_: events::Click| {
                                             if !page.consult_dr_search.get_cloned().is_empty() {
                                                 page.consult_dr_search.set_neq(String::new());
-                                                if let Some(elm) = app.get_id("consult_dr_search") {
-                                                    NiceSelect::new_default_with_value(&elm,"");
-                                                }
                                                 page.changed.set_neq(true);
                                             }
                                         }))
@@ -235,22 +192,12 @@ impl IpdConsultListPage {
                             doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("consult_dr_reply_search","แพทย์ผู้ตอบ Consult"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "consult_dr_reply_search")
-                                            .child(html!("option", {
-                                                .attr("value", "")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(all_doctor_select_option.iter().map(|option| {
-                                                doms::select_option(option, "")
-                                            }))
-                                            .apply(mixins::string_value_select(page.consult_dr_reply_search.clone(), page.changed.clone()))
-                                            // .attr("onchange", "onchange_select_consult_dr_reply_search()")
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "consult_dr_reply_search", Some("ทั้งหมด"), false,
+                                        page.consult_dr_reply_search.clone(), page.changed.clone(),
+                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        all_doctor_select_option,
+                                    ),
                                 ])
                                 .child_signal(page.view_by.signal_cloned().map(|view_by| view_by == "doctor").map(clone!(app, page => move |is_doctor| {
                                     is_doctor.then(|| {
@@ -262,9 +209,6 @@ impl IpdConsultListPage {
                                                 let doctor_code = app.doctor_code().unwrap_or_default();
                                                 let neq = page.consult_dr_reply_search.lock_ref().as_str() != doctor_code.as_str();
                                                 if neq {
-                                                    if let Some(elm) = app.get_id("consult_dr_reply_search") {
-                                                        NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                    }
                                                     page.consult_dr_reply_search.set_neq(doctor_code);
                                                     page.changed.set_neq(true);
                                                 }
@@ -280,9 +224,6 @@ impl IpdConsultListPage {
                                         let empty_search = page.consult_dr_reply_search.lock_ref().is_empty();
                                         if !empty_search {
                                             page.consult_dr_reply_search.set_neq(String::new());
-                                            if let Some(elm) = app.get_id("consult_dr_reply_search") {
-                                                NiceSelect::new_default_with_value(&elm,"");
-                                            }
                                             page.changed.set_neq(true);
                                         }
                                     }))
@@ -386,15 +327,6 @@ impl IpdConsultListPage {
                                             page.consult_dr_search.set_neq(String::new());
                                             page.consult_dr_reply_search.set_neq(String::new());
                                             page.patient.set_neq(String::new());
-                                            if let Some(elm) = app.get_id("spclty") {
-                                                NiceSelect::new_default_with_value(&elm, "000");
-                                            }
-                                            if let Some(elm) = app.get_id("consult_dr_search") {
-                                                NiceSelect::new_default(&elm);
-                                            }
-                                            if let Some(elm) = app.get_id("consult_dr_reply_search") {
-                                                NiceSelect::new_default(&elm);
-                                            }
                                             page.changed.set_neq(true);
                                         }))
                                     }),
@@ -436,7 +368,7 @@ impl IpdConsultListPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_desc.get() {
+                            if page.is_asc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
                                     SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
@@ -467,25 +399,25 @@ impl IpdConsultListPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("ตึกผู้ป่วย")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เตียง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล (อายุ)")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             // html!("th", {.class("th-sm").attr("scope","col").text("อายุ")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("วันที่ Consult")
-                                                .apply(mixins::sortable_header_mixin(SortBy::ConsultDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::ConsultDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("ตอบ")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("ด่วน")}),
@@ -494,7 +426,7 @@ impl IpdConsultListPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์ผู้ตอบ")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("วันที่ตอบ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::ReplyDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::ReplyDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
                                             }),
                                         ])
                                     }))

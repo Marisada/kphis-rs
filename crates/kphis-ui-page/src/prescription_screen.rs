@@ -15,7 +15,7 @@ use kphis_model::{
 use kphis_ui_app::App;
 use kphis_ui_component::{
     lab::LabCmp,
-    modal::{blank_modal, lab_history::LabHistory},
+    modal::{lab_history::LabHistory, modal_show_bool_mixins},
 };
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
@@ -49,8 +49,9 @@ pub struct PrescriptionScreenPage {
     pharmacy_care_changed: Mutable<bool>,
     pharmacy_care: Mutable<String>,
 
-    lab_is_last: Mutable<bool>,
     lab_history_modal: Mutable<Option<Rc<LabHistory>>>,
+    lab_is_last: Mutable<bool>,
+    show_last_drug_modal: Mutable<bool>,
 }
 
 impl PrescriptionScreenPage {
@@ -332,153 +333,153 @@ impl PrescriptionScreenPage {
                 }
                 async {}
             })))
-            .children([
-                html!("div", {
-                    .class(class::CONF_B)
-                    .child(html!("div", {
-                        .class(class::ROW_MY2)
-                        .children([
-                            html!("div", {
-                                .class("col-auto")
-                                .child(html!("button", {
-                                    .attr("type", "button")
-                                    .class(class::BTN_BLUE)
-                                    .child(html!("i", {.class(class::FA_L_ARROW)}))
-                                    .text(" กลับ")
-                                    .event(clone!(app => move |_: events::Click| {
-                                        if app.go_back_else() {
-                                            Route::Info.hard_redirect();
-                                        }
-                                    }))
+            .child(html!("div", {
+                .class(class::CONF_B)
+                .child(html!("div", {
+                    .class(class::ROW_MY2)
+                    .children([
+                        html!("div", {
+                            .class("col-auto")
+                            .child(html!("button", {
+                                .attr("type", "button")
+                                .class(class::BTN_BLUE)
+                                .child(html!("i", {.class(class::FA_L_ARROW)}))
+                                .text(" กลับ")
+                                .event(clone!(app => move |_: events::Click| {
+                                    if app.go_back_else() {
+                                        Route::Info.hard_redirect();
+                                    }
                                 }))
-                            }),
-                            html!("div", {
-                                .class("col-auto")
-                                .child(html!("h3", {.text("Screen ใบสั่งยา")}))
-                            }),
-                            html!("div", {
-                                .class("col-auto")
-                                .child(html!("div", {
-                                    .class(class::INPUT_GROUP)
-                                    .class("me-2")
-                                    .children([
-                                        doms::span_group_text("ค้นหา QN/HN/VN/CID"),
-                                        html!("input" => HtmlInputElement, {
-                                            .attr("type", "text")
-                                            .class("form-control")
-                                            .focused(true)
-                                            .attr("placeholder", "QN(0-9999)/HN/VN/CID")
-                                            //.apply(|dom| mixins::string_value(dom, page.search_text.clone(), page.changed.clone()))
-                                            .prop_signal("value", page.search_text.signal_cloned())
-                                            .with_node!(element => {
-                                                .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyDown| {
-                                                    if event.key() == "Enter" {
-                                                        event.prevent_default();
-                                                        page.search_text.set_neq(element.value());
-                                                        page.changed.set_neq(true);
-                                                    }
-                                                }))
-                                                .event(clone!(page => move |_: events::Change| {
+                            }))
+                        }),
+                        html!("div", {
+                            .class("col-auto")
+                            .child(html!("h3", {.text("Screen ใบสั่งยา")}))
+                        }),
+                        html!("div", {
+                            .class("col-auto")
+                            .child(html!("div", {
+                                .class(class::INPUT_GROUP)
+                                .class("me-2")
+                                .children([
+                                    doms::span_group_text("ค้นหา QN/HN/VN/CID"),
+                                    html!("input" => HtmlInputElement, {
+                                        .attr("type", "text")
+                                        .class("form-control")
+                                        .focused(true)
+                                        .attr("placeholder", "QN(0-9999)/HN/VN/CID")
+                                        //.apply(|dom| mixins::string_value(dom, page.search_text.clone(), page.changed.clone()))
+                                        .prop_signal("value", page.search_text.signal_cloned())
+                                        .with_node!(element => {
+                                            .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyDown| {
+                                                if event.key() == "Enter" {
+                                                    event.prevent_default();
                                                     page.search_text.set_neq(element.value());
-                                                }))
-                                            })
-                                        }),
-                                        html!("button", {
-                                            .attr("type", "button")
-                                            .class(class::BTN_L_BLUE)
-                                            .text("ค้นหา")
-                                            .event(clone!(page => move |_: events::Click| {
-                                                page.changed.set_neq(true);
+                                                    page.changed.set_neq(true);
+                                                }
+                                            }))
+                                            .event(clone!(page => move |_: events::Change| {
+                                                page.search_text.set_neq(element.value());
                                             }))
                                         })
-                                    ])
-                                }))
-                            }),
-                        ])
-                        .child_signal(app.loader_is_loading().map(|is_loading| {
-                            is_loading.then(|| {
-                                html!("div", {
-                                    .class("col-auto")
-                                    .child(html!("i",{.class(class::FA_SPIN).style("font-size","38px")}))
-                                })
-                            })
-                        }))
-                    }))
-                    .child_signal(page.info.signal_cloned().map(clone!(app, page => move |info_opt| {
-                        info_opt.as_ref().map(|info| {
-                            html!("div", {
-                                .children([
-                                    html!("div", {
-                                        .attr("id","prescription-info-row")
-                                        .class(class::ROW_T)
-                                        .child(html!("div", {
-                                            .style("column-width","480px")
-                                            .style("column-gap","8px")
-                                            .children([
-                                                Self::render_info_patient(info),
-                                                Self::render_info_allergy(info),
-                                                Self::render_info_note(info),
-                                            ])
-                                        }))
                                     }),
-                                    html!("div", {
-                                        .class(class::ROW_T)
-                                        // left panel
-                                        .child(html!("div", {
-                                            .style("width","220px")
-                                            .style_signal("height", window_size().map(clone!(app => move |ws| {
-                                                let info_height = if let Some(elm) = app.get_id("prescription-info-row") {
-                                                    elm.client_height()
-                                                } else {
-                                                    128
-                                                };
-                                                [&((ws.height as i32).saturating_sub(info_height + 140)).to_string(), "px"].concat()
-                                            })))
-                                            .style("overflow-y","auto")
-                                            .children(info.dates.clone().into_iter().map(|visit_date| {
-                                                html!("button", {
-                                                    .attr("type", "button")
-                                                    .class(class::BTN_T_W100)
-                                                    .class_signal("btn-primary", page.current_date.signal_cloned().map(clone!(visit_date => move |opt| opt.as_ref().map(|date| date.vn == visit_date.vn).unwrap_or_default())))
-                                                    .class_signal("btn-secondary", page.current_date.signal_cloned().map(clone!(visit_date => move |opt| opt.as_ref().map(|date| date.vn != visit_date.vn).unwrap_or(true))))
-                                                    .apply_if(visit_date.an.is_some(), |dom| dom.class("text-danger"))
-                                                    .text(&date_and_time_th_opt_relative(&visit_date.vstdate, &visit_date.vsttime))
-                                                    .event(clone!(page => move |_: events::Click| {
-                                                        page.current_date.set(Some(visit_date.clone()));
-                                                        page.reload_visit.set_neq(true);
-                                                    }))
-                                                })
-                                            }))
+                                    html!("button", {
+                                        .attr("type", "button")
+                                        .class(class::BTN_L_BLUE)
+                                        .text("ค้นหา")
+                                        .event(clone!(page => move |_: events::Click| {
+                                            page.changed.set_neq(true);
                                         }))
-                                        // right panel
-                                        .child_signal(page.visit.signal_cloned().map(clone!(app, page => move |visit_opt| {
-                                            visit_opt.as_ref().map(|visit| {
-                                                html!("div", {
-                                                    .style("width","calc(100vw - 238px)")
-                                                    .style("column-width","480px")
-                                                    .style("column-gap","8px")
-                                                    .children([
-                                                        Self::render_visit_hx(visit, page.clone()),
-                                                        Self::render_visit_drugs(visit),
-                                                        Self::render_drug_interaction(visit),
-                                                        Self::render_labs(visit, page.clone(), app.clone()),
-                                                        Self::render_visit_message(visit),
-                                                        Self::render_visit_action(visit, page.clone(), app.clone()),
-                                                        Self::render_visit_postal(visit, page.clone(), app.clone()),
-                                                        Self::render_visit_telemed(visit, page.clone(), app.clone()),
-                                                        Self::render_pharmacy_care(visit, page.clone(), app.clone()),
-                                                    ])
-                                                })
-                                            })
-                                        })))
-                                    }),
+                                    })
                                 ])
+                            }))
+                        }),
+                    ])
+                    .child_signal(app.loader_is_loading().map(|is_loading| {
+                        is_loading.then(|| {
+                            html!("div", {
+                                .class("col-auto")
+                                .child(html!("i",{.class(class::FA_SPIN).style("font-size","38px")}))
                             })
                         })
-                    })))
-                }),
-                Self::render_modal(page.clone()),
-            ])
+                    }))
+                }))
+                .child_signal(page.info.signal_cloned().map(clone!(app, page => move |info_opt| {
+                    info_opt.as_ref().map(|info| {
+                        html!("div", {
+                            .children([
+                                html!("div", {
+                                    .attr("id","prescription-info-row")
+                                    .class(class::ROW_T)
+                                    .child(html!("div", {
+                                        .style("column-width","480px")
+                                        .style("column-gap","8px")
+                                        .children([
+                                            Self::render_info_patient(info),
+                                            Self::render_info_allergy(info),
+                                            Self::render_info_note(info),
+                                        ])
+                                    }))
+                                }),
+                                html!("div", {
+                                    .class(class::ROW_T)
+                                    // left panel
+                                    .child(html!("div", {
+                                        .style("width","220px")
+                                        .style_signal("height", window_size().map(clone!(app => move |ws| {
+                                            let info_height = if let Some(elm) = app.get_id("prescription-info-row") {
+                                                elm.client_height()
+                                            } else {
+                                                128
+                                            };
+                                            [&((ws.height as i32).saturating_sub(info_height + 140)).to_string(), "px"].concat()
+                                        })))
+                                        .style("overflow-y","auto")
+                                        .children(info.dates.clone().into_iter().map(|visit_date| {
+                                            html!("button", {
+                                                .attr("type", "button")
+                                                .class(class::BTN_T_W100)
+                                                .class_signal("btn-primary", page.current_date.signal_cloned().map(clone!(visit_date => move |opt| opt.as_ref().map(|date| date.vn == visit_date.vn).unwrap_or_default())))
+                                                .class_signal("btn-secondary", page.current_date.signal_cloned().map(clone!(visit_date => move |opt| opt.as_ref().map(|date| date.vn != visit_date.vn).unwrap_or(true))))
+                                                .apply_if(visit_date.an.is_some(), |dom| dom.class("text-danger"))
+                                                .text(&date_and_time_th_opt_relative(&visit_date.vstdate, &visit_date.vsttime))
+                                                .event(clone!(page => move |_: events::Click| {
+                                                    page.current_date.set(Some(visit_date.clone()));
+                                                    page.reload_visit.set_neq(true);
+                                                }))
+                                            })
+                                        }))
+                                    }))
+                                    // right panel
+                                    .child_signal(page.visit.signal_cloned().map(clone!(app, page => move |visit_opt| {
+                                        visit_opt.as_ref().map(|visit| {
+                                            html!("div", {
+                                                .style("width","calc(100vw - 238px)")
+                                                .style("column-width","480px")
+                                                .style("column-gap","8px")
+                                                .children([
+                                                    Self::render_visit_hx(visit, page.clone()),
+                                                    Self::render_visit_drugs(visit, page.clone(), app.clone()),
+                                                    Self::render_drug_interaction(visit),
+                                                    Self::render_labs(visit, page.clone(), app.clone()),
+                                                    Self::render_visit_message(visit),
+                                                    Self::render_visit_action(visit, page.clone(), app.clone()),
+                                                    Self::render_visit_postal(visit, page.clone(), app.clone()),
+                                                    Self::render_visit_telemed(visit, page.clone(), app.clone()),
+                                                    Self::render_pharmacy_care(visit, page.clone(), app.clone()),
+                                                ])
+                                            })
+                                        })
+                                    })))
+                                }),
+                            ])
+                        })
+                    })
+                })))
+            }))
+            .child_signal(page.show_last_drug_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_modal(page.clone(), app.clone()))
+            })))
         })
     }
 
@@ -704,7 +705,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_visit_drugs(visit: &Rc<PrescriptionVn>) -> Dom {
+    fn render_visit_drugs(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -716,8 +717,6 @@ impl PrescriptionScreenPage {
                     // .style("overflow-y", "auto")
                     .child(html!("table", {
                         .class(class::TABLE_SM_STRIP)
-                        .attr("data-bs-toggle","modal")
-                        .attr("data-bs-target","#infoMedicineLastDrugModal")
                         .style("cursor","pointer")
                         .children([
                             html!("thead", {
@@ -753,6 +752,10 @@ impl PrescriptionScreenPage {
                                 }))
                             }),
                         ])
+                        .event(clone!(app, page => move |_: events::Click| {
+                            page.show_last_drug_modal.set(true);
+                            app.show_modal_backdrop();
+                        }))
                     }))
                 })
             ])
@@ -817,11 +820,10 @@ impl PrescriptionScreenPage {
                                 .class("nav-link")
                                 .class_signal("active", page.lab_is_last.signal())
                                 .attr("id", "pills-home-tab")
-                                .attr("data-bs-toggle", "pill")
                                 .attr("href", "#pills-home")
                                 .attr("role", "tab")
                                 .attr("aria-controls", "pills-home")
-                                .attr("aria-selected", "true")
+                                .prop_signal("aria-selected", page.lab_is_last.signal().map(|is_last| if is_last {"true"} else {"false"}))
                                 .text("LAB ล่าสุด")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::Click| {
                                     e.prevent_default();
@@ -835,11 +837,10 @@ impl PrescriptionScreenPage {
                                 .class("nav-link")
                                 .class_signal("active", not(page.lab_is_last.signal()))
                                 .attr("id", "pills-profile-tab")
-                                .attr("data-bs-toggle", "pill")
                                 .attr("href", "#pills-profile")
                                 .attr("role", "tab")
                                 .attr("aria-controls", "pills-profile")
-                                .attr("aria-selected", "false")
+                                .prop_signal("aria-selected", page.lab_is_last.signal().map(|is_last| if is_last {"false"} else {"true"}))
                                 .text("LAB ของ Visit")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::Click| {
                                     e.prevent_default();
@@ -852,31 +853,128 @@ impl PrescriptionScreenPage {
                 html!("div", {
                     .class("tab-content")
                     //.attr("id", "pills-tabContent")
-                    .children([
-                        html!("div", {
-                            .class(class::TAB_FADE)
-                            .class_signal(["show","active"], page.lab_is_last.signal())
-                            .attr("id", "pills-home")
-                            .attr("role", "tabpanel")
-                            .attr("aria-labelledby", "pills-home-tab")
-                            // .style("height", "calc(100vh - 590px)")"
-                            // .style("overflow-y", "auto")
-                            .child(html!("table", {
-                                .class(class::TABLE_SM_STRIP)
-                                .children([
-                                    html!("thead", {
-                                        .child(html!("tr", {
-                                            .children([
-                                                html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
-                                                html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
-                                                html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
-                                                html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
-                                            ])
-                                        }))
-                                    }),
-                                    html!("tbody", {
-                                        .children_signal_vec(page.info.signal_cloned().map(clone!(app, page => move |opt| opt.as_ref().map(|info| {
-                                            info.last_labs.chunks(2).map(|tuple| {
+                    .child_signal(page.lab_is_last.signal().map(clone!(app, page, visit => move |last| {
+                        if last {
+                            Some(html!("div", {
+                                .attr("role", "tabpanel")
+                                .attr("aria-labelledby", "pills-home-tab")
+                                // .style("height", "calc(100vh - 590px)")"
+                                // .style("overflow-y", "auto")
+                                .child(html!("table", {
+                                    .class(class::TABLE_SM_STRIP)
+                                    .children([
+                                        html!("thead", {
+                                            .child(html!("tr", {
+                                                .children([
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
+                                                ])
+                                            }))
+                                        }),
+                                        html!("tbody", {
+                                            .children_signal_vec(page.info.signal_cloned().map(clone!(app, page => move |opt| opt.as_ref().map(|info| {
+                                                info.last_labs.chunks(2).map(|tuple| {
+                                                    html!("tr", {
+                                                        .children(tuple.iter().flat_map(|lab| {
+                                                            let cmp = if let (Some(prev), Some(normal)) = (&lab.lab_order_result, &lab.lab_items_normal_value) {
+                                                                LabCmp::new(prev, normal)
+                                                            } else {
+                                                                LabCmp::Normal
+                                                            };
+                                                            [
+                                                                html!("td", {
+                                                                    .child(html!("span", {.class("fw-bold").text(&lab.lab_name)}))
+                                                                    .apply(|dom| {
+                                                                        if let Some(lab_items_normal_value) = lab.lab_items_normal_value.as_ref() {
+                                                                            dom.child(html!("span", {
+                                                                                .class("small")
+                                                                                .text(&[" (", lab_items_normal_value, ")"].concat())
+                                                                            }))
+                                                                        } else {
+                                                                            dom
+                                                                        }
+                                                                    })
+                                                                }),
+                                                                html!("td", {
+                                                                    .class("text-end")
+                                                                    .child(html!("span", {
+                                                                        .class("fw-bold")
+                                                                        .apply(|dom| if matches!(cmp, LabCmp::Normal) {
+                                                                            dom.class("text-primary")
+                                                                        } else {
+                                                                            dom.class("text-danger")
+                                                                        })
+                                                                        .text(&lab.lab_order_result.clone().unwrap_or(String::from("-")))
+                                                                    }))
+                                                                    .apply_if(matches!(cmp, LabCmp::High), |dom| { dom
+                                                                        .child(html!("span", {
+                                                                            .class(class::BOLD_RED)
+                                                                            .text(" H")
+                                                                        }))
+                                                                    })
+                                                                    .apply_if(matches!(cmp, LabCmp::Low), |dom| { dom
+                                                                        .child(html!("span", {
+                                                                            .class(class::BOLD_RED)
+                                                                            .text(" L")
+                                                                        }))
+                                                                    })
+                                                                    .child(html!("span",{.class("small").text(&lab.order_date.map(|date| [" (",&date_th_relative(&date),")"].concat()).unwrap_or_default())}))
+                                                                    .apply(|dom| {
+                                                                        if app.endpoint_is_allow(&Method::GET, &EndPoint::LabItem, false)
+                                                                            && lab.lab_order_result.is_some()
+                                                                            && lab.lab_name.as_str() != "CrCl"
+                                                                        {
+                                                                            dom.style("cursor","pointer")
+                                                                            .event(clone!(app, page, lab, info => move |_:events::Click| {
+                                                                                if let (Some(hn), Some(lab_items_code)) = (&info.hn, opt_zero_none(lab.lab_items_code)) {
+                                                                                    let lab_history_modal = LabHistory::new(
+                                                                                        Mutable::new(hn.to_owned()),
+                                                                                        lab_items_code,
+                                                                                        &lab.lab_items_name_ref,
+                                                                                        &lab.lab_items_unit,
+                                                                                        &lab.lab_order_number,
+                                                                                    );
+                                                                                    page.lab_history_modal.set(Some(lab_history_modal));
+                                                                                    app.show_modal_backdrop();
+                                                                                }
+                                                                            }))
+                                                                        } else {
+                                                                            dom.style("cursor","default")
+                                                                        }
+                                                                    })
+                                                                }),
+                                                            ]
+                                                        }))
+                                                    })
+                                                }).collect::<Vec<Dom>>()
+                                            }).unwrap_or_default())).to_signal_vec())
+                                        }),
+                                    ])
+                                }))
+                            }))
+                        } else {
+                            Some(html!("div", {
+                                .attr("role", "tabpanel")
+                                .attr("aria-labelledby", "pills-profile-tab")
+                                // .style("height", "calc(100vh - 590px)")
+                                // .style("overflow-y", "auto")
+                                .child(html!("table", {
+                                    .class(class::TABLE_SM_STRIP)
+                                    .children([
+                                        html!("thead", {
+                                            .child(html!("tr", {
+                                                .children([
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
+                                                    html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
+                                                ])
+                                            }))
+                                        }),
+                                        html!("tbody", {
+                                            .children(visit.labs.chunks(2).map(|tuple| {
                                                 html!("tr", {
                                                     .children(tuple.iter().flat_map(|lab| {
                                                         let cmp = if let (Some(prev), Some(normal)) = (&lab.lab_order_result, &lab.lab_items_normal_value) {
@@ -921,17 +1019,11 @@ impl PrescriptionScreenPage {
                                                                         .text(" L")
                                                                     }))
                                                                 })
-                                                                .child(html!("span",{.class("small").text(&lab.order_date.map(|date| [" (",&date_th_relative(&date),")"].concat()).unwrap_or_default())}))
                                                                 .apply(|dom| {
-                                                                    if app.endpoint_is_allow(&Method::GET, &EndPoint::LabItem, false)
-                                                                        && lab.lab_order_result.is_some()
-                                                                        && lab.lab_name.as_str() != "CrCl"
-                                                                    {
-                                                                        dom.attr("data-bs-toggle", "modal")
-                                                                        .attr("data-bs-target", "#lab-history-modal-prescription-screen")
+                                                                    if lab.lab_order_result.is_some() && lab.lab_name.as_str() != "CrCl" { dom
                                                                         .style("cursor","pointer")
-                                                                        .event(clone!(page, lab, info => move |_:events::Click| {
-                                                                            if let (Some(hn), Some(lab_items_code)) = (&info.hn, opt_zero_none(lab.lab_items_code)) {
+                                                                        .event(clone!(app, page, lab, visit => move |_:events::Click| {
+                                                                            if let (Some(hn), Some(lab_items_code)) = (&visit.hn, opt_zero_none(lab.lab_items_code)) {
                                                                                 let lab_history_modal = LabHistory::new(
                                                                                     Mutable::new(hn.to_owned()),
                                                                                     lab_items_code,
@@ -940,6 +1032,7 @@ impl PrescriptionScreenPage {
                                                                                     &lab.lab_order_number,
                                                                                 );
                                                                                 page.lab_history_modal.set(Some(lab_history_modal));
+                                                                                app.show_modal_backdrop();
                                                                             }
                                                                         }))
                                                                     } else {
@@ -950,121 +1043,18 @@ impl PrescriptionScreenPage {
                                                         ]
                                                     }))
                                                 })
-                                            }).collect::<Vec<Dom>>()
-                                        }).unwrap_or_default())).to_signal_vec())
-                                    }),
-                                ])
+                                            }))
+                                        }),
+                                    ])
+                                }))
                             }))
-                        }),
-                        html!("div", {
-                            .class(class::TAB_FADE)
-                            .class_signal(["show","active"], not(page.lab_is_last.signal()))
-                            .attr("id", "pills-profile")
-                            .attr("role", "tabpanel")
-                            .attr("aria-labelledby", "pills-profile-tab")
-                            // .style("height", "calc(100vh - 590px)")
-                            // .style("overflow-y", "auto")
-                            .child(html!("table", {
-                                .class(class::TABLE_SM_STRIP)
-                                .children([
-                                    html!("thead", {
-                                        .child(html!("tr", {
-                                            .children([
-                                                html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
-                                                html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
-                                                html!("th", {.class("text-center").attr("scope", "col").text("LAB")}),
-                                                html!("th", {.class("text-center").attr("scope", "col").text("ผล")}),
-                                            ])
-                                        }))
-                                    }),
-                                    html!("tbody", {
-                                        .children(visit.labs.chunks(2).map(|tuple| {
-                                            html!("tr", {
-                                                .children(tuple.iter().flat_map(|lab| {
-                                                    let cmp = if let (Some(prev), Some(normal)) = (&lab.lab_order_result, &lab.lab_items_normal_value) {
-                                                        LabCmp::new(prev, normal)
-                                                    } else {
-                                                        LabCmp::Normal
-                                                    };
-                                                    [
-                                                        html!("td", {
-                                                            .child(html!("span", {.class("fw-bold").text(&lab.lab_name)}))
-                                                            .apply(|dom| {
-                                                                if let Some(lab_items_normal_value) = lab.lab_items_normal_value.as_ref() {
-                                                                    dom.child(html!("span", {
-                                                                        .class("small")
-                                                                        .text(&[" (", lab_items_normal_value, ")"].concat())
-                                                                    }))
-                                                                } else {
-                                                                    dom
-                                                                }
-                                                            })
-                                                        }),
-                                                        html!("td", {
-                                                            .class("text-end")
-                                                            .child(html!("span", {
-                                                                .class("fw-bold")
-                                                                .apply(|dom| if matches!(cmp, LabCmp::Normal) {
-                                                                    dom.class("text-primary")
-                                                                } else {
-                                                                    dom.class("text-danger")
-                                                                })
-                                                                .text(&lab.lab_order_result.clone().unwrap_or(String::from("-")))
-                                                            }))
-                                                            .apply_if(matches!(cmp, LabCmp::High), |dom| { dom
-                                                                .child(html!("span", {
-                                                                    .class(class::BOLD_RED)
-                                                                    .text(" H")
-                                                                }))
-                                                            })
-                                                            .apply_if(matches!(cmp, LabCmp::Low), |dom| { dom
-                                                                .child(html!("span", {
-                                                                    .class(class::BOLD_RED)
-                                                                    .text(" L")
-                                                                }))
-                                                            })
-                                                            .apply(|dom| {
-                                                                if lab.lab_order_result.is_some() && lab.lab_name.as_str() != "CrCl" { dom
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#lab-history-modal-prescription-screen")
-                                                                    .style("cursor","pointer")
-                                                                    .event(clone!(page, lab, visit => move |_:events::Click| {
-                                                                        if let (Some(hn), Some(lab_items_code)) = (&visit.hn, opt_zero_none(lab.lab_items_code)) {
-                                                                            let lab_history_modal = LabHistory::new(
-                                                                                Mutable::new(hn.to_owned()),
-                                                                                lab_items_code,
-                                                                                &lab.lab_items_name_ref,
-                                                                                &lab.lab_items_unit,
-                                                                                &lab.lab_order_number,
-                                                                            );
-                                                                            page.lab_history_modal.set(Some(lab_history_modal));
-                                                                        }
-                                                                    }))
-                                                                } else {
-                                                                    dom.style("cursor","default")
-                                                                }
-                                                            })
-                                                        }),
-                                                    ]
-                                                }))
-                                            })
-                                        }))
-                                    }),
-                                ])
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "lab-history-modal-prescription-screen")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.lab_history_modal.signal_cloned().map(clone!(app => move |opt| {
-                                opt.as_ref().map(clone!(app => move |modal| {
-                                    LabHistory::render(modal.clone(), app, None)
-                                })).or(Some(blank_modal()))
-                            })))
-                        }),
-                    ])
+                        }
+                    })))
+                    .child_signal(page.lab_history_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| {
+                            LabHistory::render_modal(modal, page.lab_history_modal.clone(), None, app.clone())
+                        })
+                    })))
                 }),
             ])
         })
@@ -1659,121 +1649,141 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_modal(page: Rc<Self>) -> Dom {
+    fn render_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
-            .class("modal")
-            .attr("id", "infoMedicineLastDrugModal")
-            .attr("tabindex", "-1")
-            .attr("aria-labelledby", "infoMedicineLastDrugModal")
-            .child(html!("div", {
-                .class(class::MODAL_DIALOG_FULL_C)
-                .child(html!("div", {
-                    .class(class::MODAL_CONTENT_X)
-                    .children([
-                        html!("div", {
-                            .class("modal-header")
-                            .children([
-                                html!("h5", {
-                                    .class("modal-title")
-                                    //.attr("id", "exampleModalLabel")
-                                    .text("ยา")
-                                }),
-                                doms::close_modal_x_btn(),
-                            ])
-                        }),
-                        html!("div", {
-                            .class("modal-body")
-                            .child(html!("div", {
-                                .class("col-12")
-                                .children([
-                                    html!("div", {
-                                        .class("overflow-auto")
-                                        .style("overflow-y","auto")
-                                        .child(html!("table", {
-                                            .class(class::TABLE_SM_STRIP)
-                                            .children([
-                                                html!("thead", {
-                                                    .child(html!("tr", {
-                                                        .children([
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("#")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาปัจจุบัน")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวน")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาเดิม")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวนเดิม")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้ปัจจุบัน")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้เดิม")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("วันที่ ที่ได้รับครั้งก่อนหน้า")}),
-                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("สรุป")}),
-                                                        ])
-                                                    }))
-                                                }),
-                                                html!("tbody", {
-                                                    //.attr("id", "info_medicine_last_tb")
-                                                    .children_signal_vec(page.visit.signal_cloned().map(|opt| opt.as_ref().map(|visit| {
-                                                        visit.medicines.iter().enumerate().map(|(i, med)| {
-                                                            let last_opt = LastMedicine::new(&med.last_prescription);
-                                                            let is_icode_changed = last_opt.as_ref().map(|last| last.icode != med.icode).unwrap_or_default();
-                                                            let is_qty_changed = last_opt.as_ref().map(|last| last.qty != med.qty).unwrap_or_default();
-                                                            let is_strength_changed = last_opt.as_ref().map(|last| last.strength != med.strength).unwrap_or_default();
-                                                            let is_shortlist_changed = last_opt.as_ref().map(|last| last.shortlist != med.shortlist).unwrap_or_default();
+            .child(Self::render_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_last_drug_modal.clone(), app))
+        })
+    }
 
-                                                            html!("tr", {
-                                                                .attr("data-bs-toggle","modal")
-                                                                .attr("data-bs-target","#infoMedicineLastDrugModal")
-                                                                .apply_if(last_opt.is_none() || is_icode_changed || is_strength_changed || is_shortlist_changed, |dom| dom.class("table-warning"))
-                                                                .children([
-                                                                    html!("td", {.text(&(i+1).to_string())}),
-                                                                    html!("td", {.child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))}),
-                                                                    html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
-                                                                    html!("td", {
-                                                                        .apply_if(is_icode_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.name_drugitems.clone()).unwrap_or_default()))
-                                                                    }),
-                                                                    html!("td", {
-                                                                        .apply_if(is_qty_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.qty.map(|i| i.to_string())).unwrap_or_default()))
-                                                                    }),
-                                                                    html!("td", {.text(&med.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default())}),
-                                                                    html!("td", {
-                                                                        .apply_if(is_shortlist_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.shortlist.as_ref().map(|s| sanity_dot_space(s))).unwrap_or_default()))
-                                                                    }),
-                                                                    html!("td", {
-                                                                        .apply_if(last_opt.is_some(), |dom| dom.text(&last_opt.as_ref().and_then(|last| last.rxdatetime.as_ref().map(|s| datetime_str_th_relative(s))).unwrap_or_default()))
-                                                                    }),
-                                                                    html!("td", {
-                                                                        .apply_if(last_opt.is_none(), |dom| dom.child(html!("span", {.class(class::BADGE_GOLD_L).style("cursor","default").text("ยาใหม่")})))
-                                                                        .children([
-                                                                            html!("span", {
-                                                                                .class(class::BADGE_L)
-                                                                                .style("cursor","default")
-                                                                                .class(if is_icode_changed {"text-bg-warning"} else {"text-bg-secondary"})
-                                                                                .text(if is_icode_changed {"icode เปลี่ยน"} else {"icode เดิม"})
-                                                                            }),
-                                                                            html!("span", {
-                                                                                .class(class::BADGE_L)
-                                                                                .style("cursor","default")
-                                                                                .class(if is_strength_changed {"text-bg-warning"} else {"text-bg-secondary"})
-                                                                                .text(if is_strength_changed {"Strength เปลี่ยน"} else {"Strength เดิม"})
-                                                                            }),
-                                                                            html!("span", {
-                                                                                .class(class::BADGE_L)
-                                                                                .style("cursor","default")
-                                                                                .class(if is_shortlist_changed {"text-bg-warning"} else {"text-bg-secondary"})
-                                                                                .text(if is_shortlist_changed {"วิธีใช้เปลี่ยน"} else {"วิธีใช้เดิม"})
-                                                                            }),
-                                                                        ])
-                                                                    })
-                                                                ])
-                                                            })
-                                                        }).collect::<Vec<Dom>>()
-                                                    }).unwrap_or_default()).to_signal_vec())
-                                                }),
-                                            ])
-                                        }))
-                                    }),
-                                ])
-                            }))
-                        }),
-                    ])
-                }))
+    fn render_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_FULL_C)
+            .child(html!("div", {
+                .class(class::MODAL_CONTENT_X)
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                //.attr("id", "exampleModalLabel")
+                                .text("ยา")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_last_drug_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            .class("col-12")
+                            .children([
+                                html!("div", {
+                                    .class("overflow-auto")
+                                    .style("overflow-y","auto")
+                                    .child(html!("table", {
+                                        .class(class::TABLE_SM_STRIP)
+                                        .children([
+                                            html!("thead", {
+                                                .child(html!("tr", {
+                                                    .children([
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("#")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาปัจจุบัน")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวน")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาเดิม")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวนเดิม")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้ปัจจุบัน")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้เดิม")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("วันที่ ที่ได้รับครั้งก่อนหน้า")}),
+                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("สรุป")}),
+                                                    ])
+                                                }))
+                                            }),
+                                            html!("tbody", {
+                                                //.attr("id", "info_medicine_last_tb")
+                                                .children_signal_vec(page.visit.signal_cloned().map(|opt| opt.as_ref().map(|visit| {
+                                                    visit.medicines.iter().enumerate().map(|(i, med)| {
+                                                        let last_opt = LastMedicine::new(&med.last_prescription);
+                                                        let is_icode_changed = last_opt.as_ref().map(|last| last.icode != med.icode).unwrap_or_default();
+                                                        let is_qty_changed = last_opt.as_ref().map(|last| last.qty != med.qty).unwrap_or_default();
+                                                        let is_strength_changed = last_opt.as_ref().map(|last| last.strength != med.strength).unwrap_or_default();
+                                                        let is_shortlist_changed = last_opt.as_ref().map(|last| last.shortlist != med.shortlist).unwrap_or_default();
+
+                                                        html!("tr", {
+                                                            .apply_if(last_opt.is_none() || is_icode_changed || is_strength_changed || is_shortlist_changed, |dom| dom.class("table-warning"))
+                                                            .children([
+                                                                html!("td", {.text(&(i+1).to_string())}),
+                                                                html!("td", {.child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))}),
+                                                                html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
+                                                                html!("td", {
+                                                                    .apply_if(is_icode_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.name_drugitems.clone()).unwrap_or_default()))
+                                                                }),
+                                                                html!("td", {
+                                                                    .apply_if(is_qty_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.qty.map(|i| i.to_string())).unwrap_or_default()))
+                                                                }),
+                                                                html!("td", {.text(&med.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default())}),
+                                                                html!("td", {
+                                                                    .apply_if(is_shortlist_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.shortlist.as_ref().map(|s| sanity_dot_space(s))).unwrap_or_default()))
+                                                                }),
+                                                                html!("td", {
+                                                                    .apply_if(last_opt.is_some(), |dom| dom.text(&last_opt.as_ref().and_then(|last| last.rxdatetime.as_ref().map(|s| datetime_str_th_relative(s))).unwrap_or_default()))
+                                                                }),
+                                                                html!("td", {
+                                                                    .apply_if(last_opt.is_none(), |dom| dom.child(html!("span", {.class(class::BADGE_GOLD_L).style("cursor","default").text("ยาใหม่")})))
+                                                                    .children([
+                                                                        html!("span", {
+                                                                            .class(class::BADGE_L)
+                                                                            .style("cursor","default")
+                                                                            .class(if is_icode_changed {"text-bg-warning"} else {"text-bg-secondary"})
+                                                                            .text(if is_icode_changed {"icode เปลี่ยน"} else {"icode เดิม"})
+                                                                        }),
+                                                                        html!("span", {
+                                                                            .class(class::BADGE_L)
+                                                                            .style("cursor","default")
+                                                                            .class(if is_strength_changed {"text-bg-warning"} else {"text-bg-secondary"})
+                                                                            .text(if is_strength_changed {"Strength เปลี่ยน"} else {"Strength เดิม"})
+                                                                        }),
+                                                                        html!("span", {
+                                                                            .class(class::BADGE_L)
+                                                                            .style("cursor","default")
+                                                                            .class(if is_shortlist_changed {"text-bg-warning"} else {"text-bg-secondary"})
+                                                                            .text(if is_shortlist_changed {"วิธีใช้เปลี่ยน"} else {"วิธีใช้เดิม"})
+                                                                        }),
+                                                                    ])
+                                                                })
+                                                            ])
+                                                        })
+                                                    }).collect::<Vec<Dom>>()
+                                                }).unwrap_or_default()).to_signal_vec())
+                                            }),
+                                        ])
+                                    }))
+                                }),
+                            ])
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_last_drug_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
             }))
         })
     }

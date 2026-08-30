@@ -64,3 +64,22 @@
 -    --#{$prefix}table-hover-color: #{color-contrast($hover-bg)};
 +    --#{$prefix}table-hover-color: var(--#{$prefix}#{$state}-text-emphasis);
 ```
+
+# Remove javascript
+- tab: using class_signal("active"), remove "tab-pane" in "tab-content"
+- pill: using class_signal("active"), remove "tab-pane" in "tab-content"
+- collapse: accordion|navbar toggler|announcement use mutable(enum/bool) using
+    1. prop_signal("aria-expanded") on "navbar-toggler" element
+    2. swap mutable value by click event on "navbar-toggler" element
+    3. class_signal("show") on "navbar-collapse"+"collapse" element
+- dropdown: NOTE "dropdown-menu-end" need "data-bs-popper" attribute for css
+    1. class_signal("show") on "dropdown-toggler" element
+    2. prop_signal("aria-expanded") on "dropdown-toggler" element
+    3. swap mutable value by click event on "dropdown-toggler" element
+    4. class_signal("show") on "dropdown-menu" element
+    5. global click + "Esc" keydown event on "dropdown" or container element
+- radio button: using class_signal("active")
+- modal
+    1. show "modal-backdrop" on Some or true mutable, hide "modal-backdrop" on None or false mutable
+    2. child_signal(mutable) to render modal
+    3. global click + "Esc" keydown event on "modal" element

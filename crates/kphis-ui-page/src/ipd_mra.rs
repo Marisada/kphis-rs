@@ -1825,10 +1825,9 @@ impl IpdMraMutable {
                                         .class(class::INPUT_GROUP_SM)
                                         .children([
                                             html!("button", {
-                                                .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", mra.audit_type.signal_cloned().map(move |t| t == "I"))
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class(class::BTN_SM_BLUEO)
+                                                .class_signal("active", mra.audit_type.signal_ref(move |t| t == "I"))
                                                 .text("Internal")
                                                 .event(clone!(mra => move |_: events::Click| {
                                                     mra.audit_type.set(String::from("I"));
@@ -1838,10 +1837,9 @@ impl IpdMraMutable {
                                                 }))
                                             }),
                                             html!("button", {
-                                                .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", mra.audit_type.signal_cloned().map(move |t| t == "E"))
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class(class::BTN_SM_BLUEO)
+                                                .class_signal("active", mra.audit_type.signal_ref(move |t| t == "E"))
                                                 .text("External")
                                                 .event(clone!(mra => move |_: events::Click| {
                                                     mra.audit_type.set(String::from("E"));

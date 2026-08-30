@@ -51,7 +51,7 @@ use kphis_ui_component::{
         pdf_button::PdfButtons,
         searchbox::{dx::DxSearchboxCpn, hosp::HospSearchboxCpn},
     },
-    modal::{blank_modal, lab_history::LabHistory},
+    modal::lab_history::LabHistory,
     show_patient_main::ShowPatientMainCpn,
     summary_note::{SummaryNoteCpn, render_lab_alert, render_problem_list},
 };
@@ -1010,18 +1010,12 @@ impl SummaryPage {
                     ])
                 }),
                 html!("br"),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "labHistoryModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.lab_history_modal.signal_cloned().map(clone!(app => move |opt| {
-                        opt.as_ref().map(clone!(app => move |modal| {
-                            LabHistory::render(modal.clone(), app, None)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.lab_history_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    LabHistory::render_modal(modal.clone(), page.lab_history_modal.clone(), None, app.clone())
+                })
+            })))
         })
     }
 

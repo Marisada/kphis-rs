@@ -27,7 +27,7 @@ use kphis_util::{
     util::{explode, str_some},
 };
 
-use crate::modal::{blank_modal, index_note_form::IndexNoteForm};
+use crate::modal::index_note_form::IndexNoteForm;
 
 /// - GET `EndPoint::IpdAdmissionNoteDrAn`
 /// - GET `EndPoint::IpdAdmissionNoteNurseAn`
@@ -745,10 +745,8 @@ impl AdmissionNoteCpn {
                                 .child(html!("button", {
                                     .attr("type", "button")
                                     .class(class::BTN_SM_FR_GRAY)
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", "#nurseIndexNoteFormModal")
                                     .text("แก้ไข")
-                                    .event(clone!(page => move |_: events::Click| {
+                                    .event(clone!(app, page => move |_: events::Click| {
                                         match page.patient.lock_ref().as_ref().map(|pt| pt.visit_type()) {
                                             Some(VisitTypeId::Ipd(an))
                                             | Some(VisitTypeId::PreAdmit(an)) => {
@@ -759,6 +757,7 @@ impl AdmissionNoteCpn {
                                                 };
                                                 // POST `EndPoint::IpdIndexNote`
                                                 page.index_note_modal.set(Some(IndexNoteForm::load(&index_note)));
+                                                app.show_modal_backdrop();
                                                 // .attr("onclick", "setIndexPlanActionActionDateTime(event)")
                                             }
                                             Some(VisitTypeId::OpdEr(_, _))
@@ -777,22 +776,15 @@ impl AdmissionNoteCpn {
                     ])
                 }))
             })
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "nurseIndexNoteFormModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.index_note_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                    opt.as_ref().map(clone!(app, page => move |modal| {
-                        IndexNoteForm::render(
-                            modal.clone(),
-                            // page.index_note_modal.clone(),
-                            Some(page.reload_index_note.clone()),
-                            app,
-                        )
-                    })).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.index_note_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    IndexNoteForm::render_modal(modal.clone(),
+                        page.index_note_modal.clone(),
+                        Some(page.reload_index_note.clone()),
+                        app.clone(),
+                    )
+                })
+            })))
         })
     }
 }

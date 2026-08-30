@@ -1,4 +1,4 @@
-use dominator::{Dom, EventOptions, clone, events, html, is_window_loaded, with_node};
+use dominator::{Dom, EventOptions, clone, events, html, with_node};
 use futures_signals::{
     map_ref,
     signal::{Mutable, Signal, SignalExt, not},
@@ -7,7 +7,7 @@ use futures_signals::{
 use js_sys::Array;
 use std::rc::Rc;
 use wasm_bindgen::{JsCast, JsValue};
-use web_sys::{Blob, HtmlButtonElement, HtmlElement, HtmlInputElement, HtmlSelectElement};
+use web_sys::{Blob, HtmlButtonElement, HtmlElement, HtmlInputElement};
 
 use kphis_model::{
     A4_HEIGHT, A4_WIDTH,
@@ -16,11 +16,11 @@ use kphis_model::{
     endpoint::EndPoint,
     fetch::Method,
     report::{CustomReport, ReportParam, ReportTemplateParams, SystemReport, TypstRaw, TypstReport, TypstSvg},
-    timer::Timeout,
+    select_utils::SelectOption,
 };
 use kphis_ui_app::App;
 use kphis_ui_component::modal::report::param_input::ReportParamInput;
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins, pannable::PanState};
+use kphis_ui_core::{class, doms, mixins, pannable::PanState};
 use kphis_util::{
     datetime::datetime_th_relative,
     error::CONTACT_ADMIN,
@@ -39,8 +39,6 @@ pub struct ReportViewerPage {
     vnan: Mutable<String>,
 
     loaded_custom_templates_compact: Mutable<bool>,
-    renew_system_templates_select_box: Mutable<bool>,
-    renew_ward_select_box: Mutable<bool>,
 
     system_templates: MutableVec<SystemReport>,
     selected_system_template: Mutable<Option<SystemReport>>,
@@ -48,7 +46,6 @@ pub struct ReportViewerPage {
     custom_templates_compact: MutableVec<CustomReport>,
     selected_custom_template_compact: Mutable<String>,
     custom_template_changed: Mutable<bool>,
-    renew_custom_templates_select_box: Mutable<bool>,
     selected_custom_template: Mutable<Option<CustomReport>>,
 
     ids: MutableVec<Rc<ReportParamInput>>,
@@ -384,44 +381,6 @@ impl ReportViewerPage {
         }
     }
 
-    fn renew_system_templates_select_box(page: Rc<Self>, app: Rc<App>) {
-        if let Some(elm) = app.get_id("system_templates") {
-            Timeout::new(
-                0,
-                clone!(page => move || {
-                    if let Some(template) = page.selected_system_template.get_cloned() {
-                        if page.system_templates.lock_ref().contains(&template) {
-                            NiceSelect::new_default_with_value(&elm, template.template_name());
-                        } else {
-                            page.selected_system_template.set(None);
-                            NiceSelect::new_default(&elm);
-                        }
-                    } else {
-                        NiceSelect::new_default(&elm);
-                    }
-                }),
-            )
-            .forget();
-        }
-    }
-
-    fn renew_custom_templates_select_box(page: Rc<Self>, app: Rc<App>) {
-        if let Some(elm) = app.get_id("custom_templates") {
-            Timeout::new(
-                0,
-                clone!(page => move || {
-                    let template = page.selected_custom_template_compact.lock_ref();
-                    if !template.is_empty() {
-                            NiceSelect::new_default_with_value(&elm, &template);
-                    } else {
-                        NiceSelect::new_default(&elm);
-                    }
-                }),
-            )
-            .forget();
-        }
-    }
-
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         app.set_title("KPHIS - Report Viewer");
 
@@ -430,40 +389,6 @@ impl ReportViewerPage {
         let allow_signed_pdf = app.endpoint_is_allow(&Method::GET, &EndPoint::ReportTemplateTypeId, false) && app.can_sign_pdf();
 
         html!("section", {
-            .future(is_window_loaded().for_each(clone!(app, page => move |ready| {
-                if ready {
-                    Self::renew_system_templates_select_box(page.clone(), app.clone());
-                }
-                async{}
-            })))
-            .future(page.renew_system_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
-                if ready {
-                    Self::renew_system_templates_select_box(page.clone(), app.clone());
-                    page.renew_system_templates_select_box.set(false);
-                }
-                async{}
-            })))
-            .future(page.renew_custom_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
-                if ready {
-                    Self::renew_custom_templates_select_box(page.clone(), app.clone());
-                    page.renew_custom_templates_select_box.set(false);
-                }
-                async{}
-            })))
-            .future(page.renew_ward_select_box.signal().for_each(clone!(app, page => move |ready| {
-                if ready {
-                    if let Some(elm) = app.get_id("wards") {
-                        let ward = app.ward_select.lock_ref();
-                        if !ward.is_empty() {
-                            NiceSelect::new_default_with_value(&elm, &ward);
-                        } else {
-                            NiceSelect::new_default(&elm);
-                        }
-                    }
-                    page.renew_ward_select_box.set(false);
-                }
-                async{}
-            })))
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
                 let loaded = page.loaded_custom_templates_compact.signal() =>
@@ -560,10 +485,9 @@ impl ReportViewerPage {
                                 .class(class::INPUT_GROUP_T)
                                 .children([
                                     html!("button", {
-                                        .class(class::BTN_BLUEO)
-                                        .class_signal("active", page.report_type.signal_cloned().map(|report_type| matches!(report_type, ReportType::Ipd)))
                                         .attr("type", "button")
-                                        .attr("data-bs-toggle", "button")
+                                        .class(class::BTN_BLUEO)
+                                        .class_signal("active", page.report_type.signal_ref(|report_type| matches!(report_type, ReportType::Ipd)))
                                         .text("IPD")
                                         .event(clone!(page => move |_: events::Click| {
                                             page.report_type.set(ReportType::Ipd);
@@ -579,10 +503,9 @@ impl ReportViewerPage {
                                         }))
                                     }),
                                     html!("button", {
-                                        .class(class::BTN_BLUEO)
-                                        .class_signal("active", page.report_type.signal_cloned().map(|report_type| matches!(report_type, ReportType::OpdEr)))
                                         .attr("type", "button")
-                                        .attr("data-bs-toggle", "button")
+                                        .class(class::BTN_BLUEO)
+                                        .class_signal("active", page.report_type.signal_ref(|report_type| matches!(report_type, ReportType::OpdEr)))
                                         .text("OPD-ER")
                                         .event(clone!(page => move |_: events::Click| {
                                             page.report_type.set(ReportType::OpdEr);
@@ -601,10 +524,9 @@ impl ReportViewerPage {
                                 .child_signal(page.custom_templates_compact.signal_vec_cloned().is_empty().map(clone!(page => move |is_empty| {
                                     (!is_empty).then(|| {
                                         html!("button", {
-                                            .class(class::BTN_BLUEO)
-                                            .class_signal("active", page.report_type.signal_cloned().map(|report_type| matches!(report_type, ReportType::Custom)))
                                             .attr("type", "button")
-                                            .attr("data-bs-toggle", "button")
+                                            .class(class::BTN_BLUEO)
+                                            .class_signal("active", page.report_type.signal_ref(|report_type| matches!(report_type, ReportType::Custom)))
                                             .text("Custom")
                                             .event(clone!(page => move |_: events::Click| {
                                                 page.report_type.set(ReportType::Custom);
@@ -627,47 +549,54 @@ impl ReportViewerPage {
                                     match report_type {
                                         ReportType::Ipd
                                         | ReportType::OpdEr => {
-                                            page.renew_system_templates_select_box.set(true);
                                             Some(html!("div", {
                                                 .class(class::FLEX_W100)
-                                                .child(html!("select" => HtmlSelectElement, {
-                                                    .class(class::FORM_CTRL_SM_WRAP)
-                                                    .attr("id", "system_templates")
-                                                    .children_signal_vec(page.system_templates.signal_vec_cloned().map(|template| {
-                                                        html!("option", {
-                                                            .attr("value", template.template_name())
-                                                            .text(template.title())
-                                                        })
-                                                    }))
-                                                    .prop_signal("value", page.selected_system_template.signal_cloned().map(|opt| opt.as_ref().map(|selected| selected.template_name()).unwrap_or_default()))
-                                                    .with_node!(element => {
-                                                        .event(clone!(app, page => move |_: events::Change| {
-                                                            let v = element.value();
+                                                .child_signal(page.system_templates.signal_vec_cloned().to_signal_cloned().map(clone!(app, page => move |templates| {
+                                                    let options = templates.iter().map(|template| {
+                                                        SelectOption {
+                                                            key: template.template_name().to_string(),
+                                                            value: template.title().to_string(),
+                                                        }
+                                                    }).collect();
+                                                    let temp_value = Mutable::new(String::new());
+                                                    Some(doms::select_box(
+                                                        "system_templates", None, false,
+                                                        temp_value.clone(),
+                                                        page.load_and_render_svg.clone(),
+                                                        |d| d.class(class::FORM_CTRL_SM_WRAP)
+                                                            .future(page.selected_system_template.signal_cloned().for_each(clone!(temp_value => move |opt| {
+                                                                temp_value.set_neq(opt.map(|template| template.template_name().to_owned()).unwrap_or_default());
+                                                                async {}
+                                                            }))),
+                                                        clone!(app, page, temp_value => move || {
+                                                            let v = temp_value.get_cloned();
                                                             page.selected_system_template.set(SystemReport::new(&v));
                                                             app.report_select.set(v);
                                                             app.to_local_storage();
-                                                            page.load_and_render_svg.set(true);
-                                                        }))
-                                                    })
-                                                }))
+                                                        }),
+                                                        options,
+                                                    ))
+                                                })))
                                             }))
                                         }
                                         ReportType::Custom => {
-                                            page.renew_custom_templates_select_box.set(true);
                                             Some(html!("div", {
                                                 .class(class::FLEX_W100)
-                                                .child(html!("select" => HtmlSelectElement, {
-                                                    .class(class::FORM_CTRL_SM_WRAP)
-                                                    .attr("id", "custom_templates")
-                                                    // .child(html!("option", {.attr("value","").text("เลือกรายงาน")}))
-                                                    .children_signal_vec(page.custom_templates_compact.signal_vec_cloned().map(|template| {
-                                                        html!("option", {
-                                                            .attr("value", &template.template_id.to_string())
-                                                            .text(&template.template_name)
-                                                        })
-                                                    }))
-                                                    .apply(mixins::string_value_select(page.selected_custom_template_compact.clone(), page.custom_template_changed.clone()))
-                                                }))
+                                                .child_signal(page.custom_templates_compact.signal_vec_cloned().to_signal_cloned().map(clone!(app, page => move |templates| {
+                                                    let options = templates.iter().map(|template| {
+                                                        SelectOption {
+                                                            key: template.template_id.to_string(),
+                                                            value: template.template_name.clone(),
+                                                        }
+                                                    }).collect();
+                                                    Some(doms::select_box(
+                                                        "custom_templates", None, false,
+                                                        page.selected_custom_template_compact.clone(),
+                                                        page.custom_template_changed.clone(),
+                                                        |d| d.class(class::FORM_CTRL_SM_WRAP), || {},
+                                                        options,
+                                                    ))
+                                                })))
                                             }))
                                         }
                                     }
@@ -697,7 +626,6 @@ impl ReportViewerPage {
                         .children_signal_vec(page.report_type.signal_cloned().map(clone!(app, page => move |report_type| {
                             match report_type {
                                 ReportType::Ipd => {
-                                    page.renew_ward_select_box.set(true);
                                     vec![
                                         html!("div", {
                                             .class(class::INPUT_GROUP_SM)
@@ -706,21 +634,14 @@ impl ReportViewerPage {
                                                 doms::span_group_text("Ward"),
                                                 html!("div", {
                                                     .class(class::FLEX_W100)
-                                                    .child(html!("select" => HtmlSelectElement, {
-                                                        .class(class::FORM_CTRL_SM_WRAP)
-                                                        .attr("id", "wards")
-                                                        .children(ward_select_option.iter().map(|option| {
-                                                            doms::select_option(option, &app.ward_select.lock_ref())
-                                                        }))
-                                                        .prop_signal("value", app.ward_select.signal_cloned())
-                                                        .with_node!(element => {
-                                                            .event(clone!(app, page, element => move |_: events::Change| {
-                                                                app.ward_select.set_neq(element.value());
-                                                                app.to_local_storage();
-                                                                page.search_changed.set_neq(true);
-                                                            }))
-                                                        })
-                                                    }))
+                                                    .child(doms::select_box(
+                                                        "wards", None, false,
+                                                        app.ward_select.clone(),
+                                                        page.search_changed.clone(),
+                                                        |d| d.class(class::FORM_CTRL_SM_WRAP),
+                                                        clone!(app => move || app.to_local_storage()),
+                                                        ward_select_option.clone(),
+                                                    ))
                                                 }),
                                                 html!("button", {
                                                     .attr("type", "button")
@@ -730,9 +651,6 @@ impl ReportViewerPage {
                                                         let no_ward = app.ward_select.lock_ref().is_empty();
                                                         if !no_ward {
                                                             app.ward_select.set(String::new());
-                                                            if let Some(elm) = app.get_id("wards") {
-                                                                NiceSelect::new_default(&elm);
-                                                            }
                                                             page.search_changed.set_neq(true);
                                                         }
                                                     }))

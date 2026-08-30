@@ -1,5 +1,5 @@
 // ipd-nurse-document_tab_DocumentAdd.php
-use dominator::{Dom, clone, html, link};
+use dominator::{Dom, clone, events, html, link};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt},
@@ -8,7 +8,7 @@ use std::rc::Rc;
 
 use kphis_model::{ipd::document::IpdDocumentDatetime, route::Route};
 use kphis_ui_app::App;
-use kphis_ui_core::class;
+use kphis_ui_core::{class, mixins};
 use kphis_util::util::str_some;
 
 use super::concat_to_table_row_link;
@@ -68,21 +68,26 @@ impl IpdDocumentAddCpn {
                     .class("row")
                     .child_signal(page.result.signal_cloned().map(clone!(app, page => move |res| {
                         (res.nurse_admission_note.is_none() || res.dr_admission_note.is_none() || res.summary2.is_none()).then(|| {
+                            let dropdown_opened = Mutable::new(false);
                             html!("div", {
                                 .class("col-md-auto")
                                 .child(html!("div", {
                                     .class("dropdown")
                                     .children([
                                         html!("button", {
-                                            .class(class::BTN_DROP_TGL_CYAN)
                                             .attr("type", "button")
-                                            .attr("data-bs-toggle","dropdown")
-                                            .attr("aria-expanded","false")
+                                            .class(class::BTN_DROP_TGL_CYAN)
+                                            .class_signal("show", dropdown_opened.signal())
+                                            .prop_signal("aria-expanded", dropdown_opened.signal().map(|show| if show {"true"} else {"false"}))
                                             .child(html!("em", {.class(class::FA_PLUS)}))
                                             .text(" เพิ่มเอกสาร")
+                                            .event(clone!(dropdown_opened => move |_: events::Click| {
+                                                dropdown_opened.set(!dropdown_opened.get());
+                                            }))
                                         }),
                                         html!("ul", {
                                             .class("dropdown-menu")
+                                            .class_signal("show", dropdown_opened.signal())
                                             .apply(|dom| {
                                                 let route = Route::IpdAdmissionNoteNurse {an: page.an.get_cloned()};
                                                 if res.nurse_admission_note.is_none() && route.has_permission(app.state()) {
@@ -127,6 +132,7 @@ impl IpdDocumentAddCpn {
                                             })
                                         })
                                     ])
+                                    .apply(mixins::dropdown_closing_mixin(dropdown_opened.clone()))
                                 }))
                             })
                         })

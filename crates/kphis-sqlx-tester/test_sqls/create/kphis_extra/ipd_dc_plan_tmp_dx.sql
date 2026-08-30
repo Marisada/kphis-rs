@@ -1,5 +1,5 @@
 CREATE TABLE `kphis_extra`.`ipd_dc_plan_tmp_dx` (
-    `dx_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`dx_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`dx_name` VARCHAR(250) NOT NULL,
 	`dx_knowledge` TEXT NULL DEFAULT NULL,
 	`dx_revisit` TEXT NULL DEFAULT NULL,

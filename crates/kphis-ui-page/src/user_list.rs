@@ -21,6 +21,7 @@ use kphis_model::{
     },
 };
 use kphis_ui_app::App;
+use kphis_ui_component::modal::modal_show_bool_mixins;
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::str_some;
 
@@ -56,8 +57,9 @@ pub struct UserListPage {
     search_result: MutableVec<Rc<UserRole>>,
 
     sorted_by: Mutable<SortBy>,
-    is_desc: Mutable<bool>,
+    is_asc: Mutable<bool>,
 
+    show_user_manage_modal: Mutable<bool>,
     modal_changed: Mutable<bool>,
 
     modal_loginname: Mutable<String>,
@@ -152,7 +154,7 @@ impl UserListPage {
                             list_lock.clear();
                             list_lock.extend(response.user_roles.into_iter().map(Rc::new));
                             page.sorted_by.set(SortBy::Failed);
-                            page.is_desc.set_neq(true);
+                            page.is_asc.set_neq(true);
                         }
                         {
                             let mut roles_lock = page.roles.lock_mut();
@@ -184,9 +186,12 @@ impl UserListPage {
                 // POST `EndPoint::UserRoleUser`
                 match save.call_api_post(app.state()).await {
                     Ok(responses) => {
-                        app.alert_execute_responses(&responses, async move {
+                        app.alert_execute_responses(&responses, clone!(app => async move {
                             page.changed.set_neq(true);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_user_manage_modal.set(false)
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -353,7 +358,7 @@ impl UserListPage {
                 doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| {
                     let sort_fn = clone!(page => move || {
                         let mut items = page.search_result.lock_ref().to_vec();
-                        if page.is_desc.get() {
+                        if page.is_asc.get() {
                             match page.sorted_by.get_cloned() {
                                 SortBy::Loginname => items.sort_by(|a, b| b.loginname.cmp(&a.loginname)),
                                 SortBy::Fullname => items.sort_by(|a, b| b.name.cmp(&a.name)),
@@ -380,16 +385,16 @@ impl UserListPage {
                                     html!("th", {.attr("scope","col").text("#")}),
                                     html!("th", {
                                         .attr("scope","col").text("Loginname")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Loginname, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Loginname, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {
                                         .attr("scope","col").text("ชื่อ - นามสกุล")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Fullname, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Fullname, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {.attr("scope","col").text("Role")}),
                                     html!("th", {
                                         .attr("scope","col").text("HOSxP Group")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Group, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Group, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {.class("text-nowrap").attr("scope","col").text("ปิดใช้งาน")}),
                                 ])
@@ -397,11 +402,11 @@ impl UserListPage {
                                     .children([
                                         html!("th", {
                                             .attr("scope","col").text("2FA")
-                                            .apply(mixins::sortable_header_mixin(SortBy::Totp, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                            .apply(mixins::sortable_header_mixin(SortBy::Totp, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                         }),
                                         html!("th", {
                                             .attr("scope","col").text("Failed")
-                                            .apply(mixins::sortable_header_mixin(SortBy::Failed, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                            .apply(mixins::sortable_header_mixin(SortBy::Failed, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
                                         }),
                                     ])
                                 })
@@ -414,219 +419,232 @@ impl UserListPage {
                         }),
                     ])
                 })),
-                Self::render_modal(page.clone(), app.clone()),
             ])
+            .child_signal(page.show_user_manage_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_modal(page.clone(), app.clone()))
+            })))
         })
     }
 
     fn render_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
-            .class("modal")
-            .attr("id", "userManageModal")
-            .attr("role", "dialog")
-            .attr("tabindex", "-1")
-            .child(html!("div", {
-                .class(class::MODAL_DIALOG_XL_FULL)
-                .children([
-                    html!("div", {
-                        .class("modal-content")
-                        .children([
-                            html!("div", {
-                                .class("modal-header")
-                                .children([
-                                    html!("h4", {
-                                        .class("modal-title")
-                                        .text("จัดการผู้ใช้งาน")
-                                    }),
-                                    doms::close_modal_x_btn(),
-                                ])
-                            }),
-                            html!("div", {
-                                .class("modal-body")
-                                .children([
-                                    html!("div", {
-                                        .class("row")
-                                        .child(html!("div", {
-                                            .class("col")
-                                            .children([
-                                                html!("label", {
-                                                    .attr("for", "modal_loginname")
-                                                    .class("me-1")
-                                                    .text("Login Name:")
-                                                }),
-                                                html!("span", {
-                                                    .attr("id", "modal_loginname")
-                                                    .class(class::BOLD)
-                                                    .text_signal(page.modal_loginname.signal_cloned())
-                                                }),
-                                                html!("label", {
-                                                    .attr("for", "modal_name")
-                                                    .class("me-1")
-                                                    .text("ชื่อ-นามสกุล:")
-                                                }),
-                                                html!("span", {
-                                                    .attr("id", "modal_name")
-                                                    .class(class::BOLD)
-                                                    .text_signal(page.modal_name.signal_cloned())
-                                                }),
-                                                html!("label", {
-                                                    .attr("for", "modal_hosxp_group")
-                                                    .class("me-1")
-                                                    .text("HOSxP Group:")
-                                                }),
-                                                html!("span", {
-                                                    .attr("id", "modal_hosxp_group")
-                                                    .class(class::BOLD)
-                                                    .text_signal(page.modal_hosxp_group.signal_cloned())
-                                                }),
-                                                html!("span", {
-                                                    .class("me-1")
-                                                    //.attr("id", "modal_account_disable")
-                                                    .child(html!("span", {
-                                                        .class("badge")
-                                                        .class_signal("text-bg-danger", page.modal_account_disable.signal_cloned().map(|d| d == "Y"))
-                                                        .class_signal("text-bg-success", page.modal_account_disable.signal_cloned().map(|d| d != "Y"))
-                                                        .text_signal(page.modal_account_disable.signal_cloned().map(|d| if d == "Y" {"ปิดใช้งาน"} else {"เปิดใช้งาน"}))
-                                                    }))
-                                                }),
-                                                html!("label", {
-                                                    .attr("for", "modal_failed")
-                                                    .class("me-1")
-                                                    .text("Failed:")
-                                                }),
-                                                html!("span", {
-                                                    .attr("id", "modal_failed")
-                                                    .class(class::BOLD)
-                                                    .text_signal(page.modal_failed.signal().map(|i| i.to_string()))
-                                                }),
-                                            ])
-                                            .apply_if(app.endpoint_is_allow(&Method::PATCH, &EndPoint::UserConfig, false), |dom| { dom
-                                                .child_signal(page.modal_failed.signal().map(clone!(app, page => move |failed| {
-                                                    (failed > 0).then(|| {
-                                                        html!("button" => HtmlButtonElement, {
-                                                            .attr("type","button")
-                                                            .class(class::BTN_SM_R_REDO)
-                                                            .text("ตั้ง Failed เป็น 0")
-                                                            .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                Self::clear_failed(page.modal_loginname.get_cloned(), page.clone(), app.clone());
-                                                                page.modal_failed.set(0);
-                                                            }), app.state()))
-                                                        })
-                                                    })
-                                                })))
-                                                .child_signal(page.modal_has_totp.signal_cloned().map(clone!(app, page => move |has_totp| {
-                                                    has_totp.then(|| {
-                                                        html!("button" => HtmlButtonElement, {
-                                                            .attr("type","button")
-                                                            .class(class::BTN_SM_R_REDO)
-                                                            .text("ยกเลิก 2FA")
-                                                            .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                Self::remove_2fa(page.modal_loginname.get_cloned(), page.clone(), app.clone());
-                                                                page.modal_has_totp.set(false);
-                                                            }), app.state()))
-                                                        })
-                                                    })
-                                                })))
-                                            })
-                                        }))
-                                    }),
-                                    html!("hr"),
-                                    html!("div", {
-                                        .class("row")
+            .child(Self::render_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_user_manage_modal.clone(), app))
+        })
+    }
+
+    fn render_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_XL_FULL)
+            .children([
+                html!("div", {
+                    .class("modal-content")
+                    .children([
+                        html!("div", {
+                            .class("modal-header")
+                            .children([
+                                html!("h4", {
+                                    .class("modal-title")
+                                    .text("จัดการผู้ใช้งาน")
+                                }),
+                                html!("button", {
+                                    .attr("type", "button")
+                                    .class("btn-close")
+                                    .attr("aria-label", "Close")
+                                    .event(clone!(app, page => move |_: events::Click| {
+                                        app.clear_modal_backdrop();
+                                        page.show_user_manage_modal.set(false);
+                                    }))
+                                }),
+                            ])
+                        }),
+                        html!("div", {
+                            .class("modal-body")
+                            .children([
+                                html!("div", {
+                                    .class("row")
+                                    .child(html!("div", {
+                                        .class("col")
                                         .children([
-                                            html!("div", {
-                                                .class("col-6")
-                                                .child(html!("p", {.text("Role")}))
+                                            html!("label", {
+                                                .attr("for", "modal_loginname")
+                                                .class("me-1")
+                                                .text("Login Name:")
                                             }),
-                                            html!("div", {
-                                                .class("col-6")
-                                                .child(html!("p", {.text("User Permission")}))
+                                            html!("span", {
+                                                .attr("id", "modal_loginname")
+                                                .class(class::BOLD)
+                                                .text_signal(page.modal_loginname.signal_cloned())
                                             }),
-                                        ])
-                                    }),
-                                    html!("div", {
-                                        .class("row")
-                                        .children([
-                                            html!("div", {
-                                                .class("col-6")
-                                                .style("height", "calc(100vh - 270px)")
-                                                .style("overflow-y","auto")
-                                                .children([
-                                                    html!("ul", {
-                                                        //.attr("id", "role_checkbox")
-                                                        .style("list-style","none")
-                                                        .children_signal_vec(page.roles.signal_vec_cloned().to_signal_cloned().map(clone!(page => move |roles| {
-                                                            let (heads, tails): (Vec<Rc<Role>>,Vec<Rc<Role>>) = roles.into_iter().partition(|role| role.parent_role.is_none());
-                                                            heads.iter().map(clone!(page => move |head| {
-                                                                html!("li", {
-                                                                    .class("form-check")
-                                                                    .children(Self::render_li(head, page.clone()))
-                                                                    .apply_if(tails.iter().any(|x| x.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default()), clone!(page, tails => move |dom| {
-                                                                        dom.child(html!("ul", {
-                                                                            .style("list-style","none")
-                                                                            .children(Self::render_li_recursive(head, &tails, page))
-                                                                        }))
-                                                                    }))
-                                                                    // .children(Self::render_li_recursive(head, &tails, page.clone()))
-                                                                })
-                                                            })).collect::<Vec<Dom>>()
-                                                        })).to_signal_vec())
-                                                    }),
-                                                ])
+                                            html!("label", {
+                                                .attr("for", "modal_name")
+                                                .class("me-1")
+                                                .text("ชื่อ-นามสกุล:")
                                             }),
-                                            html!("div", {
-                                                .class("col-6")
-                                                .style("height", "calc(100vh - 270px)")
-                                                .style("overflow-y", "auto")
-                                                .child(html!("ul", {
-                                                    //.attr("id", "user_permission_body")
-                                                    .children_signal_vec(page.modal_user_permissions.entries_cloned().map(|perm| {
-                                                        html!("li", {
-                                                            .class("mb-2")
-                                                            .child(html!("span", {.text(perm.0.str())}))
-                                                            .children(perm.1.iter().map(|role_desc| {
-                                                                html!("span", {
-                                                                    .class(class::BADGE_CYAN_R)
-                                                                    .style("cursor","default")
-                                                                    .text(role_desc)
-                                                                })
-                                                            }))
-                                                        })
-                                                    }))
+                                            html!("span", {
+                                                .attr("id", "modal_name")
+                                                .class(class::BOLD)
+                                                .text_signal(page.modal_name.signal_cloned())
+                                            }),
+                                            html!("label", {
+                                                .attr("for", "modal_hosxp_group")
+                                                .class("me-1")
+                                                .text("HOSxP Group:")
+                                            }),
+                                            html!("span", {
+                                                .attr("id", "modal_hosxp_group")
+                                                .class(class::BOLD)
+                                                .text_signal(page.modal_hosxp_group.signal_cloned())
+                                            }),
+                                            html!("span", {
+                                                .class("me-1")
+                                                //.attr("id", "modal_account_disable")
+                                                .child(html!("span", {
+                                                    .class("badge")
+                                                    .class_signal("text-bg-danger", page.modal_account_disable.signal_cloned().map(|d| d == "Y"))
+                                                    .class_signal("text-bg-success", page.modal_account_disable.signal_cloned().map(|d| d != "Y"))
+                                                    .text_signal(page.modal_account_disable.signal_cloned().map(|d| if d == "Y" {"ปิดใช้งาน"} else {"เปิดใช้งาน"}))
                                                 }))
                                             }),
+                                            html!("label", {
+                                                .attr("for", "modal_failed")
+                                                .class("me-1")
+                                                .text("Failed:")
+                                            }),
+                                            html!("span", {
+                                                .attr("id", "modal_failed")
+                                                .class(class::BOLD)
+                                                .text_signal(page.modal_failed.signal().map(|i| i.to_string()))
+                                            }),
                                         ])
-                                    }),
-                                ])
-                            }),
-                            html!("div", {
-                                .class("modal-footer")
-                                .apply_if(app.endpoint_is_allow(&Method::POST, &EndPoint::UserRoleUser, false), |dom| {
-                                    dom.child(html!("button" => HtmlButtonElement, {
-                                        .attr("type", "button")
-                                        .class("btn")
-                                        .class_signal("btn-primary", page.modal_changed.signal())
-                                        .class_signal("btn-secondary", not(page.modal_changed.signal()))
-                                        //.attr("id", "button-save-role")
-                                        .attr("data-bs-dismiss", "modal")
-                                        .text("บันทึก")
-                                        .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                            Self::save(page.clone(), app.clone());
-                                        }), not(page.modal_changed.signal()), app.state()))
-                                        // .attr("onclick", "modal_onclickSaveSelectRole(event)")
+                                        .apply_if(app.endpoint_is_allow(&Method::PATCH, &EndPoint::UserConfig, false), |dom| { dom
+                                            .child_signal(page.modal_failed.signal().map(clone!(app, page => move |failed| {
+                                                (failed > 0).then(|| {
+                                                    html!("button" => HtmlButtonElement, {
+                                                        .attr("type","button")
+                                                        .class(class::BTN_SM_R_REDO)
+                                                        .text("ตั้ง Failed เป็น 0")
+                                                        .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                                            Self::clear_failed(page.modal_loginname.get_cloned(), page.clone(), app.clone());
+                                                            page.modal_failed.set(0);
+                                                        }), app.state()))
+                                                    })
+                                                })
+                                            })))
+                                            .child_signal(page.modal_has_totp.signal_cloned().map(clone!(app, page => move |has_totp| {
+                                                has_totp.then(|| {
+                                                    html!("button" => HtmlButtonElement, {
+                                                        .attr("type","button")
+                                                        .class(class::BTN_SM_R_REDO)
+                                                        .text("ยกเลิก 2FA")
+                                                        .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                                            Self::remove_2fa(page.modal_loginname.get_cloned(), page.clone(), app.clone());
+                                                            page.modal_has_totp.set(false);
+                                                        }), app.state()))
+                                                    })
+                                                })
+                                            })))
+                                        })
                                     }))
-                                })
-                                .child(html!("button", {
+                                }),
+                                html!("hr"),
+                                html!("div", {
+                                    .class("row")
+                                    .children([
+                                        html!("div", {
+                                            .class("col-6")
+                                            .child(html!("p", {.text("Role")}))
+                                        }),
+                                        html!("div", {
+                                            .class("col-6")
+                                            .child(html!("p", {.text("User Permission")}))
+                                        }),
+                                    ])
+                                }),
+                                html!("div", {
+                                    .class("row")
+                                    .children([
+                                        html!("div", {
+                                            .class("col-6")
+                                            .style("height", "calc(100vh - 270px)")
+                                            .style("overflow-y","auto")
+                                            .children([
+                                                html!("ul", {
+                                                    //.attr("id", "role_checkbox")
+                                                    .style("list-style","none")
+                                                    .children_signal_vec(page.roles.signal_vec_cloned().to_signal_cloned().map(clone!(page => move |roles| {
+                                                        let (heads, tails): (Vec<Rc<Role>>,Vec<Rc<Role>>) = roles.into_iter().partition(|role| role.parent_role.is_none());
+                                                        heads.iter().map(clone!(page => move |head| {
+                                                            html!("li", {
+                                                                .class("form-check")
+                                                                .children(Self::render_li(head, page.clone()))
+                                                                .apply_if(tails.iter().any(|x| x.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default()), clone!(page, tails => move |dom| {
+                                                                    dom.child(html!("ul", {
+                                                                        .style("list-style","none")
+                                                                        .children(Self::render_li_recursive(head, &tails, page))
+                                                                    }))
+                                                                }))
+                                                                // .children(Self::render_li_recursive(head, &tails, page.clone()))
+                                                            })
+                                                        })).collect::<Vec<Dom>>()
+                                                    })).to_signal_vec())
+                                                }),
+                                            ])
+                                        }),
+                                        html!("div", {
+                                            .class("col-6")
+                                            .style("height", "calc(100vh - 270px)")
+                                            .style("overflow-y", "auto")
+                                            .child(html!("ul", {
+                                                //.attr("id", "user_permission_body")
+                                                .children_signal_vec(page.modal_user_permissions.entries_cloned().map(|perm| {
+                                                    html!("li", {
+                                                        .class("mb-2")
+                                                        .child(html!("span", {.text(perm.0.str())}))
+                                                        .children(perm.1.iter().map(|role_desc| {
+                                                            html!("span", {
+                                                                .class(class::BADGE_CYAN_R)
+                                                                .style("cursor","default")
+                                                                .text(role_desc)
+                                                            })
+                                                        }))
+                                                    })
+                                                }))
+                                            }))
+                                        }),
+                                    ])
+                                }),
+                            ])
+                        }),
+                        html!("div", {
+                            .class("modal-footer")
+                            .apply_if(app.endpoint_is_allow(&Method::POST, &EndPoint::UserRoleUser, false), |dom| {
+                                dom.child(html!("button" => HtmlButtonElement, {
                                     .attr("type", "button")
-                                    .attr("data-bs-dismiss", "modal")
-                                    .class(class::BTN_GRAY)
-                                    .text("ปิด")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.modal_changed.signal())
+                                    .class_signal("btn-secondary", not(page.modal_changed.signal()))
+                                    //.attr("id", "button-save-role")
+                                    .text("บันทึก")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save(page.clone(), app.clone());
+                                    }), not(page.modal_changed.signal()), app.state()))
+                                    // .attr("onclick", "modal_onclickSaveSelectRole(event)")
                                 }))
-                            }),
-                        ])
-                    }),
-                ])
-            }))
+                            })
+                            .child(html!("button", {
+                                .attr("type", "button")
+                                .class(class::BTN_GRAY)
+                                .text("ปิด")
+                                .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_user_manage_modal.set(false);
+                                })
+                            }))
+                        }),
+                    ])
+                }),
+            ])
         })
     }
 
@@ -700,8 +718,6 @@ impl UserListPage {
 
         html!("tr", {
             .style("cursor","pointer")
-            .attr("data-bs-toggle", "modal")
-            .attr("data-bs-target", "#userManageModal")
             .children([
                 html!("td", {.class("text-center").text(&(i + 1).to_string())}),
                 html!("td", {.text(&row.loginname)}),
@@ -755,6 +771,9 @@ impl UserListPage {
                 page.modal_has_totp.set_neq(row.totp_done.unwrap_or_default());
                 page.modal_failed.set_neq(row.failed.unwrap_or_default());
                 page.modal_changed.set_neq(false);
+
+                app.clear_modal_backdrop();
+                page.show_user_manage_modal.set(false);
             })
         })
     }

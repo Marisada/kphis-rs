@@ -287,257 +287,253 @@ impl IpdPreOrderCpn {
                 }
                 async {}
             })))
-            .class(class::TAB_FADE_SHOW_ACTIVE)
-            .attr("role", "tabpanel")
+            .class("row")
             .child(html!("div", {
-                .class("row")
-                .child(html!("div", {
-                    .class("col")
-                    .child(html!("table", {
-                        .class(class::TABLE_1R)
-                        //.attr("id", "order-table")
-                        .children([
-                            html!("thead", {
-                                .child(html!("tr", {
-                                    .children([
-                                        html!("th", {
-                                            .attr("scope", "col")
-                                            .class(class::TXT_C_TOP)
-                                            .class("bg-secondary-subtle")
-                                            .style("width","30%")
-                                            //.attr("id", "progress-note-column-header")
-                                            .apply_if(allow_progress_form && allow_progress_add, |dom| {
-                                                dom.child(html!("button", {
-                                                    //.attr("id", "addProgressNoteColumnInputHeaderLink")
-                                                    .visible_signal(used.signal_cloned().map(|used| used != "Y"))
-                                                    .attr("type", "button")
-                                                    .class(class::BTN_FR_R)
-                                                    .class_signal("btn-primary", not(page.show_progress_note_input.signal()))
-                                                    .class_signal("btn-secondary", page.show_progress_note_input.signal())
-                                                    .text_signal(page.show_progress_note_input.signal_cloned().map(|show| {
-                                                        if show {"Cancel"} else {"+Add"}
-                                                    }))
-                                                    .event(clone!(page => move |_: events::Click| {
-                                                        page.edit_progress_note.set(None);
-                                                        page.show_progress_note_input.set(!page.show_progress_note_input.get());
-                                                    }))
+                .class("col")
+                .child(html!("table", {
+                    .class(class::TABLE_1R)
+                    //.attr("id", "order-table")
+                    .children([
+                        html!("thead", {
+                            .child(html!("tr", {
+                                .children([
+                                    html!("th", {
+                                        .attr("scope", "col")
+                                        .class(class::TXT_C_TOP)
+                                        .class("bg-secondary-subtle")
+                                        .style("width","30%")
+                                        //.attr("id", "progress-note-column-header")
+                                        .apply_if(allow_progress_form && allow_progress_add, |dom| {
+                                            dom.child(html!("button", {
+                                                //.attr("id", "addProgressNoteColumnInputHeaderLink")
+                                                .visible_signal(used.signal_cloned().map(|used| used != "Y"))
+                                                .attr("type", "button")
+                                                .class(class::BTN_FR_R)
+                                                .class_signal("btn-primary", not(page.show_progress_note_input.signal()))
+                                                .class_signal("btn-secondary", page.show_progress_note_input.signal())
+                                                .text_signal(page.show_progress_note_input.signal_cloned().map(|show| {
+                                                    if show {"Cancel"} else {"+Add"}
                                                 }))
-                                            })
-                                            .child(html!("div",{.class("mt-2").text("Progress Note")}))
-                                        }),
-                                        html!("th", {
-                                            .attr("scope", "col")
-                                            .class(class::TXT_C_TOP)
-                                            .style("width","35%")
-                                            //.attr("id", "one-day-column-header")
-                                            .apply_if(allow_order_form && allow_order_add, |dom| { dom
-                                                .child(html!("button", {
-                                                    //.attr("id", "addOneDayColumnInputHeaderLink")
-                                                    .visible_signal(used.signal_cloned().map(|used| used != "Y"))
-                                                    .attr("type", "button")
-                                                    .class(class::BTN_FR_R)
-                                                    .class_signal("btn-primary", not(page.show_oneday_input.signal()))
-                                                    .class_signal("btn-secondary", page.show_oneday_input.signal())
-                                                    .text_signal(page.show_oneday_input.signal_cloned().map(|show| {
-                                                        if show {"Cancel"} else {"+Add"}
-                                                    }))
-                                                    .event(clone!(page => move |_: events::Click| {
-                                                        page.edit_order.set(None);
-                                                        page.show_continuous_input.set_neq(false);
-                                                        page.show_oneday_input.set(!page.show_oneday_input.get());
-                                                    }))
-                                                }))
-                                            })
-                                            .child(html!("div",{.class("mt-2").text("One Day Order")}))
-                                        }),
-                                        html!("th", {
-                                            .attr("scope", "col")
-                                            .class(class::TXT_C_TOP)
-                                            .style("width","35%")
-                                            //.attr("id", "continuous-column-header")
-                                            .apply_if(allow_order_form && allow_order_add, |dom| { dom
-                                                .child(html!("button", {
-                                                    //.attr("id", "addContinuousColumnInputHeaderLink")
-                                                    .visible_signal(used.signal_cloned().map(|used| used != "Y"))
-                                                    .attr("type", "button")
-                                                    .class(class::BTN_FR_R)
-                                                    .class_signal("btn-primary", not(page.show_continuous_input.signal()))
-                                                    .class_signal("btn-secondary", page.show_continuous_input.signal())
-                                                    .text_signal(page.show_continuous_input.signal_cloned().map(|show| {
-                                                        if show {"Cancel"} else {"+Add"}
-                                                    }))
-                                                    .event(clone!(page => move |_: events::Click| {
-                                                        page.edit_order.set(None);
-                                                        page.show_oneday_input.set_neq(false);
-                                                        page.show_continuous_input.set(!page.show_continuous_input.get());
-                                                    }))
-                                                }))
-                                            })
-                                            .child(html!("div",{.class("mt-2").text("Continuous Order")}))
-                                        }),
-                                    ])
-                                }))
-                            }),
-                            html!("tbody", {
-                                .child(html!("tr", {
-                                    .class("order-table-row")
-                                    .children([
-                                        // Progress Note
-                                        html!("td", {
-                                            // ipd-dr-pre-order-progress-note-data.php
-                                            .class("bg-secondary-subtle")
-                                            .children_signal_vec(page.progress_note.signal_vec_cloned().map(clone!(app, page, used => move |progress_note| {
-                                                render_progress_note(progress_note, Some(page.clone()), used.clone(), app.clone())
-                                            })))
-                                            .child(html!("div", {
-                                                .class("text-end")
-                                                .child(html!("div", {
-                                                    //.attr("id", "progress-note-column-add-link")
-                                                    .visible_signal(used.signal_cloned().map(|used| used != "Y"))
-                                                    .class("text-end")
-                                                    .apply_if(allow_progress_form && allow_progress_add, |dom| { dom
-                                                        .child(html!("button", {
-                                                            .attr("type", "button")
-                                                            .class(class::BTN_R)
-                                                            .class_signal("btn-primary", not(page.show_progress_note_input.signal()))
-                                                            .class_signal("btn-secondary", page.show_progress_note_input.signal())
-                                                            .text_signal(page.show_progress_note_input.signal_cloned().map(|show| {
-                                                                if show {"Cancel"} else {"+Add"}
-                                                            }))
-                                                            .event(clone!(page => move |_: events::Click| {
-                                                                page.edit_progress_note.set(None);
-                                                                page.show_progress_note_input.set(!page.show_progress_note_input.get());
-                                                            }))
-                                                        }))
-                                                    })
+                                                .event(clone!(page => move |_: events::Click| {
+                                                    page.edit_progress_note.set(None);
+                                                    page.show_progress_note_input.set(!page.show_progress_note_input.get());
                                                 }))
                                             }))
-                                            .child_signal(page.show_progress_note_input.signal_cloned().map(clone!(app, page => move |show| {
-                                                show.then(|| {
-                                                    let form = ProgressNoteForm::new(
-                                                        false,
-                                                        page.edit_progress_note.get_cloned(),
-                                                        Mutable::new(None),
-                                                        Mutable::new(String::from("doctor")),
-                                                        Mutable::new(None),
-                                                        zero_none(page.pre_order_master_id.get()),
-                                                        app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
-                                                    );
-                                                    ProgressNoteForm::render(
-                                                        form,
-                                                        page.show_progress_note_input.clone(),
-                                                        Mutable::new(false),
-                                                        page.edit_progress_note.clone(),
-                                                        page.reload_progress_note.clone(),
-                                                        app.clone(),
-                                                    )
-                                                })
-                                            })))
-                                        }),
-                                        // One Day Order
-                                        html!("td", {
-                                            .children_signal_vec(page.oneday.signal_vec_cloned().map(clone!(app, page, used => move |order| {
-                                                render_order(order, true, used.clone(), Some(page.clone()), app.clone())
-                                            })))
-                                            .child(html!("div", {
-                                                .class("text-end")
-                                                .child(html!("div", {
-                                                    //.attr("id", "one-day-column-add-link")
-                                                    .visible_signal(used.signal_cloned().map(|used| used != "Y"))
-                                                    .class("text-end")
-                                                    .apply_if(allow_order_form && allow_order_add, |dom| { dom
-                                                        .child(html!("button", {
-                                                            .attr("type", "button")
-                                                            .class(class::BTN_R)
-                                                            .class_signal("btn-primary", not(page.show_oneday_input.signal()))
-                                                            .class_signal("btn-secondary", page.show_oneday_input.signal())
-                                                            .text_signal(page.show_oneday_input.signal_cloned().map(|show| {
-                                                                if show {"Cancel"} else {"+Add"}
-                                                            }))
-                                                            .event(clone!(page => move |_: events::Click| {
-                                                                page.edit_order.set(None);
-                                                                page.show_continuous_input.set_neq(false);
-                                                                page.show_oneday_input.set(!page.show_oneday_input.get());
-                                                            }))
-                                                        }))
-                                                    })
+                                        })
+                                        .child(html!("div",{.class("mt-2").text("Progress Note")}))
+                                    }),
+                                    html!("th", {
+                                        .attr("scope", "col")
+                                        .class(class::TXT_C_TOP)
+                                        .style("width","35%")
+                                        //.attr("id", "one-day-column-header")
+                                        .apply_if(allow_order_form && allow_order_add, |dom| { dom
+                                            .child(html!("button", {
+                                                //.attr("id", "addOneDayColumnInputHeaderLink")
+                                                .visible_signal(used.signal_cloned().map(|used| used != "Y"))
+                                                .attr("type", "button")
+                                                .class(class::BTN_FR_R)
+                                                .class_signal("btn-primary", not(page.show_oneday_input.signal()))
+                                                .class_signal("btn-secondary", page.show_oneday_input.signal())
+                                                .text_signal(page.show_oneday_input.signal_cloned().map(|show| {
+                                                    if show {"Cancel"} else {"+Add"}
+                                                }))
+                                                .event(clone!(page => move |_: events::Click| {
+                                                    page.edit_order.set(None);
+                                                    page.show_continuous_input.set_neq(false);
+                                                    page.show_oneday_input.set(!page.show_oneday_input.get());
                                                 }))
                                             }))
-                                            .child_signal(page.show_oneday_input.signal_cloned().map(clone!(app, page => move |show| {
-                                                show.then(|| {
-                                                    let form = OneDayForm::new(
-                                                        page.edit_order.get_cloned(),
-                                                        Mutable::new(None),
-                                                        zero_none(page.pre_order_master_id.get()),
-                                                        app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
-                                                        Mutable::new(String::from("doctor")),
-                                                        MutableVec::new(),
-                                                    );
-                                                    OneDayForm::render(
-                                                        form,
-                                                        page.show_oneday_input.clone(),
-                                                        page.edit_order.clone(),
-                                                        page.reload_order_oneday.clone(),
-                                                        app.clone(),
-                                                    )
-                                                })
-                                            })))
-                                        }),
-                                        // Continuous Order
-                                        html!("td", {
-                                            // ipd-dr-pre-order-continuous-data.php
-                                            .children_signal_vec(page.continuous.signal_vec_cloned().map(clone!(app, page, used => move |order| {
-                                                render_order(order, false, used.clone(), Some(page.clone()), app.clone())
-                                            })))
-                                            .child(html!("div", {
-                                                .class("text-end")
-                                                .child(html!("div", {
-                                                    //.attr("id", "continuous-column-add-link")
-                                                    .visible_signal(used.signal_cloned().map(|used| used != "Y"))
-                                                    .class("text-end")
-                                                    .apply_if(allow_order_form && allow_order_add, |dom| { dom
-                                                        .child(html!("button", {
-                                                            .attr("type", "button")
-                                                            .class(class::BTN_R)
-                                                            .class_signal("btn-primary", not(page.show_continuous_input.signal()))
-                                                            .class_signal("btn-secondary", page.show_continuous_input.signal())
-                                                            .text_signal(page.show_continuous_input.signal_cloned().map(|show| {
-                                                                if show {"Cancel"} else {"+Add"}
-                                                            }))
-                                                            .event(clone!(page => move |_: events::Click| {
-                                                                page.edit_order.set(None);
-                                                                page.show_oneday_input.set_neq(false);
-                                                                page.show_continuous_input.set(!page.show_continuous_input.get());
-                                                            }))
-                                                        }))
-                                                    })
+                                        })
+                                        .child(html!("div",{.class("mt-2").text("One Day Order")}))
+                                    }),
+                                    html!("th", {
+                                        .attr("scope", "col")
+                                        .class(class::TXT_C_TOP)
+                                        .style("width","35%")
+                                        //.attr("id", "continuous-column-header")
+                                        .apply_if(allow_order_form && allow_order_add, |dom| { dom
+                                            .child(html!("button", {
+                                                //.attr("id", "addContinuousColumnInputHeaderLink")
+                                                .visible_signal(used.signal_cloned().map(|used| used != "Y"))
+                                                .attr("type", "button")
+                                                .class(class::BTN_FR_R)
+                                                .class_signal("btn-primary", not(page.show_continuous_input.signal()))
+                                                .class_signal("btn-secondary", page.show_continuous_input.signal())
+                                                .text_signal(page.show_continuous_input.signal_cloned().map(|show| {
+                                                    if show {"Cancel"} else {"+Add"}
+                                                }))
+                                                .event(clone!(page => move |_: events::Click| {
+                                                    page.edit_order.set(None);
+                                                    page.show_oneday_input.set_neq(false);
+                                                    page.show_continuous_input.set(!page.show_continuous_input.get());
                                                 }))
                                             }))
-                                            .child_signal(page.show_continuous_input.signal_cloned().map(clone!(app, page => move |show| {
-                                                show.then(|| {
-                                                    let form = ContinuousForm::new(
-                                                        page.edit_order.get_cloned(),
-                                                        Mutable::new(None),
-                                                        zero_none(page.pre_order_master_id.get()),
-                                                        app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
-                                                        Mutable::new(String::from("doctor")),
-                                                        MutableVec::new(),
-                                                    );
-                                                    ContinuousForm::render(
-                                                        form,
-                                                        page.show_continuous_input.clone(),
-                                                        page.edit_order.clone(),
-                                                        page.reload_order_continuous.clone(),
-                                                        app.clone(),
-                                                    )
+                                        })
+                                        .child(html!("div",{.class("mt-2").text("Continuous Order")}))
+                                    }),
+                                ])
+                            }))
+                        }),
+                        html!("tbody", {
+                            .child(html!("tr", {
+                                .class("order-table-row")
+                                .children([
+                                    // Progress Note
+                                    html!("td", {
+                                        // ipd-dr-pre-order-progress-note-data.php
+                                        .class("bg-secondary-subtle")
+                                        .children_signal_vec(page.progress_note.signal_vec_cloned().map(clone!(app, page, used => move |progress_note| {
+                                            render_progress_note(progress_note, Some(page.clone()), used.clone(), app.clone())
+                                        })))
+                                        .child(html!("div", {
+                                            .class("text-end")
+                                            .child(html!("div", {
+                                                //.attr("id", "progress-note-column-add-link")
+                                                .visible_signal(used.signal_cloned().map(|used| used != "Y"))
+                                                .class("text-end")
+                                                .apply_if(allow_progress_form && allow_progress_add, |dom| { dom
+                                                    .child(html!("button", {
+                                                        .attr("type", "button")
+                                                        .class(class::BTN_R)
+                                                        .class_signal("btn-primary", not(page.show_progress_note_input.signal()))
+                                                        .class_signal("btn-secondary", page.show_progress_note_input.signal())
+                                                        .text_signal(page.show_progress_note_input.signal_cloned().map(|show| {
+                                                            if show {"Cancel"} else {"+Add"}
+                                                        }))
+                                                        .event(clone!(page => move |_: events::Click| {
+                                                            page.edit_progress_note.set(None);
+                                                            page.show_progress_note_input.set(!page.show_progress_note_input.get());
+                                                        }))
+                                                    }))
                                                 })
-                                            })))
-                                        }),
-                                    ])
-                                }))
-                            }),
-                        ])
-                    }))
+                                            }))
+                                        }))
+                                        .child_signal(page.show_progress_note_input.signal_cloned().map(clone!(app, page => move |show| {
+                                            show.then(|| {
+                                                let form = ProgressNoteForm::new(
+                                                    false,
+                                                    page.edit_progress_note.get_cloned(),
+                                                    Mutable::new(None),
+                                                    Mutable::new(String::from("doctor")),
+                                                    Mutable::new(None),
+                                                    zero_none(page.pre_order_master_id.get()),
+                                                    app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
+                                                );
+                                                ProgressNoteForm::render(
+                                                    form,
+                                                    page.show_progress_note_input.clone(),
+                                                    Mutable::new(false),
+                                                    page.edit_progress_note.clone(),
+                                                    page.reload_progress_note.clone(),
+                                                    app.clone(),
+                                                )
+                                            })
+                                        })))
+                                    }),
+                                    // One Day Order
+                                    html!("td", {
+                                        .children_signal_vec(page.oneday.signal_vec_cloned().map(clone!(app, page, used => move |order| {
+                                            render_order(order, true, used.clone(), Some(page.clone()), app.clone())
+                                        })))
+                                        .child(html!("div", {
+                                            .class("text-end")
+                                            .child(html!("div", {
+                                                //.attr("id", "one-day-column-add-link")
+                                                .visible_signal(used.signal_cloned().map(|used| used != "Y"))
+                                                .class("text-end")
+                                                .apply_if(allow_order_form && allow_order_add, |dom| { dom
+                                                    .child(html!("button", {
+                                                        .attr("type", "button")
+                                                        .class(class::BTN_R)
+                                                        .class_signal("btn-primary", not(page.show_oneday_input.signal()))
+                                                        .class_signal("btn-secondary", page.show_oneday_input.signal())
+                                                        .text_signal(page.show_oneday_input.signal_cloned().map(|show| {
+                                                            if show {"Cancel"} else {"+Add"}
+                                                        }))
+                                                        .event(clone!(page => move |_: events::Click| {
+                                                            page.edit_order.set(None);
+                                                            page.show_continuous_input.set_neq(false);
+                                                            page.show_oneday_input.set(!page.show_oneday_input.get());
+                                                        }))
+                                                    }))
+                                                })
+                                            }))
+                                        }))
+                                        .child_signal(page.show_oneday_input.signal_cloned().map(clone!(app, page => move |show| {
+                                            show.then(|| {
+                                                let form = OneDayForm::new(
+                                                    page.edit_order.get_cloned(),
+                                                    Mutable::new(None),
+                                                    zero_none(page.pre_order_master_id.get()),
+                                                    app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
+                                                    Mutable::new(String::from("doctor")),
+                                                    MutableVec::new(),
+                                                );
+                                                OneDayForm::render(
+                                                    form,
+                                                    page.show_oneday_input.clone(),
+                                                    page.edit_order.clone(),
+                                                    page.reload_order_oneday.clone(),
+                                                    app.clone(),
+                                                )
+                                            })
+                                        })))
+                                    }),
+                                    // Continuous Order
+                                    html!("td", {
+                                        // ipd-dr-pre-order-continuous-data.php
+                                        .children_signal_vec(page.continuous.signal_vec_cloned().map(clone!(app, page, used => move |order| {
+                                            render_order(order, false, used.clone(), Some(page.clone()), app.clone())
+                                        })))
+                                        .child(html!("div", {
+                                            .class("text-end")
+                                            .child(html!("div", {
+                                                //.attr("id", "continuous-column-add-link")
+                                                .visible_signal(used.signal_cloned().map(|used| used != "Y"))
+                                                .class("text-end")
+                                                .apply_if(allow_order_form && allow_order_add, |dom| { dom
+                                                    .child(html!("button", {
+                                                        .attr("type", "button")
+                                                        .class(class::BTN_R)
+                                                        .class_signal("btn-primary", not(page.show_continuous_input.signal()))
+                                                        .class_signal("btn-secondary", page.show_continuous_input.signal())
+                                                        .text_signal(page.show_continuous_input.signal_cloned().map(|show| {
+                                                            if show {"Cancel"} else {"+Add"}
+                                                        }))
+                                                        .event(clone!(page => move |_: events::Click| {
+                                                            page.edit_order.set(None);
+                                                            page.show_oneday_input.set_neq(false);
+                                                            page.show_continuous_input.set(!page.show_continuous_input.get());
+                                                        }))
+                                                    }))
+                                                })
+                                            }))
+                                        }))
+                                        .child_signal(page.show_continuous_input.signal_cloned().map(clone!(app, page => move |show| {
+                                            show.then(|| {
+                                                let form = ContinuousForm::new(
+                                                    page.edit_order.get_cloned(),
+                                                    Mutable::new(None),
+                                                    zero_none(page.pre_order_master_id.get()),
+                                                    app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
+                                                    Mutable::new(String::from("doctor")),
+                                                    MutableVec::new(),
+                                                );
+                                                ContinuousForm::render(
+                                                    form,
+                                                    page.show_continuous_input.clone(),
+                                                    page.edit_order.clone(),
+                                                    page.reload_order_continuous.clone(),
+                                                    app.clone(),
+                                                )
+                                            })
+                                        })))
+                                    }),
+                                ])
+                            }))
+                        }),
+                    ])
                 }))
             }))
         })

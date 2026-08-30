@@ -12,6 +12,8 @@ use kphis_ui_app::App;
 use kphis_ui_core::{class, doms};
 use kphis_util::datetime::date_th_opt;
 
+use crate::modal::modal_show_option_mixins;
+
 /// GET `EndPoint::LabWbcKeyValue`
 #[derive(Default)]
 pub struct LabWbc {
@@ -59,7 +61,14 @@ impl LabWbc {
         )
     }
 
-    pub fn render(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -81,7 +90,15 @@ impl LabWbc {
                         .class("modal-header")
                         .children([
                             html!("h5", {.class("modal-title").text("เลือกรายการ")}),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -89,7 +106,7 @@ impl LabWbc {
                         //.attr("id", "selectLabWBCModalBody")
                         .style("height","400px")
                         .style("width", "100%")
-                        .child(doms::table_responsive(class::TABLE_STRIP, clone!(modal => move |table| { table
+                        .child(doms::table_responsive(class::TABLE_STRIP, clone!(app, display, modal => move |table| { table
                             .children([
                                 html!("thead", {
                                     .child(html!("tr", {
@@ -105,10 +122,9 @@ impl LabWbc {
                                     }))
                                 }),
                                 html!("tbody", {
-                                    .children_signal_vec(modal.labs.signal_vec_cloned().map(clone!(modal => move |lab| {
+                                    .children_signal_vec(modal.labs.signal_vec_cloned().map(clone!(app, display, modal => move |lab| {
                                         html!("tr", {
                                             .style("cursor","pointer")
-                                            .attr("data-bs-dismiss", "modal")
                                             .children([
                                                 html!("td", {.class("text-center").text(&lab.lab_order_number.to_string())}),
                                                 html!("td", {.class("text-center").text(&date_th_opt(&lab.order_date))}),
@@ -117,10 +133,12 @@ impl LabWbc {
                                                 html!("td", {.class("text-center").text(&lab.wbc.clone().unwrap_or_default())}),
                                                 html!("td", {.class("text-center").text(&lab.band.clone().unwrap_or_default())}),
                                             ])
-                                            .event(clone!(modal => move |_:events::Click| {
+                                            .event(clone!(app, display, modal => move |_:events::Click| {
                                                 modal.parent_wbc.set_neq(lab.wbc.clone().map(|wbc| (wbc.replace(',',"").parse::<f32>().unwrap_or_default() / 1000.0).to_string()).unwrap_or_default());
                                                 modal.parent_band.set_neq(lab.band.clone().unwrap_or_default());
                                                 modal.parent_changed.set_neq(true);
+                                                app.clear_modal_backdrop();
+                                                display.set(None);
                                             }))
                                         })
                                     })))
@@ -133,8 +151,12 @@ impl LabWbc {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
-                            .text("ปิด")
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

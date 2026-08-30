@@ -15,11 +15,8 @@ use kphis_model::{
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_component::{
-    gadget::searchbox::patient::PatientSearchboxCpn,
-    modal::{blank_modal, pre_order_new::PreOrderNew},
-};
-use kphis_ui_core::{binding::NiceSelect, class, doms, mixins};
+use kphis_ui_component::{gadget::searchbox::patient::PatientSearchboxCpn, modal::pre_order_new::PreOrderNew};
+use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_8601, date_th_opt, datetime_th_opt_relative},
     util::{pre_order_type_display, str_some},
@@ -56,7 +53,7 @@ pub struct IpdPreOrderListPage {
     changed: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
-    is_desc: Mutable<bool>,
+    is_asc: Mutable<bool>,
 
     pre_order_new_modal: Mutable<Option<Rc<PreOrderNew>>>,
 }
@@ -73,7 +70,7 @@ impl IpdPreOrderListPage {
             include_shared_template: Mutable::new(String::from("N")),
             order_doctor: Mutable::new(order_doctor),
             used: Mutable::new(String::from("N")),
-            is_desc: Mutable::new(true),
+            is_asc: Mutable::new(true),
             ..Default::default()
         })
     }
@@ -103,7 +100,7 @@ impl IpdPreOrderListPage {
                         lock.clear();
                         lock.extend(orders.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::OrderDateTime);
-                        page.is_desc.set_neq(true);
+                        page.is_asc.set_neq(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -121,9 +118,6 @@ impl IpdPreOrderListPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    if let Some(elm) = app.get_id("order_doctor") {
-                        NiceSelect::new_default(&elm);
-                    }
                     page.changed.set(true);
                 }
                 async {}
@@ -187,18 +181,12 @@ impl IpdPreOrderListPage {
                                 doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("order_doctor","ผู้บันทึก"),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_CTRL_SM)
-                                                .attr("id", "order_doctor")
-                                                .child(html!("option", {.attr("value", "").text("ทั้งหมด")}))
-                                                .children(all_doctor_select_option.iter().map(|option| {
-                                                    doms::select_option(option, &page.order_doctor.lock_ref())
-                                                }))
-                                                .apply(mixins::string_value_select(page.order_doctor.clone(), page.changed.clone()))
-                                            }))
-                                        }),
+                                        doms::select_box(
+                                            "order_doctor", Some("ทั้งหมด"), false,
+                                            page.order_doctor.clone(), page.changed.clone(),
+                                            |d| d.class(class::FORM_CTRL_SM), || {},
+                                            all_doctor_select_option,
+                                        ),
                                         html!("button", {
                                             .attr("type", "button")
                                             .class(class::BTN_SM_GRAY)
@@ -207,9 +195,6 @@ impl IpdPreOrderListPage {
                                                 let doctor_code = app.doctor_code().unwrap_or_default();
                                                 let neq = page.order_doctor.lock_ref().as_str() != doctor_code.as_str();
                                                 if neq {
-                                                    if let Some(elm) = app.get_id("order_doctor") {
-                                                        NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                    }
                                                     page.order_doctor.set_neq(doctor_code);
                                                     page.changed.set_neq(true);
                                                 }
@@ -223,9 +208,6 @@ impl IpdPreOrderListPage {
                                                 let no_doctor = page.order_doctor.lock_ref().is_empty();
                                                 if !no_doctor {
                                                     page.order_doctor.set_neq(String::new());
-                                                    if let Some(elm) = app.get_id("order_doctor") {
-                                                        NiceSelect::new_default_with_value(&elm,"");
-                                                    }
                                                     page.changed.set_neq(true);
                                                 }
                                             }))
@@ -363,12 +345,11 @@ impl IpdPreOrderListPage {
                                         dom.child(html!("button", {
                                             .attr("type", "button")
                                             .class(class::BTN_SM_L_BLUE)
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", "#addPreOrderModal")
                                             .child(html!("i", {.class(class::FA_PLUS)}))
                                             .text(" เพิ่มใบ Order ใหม่")
-                                            .event(clone!(page => move |_: events::Click| {
+                                            .event(clone!(app, page => move |_: events::Click| {
                                                 page.pre_order_new_modal.set(Some(PreOrderNew::new(page.view_by.clone())));
+                                                app.show_modal_backdrop();
                                             }))
                                         }))
                                     })
@@ -396,7 +377,7 @@ impl IpdPreOrderListPage {
                 doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| {
                     let sort_fn = clone!(page => move || {
                         let mut items = page.search_result.lock_ref().to_vec();
-                        if page.is_desc.get() {
+                        if page.is_asc.get() {
                             match page.sorted_by.get_cloned() {
                                 SortBy::OrderDateTime => items.sort_by(|a, b| b.order_date_time.cmp(&a.order_date_time)),
                                 SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
@@ -425,21 +406,21 @@ impl IpdPreOrderListPage {
                                     // }),
                                     html!("th", {
                                         .attr("scope", "col").text("เวลาที่บันทึก")
-                                        .apply(mixins::sortable_header_mixin(SortBy::OrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::OrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {.attr("scope", "col").text("ประเภทใบ Order")}),
                                     html!("th", {.attr("scope", "col").text("ผู้บันทึก")}),
                                     html!("th", {
                                         .attr("scope", "col").text("HN")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {
                                         .attr("scope", "col").text("ชื่อ-นามสกุล")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {
                                         .attr("scope", "col").text("วันที่นัด/Admit")
-                                        .apply(mixins::sortable_header_mixin(SortBy::ForDate, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                        .apply(mixins::sortable_header_mixin(SortBy::ForDate, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
                                     }),
                                     html!("th", {.attr("scope", "col").text("ใช้งาน")}),
                                     html!("th", {.attr("scope", "col").text("ชื่อ Template")}),
@@ -453,18 +434,12 @@ impl IpdPreOrderListPage {
                         }),
                     ])
                 })),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "addPreOrderModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.pre_order_new_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                        opt.as_ref().map(clone!(app, page => move |modal| {
-                            PreOrderNew::render(modal.clone(), page.pre_order_new_modal.clone(), page.changed.clone(), app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.pre_order_new_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    PreOrderNew::render_modal(modal, page.pre_order_new_modal.clone(), page.changed.clone(), app.clone())
+                })
+            })))
         })
     }
 

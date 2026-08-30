@@ -29,7 +29,7 @@ use kphis_util::{
 
 use crate::{
     gadget::image::{ImageCpn, ImagePaths},
-    modal::{blank_modal, lab_selector::LabSelector, vs_selector::VsSelector},
+    modal::{lab_selector::LabSelector, vs_selector::VsSelector},
 };
 
 /// - GET `EndPoint::IpdTmpIntvt`
@@ -383,6 +383,7 @@ impl NurseNoteFormCpn {
             None => Vec::new(),
         };
         let load_dlcs_once = Mutable::new(false);
+        let dlcs_opened = Mutable::new(false);
 
         html!("div", {
             .future(load_dlcs_once.signal().for_each(clone!(app, page, load_dlcs_once => move |load_once| {
@@ -418,9 +419,10 @@ impl NurseNoteFormCpn {
                     (Some(_), None) => true,
                     (None, _) => false,
                 } { parent_opt.clone() } else { None }
-            }.for_each(clone!(app, page => move |note_opt| {
+            }.for_each(clone!(app, page, dlcs_opened => move |note_opt| {
                 if let Some(focus_note) = note_opt {
                     page.focus_note.set(Some(focus_note.clone()));
+                    dlcs_opened.set(false);
                     Self::load_focus_note_row(focus_note, page.clone(), app.clone());
                 }
                 async {}
@@ -543,7 +545,6 @@ impl NurseNoteFormCpn {
                                                 .children_signal_vec(page.focus_list.signal_vec_cloned().map(|focus_list| {
                                                     html!("option", {
                                                         .attr("value", &focus_list.fclist_id.to_string())
-                                                        .attr("data-smp", &focus_list.focus_id.to_string())
                                                         .text(&[focus_list.focus_name.clone().unwrap_or_default(), focus_list.focus_text.as_ref().map(|txt| [", ", txt].concat()).unwrap_or_default()].concat())
                                                     })
                                                 }))
@@ -583,19 +584,18 @@ impl NurseNoteFormCpn {
                                                     html!("button", {
                                                         .attr("type", "button")
                                                         .class(class::BTN_GRAY)
-                                                        .attr("data-bs-toggle", "modal")
-                                                        .attr("data-bs-target", "#vsSelectorModal")
                                                         .style("position","absolute")
                                                         .style("top","30px")
                                                         .style("right","50px")
                                                         .child(html!("i", {.class(class::FA_HEARTBEAT)}))
-                                                        .event(clone!(page => move |_: events::Click| {
+                                                        .event(clone!(app, page => move |_: events::Click| {
                                                             page.vs_selector_modal.set(Some(VsSelector::new(
                                                                 false,
                                                                 page.patient.clone(),
                                                                 page.assessment.clone(),
                                                                 page.changed.clone(),
                                                             )));
+                                                            app.show_modal_backdrop();
                                                         }))
                                                     })
                                                 })
@@ -604,19 +604,18 @@ impl NurseNoteFormCpn {
                                                 .child(html!("button", {
                                                     .attr("type", "button")
                                                     .class(class::BTN_GRAY)
-                                                    .attr("data-bs-toggle", "modal")
-                                                    .attr("data-bs-target", "#labSelectorModal")
                                                     .style("position","absolute")
                                                     .style("top","30px")
                                                     .style("right","0px")
                                                     .child(html!("i", {.class(class::FA_FLASK)}))
-                                                    .event(clone!(page => move |_: events::Click| {
+                                                    .event(clone!(app, page => move |_: events::Click| {
                                                         page.lab_selector_modal.set(Some(LabSelector::new(
                                                             false,
                                                             page.patient.clone(),
                                                             page.assessment.clone(),
                                                             page.changed.clone(),
                                                         )));
+                                                        app.show_modal_backdrop();
                                                     }))
                                                 }))
                                             )
@@ -801,20 +800,22 @@ impl NurseNoteFormCpn {
                                                                 .class("accordion-header")
                                                                 .child(html!("button", {
                                                                     .attr("type", "button")
-                                                                    .class(class::ACCORDION_BTN_COLLAPSED_CYANS_P2)
-                                                                    .attr("data-bs-toggle","collapse")
-                                                                    .attr("data-bs-target","#dailycare-all")
-                                                                    .attr("aria-expanded","false")
+                                                                    .class(class::ACCORDION_BTN_CYANS_P2)
+                                                                    .class_signal("collapsed", not(dlcs_opened.signal()))
+                                                                    .prop_signal("aria-expanded", dlcs_opened.signal().map(|opened| if opened {"true"} else {"false"}))
                                                                     .attr("aria-controls","dailycare-all")
                                                                     .text("แสดง Dailycares (เลือก ")
                                                                     .text_signal(page.dlc_ids.signal_vec_cloned().len().map(|i| i.to_string()))
                                                                     .text(" รายการ)")
+                                                                    .event(clone!(dlcs_opened => move |_:events::Click| {
+                                                                        dlcs_opened.set(!dlcs_opened.get());
+                                                                    }))
                                                                 }))
                                                             }),
                                                             html!("div", {
                                                                 .attr("id", "dailycare-all")
                                                                 .class(class::ACCORDION_COLLAPSE)
-                                                                .attr("data-bs-parent","#dailycare-container")
+                                                                .class_signal("show", dlcs_opened.signal())
                                                                 .child(html!("div", {
                                                                    .class("accordion-body")
                                                                    .children_signal_vec(page.dlcs.signal_cloned().to_signal_vec().map(clone!(page => move |dlc| {
@@ -870,37 +871,35 @@ impl NurseNoteFormCpn {
                                                 html!("button", {
                                                     .attr("type", "button")
                                                     .class(class::BTN_GRAY)
-                                                    .attr("data-bs-toggle", "modal")
-                                                    .attr("data-bs-target", "#vsSelectorModal")
                                                     .style("position","absolute")
                                                     .style("top","30px")
                                                     .style("right","50px")
                                                     .child(html!("i", {.class(class::FA_HEARTBEAT)}))
-                                                    .event(clone!(page => move |_: events::Click| {
+                                                    .event(clone!(app, page => move |_: events::Click| {
                                                         page.vs_selector_modal.set(Some(VsSelector::new(
                                                             false,
                                                             page.patient.clone(),
                                                             page.evalution.clone(),
                                                             page.changed.clone(),
                                                         )));
+                                                        app.show_modal_backdrop();
                                                     }))
                                                 }),
                                                 html!("button", {
                                                     .attr("type", "button")
                                                     .class(class::BTN_GRAY)
-                                                    .attr("data-bs-toggle", "modal")
-                                                    .attr("data-bs-target", "#labSelectorModal")
                                                     .style("position","absolute")
                                                     .style("top","30px")
                                                     .style("right","0px")
                                                     .child(html!("i", {.class(class::FA_FLASK)}))
-                                                    .event(clone!(page => move |_: events::Click| {
+                                                    .event(clone!(app, page => move |_: events::Click| {
                                                         page.lab_selector_modal.set(Some(LabSelector::new(
                                                             false,
                                                             page.patient.clone(),
                                                             page.evalution.clone(),
                                                             page.changed.clone(),
                                                         )));
+                                                        app.show_modal_backdrop();
                                                     }))
                                                 }),
                                             ])
@@ -1045,29 +1044,17 @@ impl NurseNoteFormCpn {
                     ])
                 }),
                 html!("br"),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "vsSelectorModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app => move |opt| {
-                        opt.as_ref().map(clone!(app => move |modal| {
-                            VsSelector::render(modal.clone(), app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "labSelectorModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.lab_selector_modal.signal_cloned().map(clone!(app => move |opt| {
-                        opt.as_ref().map(clone!(app => move |modal| {
-                            LabSelector::render(modal.clone(), app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone())
+                })
+            })))
+            .child_signal(page.lab_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    LabSelector::render_modal(modal.clone(), page.lab_selector_modal.clone(), app.clone())
+                })
+            })))
         })
     }
 }

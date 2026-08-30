@@ -1,9 +1,13 @@
 use dominator::{Dom, clone, events, html};
 use futures_signals::signal::Mutable;
+use std::rc::Rc;
 
 use kphis_model::search::searchbox::DrugDuplicateCheck;
+use kphis_ui_app::App;
 use kphis_ui_core::class;
 use kphis_util::datetime::{date_th_opt, time_hm_opt};
+
+use crate::modal::modal_show_option_mixins;
 
 // ipd-dr-order-item-drug-duplication-modal.php
 #[derive(Clone, Default)]
@@ -13,14 +17,21 @@ pub struct DrugDuplication {
 }
 
 impl DrugDuplication {
-    pub fn new(med_name: &str, duplication: &[DrugDuplicateCheck]) -> Self {
-        Self {
+    pub fn new(med_name: &str, duplication: &[DrugDuplicateCheck]) -> Rc<Self> {
+        Rc::new(Self {
             med_name: String::from(med_name),
             duplications: duplication.to_vec(),
-        }
+        })
     }
 
-    pub fn render(&self, display: Mutable<Option<Self>>, allowed: Mutable<bool>) -> Dom {
+    pub fn render_modal(&self, display: Mutable<Option<Rc<Self>>>, allowed: Mutable<bool>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(self.render_dialog(display.clone(), allowed.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(&self, display: Mutable<Option<Rc<Self>>>, allowed: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::MODAL_DIALOG_LG)
             .attr("role", "document")
@@ -37,9 +48,9 @@ impl DrugDuplication {
                             html!("button", {
                                 .attr("type", "button")
                                 .class("btn-close")
-                                .attr("data-bs-dismiss", "modal")
                                 .attr("aria-label", "Close")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }),
@@ -110,10 +121,9 @@ impl DrugDuplication {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_BLUE)
-                                //.attr("id", "drugDuplicationModalOkButton")
-                                .attr("data-bs-dismiss", "modal")
                                 .text("ตกลง")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                     allowed.set(true);
                                 }))
@@ -121,10 +131,9 @@ impl DrugDuplication {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_GRAY)
-                                //.attr("id", "drugDuplicationModalCancelButton")
-                                .attr("data-bs-dismiss", "modal")
                                 .text("ยกเลิก")
                                 .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 })
                             }),

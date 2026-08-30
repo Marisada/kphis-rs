@@ -802,9 +802,7 @@ impl OpdErMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::MedHx)))
-                                //.attr("id", "pills-medical-history-tab")
-                                .attr("data-bs-toggle", "pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::MedHx)))
                                 .attr("href", "#")
                                 .text("ประวัติผู้ป่วย")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -820,7 +818,6 @@ impl OpdErMainPage {
                             .child(html!("a", {
                                 .class("nav-link")
                                 .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::MedReconcile)))
-                                .attr("data-bs-toggle","pill")
                                 .attr("href","#")
                                 .text("Med Reconciliation ")
                                 .child_signal(map_ref! {
@@ -856,9 +853,7 @@ impl OpdErMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Order)))
-                                //.attr("id", "pills-order-tab")
-                                .attr("data-bs-toggle", "pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Order)))
                                 .attr("href", "#")
                                 .text("Order")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -873,9 +868,7 @@ impl OpdErMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::VitalSign)))
-                                //.attr("id", "pills-vs-tab")
-                                .attr("data-bs-toggle", "pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::VitalSign)))
                                 .attr("href", "#")
                                 .text("Vital Sign")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -895,9 +888,7 @@ impl OpdErMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Io)))
-                                        //.attr("id", "pills-io-tab")
-                                        .attr("data-bs-toggle", "pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Io)))
                                         .attr("href", "#")
                                         .text("I/O")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -916,9 +907,7 @@ impl OpdErMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::NurseNote)))
-                                        //.attr("id", "pills-focus-tab")
-                                        .attr("data-bs-toggle", "pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::NurseNote)))
                                         .attr("href", "#")
                                         .text("Nursing Progress Note")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -937,9 +926,7 @@ impl OpdErMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::NursePlan)))
-                                        //.attr("id", "pills-planning-tab")
-                                        .attr("data-bs-toggle", "pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::NursePlan)))
                                         .attr("href", "#")
                                         .text("Nurse Planning")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -956,9 +943,7 @@ impl OpdErMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Lab)))
-                                //.attr("id", "pills-lab-tab")
-                                .attr("data-bs-toggle", "pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Lab)))
                                 .attr("href", "#")
                                 .text("Lab ")
                                 .child_signal(map_ref! {
@@ -992,8 +977,7 @@ impl OpdErMainPage {
                                 .class(class::NAV_ITEM_PY)
                                 .child(html!("a", {
                                     .class("nav-link")
-                                    .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::XRay)))
-                                    .attr("data-bs-toggle","pill")
+                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::XRay)))
                                     .attr("href","#")
                                     .text("X-Ray ")
                                     .child_signal(page.show_xray_unread_exists_spinner.signal().map(|unread| {
@@ -1036,7 +1020,6 @@ impl OpdErMainPage {
                                     .child(html!("a", {
                                         .class("nav-link")
                                         .attr("href", "#")
-                                        // .attr("data-bs-toggle", "pill")
                                         .text("ประวัติการสั่งยา ")
                                         .child(html!("i", {.class(class::FA_DISPLAY)}))
                                         .event_with_options(&EventOptions::preventable(), move |event: events::Click| {
@@ -1060,9 +1043,7 @@ impl OpdErMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Emr)))
-                                // .attr("id", "pills-EMR-tab")
-                                .attr("data-bs-toggle", "pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Emr)))
                                 .attr("href", "#")
                                 .text("EMR")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -1079,8 +1060,7 @@ impl OpdErMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::ReferOut)))
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::ReferOut)))
                                         .attr("href","#")
                                         .text("Refer Out")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -1096,9 +1076,7 @@ impl OpdErMainPage {
                         .class(class::NAV_ITEM_PY)
                         .child(html!("a", {
                             .class("nav-link")
-                            .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Document)))
-                            //.attr("id", "pills-opd-er-document-tab")
-                            .attr("data-bs-toggle", "pill")
+                            .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Document)))
                             .attr("href", "#")
                             .text("เอกสาร")
                             .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {

@@ -1,7 +1,11 @@
 use dominator::{Dom, clone, events, html};
 use futures_signals::signal::Mutable;
+use std::rc::Rc;
 
+use kphis_ui_app::App;
 use kphis_ui_core::class;
+
+use crate::modal::modal_show_option_mixins;
 
 // ipd-dr-order-item-drug-notify-modal.php
 #[derive(Clone, Default)]
@@ -11,14 +15,21 @@ pub struct DrugNotify {
 }
 
 impl DrugNotify {
-    pub fn new(med_name: &str, show_notify_text: &str) -> Self {
-        Self {
+    pub fn new(med_name: &str, show_notify_text: &str) -> Rc<Self> {
+        Rc::new(Self {
             med_name: String::from(med_name),
             show_notify_text: String::from(show_notify_text),
-        }
+        })
     }
 
-    pub fn render(&self, display: Mutable<Option<Self>>) -> Dom {
+    pub fn render_modal(&self, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(self.render_dialog(display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(&self, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::MODAL_DIALOG_LG)
             .attr("role", "document")
@@ -35,9 +46,9 @@ impl DrugNotify {
                             html!("button", {
                                 .attr("type", "button")
                                 .class("btn-close")
-                                .attr("data-bs-dismiss", "modal")
                                 .attr("aria-label", "Close")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }),
@@ -64,10 +75,9 @@ impl DrugNotify {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            //.attr("id", "drugNotifyModalDismissButton")
-                            .attr("data-bs-dismiss", "modal")
                             .text("ปิด")
                             .event(clone!(display => move |_: events::Click| {
+                                app.clear_modal_backdrop();
                                 display.set(None);
                             }))
                         }))

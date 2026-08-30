@@ -31,10 +31,7 @@ use kphis_util::{
 
 use crate::{
     gadget::pdf_button::PdfButtons,
-    modal::{
-        blank_modal,
-        index_plan_action_form::{FormType, IndexPlanActionForm, OrderType},
-    },
+    modal::index_plan_action_form::{FormType, IndexPlanActionForm, OrderType},
 };
 
 /// - GET `EndPoint::IpdIndexPlanDateAn`
@@ -366,11 +363,9 @@ impl IndexPlanCpn {
                                     .attr("type", "button")
                                     .class(class::BTN_L_BLUE)
                                     //.attr("id", "openIndexPlanActionButton")
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", "#indexPlanActionModal")
                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                     .text(" เพิ่ม Plan ที่ไม่ผูก Order")
-                                    .event(clone!(page => move |_: events::Click| {
+                                    .event(clone!(app, page => move |_: events::Click| {
                                         page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
                                             0,
                                             None,
@@ -380,6 +375,7 @@ impl IndexPlanCpn {
                                             FormType::Plan,
                                             page.view_by.clone(),
                                         )));
+                                        app.show_modal_backdrop();
                                     }))
                                     // .attr("onclick", "onclickAddIndexPlanOrderItem(event,null,null);")
                                 })))
@@ -494,23 +490,17 @@ impl IndexPlanCpn {
                         )
                     })))
                 }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "indexPlanActionModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.index_plan_action_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                        opt.as_ref().map(clone!(app, page => move |modal| {
-                            IndexPlanActionForm::render(
-                                modal.clone(),
-                                page.index_plan_action_modal.clone(),
-                                Some(page.changed.clone()),
-                                app,
-                            )
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.index_plan_action_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    IndexPlanActionForm::render_modal(
+                        modal.clone(),
+                        page.index_plan_action_modal.clone(),
+                        Some(page.changed.clone()),
+                        app.clone(),
+                    )
+                })
+            })))
         })
     }
 }
@@ -781,8 +771,6 @@ pub fn render_index_plan(
                         .children([
                             // Timing + detailed title
                             html!("span", {
-                                .attr("data-bs-toggle", "modal")
-                                .attr("data-bs-target", "#indexPlanActionModal")
                                 .class(class::TXT_C_MIDDLE)
                                 .style("cursor","pointer")
                                 .style("width", "70px")
@@ -814,6 +802,7 @@ pub fn render_index_plan(
                                                 FormType::Action,
                                                 view_by.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }
                                         None => {
                                             index_plan_action_modal.set(Some(IndexPlanActionForm::new_with_visit_type(
@@ -826,6 +815,7 @@ pub fn render_index_plan(
                                                 FormType::Action,
                                                 view_by.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }
                                     }
                                     if let Some((elm, scroll)) = scroll_container.as_ref() {
@@ -894,8 +884,6 @@ pub fn render_index_plan(
                                         .class(class::BADGE_LB)
                                         .class(bg_color)
                                         .style("cursor","pointer")
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#indexPlanActionModal")
                                         .child(sym)
                                         .text(" ")
                                         .text(&action_dt)
@@ -912,6 +900,7 @@ pub fn render_index_plan(
                                                     FormType::Action,
                                                     view_by.clone(),
                                                 )));
+                                                app.show_modal_backdrop();
                                             } else {
                                                 index_plan_action_modal.set(Some(IndexPlanActionForm::new_with_visit_type(
                                                     row.order_item_id,
@@ -923,6 +912,7 @@ pub fn render_index_plan(
                                                     FormType::Action,
                                                     view_by.clone(),
                                                 )));
+                                                app.show_modal_backdrop();
                                             }
                                             if let Some((elm, scroll)) = scroll_container.as_ref() {
                                                 scroll.set((elm.scroll_left(), elm.scroll_top()));

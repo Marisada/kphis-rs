@@ -14,7 +14,7 @@ use kphis_util::{
     util::str_some,
 };
 
-use crate::gadget::searchbox::patient::PatientSearchboxCpn;
+use crate::{gadget::searchbox::patient::PatientSearchboxCpn, modal::modal_show_option_mixins};
 
 /// - POST `EndPoint::IpdPreOrderMaster`
 /// - GET `EndPoint::SearchBoxPatientText` (PatientSearchboxCpn)
@@ -55,7 +55,14 @@ impl PreOrderNew {
         self.pre_order_type.signal_cloned().map(|ot| ot == "template")
     }
 
-    pub fn render(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), changed, app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .class("modal-dialog")
             .attr("role", "document")
@@ -72,9 +79,9 @@ impl PreOrderNew {
                             html!("button", {
                                 .attr("type", "button")
                                 .class("btn-close")
-                                .attr("data-bs-dismiss", "modal")
                                 .attr("aria-label", "Close")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }),
@@ -250,7 +257,6 @@ impl PreOrderNew {
                                 .class("btn")
                                 .class_signal("btn-primary", modal.changed.signal())
                                 .class_signal("btn-secondary", not(modal.changed.signal()))
-                                .attr("data-bs-dismiss", "modal")
                                 .text("บันทึก")
                                 .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, modal, display => move || {
                                     Self::submit(modal.clone(), display.clone(), changed.clone(), app.clone());
@@ -260,9 +266,10 @@ impl PreOrderNew {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_GRAY)
-                                .attr("data-bs-dismiss", "modal")
-                                .text("ยกเลิก")
+                                .child(html!("i", {.class(class::FA_X)}))
+                                .text(" ปิด")
                                 .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 })
                             }),
@@ -298,6 +305,7 @@ impl PreOrderNew {
                         Ok((pre_order_master_id, response)) => {
                             app.alert_execute_response(&response, clone!(app => async move {
                                 changed.set_neq(true);
+                                app.clear_modal_backdrop();
                                 display.set(None);
                                 let route = Route::IpdPreOrder {
                                     view_by: modal.view_by.get_cloned(),

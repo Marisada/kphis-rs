@@ -38,13 +38,10 @@ use kphis_ui_component::{
         image::{ImageCpn, ImagePaths},
         pdf_button::PdfButtons,
     },
-    modal::{
-        blank_modal,
-        scoring::{
-            addict_assist::AddictAssistV2, aggression_oas::AggressionOAS, alcohol_audit::AlcoholAudit, alcohol_aws::AlcoholAws, alcohol_ciwa_ar::AlcoholCiwaAr, amphetamine_awq::AmphetamineAwqV2, braden::Braden, depress_2q::Depress2Q,
-            depress_9q::Depress9Q, depress_cdi::DepressCdi, depress_cesd::DepressCesD, depress_phqa::DepressPhqA, nicotin_ftnd::NicotinFtnd, ptsd_cries13::PtsdCries13, ptsd_pisces10::PtsdPisces10, ptsd_screen::PtsdScreen,
-            stress_st5::StressST5, suicide_8q::Suicide8Q,
-        },
+    modal::scoring::{
+        addict_assist::AddictAssistV2, aggression_oas::AggressionOAS, alcohol_audit::AlcoholAudit, alcohol_aws::AlcoholAws, alcohol_ciwa_ar::AlcoholCiwaAr, amphetamine_awq::AmphetamineAwqV2, braden::Braden, depress_2q::Depress2Q,
+        depress_9q::Depress9Q, depress_cdi::DepressCdi, depress_cesd::DepressCesD, depress_phqa::DepressPhqA, nicotin_ftnd::NicotinFtnd, ptsd_cries13::PtsdCries13, ptsd_pisces10::PtsdPisces10, ptsd_screen::PtsdScreen,
+        stress_st5::StressST5, suicide_8q::Suicide8Q,
     },
     show_patient_main::ShowPatientMainCpn,
 };
@@ -1005,7 +1002,7 @@ impl IpdAdmissionNoteDrPage {
                                             .attr("role","alert")
                                             .text("บันทึกโดยแพทย์")
                                         }),
-                                        Self::render_pi_doctor(page.clone()),
+                                        Self::render_pi_doctor(page.clone(), app.clone()),
                                     ])
                                 }),
                                 // right column
@@ -1048,7 +1045,7 @@ impl IpdAdmissionNoteDrPage {
         })
     }
 
-    fn render_pi_doctor(page: Rc<Self>) -> Dom {
+    fn render_pi_doctor(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class("card")
             .child(html!("div", {
@@ -1311,14 +1308,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#bradenModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.braden_modal.set(Some(Braden::new(
                                                         page.braden_scale.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -1409,16 +1405,10 @@ impl IpdAdmissionNoteDrPage {
                                 }),
                             ])
                         }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "bradenModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.braden_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| Braden::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
                     ])
+                    .child_signal(page.braden_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| Braden::render_modal(modal, page.braden_modal.clone(), app.clone()))
+                    })))
                 }))
             }))
         })
@@ -3210,8 +3200,14 @@ impl IpdAdmissionNoteDrPage {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_R_BLUE)
-                                .child(html!("i", {.class(class::FA_EYE)}))
-                                .text(" View")
+                                .child_signal(page.display_puberty.signal().map(|is_visible| {
+                                    if is_visible {
+                                        Some(html!("i", {.class(class::FA_EYE_SLASH)}))
+                                    } else {
+                                        Some(html!("i", {.class(class::FA_EYE)}))
+                                    }
+                                }))
+                                .text_signal(page.display_puberty.signal().map(|is_visible| if is_visible {" ซ่อน"} else {" แสดง"}))
                                 .event(clone!(page => move |_: events::Click| {
                                     page.display_puberty.set(!page.display_puberty.get());
                                 }))
@@ -4864,8 +4860,14 @@ impl IpdAdmissionNoteDrPage {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_R_BLUE)
-                                .child(html!("i", {.class(class::FA_EYE)}))
-                                .text(" View")
+                                .child_signal(page.display_psychiatry.signal().map(|is_visible| {
+                                    if is_visible {
+                                        Some(html!("i", {.class(class::FA_EYE_SLASH)}))
+                                    } else {
+                                        Some(html!("i", {.class(class::FA_EYE)}))
+                                    }
+                                }))
+                                .text_signal(page.display_psychiatry.signal().map(|is_visible| if is_visible {" ซ่อน"} else {" แสดง"}))
                                 .event(clone!(page => move |_: events::Click| {
                                     page.display_psychiatry.set(!page.display_psychiatry.get());
                                 }))
@@ -4947,8 +4949,8 @@ impl IpdAdmissionNoteDrPage {
                             ])
                         }),
                     ])
-                    .children_signal_vec(page.addict_assists.signal_vec_cloned().map(clone!(page => move |assist| {
-                        AddictAssist::render(assist, page.clone())
+                    .children_signal_vec(page.addict_assists.signal_vec_cloned().map(clone!(app, page => move |assist| {
+                        AddictAssist::render(assist, page.clone(), app.clone())
                     })))
                     .children([
                         html!("p"),
@@ -5045,14 +5047,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#amphetamineAwqModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.amphetamine_awq_modal.set(Some(AmphetamineAwqV2::new(
                                                         page.amphetamine_awq.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("span", {
@@ -5145,14 +5146,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#aggressionOasModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.aggression_oas_modal.set(Some(AggressionOAS::new(
                                                         page.aggression_oas.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5258,14 +5258,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#alcoholAuditModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.alcohol_audit_modal.set(Some(AlcoholAudit::new(
                                                         page.alcohol_audit.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5308,14 +5307,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#alcoholCiwaModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.alcohol_ciwa_modal.set(Some(AlcoholCiwaAr::new(
                                                         page.alcohol_ciwa.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5358,14 +5356,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#alcoholAwsModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.alcohol_aws_modal.set(Some(AlcoholAws::new(
                                                         page.alcohol_aws.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5408,14 +5405,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#nicotinFtndModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.nicotin_ftnd_modal.set(Some(NicotinFtnd::new(
                                                         page.nicotin_ftnd.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5456,14 +5452,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#depress2QModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.depress_2q_modal.set(Some(Depress2Q::new(
                                                         page.depress_2q.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5504,14 +5499,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#depress9QModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.depress_9q_modal.set(Some(Depress9Q::new(
                                                         page.depress_9q.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5554,14 +5548,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#depressCdiModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.depress_cdi_modal.set(Some(DepressCdi::new(
                                                         page.depress_cdi.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5600,14 +5593,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#depressCesdModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.depress_cesd_modal.set(Some(DepressCesD::new(
                                                         page.depress_cesd.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5646,14 +5638,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#depressPhqaModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.depress_phqa_modal.set(Some(DepressPhqA::new(
                                                         page.depress_phqa.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5714,14 +5705,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#suicide8QModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.suicide_8q_modal.set(Some(Suicide8Q::new(
                                                         page.suicide_8q.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5764,14 +5754,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#stressST5Modal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.stress_st5_modal.set(Some(StressST5::new(
                                                         page.stress_st5.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5814,14 +5803,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#ptsdScreenModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.ptsd_screen_modal.set(Some(PtsdScreen::new(
                                                         page.ptsd_screen.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5860,14 +5848,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#ptsdPiscesModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.ptsd_pisces_modal.set(Some(PtsdPisces10::new(
                                                         page.ptsd_pisces.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5910,14 +5897,13 @@ impl IpdAdmissionNoteDrPage {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_GRAY)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#ptsdCriesModal")
                                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                                .event(clone!(page => move |_:events::Click| {
+                                                .event(clone!(app, page => move |_:events::Click| {
                                                     page.ptsd_cries_modal.set(Some(PtsdCries13::new(
                                                         page.ptsd_cries.clone(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }),
                                             html!("div", {
@@ -5941,160 +5927,58 @@ impl IpdAdmissionNoteDrPage {
                                 }),
                             ])
                         }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "addictAssistModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.addict_assist_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| AddictAssistV2::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "amphetamineAwqModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.amphetamine_awq_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| AmphetamineAwqV2::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "aggressionOasModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.aggression_oas_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| AggressionOAS::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "alcoholAuditModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.alcohol_audit_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| AlcoholAudit::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "alcoholCiwaModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.alcohol_ciwa_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| AlcoholCiwaAr::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "alcoholAwsModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.alcohol_aws_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| AlcoholAws::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "nicotinFtndModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.nicotin_ftnd_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| NicotinFtnd::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "depress2QModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.depress_2q_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| Depress2Q::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "depress9QModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.depress_9q_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| Depress9Q::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "depressCdiModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.depress_cdi_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| DepressCdi::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "depressCesdModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.depress_cesd_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| DepressCesD::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "depressPhqaModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.depress_phqa_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| DepressPhqA::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "suicide8QModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.suicide_8q_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| Suicide8Q::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "stressST5Modal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.stress_st5_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| StressST5::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "ptsdScreenModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.ptsd_screen_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| PtsdScreen::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "ptsdPiscesModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.ptsd_pisces_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| PtsdPisces10::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
-                        html!("div", {
-                            .class("modal")
-                            .attr("id", "ptsdCriesModal")
-                            .attr("role", "dialog")
-                            .attr("tabindex", "-1")
-                            .child_signal(page.ptsd_cries_modal.signal_cloned().map(|opt| {
-                                opt.as_ref().map(|modal| PtsdCries13::render(modal.clone())).or(Some(blank_modal()))
-                            }))
-                        }),
                     ])
+                    .child_signal(page.addict_assist_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| AddictAssistV2::render_modal(modal, page.addict_assist_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.amphetamine_awq_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| AmphetamineAwqV2::render_modal(modal, page.amphetamine_awq_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.aggression_oas_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| AggressionOAS::render_modal(modal, page.aggression_oas_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.alcohol_audit_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| AlcoholAudit::render_modal(modal, page.alcohol_audit_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.alcohol_ciwa_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| AlcoholCiwaAr::render_modal(modal, page.alcohol_ciwa_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.alcohol_aws_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| AlcoholAws::render_modal(modal, page.alcohol_aws_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.nicotin_ftnd_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| NicotinFtnd::render_modal(modal, page.nicotin_ftnd_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.depress_2q_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| Depress2Q::render_modal(modal, page.depress_2q_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.depress_9q_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| Depress9Q::render_modal(modal, page.depress_9q_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.depress_cdi_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| DepressCdi::render_modal(modal, page.depress_cdi_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.depress_cesd_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| DepressCesD::render_modal(modal, page.depress_cesd_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.depress_phqa_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| DepressPhqA::render_modal(modal, page.depress_phqa_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.suicide_8q_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| Suicide8Q::render_modal(modal, page.suicide_8q_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.stress_st5_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| StressST5::render_modal(modal, page.stress_st5_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.ptsd_screen_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| PtsdScreen::render_modal(modal, page.ptsd_screen_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.ptsd_pisces_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| PtsdPisces10::render_modal(modal, page.ptsd_pisces_modal.clone(), app.clone()))
+                    })))
+                    .child_signal(page.ptsd_cries_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                        opt.map(|modal| PtsdCries13::render_modal(modal, page.ptsd_cries_modal.clone(), app.clone()))
+                    })))
                 })
             ])
         })
@@ -8127,7 +8011,7 @@ impl AddictAssist {
         })
     }
 
-    fn render(fa: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
+    fn render(fa: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::ROW)
             .children([
@@ -8148,15 +8032,14 @@ impl AddictAssist {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_SM_GRAY)
-                                .attr("data-bs-toggle", "modal")
-                                .attr("data-bs-target", "#addictAssistModal")
                                 .child(html!("i", {.class(class::FA_EDIT)}))
-                                .event(clone!(page, fa => move |_:events::Click| {
+                                .event(clone!(app, page, fa => move |_:events::Click| {
                                     page.addict_assist_modal.set(Some(AddictAssistV2::new(
                                         fa.agent.clone(),
                                         fa.score.clone(),
                                         page.changed.clone(),
                                     )));
+                                    app.show_modal_backdrop();
                                 }))
                             }),
                             html!("div", {
