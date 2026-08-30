@@ -20,7 +20,7 @@ use kphis_util::util::{str_some, zero_none};
 use kphis_ui_app::App;
 use kphis_ui_component::{
     index_plan::{redraw_index_plan, render_index_plan},
-    modal::{blank_modal, index_plan_action_form::IndexPlanActionForm},
+    modal::index_plan_action_form::IndexPlanActionForm,
     show_patient_main::ShowPatientMainCpn,
 };
 use kphis_ui_core::{class, doms, mixins};
@@ -250,11 +250,6 @@ impl IndexPlanPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    // if page.is_ipd {
-                    //     if let Some(elm) = app.get_id("wards") {
-                    //         NiceSelect::new_default(&elm);
-                    //     }
-                    // }
                     page.search_changed.set(true);
                 }
                 async {}
@@ -326,21 +321,6 @@ impl IndexPlanPage {
                                                 clone!(app => move || app.to_local_storage()),
                                                 ward_select_option,
                                             ))
-                                            // .child(html!("select" => HtmlSelectElement, {
-                                            //     .class(class::FORM_CTRL_SM)
-                                            //     .attr("id", "wards")
-                                            //     .children(ward_select_option.iter().map(|option| {
-                                            //         doms::select_option(option, &app.ward_select.lock_ref())
-                                            //     }))
-                                            //     .prop_signal("value", app.ward_select.signal_cloned())
-                                            //     .with_node!(element => {
-                                            //         .event(clone!(app, page, element => move |_: events::Change| {
-                                            //             app.ward_select.set_neq(element.value());
-                                            //             app.to_local_storage();
-                                            //             page.search_changed.set_neq(true);
-                                            //         }))
-                                            //     })
-                                            // }))
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
@@ -350,9 +330,6 @@ impl IndexPlanPage {
                                                 let empty_ward = app.ward_select.lock_ref().is_empty();
                                                 if !empty_ward {
                                                     app.ward_select.set(String::new());
-                                                    // if let Some(elm) = app.get_id("wards") {
-                                                    //     NiceSelect::new_default(&elm);
-                                                    // }
                                                     page.search_changed.set_neq(true);
                                                 }
                                             }))
@@ -553,23 +530,17 @@ impl IndexPlanPage {
                                         }))
                                     })
                                 }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "indexPlanActionModal")
-                                    .attr("role", "dialog")
-                                    .attr("tabindex", "-1")
-                                    .child_signal(page.index_plan_action_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                                        opt.as_ref().map(clone!(app, page => move |modal| {
-                                            IndexPlanActionForm::render(
-                                                modal.clone(),
-                                                page.index_plan_action_modal.clone(),
-                                                Some(page.index_changed.clone()),
-                                                app,
-                                            )
-                                        })).or(Some(blank_modal()))
-                                    })))
-                                }),
                             ])
+                            .child_signal(page.index_plan_action_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                                opt.map(|modal| {
+                                    IndexPlanActionForm::render_modal(
+                                        modal.clone(),
+                                        page.index_plan_action_modal.clone(),
+                                        Some(page.index_changed.clone()),
+                                        app.clone(),
+                                    )
+                                })
+                            })))
                         }))
                     }),
                 ])

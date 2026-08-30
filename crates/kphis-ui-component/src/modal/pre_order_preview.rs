@@ -25,7 +25,10 @@ use kphis_util::{
     util::{str_some, zero_none},
 };
 
-use crate::ipd_pre_order::{render_order, render_progress_note};
+use crate::{
+    ipd_pre_order::{render_order, render_progress_note},
+    modal::pre_order_select::PreOrderSelect,
+};
 
 #[derive(Clone, Default)]
 pub enum ToOrderType {
@@ -171,7 +174,7 @@ impl PreOrderPreview {
         )
     }
 
-    fn pre_order_to(command: &PreOrderIntoCommand, parent_date_loaded: Option<Mutable<bool>>, parent_count_loaded: Option<Mutable<bool>>, page: Rc<Self>, app: Rc<App>) {
+    fn pre_order_to(command: &PreOrderIntoCommand, parent_date_loaded: Option<Mutable<bool>>, parent_count_loaded: Option<Mutable<bool>>, display: Mutable<Option<Rc<PreOrderSelect>>>, page: Rc<Self>, app: Rc<App>) {
         app.async_load(
             true,
             clone!(app, page, command => async move {
@@ -179,14 +182,16 @@ impl PreOrderPreview {
                     // POST `EndPoint::IpdPreOrderInto`
                     match command.call_api_post(app.state()).await {
                         Ok(responses) => {
-                            app.alert_execute_responses(&responses, async move {
+                            app.alert_execute_responses(&responses, clone!(app => async move {
                                 if let Some(date_loaded) = parent_date_loaded {
                                     date_loaded.set_neq(false);
                                 }
                                 if let Some(count_loaded) = parent_count_loaded {
                                     count_loaded.set_neq(false);
                                 }
-                            }).await;
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })).await;
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -197,14 +202,7 @@ impl PreOrderPreview {
         )
     }
 
-    pub fn render(
-        page: Rc<Self>,
-        app: Rc<App>,
-        // select_redraw: Mutable<bool>,
-        close_mutable: Mutable<Option<u32>>,
-        parent_date_loaded: Option<Mutable<bool>>,
-        parent_count_loaded: Option<Mutable<bool>>,
-    ) -> Dom {
+    pub fn render(page: Rc<Self>, display: Mutable<Option<Rc<PreOrderSelect>>>, app: Rc<App>, close_mutable: Mutable<Option<u32>>, parent_date_loaded: Option<Mutable<bool>>, parent_count_loaded: Option<Mutable<bool>>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -241,8 +239,6 @@ impl PreOrderPreview {
                                 .text(" Back")
                                 .event(move |_: events::Click| {
                                     close_mutable.set(None);
-                                    // select_redraw.set(true);
-                                // .attr("onclick", "onclickBackButton(event);")
                                 })
                             }))
                         }),
@@ -315,10 +311,9 @@ impl PreOrderPreview {
                             *is_template || !*is_used
                         }.map(clone!(app, page, parent_date_loaded, parent_count_loaded => move |not_used_template| {
                             not_used_template.then(|| {
-                                doms::form_inline_end(clone!(app, page, parent_date_loaded, parent_count_loaded => move |end| { end
+                                doms::form_inline_end(clone!(app, page, parent_date_loaded, parent_count_loaded, display => move |end| { end
                                     .child(html!("button" => HtmlButtonElement, {
                                         .attr("type", "button")
-                                        .attr("data-bs-dismiss", "modal")
                                         .class(class::BTN_SM_BLUE)
                                         .child(html!("i", {.class(class::FA_PLUS)}))
                                         .text(" ใช้งาน")
@@ -340,7 +335,7 @@ impl PreOrderPreview {
                                                 from_id: str_some(page.pre_order_master_id.get().to_string()),
                                                 into_id: str_some(page.caller_id.get_cloned()),
                                             };
-                                            Self::pre_order_to(&command, parent_date_loaded.clone(), parent_count_loaded.clone(), page.clone(), app.clone());
+                                            Self::pre_order_to(&command, parent_date_loaded.clone(), parent_count_loaded.clone(), display.clone(), page.clone(), app.clone());
                                             // use usePreOrderMaster(pre_order_master_id, pre_order_type) FROM ipd-dr-order.php OR ipd-dr-pre-order.php
                                             // .attr("onclick", "onclickUsePreOrderMasterButton(event);")
                                         }), app.state()))

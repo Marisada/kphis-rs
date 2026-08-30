@@ -5,6 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
+use wasm_bindgen::JsCast;
 use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement};
 
 use kphis_model::{
@@ -251,7 +252,42 @@ impl DrugDetailModal {
         )
     }
 
-    pub fn render(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
+    // please check `kphis-ui-component::modal::modal_show_option_mixins` for modal mechanic
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_SHOW)
+            .attr("role", "dialog")
+            .attr("aria-modal", "true")
+            .attr("tabindex", "-1")
+            .child(Self::render_dialog(modal.clone(), display.clone(), parent_reload.clone(), app.clone()))
+            // Add global escape key listener
+            .global_event(clone!(app, modal, display, parent_reload => move |e: events::KeyDown| {
+                if e.key() == "Escape" {
+                    if let Some(reload) = &parent_reload {
+                        reload.set_neq(modal.parent_need_reload.get());
+                    }
+
+                    app.clear_modal_backdrop();
+                    display.set(None);
+                }
+            }))
+            // Click outside modal
+            .event(move |e :events::Click| {
+                if let Some(target) = e.target().and_then(|target| target.dyn_into::<web_sys::Element>().ok()) {
+                    if target.class_list().contains("modal") {
+                        if let Some(reload) = &parent_reload {
+                            reload.set_neq(modal.parent_need_reload.get());
+                        }
+
+                        app.clear_modal_backdrop();
+                        display.set(None);
+                    }
+                }
+            })
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, parent_reload: Option<Mutable<bool>>, app: Rc<App>) -> Dom {
         html!("div", {
             .apply_if(!modal.is_form, |dom| dom
                 .future(map_ref!(
@@ -281,12 +317,12 @@ impl DrugDetailModal {
                                 html!("button", {
                                     .attr("type", "button")
                                     .class("btn-close")
-                                    .attr("data-bs-dismiss", "modal")
                                     .attr("aria-label", "Close")
-                                    .event(clone!(modal, display, parent_reload => move |_: events::Click| {
+                                    .event(clone!(app, modal, display, parent_reload => move |_: events::Click| {
                                         if let Some(reload) = &parent_reload {
                                             reload.set_neq(modal.parent_need_reload.get());
                                         }
+                                        app.clear_modal_backdrop();
                                         display.set(None);
                                     }))
                                 }),
@@ -712,16 +748,16 @@ impl DrugDetailModal {
                             )
                             .child(html!("button", {
                                 .attr("type", "button")
-                                .attr("data-bs-dismiss", "modal")
                                 .class(class::BTN_GRAY)
                                 .child(html!("i", {.class(class::FA_X)}))
                                 .text(" ปิด")
-                                .event(clone!(modal, parent_reload => move |_: events::Click| {
+                                .event(move |_: events::Click| {
                                     if let Some(reload) = &parent_reload {
                                         reload.set_neq(modal.parent_need_reload.get());
                                     }
+                                    app.clear_modal_backdrop();
                                     display.set(None);
-                                }))
+                                })
                             }))
                         }),
                     ])

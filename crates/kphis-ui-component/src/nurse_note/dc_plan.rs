@@ -1117,47 +1117,6 @@ impl DcPlanCpn {
                             all_dxs,
                         ))
                     })))
-                    //     html!("div", {
-                    //         .class(class::FLEX_GROW1)
-                    //         .style("max-width", "640px")
-                    //         .future(page.redraw_dx_selector.signal().for_each(clone!(page, app => move |redraw| {
-                    //             if redraw {
-                    //                 if let Some(elm) = app.get_id("dx_select") {
-                    //                     NiceSelect::new_default_with_value(&elm, &page.dx_id.lock_ref());
-                    //                 }
-                    //                 page.redraw_dx_selector.set_neq(false);
-                    //             }
-                    //             async {}
-                    //         })))
-                    //         .child(html!("select" => HtmlSelectElement, {
-                    //             .class(class::FORM_CTRL_SM)
-                    //             .attr("id", "dx_select")
-                    //             .children([
-                    //                 html!("option", {
-                    //                     .attr("value", "")
-                    //                     .text("เลือก")
-                    //                 }),
-                    //             ])
-                    //             .children_signal_vec(page.all_dxs.signal_vec_cloned().map(|dx| {
-                    //                 html!("option", {
-                    //                     .attr("value", &dx.dx_id.to_string())
-                    //                     .text(&dx.dx_name.clone().unwrap_or_default())
-                    //                 })
-                    //             }))
-                    //             .apply(mixins::string_value_select(page.dx_id.clone(), page.changed.clone()))
-                    //             .future(page.dx_id.signal_cloned().for_each(clone!(page => move |dx_id_str| {
-                    //                 if let Some(dx_id) = dx_id_str.parse::<u32>().ok() {
-                    //                     if let Some(dx) = page.all_dxs.lock_ref().iter().find(|dx| dx.dx_id == dx_id) {
-                    //                         page.dx_knowledge.set_neq(dx.dx_knowledge.clone().unwrap_or_default());
-                    //                         page.dx_revisit.set_neq(dx.dx_revisit.clone().unwrap_or_default());
-                    //                         page.dx_prevention.set_neq(dx.dx_prevention.clone().unwrap_or_default());
-                    //                     }
-                    //                 }
-                    //                 async {}
-                    //             })))
-                    //         }))
-                    //     }),
-                    // ])
                 })),
                 html!("div", {
                     .class(class::BOLD_Y)

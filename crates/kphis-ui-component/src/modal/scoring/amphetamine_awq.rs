@@ -5,7 +5,10 @@ use futures_signals::{
 };
 use std::rc::Rc;
 
+use kphis_ui_app::App;
 use kphis_ui_core::{class, doms};
+
+use crate::modal::modal_show_option_mixins;
 
 const AWQ_V2_INTRERPRET: &str = r#"
         • ควรประเมินวันละ 1 ครั้ง และสิ้นสุดการประเมินเมื่อไม่มีอาการ ในทุกข้อคำถาม
@@ -150,7 +153,14 @@ impl AmphetamineAwqV2 {
         if let (Some(s7), Some(s8), Some(s10)) = (score_7, score_8, score_10) { Some(s7 + s8 + s10) } else { None }
     }
 
-    pub fn render(modal: Rc<Self>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(modal.total_score_signal().for_each(clone!(modal => move |total_score| {
                 if let Some(total) = total_score {
@@ -191,7 +201,15 @@ impl AmphetamineAwqV2 {
                                     html!("div", {.text("Amphetamine Withdrawal Questionnaire Version 2 : AWQv2")}),
                                 ])
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -253,7 +271,7 @@ impl AmphetamineAwqV2 {
                                             .children([
                                                 html!("th", {.class("text-center").attr("scope", "col").attr("colspan", "2").text("คะแนนกลุ่มอาการ Hyperarousal (ข้อ 1, 6, 9)")}),
                                                 html!("th", {
-                                                    .class("text-center").attr("scope", "col").attr("colspan", "4")
+                                                    .class("text-center").attr("scope", "col").attr("colspan", "5")
                                                     .text_signal(modal.hyperarousal_score_signal().map(|opt| opt.map(|u| u.to_string()).unwrap_or_default()))
                                                 }),
                                             ])
@@ -262,7 +280,7 @@ impl AmphetamineAwqV2 {
                                             .children([
                                                 html!("th", {.class("text-center").attr("scope", "col").attr("colspan", "2").text("คะแนนกลุ่มอาการ Anxiety (ข้อ 3, 4, 5)")}),
                                                 html!("th", {
-                                                    .class("text-center").attr("scope", "col").attr("colspan", "4")
+                                                    .class("text-center").attr("scope", "col").attr("colspan", "5")
                                                     .text_signal(modal.anxiety_score_signal().map(|opt| opt.map(|u| u.to_string()).unwrap_or_default()))
                                                 }),
                                             ])
@@ -271,7 +289,7 @@ impl AmphetamineAwqV2 {
                                             .children([
                                                 html!("th", {.class("text-center").attr("scope", "col").attr("colspan", "2").text("คะแนนกลุ่มอาการ Reversed Vegetative (ข้อ 7, 8, 10)")}),
                                                 html!("th", {
-                                                    .class("text-center").attr("scope", "col").attr("colspan", "4")
+                                                    .class("text-center").attr("scope", "col").attr("colspan", "5")
                                                     .text_signal(modal.rev_vegetative_score_signal().map(|opt| opt.map(|u| u.to_string()).unwrap_or_default()))
                                                 }),
                                             ])
@@ -280,7 +298,7 @@ impl AmphetamineAwqV2 {
                                             .children([
                                                 html!("th", {.class("text-center").attr("scope", "col").attr("colspan", "2").text("คะแนนรวม")}),
                                                 html!("th", {
-                                                    .class("text-center").attr("scope", "col").attr("colspan", "4")
+                                                    .class("text-center").attr("scope", "col").attr("colspan", "5")
                                                     .text_signal(modal.total_score_signal().map(|opt| opt.map(|u| u.to_string()).unwrap_or_default()))
                                                 }),
                                             ])
@@ -298,7 +316,6 @@ impl AmphetamineAwqV2 {
                         .class("modal-footer")
                         .child(html!("button", {
                             .attr("type", "button")
-                            .attr("data-bs-dismiss", "modal")
                             .class("btn")
                             .class_signal("btn-secondary", not(modal.is_complete.signal()))
                             .class_signal("btn-primary", modal.is_complete.signal())
@@ -330,6 +347,8 @@ impl AmphetamineAwqV2 {
                                     modal.parent_result.set_neq(concat);
                                     modal.parent_changed.set_neq(true);
                                 }
+                                app.clear_modal_backdrop();
+                                display.set(None);
                             })
                         }))
                     }),

@@ -17,7 +17,7 @@ use kphis_model::{
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::Modal, class, doms};
+use kphis_ui_core::{class, doms};
 use kphis_util::{
     datetime::{date_th_opt, datetime_th_opt, js_now, time_hm_opt},
     util::zero_none,
@@ -25,10 +25,7 @@ use kphis_util::{
 
 use crate::{
     gadget::pdf_button::PdfButtons,
-    modal::{
-        blank_modal,
-        consult_form::{ConsultForm, ConsultFormMode},
-    },
+    modal::consult_form::{ConsultForm, ConsultFormMode},
 };
 
 /// - GET `EndPoint::IpdConsultAn`
@@ -117,7 +114,7 @@ impl IpdConsultCpn {
                 let focused = page.focused.signal(),
                 let focus = page.focus.signal() =>
                 *focus && !focused
-            }.for_each(clone!(page => move |ready| {
+            }.for_each(clone!(app, page => move |ready| {
                 if ready {
                     if let Some(id) = zero_none(page.focused_id.get()) {
                         match page.sub.lock_ref().as_str() {
@@ -128,7 +125,7 @@ impl IpdConsultCpn {
                                 page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), Some(id), ConsultFormMode::View)));
                             }
                         }
-                        Modal::new("#consultFormModal").show();
+                        app.show_modal_backdrop();
                     }
                     // focus only once
                     // page.focus.set(false);
@@ -149,12 +146,11 @@ impl IpdConsultCpn {
                                     .attr("type", "button")
                                     .class(class::BTN_L_GRAY)
                                     //.attr("id", "openConsultActionButton")
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", "#consultFormModal")
                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                     .text(" เพิ่มใบ consult")
-                                    .event(clone!(page => move |_: events::Click| {
+                                    .event(clone!(app, page => move |_: events::Click| {
                                         page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), None, ConsultFormMode::Edit)));
+                                        app.show_modal_backdrop();
                                     }))
                                 }))
                             })
@@ -276,17 +272,11 @@ impl IpdConsultCpn {
                 })),
             ])
             // ipd-dr-consult-form.php
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "consultFormModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.consult_form_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                    opt.as_ref().map(clone!(app, page => move |modal| {
-                        ConsultForm::render(modal.clone(), page.consult_form_modal.clone(), page.changed.clone(), app)
-                    })).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.consult_form_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    ConsultForm::render_modal(modal.clone(), page.consult_form_modal.clone(), page.changed.clone(), app.clone())
+                })
+            })))
         })
     }
 }
@@ -368,45 +358,41 @@ fn render_consult(row: Rc<ConsultWithName>, page: Rc<IpdConsultCpn>, app: Rc<App
         .children([
             html!("td", {
                 .style("cursor","pointer")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", "#consultFormModal")
                 .text(&[row.consult_type_name.clone().unwrap_or_default(), row.spcltyname.as_ref().map(|spcltyname| [" (ส่งแผนก ", spcltyname, ")"].concat()).unwrap_or_default()].concat())
-                .event(clone!(row, page => move |_: events::Click| {
+                .event(clone!(app, row, page => move |_: events::Click| {
                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                    app.show_modal_backdrop();
                 }))
             }),
             html!("td", {
                 .style("cursor","pointer")
                 .class("text-center")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", "#consultFormModal")
                 .text(&row.consult_emergency_name.clone().unwrap_or_default())
-                .event(clone!(row, page => move |_: events::Click| {
+                .event(clone!(app, row, page => move |_: events::Click| {
                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                    app.show_modal_backdrop();
                 }))
             }),
             html!("td", {
                 .style("cursor","pointer")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", "#consultFormModal")
                 .attr("title", &row.string_consult_request_name.clone().unwrap_or_default())
                 .children(html_consult_request_name)
-                .event(clone!(row, page => move |_: events::Click| {
+                .event(clone!(app, row, page => move |_: events::Click| {
                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                    app.show_modal_backdrop();
                 }))
             }),
             html!("td", {
                 .style("cursor","pointer")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", "#consultFormModal")
                 .class("text-center")
                 .children([
                     text(&date_th_opt(&row.consult_date)),
                     html!("br"),
                     text(&time_hm_opt(&row.consult_time)),
                 ])
-                .event(clone!(row, page => move |_: events::Click| {
+                .event(clone!(app, row, page => move |_: events::Click| {
                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                    app.show_modal_backdrop();
                 }))
             }),
             html!("td", {
@@ -414,15 +400,14 @@ fn render_consult(row: Rc<ConsultWithName>, page: Rc<IpdConsultCpn>, app: Rc<App
                 .apply_if(app.has_permission(Permission::IpdDoctorConsultEdit) || is_pre_admit, |dom| { // && is_request_user,
                     dom.child(html!("button", {
                         .attr("type", "button")
-                        .attr("data-bs-toggle", "modal")
-                        .attr("data-bs-target", "#consultFormModal")
                         .class(class::BTN_SM_GRAY)
                         .apply(|dom| {
                             if !html_consult_reply_name.is_empty() {
                                 dom.attr("disabled", "")
                             } else {
-                                dom.event(clone!(row, page => move |_: events::Click| {
+                                dom.event(clone!(app, row, page => move |_: events::Click| {
                                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::Edit)));
+                                    app.show_modal_backdrop();
                                 }))
                             }
                         })
@@ -433,34 +418,31 @@ fn render_consult(row: Rc<ConsultWithName>, page: Rc<IpdConsultCpn>, app: Rc<App
             html!("td", {
                 .class("bg-info-subtle")
                 .style("cursor","pointer")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", "#consultFormModal")
                 .attr("title", &row.string_consult_reply_name.clone().unwrap_or_default())
                 .children(html_consult_reply_name)
-                .event(clone!(row, page => move |_: events::Click| {
+                .event(clone!(app, row, page => move |_: events::Click| {
                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                    app.show_modal_backdrop();
                 }))
             }),
             html!("td", {
                 .class("bg-info-subtle")
                 .style("cursor","pointer")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", "#consultFormModal")
                 .class("text-center")
                 .text(&datetime_th_opt(&row.consult_datetime_create_reply))
-                .event(clone!(row, page => move |_: events::Click| {
+                .event(clone!(app, row, page => move |_: events::Click| {
                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                    app.show_modal_backdrop();
                 }))
             }),
             html!("td", {
                 .class("bg-info-subtle")
                 .style("cursor","pointer")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", "#consultFormModal")
                 .class("text-center")
                 .text(&datetime_th_opt(&row.consult_datetime_update_reply))
-                .event(clone!(row, page => move |_: events::Click| {
+                .event(clone!(app, row, page => move |_: events::Click| {
                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                    app.show_modal_backdrop();
                 }))
             }),
             html!("td", {
@@ -472,8 +454,6 @@ fn render_consult(row: Rc<ConsultWithName>, page: Rc<IpdConsultCpn>, app: Rc<App
                 .apply_if(app.has_permission(Permission::IpdDoctorConsultEdit) || is_pre_admit, |dom| {
                     dom.child(html!("button", {
                         .attr("type", "button")
-                        .attr("data-bs-toggle", "modal")
-                        .attr("data-bs-target", "#consultFormModal")
                         .class(class::BTN_SM_GRAY)
                         .apply(|dom| {
                             if reply_over_24hr {
@@ -481,8 +461,9 @@ fn render_consult(row: Rc<ConsultWithName>, page: Rc<IpdConsultCpn>, app: Rc<App
                             } else if is_request_user {
                                 dom.attr("title", "ผู้ขอปรึกษา ไม่สามารถตอบข้อมูลได้").attr("disabled", "")
                             } else {
-                                dom.event(clone!(row, page => move |_: events::Click| {
+                                dom.event(clone!(app, row, page => move |_: events::Click| {
                                     page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::Reply)));
+                                    app.show_modal_backdrop();
                                 }))
                             }
                         })

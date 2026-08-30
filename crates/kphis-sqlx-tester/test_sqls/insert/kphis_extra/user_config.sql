@@ -1,2 +1,3 @@
 INSERT INTO `kphis_extra`.`user_config` (`loginname`, `wards`, `spcltys`, `theme`, `wide_screen`, `totp`, `ts`, `failed`, `totp_done`, `create_user`, `create_datetime`, `update_user`, `update_datetime`, `version`) VALUES
-	('user', '01', '01', 'dark', 'card', NULL, NULL, NULL, NULL, 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);
+	('user', '01', '01', 'dark', 'card', NULL, NULL, NULL, NULL, 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1),
+	('bobby', '01', '01', 'dark', 'card', 'ABCDEF', 9, 99, 9, 'user', '2024-01-01 11:11:11', 'user', '2024-01-01 11:11:11', 1);

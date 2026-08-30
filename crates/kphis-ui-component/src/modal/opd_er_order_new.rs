@@ -14,7 +14,7 @@ use kphis_ui_app::App;
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::{str_some, zero_none};
 
-use crate::gadget::searchbox::opd_visit::OpdVisitSearchboxCpn;
+use crate::{gadget::searchbox::opd_visit::OpdVisitSearchboxCpn, modal::modal_show_option_mixins};
 
 /// - POST `EndPoint::OpdErOrderMaster`
 /// - GET `EndPoint::SearchBoxOpdVisitModeText` (OpdVisitSearchboxCpn)
@@ -43,7 +43,14 @@ impl OpdErOrderNew {
         }
     }
 
-    pub fn render(modal: Rc<Self>, view_by: Mutable<String>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, view_by: Mutable<String>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, view_by, display.clone(), changed, app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, view_by: Mutable<String>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         let all_er_bed_select_option = match app.app_asset.lock_ref().as_ref() {
             Some(assets_arc) => {
                 let asset = assets_arc.as_ref().to_owned();
@@ -68,9 +75,9 @@ impl OpdErOrderNew {
                             html!("button", {
                                 .attr("type", "button")
                                 .class("btn-close")
-                                .attr("data-bs-dismiss", "modal")
                                 .attr("aria-label", "Close")
-                                .event(clone!(display => move |_: events::Click| {
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 }))
                             }),
@@ -191,7 +198,6 @@ impl OpdErOrderNew {
                                 .class("btn")
                                 .class_signal("btn-primary", modal.changed.signal())
                                 .class_signal("btn-secondary", not(modal.changed.signal()))
-                                .attr("data-bs-dismiss", "modal")
                                 .text("บันทึก")
                                 .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, modal, display => move || {
                                     Self::submit(modal.clone(), view_by.clone(), display.clone(), changed.clone(), app.clone());
@@ -201,9 +207,10 @@ impl OpdErOrderNew {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_GRAY)
-                                .attr("data-bs-dismiss", "modal")
-                                .text("ยกเลิก")
+                                .child(html!("i", {.class(class::FA_X)}))
+                                .text(" ปิด")
                                 .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
                                     display.set(None);
                                 })
                             }),
@@ -231,6 +238,7 @@ impl OpdErOrderNew {
                     Ok((opd_er_order_master_id, response)) => {
                         app.alert_execute_response(&response, clone!(app => async move {
                             changed.set_neq(true);
+                            app.clear_modal_backdrop();
                             display.set(None);
                             let route = Route::OpdErMain {
                                 view_by: view_by.get_cloned(),

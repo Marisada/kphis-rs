@@ -17,6 +17,8 @@ use kphis_ui_app::App;
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::error::CONTACT_ADMIN;
 
+use crate::modal::modal_show_bool_mixins;
+
 /// - GET `EndPoint::IpdPasscode`
 /// - POST `EndPoint::IpdPasscode`
 #[derive(Clone, Default)]
@@ -169,20 +171,27 @@ impl IpdPasscodeForm {
         })
     }
 
-    pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<bool>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
-                let loaded = page.loaded.signal() =>
+                let loaded = modal.loaded.signal() =>
                 !busy && !loaded
-            ).for_each(clone!(app, page => move |ready| {
+            ).for_each(clone!(app, modal => move |ready| {
                 if ready {
                     if app.can_change_ward_passcode() {
-                        app.async_load(true, clone!(app, page => async move {
-                            Self::get_current_ward_passcode_data(page.clone(), app.clone()).await;
+                        app.async_load(true, clone!(app, modal => async move {
+                            Self::get_current_ward_passcode_data(modal.clone(), app.clone()).await;
                         }));
                     }
-                    page.loaded.set_neq(true);
+                    modal.loaded.set_neq(true);
                 }
                 async {}
             })))
@@ -198,7 +207,15 @@ impl IpdPasscodeForm {
                                 .class("modal-title")
                                 .text("Ward Passcode")
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(false);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -212,8 +229,8 @@ impl IpdPasscodeForm {
                                     .child(html!("ul", {
                                         .class("list-group")
                                         //.attr("id", "ward_passcode_list_group")
-                                        .children_signal_vec(page.using_passcode.signal_vec_cloned().enumerate().map(clone!(app, page => move |(i, item)| {
-                                            Self::render_using_passcode(item, i.get().unwrap_or_default(), app.clone(), page.clone())
+                                        .children_signal_vec(modal.using_passcode.signal_vec_cloned().enumerate().map(clone!(app, modal => move |(i, item)| {
+                                            Self::render_using_passcode(item, i.get().unwrap_or_default(), app.clone(), modal.clone())
                                         })))
                                     }))
                                 }),
@@ -228,7 +245,7 @@ impl IpdPasscodeForm {
                                             .children([
                                                 html!("div", {
                                                     .class(class::INPUT_GROUP_T)
-                                                    .visible_signal(not(page.not_using_is_empty()))
+                                                    .visible_signal(not(modal.not_using_is_empty()))
                                                     .children([
                                                         doms::label_group_for("passcode_ward_select","สำหรับ ward"),
                                                         html!("select" => web_sys::HtmlSelectElement, {
@@ -236,13 +253,13 @@ impl IpdPasscodeForm {
                                                             .style("width","250px")
                                                             .attr("id", "passcode_ward_select")
                                                             .child(html!("option", {.attr("value","").text("เลือก")}))
-                                                            .children_signal_vec(page.not_using_passcode.signal_vec_cloned().map(|item| {
+                                                            .children_signal_vec(modal.not_using_passcode.signal_vec_cloned().map(|item| {
                                                                 render_not_using_passcode(item)
                                                             }))
-                                                            .prop_signal("value", page.ward.signal_cloned())
+                                                            .prop_signal("value", modal.ward.signal_cloned())
                                                             .with_node!(element => {
-                                                                .event(clone!(page => move |_: events::Change| {
-                                                                    page.ward.set_neq(element.value());
+                                                                .event(clone!(modal => move |_: events::Change| {
+                                                                    modal.ward.set_neq(element.value());
                                                                 }))
                                                             })
                                                         })
@@ -254,7 +271,7 @@ impl IpdPasscodeForm {
                                                         html!("label", {
                                                             .attr("for", "passcode_password")
                                                             .class("input-group-text")
-                                                            .class_signal("text-danger", page.password.signal_cloned().map(|pwd| pwd.is_empty()))
+                                                            .class_signal("text-danger", modal.password.signal_cloned().map(|pwd| pwd.is_empty()))
                                                             .text("Password HOSxP")
                                                         }),
                                                         html!("input" => web_sys::HtmlInputElement, {
@@ -264,10 +281,10 @@ impl IpdPasscodeForm {
                                                             .attr("placeholder","Password HOSxP")
                                                             .attr("autocomplete","off")
                                                             // .apply(mixins::string_value(page.password.clone(), page.changed.clone()))
-                                                            .prop_signal("value", page.password.signal_cloned())
+                                                            .prop_signal("value", modal.password.signal_cloned())
                                                             .with_node!(element => {
-                                                                .event(clone!(page => move |_: events::Input| {
-                                                                    page.password.set_neq(element.value());
+                                                                .event(clone!(modal => move |_: events::Input| {
+                                                                    modal.password.set_neq(element.value());
                                                                 }))
                                                             })
                                                         })
@@ -278,13 +295,13 @@ impl IpdPasscodeForm {
                                                     .class(class::BTN_RX_BLUE)
                                                     //.attr("id", "addPasscodeButton")
                                                     .text("สร้าง Passcode ใหม่")
-                                                    .visible_signal(not(page.not_using_is_empty()))
+                                                    .visible_signal(not(modal.not_using_is_empty()))
                                                     .apply(mixins::click_with_loader_checked_or_true_disable_signal(
-                                                        clone!(app, page => move || {
-                                                            Self::gen_ipd_ward_passcode(page.clone(), app.clone());
+                                                        clone!(app, modal => move || {
+                                                            Self::gen_ipd_ward_passcode(modal.clone(), app.clone());
                                                             // onclick="return genIpdWardPasscode(event)"
                                                         }),
-                                                        or(page.ward.signal_cloned().map(|w| w.is_empty()), page.password.signal_cloned().map(|p| p.is_empty())),
+                                                        or(modal.ward.signal_cloned().map(|w| w.is_empty()), modal.password.signal_cloned().map(|p| p.is_empty())),
                                                         app.state(),
                                                     ))
                                                 })
@@ -301,11 +318,12 @@ impl IpdPasscodeForm {
                     //     .child(html!("button", {
                     //         .attr("type", "button")
                     //         .class(class::BTN_GRAY)
-                    //         .attr("data-bs-dismiss","modal")
-                    //         .child(html!("i", {
-                    //             .class(class::FA_X)
-                    //         }))
+                    //         .child(html!("i", {.class(class::FA_X)}))
                     //         .text(" Cancel")
+                    //         .event(move |_: events::Click| {
+                    //              app.clear_modal_backdrop();
+                    //              display.set(false);
+                    //         })
                     //     }))
                     // })
                 ])

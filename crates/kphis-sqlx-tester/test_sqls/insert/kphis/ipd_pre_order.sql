@@ -4,7 +4,7 @@ INSERT INTO `kphis`.`ipd_pre_order` (`order_id`, `pre_order_master_id`, `order_d
 	(3, 1, '2024-01-01', '11:11:11', '001', 'oneday', 'nurse', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
 	(4, 1, '2024-01-01', '11:11:11', '001', 'oneday', 'nurse', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
 	(5, 1, '2024-01-01', '11:11:11', '001', 'continuous', 'doctor', 'Y', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
-    (6, 1, '2024-01-01', '11:11:11', '001', 'continuous', 'doctor', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
+	(6, 1, '2024-01-01', '11:11:11', '001', 'continuous', 'doctor', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
 	(7, 2, '2024-01-01', '11:11:11', '007', 'oneday', 'doctor', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
 	(8, 3, '2024-01-01', '11:11:11', '007', 'oneday', 'doctor', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),
 	(9, 4, '2024-01-11', '11:11:11', '007', 'oneday', 'doctor', 'N', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', '2024-01-01 11:11:11', 'admin', '2024-01-01 11:11:11', 1),

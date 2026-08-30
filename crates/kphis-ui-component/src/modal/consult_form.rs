@@ -26,7 +26,10 @@ use kphis_util::{
     util::{str_some, zero_none},
 };
 
-use crate::gadget::image::{ImageCpn, ImagePaths};
+use crate::{
+    gadget::image::{ImageCpn, ImagePaths},
+    modal::modal_show_option_mixins,
+};
 
 /// - GET `EndPoint::IpdConsultId`
 /// - POST `EndPoint::IpdConsult` (guarded, remove Save btn)
@@ -110,28 +113,13 @@ impl ConsultForm {
                     match Consult::call_api_get(modal.consult_id.get(), app.state()).await {
                         Ok(response) => {
                             if let Some(consult) = response {
-                                let consult_ward = consult.consult_ward.unwrap_or_default();
-                                let consult_doctorcode_mention = consult.consult_doctorcode_mention.unwrap_or_default();
-                                let consult_spclty = consult.consult_spclty.unwrap_or_default();
-                                // if matches!(modal.consult_mode, ConsultFormMode::Edit) {
-                                //     if let Some(elm) = app.get_id("consult_ward") {
-                                //         NiceSelect::new_default_with_value(&elm, &consult_ward);
-                                //     }
-                                //     if let Some(elm) = app.get_id("consult_doctorcode_mention") {
-                                //         NiceSelect::new_default_with_value(&elm, &consult_doctorcode_mention);
-                                //     }
-                                //     if let Some(elm) = app.get_id("consult_spclty") {
-                                //         NiceSelect::new_default_with_value(&elm, &consult_spclty);
-                                //     }
-                                // }
-
                                 modal.an.set_neq(consult.an);
                                 modal.consult_id.set_neq(consult.consult_id);
                                 modal.consult_type.set_neq(consult.consult_type.map(|i| i.to_string()).unwrap_or_default());
-                                modal.consult_ward.set_neq(consult_ward);
+                                modal.consult_ward.set_neq(consult.consult_ward.unwrap_or_default());
                                 modal.consult_emergency.set_neq(consult.consult_emergency.unwrap_or_default());
-                                modal.consult_doctorcode_mention.set_neq(consult_doctorcode_mention);
-                                modal.consult_spclty.set_neq(consult_spclty);
+                                modal.consult_doctorcode_mention.set_neq(consult.consult_doctorcode_mention.unwrap_or_default());
+                                modal.consult_spclty.set_neq(consult.consult_spclty.unwrap_or_default());
                                 modal.consult_date.set_neq(consult.consult_date.map(|d| d.to_string()).unwrap_or_default());
                                 modal.consult_time.set_neq(consult.consult_time.map(|t| t.js_string()).unwrap_or_default());
                                 modal.consult_data.set_neq(consult.consult_data.unwrap_or_default());
@@ -244,9 +232,10 @@ impl ConsultForm {
                             modal.data_image_callback.lock_ref().post_images(ImageUsage::IpdConsultData, id, app.clone()).await;
                             // SSE message
                             save.consult_id = Some(id);
-                            send_sse_by_save(&save, modal.patient.get_cloned(), app);
+                            send_sse_by_save(&save, modal.patient.get_cloned(), app.clone());
                             // clearing
                             changed.set_neq(true);
+                            app.clear_modal_backdrop();
                             display.set(None);
                         })).await;
                     }
@@ -274,10 +263,11 @@ impl ConsultForm {
                         // DELETE `EndPoint::IpdConsult`
                         match Consult::call_api_delete(&params, app.state()).await {
                             Ok(responses) => {
-                                app.alert_execute_responses(&responses, async move {
+                                app.alert_execute_responses(&responses, clone!(app => async move {
                                     changed.set_neq(true);
+                                    app.clear_modal_backdrop();
                                     display.set(None);
-                                }).await;
+                                })).await;
                             }
                             Err(e) => {
                                 app.alert_app_error(&e).await;
@@ -289,7 +279,14 @@ impl ConsultForm {
         )
     }
 
-    pub fn render(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), changed.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         let is_new = modal.consult_id.get() == 0;
 
         let (all_doctor_select_option, doctor_select_option, spclty_kphis_select_option, emergency_select_option, ward_select_option, consult_type_select_option) = match app.app_asset.lock_ref().as_ref() {
@@ -335,7 +332,15 @@ impl ConsultForm {
                                     .text(" Consultation")
                                 }))
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -387,19 +392,6 @@ impl ConsultForm {
                                                         || {},
                                                         ward_select_option,
                                                     ),
-                                                    // html!("select" => HtmlSelectElement, {
-                                                    //     .class("form-control")
-                                                    //     .attr("id", "consult_ward")
-                                                    //     .child(html!("option", {
-                                                    //         .attr("value", "")
-                                                    //         .text("เลือก")
-                                                    //     }))
-                                                    //     .children(ward_select_option.iter().map(|option| {
-                                                    //         doms::select_option(option, "")
-                                                    //     }))
-                                                    //     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
-                                                    //     .apply(mixins::string_value_select(modal.consult_ward.clone(), modal.changed.clone()))
-                                                    // }),
                                                 ])
                                             }))
                                         }),
@@ -513,17 +505,6 @@ impl ConsultForm {
                                                                         || {},
                                                                         spclty_kphis_select_option,
                                                                     ),
-                                                                    // html!("select" => HtmlSelectElement, {
-                                                                    //     .class(class::FORM_CTRL_T)
-                                                                    //     .attr("id", "consult_spclty")
-                                                                    //     .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                                    //     .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
-                                                                    //     .children(spclty_kphis_select_option.iter().map(|option| {
-                                                                    //         doms::select_option(option, "")
-                                                                    //     }))
-                                                                    //     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
-                                                                    //     .apply(mixins::string_value_select(modal.consult_spclty.clone(), modal.changed.clone()))
-                                                                    // }),
                                                                 ])
                                                             }))
                                                         }),
@@ -543,19 +524,6 @@ impl ConsultForm {
                                                                         || {},
                                                                         [vec![SelectOption {key: String::from("0"), value: String::from("ฝ่ายเภสัชกรรม")}], doctor_select_option].concat(),
                                                                     ),
-                                                                    // html!("select" => HtmlSelectElement, {
-                                                                    //     .class(class::FORM_CTRL_T)
-                                                                    //     .attr("id", "consult_doctorcode_mention")
-                                                                    //     .child(html!("option", {
-                                                                    //         .attr("value", "")
-                                                                    //         .text("เลือก")
-                                                                    //     }))
-                                                                    //     .children(doctor_select_option.iter().map(|option| {
-                                                                    //         doms::select_option(option, "")
-                                                                    //     }))
-                                                                    //     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
-                                                                    //     .apply(mixins::string_value_select(modal.consult_doctorcode_mention.clone(), modal.changed.clone()))
-                                                                    // }),
                                                                 ])
                                                             }))
                                                         }),
@@ -891,9 +859,8 @@ impl ConsultForm {
                             dom.child(html!("button" => HtmlButtonElement, {
                                 .attr("type", "button")
                                 .class(class::BTN_LX_RED)
-                                .attr("data-bs-dismiss", "modal")
                                 .child(html!("i", {.class(class::FA_TRASH)}))
-                                .text(" Delete")
+                                .text(" ลบ")
                                 .apply(mixins::click_with_loader_checked(clone!(app, modal, display, changed => move || {
                                     Self::delete(modal.clone(), display.clone(), changed.clone(), app.clone());
                                 }), app.state()))
@@ -902,7 +869,7 @@ impl ConsultForm {
                         .apply_if(!matches!(modal.consult_mode, ConsultFormMode::View)
                             && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdConsult, modal.is_pre_admit),
                         |dom| { dom
-                            .child_signal(modal.consult_id.signal_cloned().map(clone!(app, modal => move |or_zero| {
+                            .child_signal(modal.consult_id.signal_cloned().map(clone!(app, modal, display => move |or_zero| {
                                 (if or_zero == 0 {
                                     app.has_permission(Permission::IpdDoctorConsultAdd)
                                 } else {
@@ -918,9 +885,8 @@ impl ConsultForm {
                                         })
                                         .attr("type", "button")
                                         .class(class::BTN_BLUE)
-                                        .attr("data-bs-dismiss", "modal")
                                         .child(html!("i", {.class(class::FA_SAVE)}))
-                                        .text(" Save")
+                                        .text(" บันทึก")
                                         .apply(mixins::click_with_loader_checked(clone!(app, modal, display, changed => move || {
                                             Self::save(modal.clone(), display.clone(), changed.clone(), app.clone());
                                         }), app.state()))
@@ -931,9 +897,12 @@ impl ConsultForm {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
                             .child(html!("i", {.class(class::FA_X)}))
-                            .text(" Cancel")
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

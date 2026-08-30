@@ -356,8 +356,7 @@ impl IpdMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::MedReconcile)))
-                                .attr("data-bs-toggle","pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::MedReconcile)))
                                 .attr("href","#")
                                 .text("Med Reconciliation ")
                                 .child_signal(map_ref! {
@@ -395,10 +394,9 @@ impl IpdMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Order)))
-                                .attr("data-bs-toggle","pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Order)))
                                 .attr("href","#")
-                                .text_signal(page.view_by.signal_cloned().map(|view_by| {
+                                .text_signal(page.view_by.signal_ref(|view_by| {
                                     if view_by.as_str() == "nurse" {
                                         "Order & Index"
                                     } else {
@@ -417,8 +415,7 @@ impl IpdMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::VitalSign)))
-                                .attr("data-bs-toggle","pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::VitalSign)))
                                 .attr("href","#")
                                 .text("Vital Sign")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -438,8 +435,7 @@ impl IpdMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Io)))
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Io)))
                                         .attr("href","#")
                                         .text("I/O")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -458,8 +454,7 @@ impl IpdMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::NurseNote)))
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::NurseNote)))
                                         .attr("href","#")
                                         .text("Nursing Progress Note")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -481,8 +476,7 @@ impl IpdMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::NursePlan)))
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::NursePlan)))
                                         .attr("href","#")
                                         .text("Nurse Planning")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -499,8 +493,7 @@ impl IpdMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Lab)))
-                                .attr("data-bs-toggle","pill")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Lab)))
                                 .attr("href","#")
                                 .text("Lab ")
                                 .child_signal(map_ref! {
@@ -531,8 +524,7 @@ impl IpdMainPage {
                                 .class(class::NAV_ITEM_PY)
                                 .child(html!("a", {
                                     .class("nav-link")
-                                    .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::XRay)))
-                                    .attr("data-bs-toggle","pill")
+                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::XRay)))
                                     .attr("href","#")
                                     .text("X-Ray ")
                                     .child_signal(page.show_xray_unread_exists_spinner.signal().map(|unread| {
@@ -574,7 +566,6 @@ impl IpdMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .attr("data-bs-toggle", "pill")
                                         .attr("href","#")
                                         .text("ประวัติการสั่งยา ")
                                         .child(html!("i", {.class(class::FA_DISPLAY)}))
@@ -598,8 +589,7 @@ impl IpdMainPage {
                                 .class(class::NAV_ITEM_PY)
                                 .child(html!("a", {
                                     .class("nav-link")
-                                    .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Emr)))
-                                    .attr("data-bs-toggle","pill")
+                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Emr)))
                                     .attr("href","#")
                                     .text("EMR")
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -612,8 +602,7 @@ impl IpdMainPage {
                                 .class(class::NAV_ITEM_PY)
                                 .child(html!("a", {
                                     .class("nav-link")
-                                    .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Document)))
-                                    .attr("data-bs-toggle","pill")
+                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Document)))
                                     .attr("href","#")
                                     .text("เอกสาร")
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -631,8 +620,7 @@ impl IpdMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Doctor)))
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Doctor)))
                                         .attr("href","#")
                                         .text("แพทย์เจ้าของไข้")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -654,8 +642,7 @@ impl IpdMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Consult)))
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Consult)))
                                         .attr("href","#")
                                         .text("Consult")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -674,8 +661,7 @@ impl IpdMainPage {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::ReferOut)))
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::ReferOut)))
                                         .attr("href","#")
                                         .text("Refer Out")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -693,8 +679,7 @@ impl IpdMainPage {
                     //             .class(class::NAV_ITEM_PY)
                     //             .child(html!("a", {
                     //                 .class("nav-link")
-                    //                 .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Operation)))
-                    //                 .attr("data-bs-toggle","pill")
+                    //                 .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Operation)))
                     //                 .attr("href","#")
                     //                 .text("ประวัติผ่าตัด")
                     //                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {

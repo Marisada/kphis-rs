@@ -49,7 +49,6 @@ use crate::{
         pdf_button::{PdfButtons, static_pdf_btn_with_modal},
     },
     modal::{
-        blank_modal,
         index_plan_action_form::{FormType, IndexPlanActionForm, OrderType},
         medplan_form::{MedPlanForm, MedPlanMutable, OffMedPlanMutable},
         pre_order_preview::ToOrderType,
@@ -1420,7 +1419,6 @@ impl OrderCpn {
                                     }))
                                 )
                             })
-
                             .child_signal(map_ref!{
                                 let is_readonly = page.is_readonly_signal(),
                                 let is_pharmacist = page.is_view_by_pharmacist() =>
@@ -1545,18 +1543,16 @@ impl OrderCpn {
                                         let is_doctor = page.is_view_by_doctor(),
                                         let is_not_discharge = page.is_not_discharged() =>
                                         *is_doctor && if is_ipd {*is_not_discharge} else {true}
-                                    }.map(clone!(page => move |is_doctor_not_discharge| {
+                                    }.map(clone!(app, page => move |is_doctor_not_discharge| {
                                         (is_doctor_not_discharge && allow_pre_order).then(|| {
                                             html!("div", {
                                                 .class(class::FLOAT_RL)
                                                 .child(html!("button", {
                                                     .attr("type", "button")
                                                     .class(class::BTN_GRAY)
-                                                    .attr("data-bs-toggle", "modal")
-                                                    .attr("data-bs-target", &["#selectPreOrderModal", cpn_id].concat())
                                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                                     .text(" Template")
-                                                    .event(clone!(page => move |_: events::Click| {
+                                                    .event(clone!(app, page => move |_: events::Click| {
                                                         match page.patient.lock_ref().as_ref().map(|pt| pt.visit_type()) {
                                                             Some(VisitTypeId::Ipd(an))
                                                             | Some(VisitTypeId::PreAdmit(an)) => {
@@ -1565,6 +1561,7 @@ impl OrderCpn {
                                                                     &an,
                                                                     ToOrderType::Order,
                                                                 )));
+                                                                app.show_modal_backdrop();
                                                             }
                                                             Some(VisitTypeId::OpdEr(_vn, opd_er_order_master_id)) => {
                                                                 page.pre_order_select_modal.set(Some(PreOrderSelect::new(
@@ -1572,6 +1569,7 @@ impl OrderCpn {
                                                                     &opd_er_order_master_id.to_string(),
                                                                     ToOrderType::OpdErOrder,
                                                                 )));
+                                                                app.show_modal_backdrop();
                                                             }
                                                             Some(VisitTypeId::Visit(_))
                                                             | None => {}
@@ -1585,15 +1583,13 @@ impl OrderCpn {
                                         let is_doctor_or_nurse = page.is_view_by_doctor_or_nurse(),
                                         let is_not_discharge = page.is_not_discharged() =>
                                         * is_doctor_or_nurse && if is_ipd {*is_not_discharge} else {true}
-                                    }.map(clone!(page => move |is_doctor_or_nurse_not_discharge| {
+                                    }.map(clone!(app, page => move |is_doctor_or_nurse_not_discharge| {
                                         (is_doctor_or_nurse_not_discharge && allow_pre_order).then(|| {
                                             html!("div", {
                                                 .class(class::FLOAT_RL)
                                                 .child(html!("button", {
                                                     .attr("type", "button")
                                                     .class(class::BTN_GRAY)
-                                                    .attr("data-bs-toggle", "modal")
-                                                    .attr("data-bs-target", &["#selectPreOrderModal", cpn_id].concat())
                                                     .children([
                                                         html!("span", {
                                                             .class(class::SPIN_SM_GLOW_RED)
@@ -1605,7 +1601,7 @@ impl OrderCpn {
                                                         html!("i", {.class(class::FA_CLIPBOARD_R)}),
                                                     ])
                                                     .text(" เลือกใบ Order")
-                                                    .event(clone!(page => move |_: events::Click| {
+                                                    .event(clone!(app, page => move |_: events::Click| {
                                                         if let Some(patient) = page.patient.lock_ref().as_ref() {
                                                             match patient.visit_type() {
                                                                 VisitTypeId::Ipd(an)
@@ -1615,6 +1611,7 @@ impl OrderCpn {
                                                                         &an,
                                                                         ToOrderType::Order,
                                                                     )));
+                                                                    app.show_modal_backdrop();
                                                                 }
                                                                 VisitTypeId::OpdEr(_vn, opd_er_order_master_id) => {
                                                                     page.pre_order_select_modal.set(Some(PreOrderSelect::new(
@@ -1622,6 +1619,7 @@ impl OrderCpn {
                                                                         &opd_er_order_master_id.to_string(),
                                                                         ToOrderType::OpdErOrder,
                                                                     )));
+                                                                    app.show_modal_backdrop();
                                                                 }
                                                                 VisitTypeId::Visit(_) => {}
                                                             }
@@ -1775,41 +1773,153 @@ impl OrderCpn {
                                 .child(html!("div", {
                                     .class("tab-content")
                                     .child(html!("div", {
-                                        .class(class::TAB_FADE_SHOW_ACTIVE)
-                                        .attr("role", "tabpanel")
+                                        .class("row")
                                         .child(html!("div", {
-                                            .class("row")
-                                            .child(html!("div", {
-                                                .class("col")
-                                                .apply_if(cpn_id != "aside", |dom| dom
-                                                    .child_signal(page.is_view_by_doctor().map(|is_doctor| {
-                                                        is_doctor.then(|| {
-                                                            html!("div", {
-                                                                .class("mb-2")
-                                                                .children([
-                                                                    doms::badge_info_center("บันทึก Progress note ที่ครอบคลุม S O A P ทุกวันใน 3 วันแรก และทุกครั้งที่มีการเปลี่ยนแปลงอาการ หรือการรักษา หรือให้ยาหรือมีการทำ invasive procedure"),
-                                                                    doms::badge_info_center("บันทึกการแปลผล investigation ที่สำคัญ และมีการให้การวินิจฉัยร่วมกับการวางแผนการรักษาเมื่อผล investigation ผิดปกติ"),
-                                                                ])
-                                                            })
+                                            .class("col")
+                                            .apply_if(cpn_id != "aside", |dom| dom
+                                                .child_signal(page.is_view_by_doctor().map(|is_doctor| {
+                                                    is_doctor.then(|| {
+                                                        html!("div", {
+                                                            .class("mb-2")
+                                                            .children([
+                                                                doms::badge_info_center("บันทึก Progress note ที่ครอบคลุม S O A P ทุกวันใน 3 วันแรก และทุกครั้งที่มีการเปลี่ยนแปลงอาการ หรือการรักษา หรือให้ยาหรือมีการทำ invasive procedure"),
+                                                                doms::badge_info_center("บันทึกการแปลผล investigation ที่สำคัญ และมีการให้การวินิจฉัยร่วมกับการวางแผนการรักษาเมื่อผล investigation ผิดปกติ"),
+                                                            ])
                                                         })
-                                                    }))
-                                                )
-                                                .child(html!("table", {
-                                                    .class(class::TABLE_1R)
-                                                    .children([
-                                                        html!("thead", {
-                                                            .child(html!("tr", {
-                                                                .children([
-                                                                    html!("th", {
-                                                                        .attr("scope", "col")
-                                                                        .class(class::TXT_C_TOP)
-                                                                        .class("bg-secondary-subtle")
-                                                                        .style("width","30%")
+                                                    })
+                                                }))
+                                            )
+                                            .child(html!("table", {
+                                                .class(class::TABLE_1R)
+                                                .children([
+                                                    html!("thead", {
+                                                        .child(html!("tr", {
+                                                            .children([
+                                                                html!("th", {
+                                                                    .attr("scope", "col")
+                                                                    .class(class::TXT_C_TOP)
+                                                                    .class("bg-secondary-subtle")
+                                                                    .style("width","30%")
+                                                                    .child_signal(page.is_readonly_signal().map(clone!(page => move |is_readonly| {
+                                                                        (!is_readonly && allow_progress_form && allow_progress_add).then(|| {
+                                                                            html!("button", {
+                                                                                .attr("type", "button")
+                                                                                .class(class::BTN_FR_R)
+                                                                                .class_signal("btn-primary", not(page.show_progress_note_input.signal()))
+                                                                                .class_signal("btn-secondary", page.show_progress_note_input.signal())
+                                                                                .text_signal(page.show_progress_note_input.signal_cloned().map(|show| {
+                                                                                    if show {"Cancel"} else {"+Add"}
+                                                                                }))
+                                                                                .event(clone!(page => move |_: events::Click| {
+                                                                                    page.edit_progress_note.set(None);
+                                                                                    page.show_progress_note_auditor_input.set_neq(false);
+                                                                                    page.show_progress_note_input.set(!page.show_progress_note_input.get());
+                                                                                }))
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child_signal(map_ref!{
+                                                                        let is_not_discharged = page.is_not_discharged(),
+                                                                        let is_readonly = page.is_readonly_signal() =>
+                                                                        !is_not_discharged && !is_readonly
+                                                                    }.map(clone!(page => move |ready| {
+                                                                        (ready && has_audit_use && allow_progress_form && allow_progress_add).then(|| {
+                                                                            html!("button", {
+                                                                                .attr("type", "button")
+                                                                                .class(class::BTN_FR_R)
+                                                                                .class_signal("btn-warning", not(page.show_progress_note_auditor_input.signal()))
+                                                                                .class_signal("btn-secondary", page.show_progress_note_auditor_input.signal())
+                                                                                .text_signal(page.show_progress_note_auditor_input.signal_cloned().map(|show| {
+                                                                                    if show {"Cancel"} else {"+Audit"}
+                                                                                }))
+                                                                                .event(clone!(page => move |_: events::Click| {
+                                                                                    page.edit_progress_note.set(None);
+                                                                                    page.show_progress_note_input.set_neq(false);
+                                                                                    page.show_progress_note_auditor_input.set(!page.show_progress_note_auditor_input.get());
+                                                                                }))
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child(html!("div",{.class("mt-2").text("Progress Note")}))
+                                                                }),
+                                                                html!("th", {
+                                                                    .attr("scope", "col")
+                                                                    .class(class::TXT_C_TOP)
+                                                                    .style("width","35%")
+                                                                    .child_signal(map_ref!{
+                                                                        let is_today = page.current_is_today(),
+                                                                        let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
+                                                                        if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly
+                                                                    }.map(clone!(page => move |ready| {
+                                                                        (ready && allow_order_form && allow_order_add).then(|| {
+                                                                            html!("button", {
+                                                                                .attr("type", "button")
+                                                                                .class(class::BTN_FR_R)
+                                                                                .class_signal("btn-primary", not(page.show_oneday_input.signal()))
+                                                                                .class_signal("btn-secondary", page.show_oneday_input.signal())
+                                                                                .text_signal(page.show_oneday_input.signal_cloned().map(|show| {
+                                                                                    if show {"Cancel"} else {"+Add"}
+                                                                                }))
+                                                                                .event(clone!(page => move |_: events::Click| {
+                                                                                    page.edit_order.set(None);
+                                                                                    page.offs_by_parent.lock_mut().clear();
+                                                                                    page.show_continuous_input.set_neq(false);
+                                                                                    page.show_oneday_input.set(!page.show_oneday_input.get());
+                                                                                }))
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child(html!("div",{.class("mt-2").text("One Day Order")}))
+                                                                }),
+                                                                html!("th", {
+                                                                    .attr("scope", "col")
+                                                                    .class(class::TXT_C_TOP)
+                                                                    .style("width","35%")
+                                                                    .child_signal(map_ref!{
+                                                                        let is_today = page.current_is_today(),
+                                                                        let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
+                                                                        if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly
+                                                                    }.map(clone!(page => move |ready| {
+                                                                        (ready && allow_order_form && allow_order_add).then(|| {
+                                                                            html!("button", {
+                                                                                .attr("type", "button")
+                                                                                .class(class::BTN_FR_R)
+                                                                                .class_signal("btn-primary", not(page.show_continuous_input.signal()))
+                                                                                .class_signal("btn-secondary", page.show_continuous_input.signal())
+                                                                                .text_signal(page.show_continuous_input.signal_cloned().map(|show| {
+                                                                                    if show {"Cancel"} else {"+Add"}
+                                                                                }))
+                                                                                .event(clone!(page => move |_: events::Click| {
+                                                                                    page.edit_order.set(None);
+                                                                                    page.offs_by_parent.lock_mut().clear();
+                                                                                    page.show_oneday_input.set_neq(false);
+                                                                                    page.show_continuous_input.set(!page.show_continuous_input.get());
+                                                                                }))
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child(html!("div",{.class("mt-2").text("Continuous Order")}))
+                                                                }),
+                                                            ])
+                                                        }))
+                                                    }),
+                                                    html!("tbody", {
+                                                        .child(html!("tr", {
+                                                            .children([
+                                                                // Progress Note
+                                                                html!("td", {
+                                                                    // ipd-dr-order-progress-note-data.php
+                                                                    .class("bg-secondary-subtle")
+                                                                    .children_signal_vec(page.progress_note.signal_vec_cloned().map(clone!(app, page => move |progress_note| {
+                                                                        Self::render_progress_note(cpn_id, progress_note, page.clone(), app.clone())
+                                                                    })))
+                                                                    .child(html!("div", {
+                                                                        .class("text-end")
                                                                         .child_signal(page.is_readonly_signal().map(clone!(page => move |is_readonly| {
                                                                             (!is_readonly && allow_progress_form && allow_progress_add).then(|| {
                                                                                 html!("button", {
                                                                                     .attr("type", "button")
-                                                                                    .class(class::BTN_FR_R)
+                                                                                    .class(class::BTN_R)
                                                                                     .class_signal("btn-primary", not(page.show_progress_note_input.signal()))
                                                                                     .class_signal("btn-secondary", page.show_progress_note_input.signal())
                                                                                     .text_signal(page.show_progress_note_input.signal_cloned().map(|show| {
@@ -1831,7 +1941,7 @@ impl OrderCpn {
                                                                             (ready && has_audit_use && allow_progress_form && allow_progress_add).then(|| {
                                                                                 html!("button", {
                                                                                     .attr("type", "button")
-                                                                                    .class(class::BTN_FR_R)
+                                                                                    .class(class::BTN_R)
                                                                                     .class_signal("btn-warning", not(page.show_progress_note_auditor_input.signal()))
                                                                                     .class_signal("btn-secondary", page.show_progress_note_auditor_input.signal())
                                                                                     .text_signal(page.show_progress_note_auditor_input.signal_cloned().map(|show| {
@@ -1845,21 +1955,85 @@ impl OrderCpn {
                                                                                 })
                                                                             })
                                                                         })))
-                                                                        .child(html!("div",{.class("mt-2").text("Progress Note")}))
-                                                                    }),
-                                                                    html!("th", {
-                                                                        .attr("scope", "col")
-                                                                        .class(class::TXT_C_TOP)
-                                                                        .style("width","35%")
+                                                                    }))
+                                                                    .child_signal(map_ref!{
+                                                                        let normal = page.show_progress_note_input.signal(),
+                                                                        let auditor = page.show_progress_note_auditor_input.signal() =>
+                                                                        (*normal, *auditor)
+                                                                    }.map(clone!(app, page => move |(normal, auditor)| {
+                                                                        (normal || auditor).then(|| {
+                                                                            let form = ProgressNoteForm::new(
+                                                                                auditor,
+                                                                                page.edit_progress_note.get_cloned(),
+                                                                                page.current_date.clone(),
+                                                                                page.view_by.clone(),
+                                                                                page.patient.clone(),
+                                                                                None,
+                                                                                app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
+                                                                            );
+                                                                            ProgressNoteForm::render(
+                                                                                form,
+                                                                                page.show_progress_note_input.clone(),
+                                                                                page.show_progress_note_auditor_input.clone(),
+                                                                                page.edit_progress_note.clone(),
+                                                                                page.reload_progress_note.clone(),
+                                                                                app.clone(),
+                                                                            )
+                                                                        })
+                                                                    })))
+                                                                }),
+                                                                // One Day Order
+                                                                html!("td", {
+                                                                    .child_signal(page.previous_dc_home_med.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .children([
+                                                                                    html!("div", {.class("fw-bold").text("Previous Discharge and Home Medication")}),
+                                                                                    html!("ul", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.previous_dc_home_med.signal_vec_cloned().map(clone!(app, page => move |order| {
+                                                                                            Self::render_previous_order(&order, OrderType::OneDay, page.clone(), app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child_signal(page.previous_retain.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .children([
+                                                                                    html!("div", {.class("fw-bold").text("Previous Retains")}),
+                                                                                    html!("ul", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.previous_retain.signal_vec_cloned().map(clone!(app, page => move |order| {
+                                                                                            Self::render_previous_order(&order, OrderType::OneDay, page.clone(), app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .children_signal_vec(page.oneday.signal_vec_cloned().map(clone!(app, page => move |order| {
+                                                                        Self::render_order(cpn_id, order, true, page.clone(), app.clone())
+                                                                    })))
+                                                                    .child(html!("div", {
+                                                                        .class("text-end")
                                                                         .child_signal(map_ref!{
                                                                             let is_today = page.current_is_today(),
                                                                             let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
-                                                                            if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly
+                                                                            (if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly)
                                                                         }.map(clone!(page => move |ready| {
                                                                             (ready && allow_order_form && allow_order_add).then(|| {
                                                                                 html!("button", {
                                                                                     .attr("type", "button")
-                                                                                    .class(class::BTN_FR_R)
+                                                                                    .class(class::BTN_R)
                                                                                     .class_signal("btn-primary", not(page.show_oneday_input.signal()))
                                                                                     .class_signal("btn-secondary", page.show_oneday_input.signal())
                                                                                     .text_signal(page.show_oneday_input.signal_cloned().map(|show| {
@@ -1874,21 +2048,191 @@ impl OrderCpn {
                                                                                 })
                                                                             })
                                                                         })))
-                                                                        .child(html!("div",{.class("mt-2").text("One Day Order")}))
-                                                                    }),
-                                                                    html!("th", {
-                                                                        .attr("scope", "col")
-                                                                        .class(class::TXT_C_TOP)
-                                                                        .style("width","35%")
+                                                                    }))
+                                                                    .child_signal(map_ref!{
+                                                                        let is_today = page.current_is_today(),
+                                                                        let show_input = page.show_oneday_input.signal() =>
+                                                                        if is_ipd {*is_today} else {true} && *show_input
+                                                                    }.map(clone!(app, page => move |show| {
+                                                                        show.then(|| {
+                                                                            let form = OneDayForm::new(
+                                                                                page.edit_order.get_cloned(),
+                                                                                page.patient.clone(),
+                                                                                None,
+                                                                                app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
+                                                                                page.view_by.clone(),
+                                                                                page.offs_by_parent.clone(),
+                                                                            );
+                                                                            OneDayForm::render(
+                                                                                form,
+                                                                                page.show_oneday_input.clone(),
+                                                                                page.edit_order.clone(),
+                                                                                page.reload_order_oneday.clone(),
+                                                                                app.clone(),
+                                                                            )
+                                                                        })
+                                                                    })))
+                                                                }),
+                                                                // Continuous Order
+                                                                html!("td", {
+                                                                    // ipd-dr-order-continuous-previous-data.php
+                                                                    .child_signal(page.previous_continuous_non_med.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .children([
+                                                                                    html!("div", {.class("fw-bold").text("Current Treatment")}),
+                                                                                    html!("ul", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.previous_continuous_non_med.signal_vec_cloned().map(clone!(app, page => move |order| {
+                                                                                            Self::render_previous_order(&order, OrderType::Continuous, page.clone(), app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child_signal(page.previous_continuous_injection.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .children([
+                                                                                    html!("div", {.class("fw-bold").text("Current Injection")}),
+                                                                                    html!("ol", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.previous_continuous_injection.signal_vec_cloned().map(clone!(app, page => move |order| {
+                                                                                            Self::render_previous_order(&order, OrderType::Continuous, page.clone(), app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child_signal(page.previous_continuous_med.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .children([
+                                                                                    html!("div", {.class("fw-bold").text("Current Medication")}),
+                                                                                    html!("ol", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.previous_continuous_med.signal_vec_cloned().map(clone!(app, page => move |order| {
+                                                                                            Self::render_previous_order(&order, OrderType::Continuous, page.clone(), app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child_signal(page.holded_med_rec.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .class("bg-secondary-subtle")
+                                                                                .children([
+                                                                                    html!("div", {
+                                                                                        .class("fw-bold")
+                                                                                        .text("Held Med Reconciliation")
+                                                                                    }),
+                                                                                    html!("ol", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.holded_med_rec.signal_vec_cloned().map(clone!(app => move |med_rec_item| {
+                                                                                            Self::render_med_rec(&med_rec_item, app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child_signal(page.offed_med_rec.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .class("bg-secondary-subtle")
+                                                                                .children([
+                                                                                    html!("div", {
+                                                                                        .class("fw-bold")
+                                                                                        .text("Offed Med Reconciliation")
+                                                                                    }),
+                                                                                    html!("ol", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.offed_med_rec.signal_vec_cloned().map(clone!(app => move |med_rec_item| {
+                                                                                            Self::render_med_rec(&med_rec_item, app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    .child_signal(page.missed_med_rec.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
+                                                                        (!empty).then(|| {
+                                                                            html!("div", {
+                                                                                .class(class::BOX_ROUND_T)
+                                                                                .class("bg-secondary-subtle")
+                                                                                .child_signal(map_ref!{
+                                                                                    let show = page.show_continuous_input.signal(),
+                                                                                    let is_today = page.current_is_today(),
+                                                                                    let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
+                                                                                    !show && if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly
+                                                                                }.map(clone!(page => move |ready| {
+                                                                                    ready.then(|| {
+                                                                                        html!("button", {
+                                                                                            .attr("type", "button")
+                                                                                            .class(class::BTN_SM_FR_BLUEO)
+                                                                                            .child(html!("i", {.class(class::FA_PLUS_L)}))
+                                                                                            .text("Add")
+                                                                                            .event(clone!(page => move |_:events::Click| {
+                                                                                                page.edit_order.set(Some(Order::new_from_med_rec_items(&page.missed_med_rec.lock_ref())));
+                                                                                                page.offs_by_parent.lock_mut().clear();
+                                                                                                page.show_oneday_input.set_neq(false);
+                                                                                                page.show_continuous_input.set(!page.show_continuous_input.get());
+                                                                                            }))
+                                                                                        })
+                                                                                    })
+                                                                                })))
+                                                                                .children([
+                                                                                    html!("div", {
+                                                                                        .class("fw-bold")
+                                                                                        .text("Missed Med Reconciliation")
+                                                                                    }),
+                                                                                    html!("ol", {
+                                                                                        .class("dash")
+                                                                                        .class(class::BORDER_T_T)
+                                                                                        .style("white-space","pre-wrap")
+                                                                                        .children_signal_vec(page.missed_med_rec.signal_vec_cloned().map(clone!(app => move |med_rec_item| {
+                                                                                            Self::render_med_rec(&med_rec_item, app.clone())
+                                                                                        })))
+                                                                                    }),
+                                                                                ])
+                                                                            })
+                                                                        })
+                                                                    })))
+                                                                    // ipd-dr-order-continuous-data.php
+                                                                    .children_signal_vec(page.continuous.signal_vec_cloned().map(clone!(app, page => move |order| {
+                                                                        Self::render_order(cpn_id, order, false, page.clone(), app.clone())
+                                                                    })))
+                                                                    .child(html!("div", {
+                                                                        .class("text-end")
                                                                         .child_signal(map_ref!{
                                                                             let is_today = page.current_is_today(),
                                                                             let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
-                                                                            if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly
+                                                                            (if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly)
                                                                         }.map(clone!(page => move |ready| {
                                                                             (ready && allow_order_form && allow_order_add).then(|| {
                                                                                 html!("button", {
                                                                                     .attr("type", "button")
-                                                                                    .class(class::BTN_FR_R)
+                                                                                    .class(class::BTN_R)
+                                                                                    .class("mb-1")
                                                                                     .class_signal("btn-primary", not(page.show_continuous_input.signal()))
                                                                                     .class_signal("btn-secondary", page.show_continuous_input.signal())
                                                                                     .text_signal(page.show_continuous_input.signal_cloned().map(|show| {
@@ -1903,385 +2247,35 @@ impl OrderCpn {
                                                                                 })
                                                                             })
                                                                         })))
-                                                                        .child(html!("div",{.class("mt-2").text("Continuous Order")}))
-                                                                    }),
-                                                                ])
-                                                            }))
-                                                        }),
-                                                        html!("tbody", {
-                                                            .child(html!("tr", {
-                                                                .children([
-                                                                    // Progress Note
-                                                                    html!("td", {
-                                                                        // ipd-dr-order-progress-note-data.php
-                                                                        .class("bg-secondary-subtle")
-                                                                        .children_signal_vec(page.progress_note.signal_vec_cloned().map(clone!(app, page => move |progress_note| {
-                                                                            Self::render_progress_note(cpn_id, progress_note, page.clone(), app.clone())
-                                                                        })))
-                                                                        .child(html!("div", {
-                                                                            .class("text-end")
-                                                                            .child_signal(page.is_readonly_signal().map(clone!(page => move |is_readonly| {
-                                                                                (!is_readonly && allow_progress_form && allow_progress_add).then(|| {
-                                                                                    html!("button", {
-                                                                                        .attr("type", "button")
-                                                                                        .class(class::BTN_R)
-                                                                                        .class_signal("btn-primary", not(page.show_progress_note_input.signal()))
-                                                                                        .class_signal("btn-secondary", page.show_progress_note_input.signal())
-                                                                                        .text_signal(page.show_progress_note_input.signal_cloned().map(|show| {
-                                                                                            if show {"Cancel"} else {"+Add"}
-                                                                                        }))
-                                                                                        .event(clone!(page => move |_: events::Click| {
-                                                                                            page.edit_progress_note.set(None);
-                                                                                            page.show_progress_note_auditor_input.set_neq(false);
-                                                                                            page.show_progress_note_input.set(!page.show_progress_note_input.get());
-                                                                                        }))
-                                                                                    })
-                                                                                })
-                                                                            })))
-                                                                            .child_signal(map_ref!{
-                                                                                let is_not_discharged = page.is_not_discharged(),
-                                                                                let is_readonly = page.is_readonly_signal() =>
-                                                                                !is_not_discharged && !is_readonly
-                                                                            }.map(clone!(page => move |ready| {
-                                                                                (ready && has_audit_use && allow_progress_form && allow_progress_add).then(|| {
-                                                                                    html!("button", {
-                                                                                        .attr("type", "button")
-                                                                                        .class(class::BTN_R)
-                                                                                        .class_signal("btn-warning", not(page.show_progress_note_auditor_input.signal()))
-                                                                                        .class_signal("btn-secondary", page.show_progress_note_auditor_input.signal())
-                                                                                        .text_signal(page.show_progress_note_auditor_input.signal_cloned().map(|show| {
-                                                                                            if show {"Cancel"} else {"+Audit"}
-                                                                                        }))
-                                                                                        .event(clone!(page => move |_: events::Click| {
-                                                                                            page.edit_progress_note.set(None);
-                                                                                            page.show_progress_note_input.set_neq(false);
-                                                                                            page.show_progress_note_auditor_input.set(!page.show_progress_note_auditor_input.get());
-                                                                                        }))
-                                                                                    })
-                                                                                })
-                                                                            })))
-                                                                        }))
-                                                                        .child_signal(map_ref!{
-                                                                            let normal = page.show_progress_note_input.signal(),
-                                                                            let auditor = page.show_progress_note_auditor_input.signal() =>
-                                                                            (*normal, *auditor)
-                                                                        }.map(clone!(app, page => move |(normal, auditor)| {
-                                                                            (normal || auditor).then(|| {
-                                                                                let form = ProgressNoteForm::new(
-                                                                                    auditor,
-                                                                                    page.edit_progress_note.get_cloned(),
-                                                                                    page.current_date.clone(),
-                                                                                    page.view_by.clone(),
-                                                                                    page.patient.clone(),
-                                                                                    None,
-                                                                                    app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
-                                                                                );
-                                                                                ProgressNoteForm::render(
-                                                                                    form,
-                                                                                    page.show_progress_note_input.clone(),
-                                                                                    page.show_progress_note_auditor_input.clone(),
-                                                                                    page.edit_progress_note.clone(),
-                                                                                    page.reload_progress_note.clone(),
-                                                                                    app.clone(),
-                                                                                )
-                                                                            })
-                                                                        })))
-                                                                    }),
-                                                                    // One Day Order
-                                                                    html!("td", {
-                                                                        .child_signal(page.previous_dc_home_med.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .children([
-                                                                                        html!("div", {.class("fw-bold").text("Previous Discharge and Home Medication")}),
-                                                                                        html!("ul", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.previous_dc_home_med.signal_vec_cloned().map(clone!(app, page => move |order| {
-                                                                                                Self::render_previous_order(cpn_id, &order, OrderType::OneDay, page.clone(), app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        .child_signal(page.previous_retain.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .children([
-                                                                                        html!("div", {.class("fw-bold").text("Previous Retains")}),
-                                                                                        html!("ul", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.previous_retain.signal_vec_cloned().map(clone!(app, page => move |order| {
-                                                                                                Self::render_previous_order(cpn_id, &order, OrderType::OneDay, page.clone(), app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        .children_signal_vec(page.oneday.signal_vec_cloned().map(clone!(app, page => move |order| {
-                                                                            Self::render_order(cpn_id, order, true, page.clone(), app.clone())
-                                                                        })))
-                                                                        .child(html!("div", {
-                                                                            .class("text-end")
-                                                                            .child_signal(map_ref!{
-                                                                                let is_today = page.current_is_today(),
-                                                                                let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
-                                                                                (if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly)
-                                                                            }.map(clone!(page => move |ready| {
-                                                                                (ready && allow_order_form && allow_order_add).then(|| {
-                                                                                    html!("button", {
-                                                                                        .attr("type", "button")
-                                                                                        .class(class::BTN_R)
-                                                                                        .class_signal("btn-primary", not(page.show_oneday_input.signal()))
-                                                                                        .class_signal("btn-secondary", page.show_oneday_input.signal())
-                                                                                        .text_signal(page.show_oneday_input.signal_cloned().map(|show| {
-                                                                                            if show {"Cancel"} else {"+Add"}
-                                                                                        }))
-                                                                                        .event(clone!(page => move |_: events::Click| {
-                                                                                            page.edit_order.set(None);
-                                                                                            page.offs_by_parent.lock_mut().clear();
-                                                                                            page.show_continuous_input.set_neq(false);
-                                                                                            page.show_oneday_input.set(!page.show_oneday_input.get());
-                                                                                        }))
-                                                                                    })
-                                                                                })
-                                                                            })))
-                                                                        }))
-                                                                        .child_signal(map_ref!{
-                                                                            let is_today = page.current_is_today(),
-                                                                            let show_input = page.show_oneday_input.signal() =>
-                                                                            if is_ipd {*is_today} else {true} && *show_input
-                                                                        }.map(clone!(app, page => move |show| {
-                                                                            show.then(|| {
-                                                                                let form = OneDayForm::new(
-                                                                                    page.edit_order.get_cloned(),
-                                                                                    page.patient.clone(),
-                                                                                    None,
-                                                                                    app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
-                                                                                    page.view_by.clone(),
-                                                                                    page.offs_by_parent.clone(),
-                                                                                );
-                                                                                OneDayForm::render(
-                                                                                    form,
-                                                                                    page.show_oneday_input.clone(),
-                                                                                    page.edit_order.clone(),
-                                                                                    page.reload_order_oneday.clone(),
-                                                                                    app.clone(),
-                                                                                )
-                                                                            })
-                                                                        })))
-                                                                    }),
-                                                                    // Continuous Order
-                                                                    html!("td", {
-                                                                        // ipd-dr-order-continuous-previous-data.php
-                                                                        .child_signal(page.previous_continuous_non_med.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .children([
-                                                                                        html!("div", {.class("fw-bold").text("Current Treatment")}),
-                                                                                        html!("ul", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.previous_continuous_non_med.signal_vec_cloned().map(clone!(app, page => move |order| {
-                                                                                                Self::render_previous_order(cpn_id, &order, OrderType::Continuous, page.clone(), app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        .child_signal(page.previous_continuous_injection.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .children([
-                                                                                        html!("div", {.class("fw-bold").text("Current Injection")}),
-                                                                                        html!("ol", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.previous_continuous_injection.signal_vec_cloned().map(clone!(app, page => move |order| {
-                                                                                                Self::render_previous_order(cpn_id, &order, OrderType::Continuous, page.clone(), app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        .child_signal(page.previous_continuous_med.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .children([
-                                                                                        html!("div", {.class("fw-bold").text("Current Medication")}),
-                                                                                        html!("ol", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.previous_continuous_med.signal_vec_cloned().map(clone!(app, page => move |order| {
-                                                                                                Self::render_previous_order(cpn_id, &order, OrderType::Continuous, page.clone(), app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        .child_signal(page.holded_med_rec.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .class("bg-secondary-subtle")
-                                                                                    .children([
-                                                                                        html!("div", {
-                                                                                            .class("fw-bold")
-                                                                                            .text("Held Med Reconciliation")
-                                                                                        }),
-                                                                                        html!("ol", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.holded_med_rec.signal_vec_cloned().map(clone!(app => move |med_rec_item| {
-                                                                                                Self::render_med_rec(&med_rec_item, app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        .child_signal(page.offed_med_rec.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .class("bg-secondary-subtle")
-                                                                                    .children([
-                                                                                        html!("div", {
-                                                                                            .class("fw-bold")
-                                                                                            .text("Offed Med Reconciliation")
-                                                                                        }),
-                                                                                        html!("ol", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.offed_med_rec.signal_vec_cloned().map(clone!(app => move |med_rec_item| {
-                                                                                                Self::render_med_rec(&med_rec_item, app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        .child_signal(page.missed_med_rec.signal_vec_cloned().is_empty().map(clone!(app, page => move |empty| {
-                                                                            (!empty).then(|| {
-                                                                                html!("div", {
-                                                                                    .class(class::BOX_ROUND_T)
-                                                                                    .class("bg-secondary-subtle")
-                                                                                    .child_signal(map_ref!{
-                                                                                        let show = page.show_continuous_input.signal(),
-                                                                                        let is_today = page.current_is_today(),
-                                                                                        let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
-                                                                                        !show && if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly
-                                                                                    }.map(clone!(page => move |ready| {
-                                                                                        ready.then(|| {
-                                                                                            html!("button", {
-                                                                                                .attr("type", "button")
-                                                                                                .class(class::BTN_SM_FR_BLUEO)
-                                                                                                .child(html!("i", {.class(class::FA_PLUS_L)}))
-                                                                                                .text("Add")
-                                                                                                .event(clone!(page => move |_:events::Click| {
-                                                                                                    page.edit_order.set(Some(Order::new_from_med_rec_items(&page.missed_med_rec.lock_ref())));
-                                                                                                    page.offs_by_parent.lock_mut().clear();
-                                                                                                    page.show_oneday_input.set_neq(false);
-                                                                                                    page.show_continuous_input.set(!page.show_continuous_input.get());
-                                                                                                }))
-                                                                                            })
-                                                                                        })
-                                                                                    })))
-                                                                                    .children([
-                                                                                        html!("div", {
-                                                                                            .class("fw-bold")
-                                                                                            .text("Missed Med Reconciliation")
-                                                                                        }),
-                                                                                        html!("ol", {
-                                                                                            .class("dash")
-                                                                                            .class(class::BORDER_T_T)
-                                                                                            .style("white-space","pre-wrap")
-                                                                                            .children_signal_vec(page.missed_med_rec.signal_vec_cloned().map(clone!(app => move |med_rec_item| {
-                                                                                                Self::render_med_rec(&med_rec_item, app.clone())
-                                                                                            })))
-                                                                                        }),
-                                                                                    ])
-                                                                                })
-                                                                            })
-                                                                        })))
-                                                                        // ipd-dr-order-continuous-data.php
-                                                                        .children_signal_vec(page.continuous.signal_vec_cloned().map(clone!(app, page => move |order| {
-                                                                            Self::render_order(cpn_id, order, false, page.clone(), app.clone())
-                                                                        })))
-                                                                        .child(html!("div", {
-                                                                            .class("text-end")
-                                                                            .child_signal(map_ref!{
-                                                                                let is_today = page.current_is_today(),
-                                                                                let is_doctor_or_nurse_not_readonly = page.is_view_by_doctor_or_nurse_and_not_readonly() =>
-                                                                                (if is_ipd {*is_today} else {true} && *is_doctor_or_nurse_not_readonly)
-                                                                            }.map(clone!(page => move |ready| {
-                                                                                (ready && allow_order_form && allow_order_add).then(|| {
-                                                                                    html!("button", {
-                                                                                        .attr("type", "button")
-                                                                                        .class(class::BTN_R)
-                                                                                        .class("mb-1")
-                                                                                        .class_signal("btn-primary", not(page.show_continuous_input.signal()))
-                                                                                        .class_signal("btn-secondary", page.show_continuous_input.signal())
-                                                                                        .text_signal(page.show_continuous_input.signal_cloned().map(|show| {
-                                                                                            if show {"Cancel"} else {"+Add"}
-                                                                                        }))
-                                                                                        .event(clone!(page => move |_: events::Click| {
-                                                                                            page.edit_order.set(None);
-                                                                                            page.offs_by_parent.lock_mut().clear();
-                                                                                            page.show_oneday_input.set_neq(false);
-                                                                                            page.show_continuous_input.set(!page.show_continuous_input.get());
-                                                                                        }))
-                                                                                    })
-                                                                                })
-                                                                            })))
-                                                                        }))
-                                                                        .child_signal(map_ref!{
-                                                                            let is_today = page.current_is_today(),
-                                                                            let show_input = page.show_continuous_input.signal() =>
-                                                                            if is_ipd {*is_today} else {true} && *show_input
-                                                                        }.map(clone!(app, page => move |show| {
-                                                                            show.then(|| {
-                                                                                let form = ContinuousForm::new(
-                                                                                    page.edit_order.get_cloned(),
-                                                                                    page.patient.clone(),
-                                                                                    None,
-                                                                                    app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
-                                                                                    page.view_by.clone(),
-                                                                                    page.offs_by_parent.clone(),
-                                                                                );
-                                                                                ContinuousForm::render(
-                                                                                    form,
-                                                                                    page.show_continuous_input.clone(),
-                                                                                    page.edit_order.clone(),
-                                                                                    page.reload_order_continuous.clone(),
-                                                                                    app.clone(),
-                                                                                )
-                                                                            })
-                                                                        })))
-                                                                    }),
-                                                                ])
-                                                            }))
-                                                        }),
-                                                    ])
-                                                }))
+                                                                    }))
+                                                                    .child_signal(map_ref!{
+                                                                        let is_today = page.current_is_today(),
+                                                                        let show_input = page.show_continuous_input.signal() =>
+                                                                        if is_ipd {*is_today} else {true} && *show_input
+                                                                    }.map(clone!(app, page => move |show| {
+                                                                        show.then(|| {
+                                                                            let form = ContinuousForm::new(
+                                                                                page.edit_order.get_cloned(),
+                                                                                page.patient.clone(),
+                                                                                None,
+                                                                                app.user.lock_ref().as_ref().map(|u|u.user.doctorcode.get_cloned()).unwrap_or_default(),
+                                                                                page.view_by.clone(),
+                                                                                page.offs_by_parent.clone(),
+                                                                            );
+                                                                            ContinuousForm::render(
+                                                                                form,
+                                                                                page.show_continuous_input.clone(),
+                                                                                page.edit_order.clone(),
+                                                                                page.reload_order_continuous.clone(),
+                                                                                app.clone(),
+                                                                            )
+                                                                        })
+                                                                    })))
+                                                                }),
+                                                            ])
+                                                        }))
+                                                    }),
+                                                ])
                                             }))
                                         }))
                                     }))
@@ -2328,39 +2322,27 @@ impl OrderCpn {
                         }))
                     })
                 }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", &["selectPreOrderModal", cpn_id].concat())
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.pre_order_select_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                        opt.as_ref().map(clone!(app, page => move |modal| {
-                            PreOrderSelect::render(modal.clone(), page.pre_order_select_modal.clone(), Some(page.loaded_all.clone()), Some(page.loaded_pre_order_count.clone()), app)
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", &["indexPlanActionFormModal", cpn_id].concat())
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.index_plan_action_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                        opt.as_ref().map(clone!(app, page => move |modal| {
-                            let reload = if modal.is_continuous() {
-                                page.reload_order_continuous.clone()
-                            } else {
-                                page.reload_order_oneday.clone()
-                            };
-                            IndexPlanActionForm::render(
-                                modal.clone(),
-                                page.index_plan_action_modal.clone(),
-                                Some(reload),
-                                app,
-                            )
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.pre_order_select_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    PreOrderSelect::render_modal(modal.clone(), page.pre_order_select_modal.clone(), Some(page.loaded_all.clone()), Some(page.loaded_pre_order_count.clone()), app.clone())
+                })
+            })))
+            .child_signal(page.index_plan_action_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    let reload = if modal.is_continuous() {
+                        page.reload_order_continuous.clone()
+                    } else {
+                        page.reload_order_oneday.clone()
+                    };
+                    IndexPlanActionForm::render_modal(
+                        modal.clone(),
+                        page.index_plan_action_modal.clone(),
+                        Some(reload),
+                        app.clone(),
+                    )
+                })
+            })))
         })
     }
 
@@ -2431,7 +2413,7 @@ impl OrderCpn {
                             }
                             // ORDER ITEMS
                             let lis = order_item_type.order_items.iter().map(clone!(app, page, order, due_mutables, flags => move |order_item| {
-                                Self::render_order_item(cpn_id, Rc::new(order_item.to_owned()), order.clone(), is_oneday, due_mutables.clone(), flags.clone(), page.clone(), app.clone())
+                                Self::render_order_item(Rc::new(order_item.to_owned()), order.clone(), is_oneday, due_mutables.clone(), flags.clone(), page.clone(), app.clone())
                             })).collect::<Vec<Dom>>();
                             let list_tag = if order_item_type.is_homemed() {"ol"} else {"ul"};
                             let list = html!(list_tag, {
@@ -2789,8 +2771,6 @@ impl OrderCpn {
                                 if page.is_ipd && !flags.is_pre_admit && order.need_medplan()
                                     && app.endpoint_is_allow(&Method::GET, &EndPoint::HisMedPlanIpdAn, false)
                                 { d
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", &["#medPlanFormModal", cpn_id].concat())
                                     .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page, order, order_time_mutable, due_mutables => move || {
                                         // send DUE patch
                                         Self::patch_due_pharm(due_mutables.clone(), order.clone(), page.clone(), app.clone());
@@ -2839,6 +2819,7 @@ impl OrderCpn {
                                             order_time_mutable.clone(),
                                             is_oneday,
                                         )));
+                                        app.show_modal_backdrop();
                                     }),
                                     due_mutables.is_pharm_invalid_signal(),
                                     app.state()))
@@ -2884,19 +2865,13 @@ impl OrderCpn {
                     })
                 })
             })))
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", &["medPlanFormModal", cpn_id].concat())
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.medplan_form_modal.signal_cloned().map(clone!(app => move |opt| {
-                    opt.as_ref().map(clone!(app => move |modal| MedPlanForm::render(modal.clone(), app))).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.medplan_form_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| MedPlanForm::render_modal(modal.clone(), page.medplan_form_modal.clone(), app.clone()))
+            })))
         })
     }
 
-    fn render_order_item(cpn_id: &'static str, order_item: Rc<OrderItem>, order: Rc<Order>, is_oneday: bool, due_mutables: Rc<DueMutables>, flags: Rc<OrderFlags>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    fn render_order_item(order_item: Rc<OrderItem>, order: Rc<Order>, is_oneday: bool, due_mutables: Rc<DueMutables>, flags: Rc<OrderFlags>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_due = order_item.due_status.as_ref().map(|due_status| due_status == "Y").unwrap_or_default();
         let has_info = order_item.info_status.as_ref().map(|info_status| info_status == "Y").unwrap_or_default();
         let will_blue = if is_oneday { vec!["med", "home-medication", "injection", "ivfluid"] } else { vec!["med", "injection", "ivfluid"] };
@@ -2991,13 +2966,11 @@ impl OrderCpn {
                         } else {
                             app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderItem, false)
                         },
-                    clone!(page, order, order_item => move |dom| dom.child(html!("button", {
+                    |dom| dom.child(html!("button", {
                         .attr("type", "button")
                         .class(class::BTN_SM_FR_RT_BLUEO)
-                        .attr("data-bs-toggle", "modal")
-                        .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
                         .text("+Plan")
-                        .event(clone!(page, order_item => move |_: events::Click| {
+                        .event(clone!(app, page, order, order_item => move |_: events::Click| {
                             page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
                                 order_item.order_item_id,
                                 None,
@@ -3007,9 +2980,10 @@ impl OrderCpn {
                                 FormType::Plan,
                                 page.view_by.clone(),
                             )));
+                            app.show_modal_backdrop();
                         }))
                         // ipd-nurse-index-plan-action-form.php::onclickAddIndexPlanOrderItem(event, order_item.order_item_id, order_item.order_item_detail);
-                    }))))
+                    })))
                     // DUE button
                     .apply(|dom| {
                         if is_due && (flags.is_doctor || flags.is_nurse || flags.is_pharmacist) {
@@ -3220,8 +3194,7 @@ impl OrderCpn {
                     })))
                     // PLAN / ACTION
                     .apply_if(flags.is_doctor || flags.is_nurse || flags.is_pharmacist, |dom| {
-                        dom.children(order_item.index_plans.iter().filter_map(clone!(page, order, order_item, flags => move |plan| Self::render_index_plan_badge(
-                            cpn_id,
+                        dom.children(order_item.index_plans.iter().filter_map(clone!(app, page, order, order_item, flags => move |plan| Self::render_index_plan_badge(
                             plan,
                             &order_item,
                             page.current_date.lock_ref().as_ref().map(|od| od.order_date),
@@ -3229,6 +3202,7 @@ impl OrderCpn {
                             flags.is_nurse || flags.is_pharmacist,
                             !flags.is_readonly && flags.is_nurse,
                             page.clone(),
+                            app.clone()
                         ))))
                     })
                     // DUE/Info BOX
@@ -3441,7 +3415,7 @@ impl OrderCpn {
         })
     }
 
-    fn render_previous_order(cpn_id: &'static str, order_item: &OrderItem, order_type: OrderType, page: Rc<Self>, app: Rc<App>) -> Dom {
+    fn render_previous_order(order_item: &OrderItem, order_type: OrderType, page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_readonly = page.is_readonly();
         let is_pre_admit = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type.is_pre_admit()).unwrap_or_default();
         let is_today = page.is_today();
@@ -3519,11 +3493,9 @@ impl OrderCpn {
                 // && order_item.off_by_datetime.is_none()
                 // && ["doctor","nurse"].contains(&order_item.order_owner_type.clone().unwrap_or_default().as_str())
                 && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderItem, is_pre_admit),
-            clone!(page, order_item, order_type => move |dom| dom.child(html!("button", {
+            clone!(app, page, order_item, order_type => move |dom| dom.child(html!("button", {
                 .attr("type", "button")
                 .class(class::BTN_SM_FR_RT_BLUEO)
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
                 .text("+Plan")
                 .event(clone!(page, order_item, order_type => move |_: events::Click| {
                     page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
@@ -3535,6 +3507,7 @@ impl OrderCpn {
                         FormType::Plan,
                         page.view_by.clone(),
                     )));
+                    app.show_modal_backdrop();
                 }))
                 // ipd-nurse-index-plan-action-form.php::onclickAddIndexPlanOrderItem(event, order_item.order_item_id, order_item.order_item_detail);
             }))))
@@ -3686,8 +3659,7 @@ impl OrderCpn {
                 || is_nurse
                 || is_pharmacist,
             |dom| {
-                dom.children(order_item.index_plans.iter().filter_map(clone!(page => move |plan| Self::render_index_plan_badge(
-                    cpn_id,
+                dom.children(order_item.index_plans.iter().filter_map(move |plan| Self::render_index_plan_badge(
                     plan,
                     order_item,
                     page.current_date.lock_ref().as_ref().map(|od| od.order_date),
@@ -3695,9 +3667,9 @@ impl OrderCpn {
                     is_nurse || is_pharmacist,
                     !is_readonly && is_nurse,
                     page.clone(),
-                ))))
+                    app.clone()
+                )))
             })
-
         })
     }
 
@@ -3952,7 +3924,7 @@ impl OrderCpn {
     }
 
     // SAME AS OPD-ER
-    fn render_index_plan_badge(cpn_id: &'static str, plan: &IndexPlan, order_item: &OrderItem, current_date: Option<Date>, order_type: OrderType, show_actions: bool, editable: bool, page: Rc<Self>) -> Option<Dom> {
+    fn render_index_plan_badge(plan: &IndexPlan, order_item: &OrderItem, current_date: Option<Date>, order_type: OrderType, show_actions: bool, editable: bool, page: Rc<Self>, app: Rc<App>) -> Option<Dom> {
         plan.is_plan_visible(current_date).then(|| {
             // let plan_id = plan.plan_id;
             let order_item_id = plan.order_item_id;
@@ -4014,9 +3986,7 @@ impl OrderCpn {
                     })
                     .attr("title", &actions_title)
                     .apply_if(editable, |dom| { dom
-                        .attr("data-bs-toggle", "modal")
-                        .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
-                        .event(clone!(page, order_type => move |_: events::Click| {
+                        .event(clone!(app, page, order_type => move |_: events::Click| {
                             page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
                                 order_item_id.unwrap_or_default(),
                                 plan_id,
@@ -4026,6 +3996,7 @@ impl OrderCpn {
                                 FormType::Plan,
                                 page.view_by.clone(),
                             )));
+                            app.show_modal_backdrop();
                         }))
                     }),
                     plan.plan_detail.as_ref(),
@@ -4035,7 +4006,7 @@ impl OrderCpn {
                 .apply(|dom| {
                     // WITH ACTIONS TEXT
                     if show_actions { dom
-                        .children(actions.into_iter().map(clone!(page => move |action| {
+                        .children(actions.into_iter().map(clone!(app, page => move |action| {
                             let label = if action.action_date == current_date {
                                 ["(", &action.action_time.map(|t| time_hm(&t)).unwrap_or(String::from("ไม่ระบุเวลา")), ")"].concat()
                             } else {
@@ -4048,7 +4019,7 @@ impl OrderCpn {
                                 [checkmark, &monitor_datetime, " โดย ", &monitor_user].concat()
                             }).collect::<Vec<String>>().join("\n");
                             doms::span_with_tooltip(
-                                clone!(page, order_type, action => move |d| { d
+                                clone!(app, page, order_type, action => move |d| { d
                                     .child(html!("span", {
                                         .class("ms-1")
                                         .style("color","red")
@@ -4063,8 +4034,6 @@ impl OrderCpn {
                                         .attr("title", &monitors_title)
                                     }))
                                     .apply_if(editable, |dd| dd
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", &["#indexPlanActionFormModal", cpn_id].concat())
                                         .event(clone!(page, order_type => move |_: events::Click| {
                                             page.index_plan_action_modal.set(Some(IndexPlanActionForm::new(
                                                 order_item_id.unwrap_or_default(),
@@ -4075,6 +4044,7 @@ impl OrderCpn {
                                                 FormType::Action,
                                                 page.view_by.clone(),
                                             )));
+                                            app.show_modal_backdrop();
                                         }))
                                     )
                                 }),
@@ -4124,11 +4094,6 @@ impl OrderCpn {
 
     pub fn render_opd_med(i: usize, opd_med: Rc<OpdMed>) -> Dom {
         html!("tr", {
-            // .attr("data-hos-guid", &opd_med.hos_guid)
-            // .attr("data-icode", &opd_med.icode.clone().unwrap_or_default())
-            // .attr("data-item-name", &opd_med.item_name.clone().unwrap_or_default())
-            // .attr("data-rxdate", &opd_med.rxdate.map(|d| d.to_string()).unwrap_or_default())
-            // .attr("data-usage", &opd_med.usage.clone().unwrap_or_default())
             .children([
                 html!("td", {.text(&(i + 1).to_string())}),
                 html!("td", {.text(&opd_med.item_name.clone().unwrap_or_default())}),

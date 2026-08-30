@@ -66,8 +66,7 @@ impl NurseNoteCpn {
                             .children([
                                 html!("a", {
                                     .class(class::NAV_ITEM_LINK_P2)
-                                    .attr("id", "nav-focus-list-tab")
-                                    .attr("data-bs-toggle","pill")
+                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Focus)))
                                     .attr("href","#")
                                     .text("Focus List")
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -76,9 +75,8 @@ impl NurseNoteCpn {
                                     }))
                                 }),
                                 html!("a", {
-                                    .class(class::NAV_ITEM_LINK_ACTIVE_P2)
-                                    .attr("id", "nav-nurse-progress-note-tab")
-                                    .attr("data-bs-toggle","pill")
+                                    .class(class::NAV_ITEM_LINK_P2)
+                                    .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Note)))
                                     .attr("href","#")
                                     .text("Nursing Progress Note")
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -101,8 +99,7 @@ impl NurseNoteCpn {
                                 ).then(|| {
                                     html!("a", {
                                         .class(class::NAV_ITEM_LINK_P2)
-                                        .attr("id", "nav-discharge-plan-tab")
-                                        .attr("data-bs-toggle","pill")
+                                        .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::DcPlan)))
                                         .attr("href","#")
                                         .text("Discharge Plan")
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {

@@ -16,11 +16,13 @@ use kphis_model::{
     patient_info::PatientInfo,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{class, doms, mixins};
+use kphis_ui_core::{class, mixins};
 use kphis_util::{
     datetime::{date_th_opt, time_hm_opt},
     util::{sanity_dot_space, str_some, zero_none},
 };
+
+use crate::modal::modal_show_bool_mixins;
 
 /// - GET `EndPoint::IpdMedReconcileRemedVisitHn`
 /// - GET `EndPoint::IpdMedReconcileRemedMed`
@@ -184,12 +186,13 @@ impl MedReconcileRemed {
                     if let Some(result) = result_opt {
                         match result {
                             Ok((_id, responses)) => {
-                                app.alert_execute_responses(&responses, async move {
+                                app.alert_execute_responses(&responses, clone!(app => async move {
                                     // app.alert("บันทึกข้อมูลเรียบร้อย","");
                                     modal.loaded_med_reconciliation_has_data.set_neq(false);
                                     modal.parent_loaded.set(false);
+                                    app.clear_modal_backdrop();
                                     modal.this_visible.set(false);
-                                }).await;
+                                })).await;
                             }
                             Err(e) => {
                                 app.alert_app_error(&e).await;
@@ -201,7 +204,14 @@ impl MedReconcileRemed {
         }
     }
 
-    pub fn render(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(modal.this_visible.clone(), app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -249,7 +259,15 @@ impl MedReconcileRemed {
                                 .class("modal-title")
                                 .text("Med Reconciliation: Remed")
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, modal => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    modal.this_visible.set(false);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -518,12 +536,11 @@ impl MedReconcileRemed {
                             }),
                             html!("button" => HtmlButtonElement, {
                                 .attr("type", "button")
-                                .attr("data-bs-dismiss", "modal")
                                 .class("btn")
                                 .class_signal("btn-primary", modal.has_selected())
                                 .class_signal("btn-secondary", not(modal.has_selected()))
                                 .child(html!("i", {.class(class::FA_PLUS)}))
-                                .text(" Add")
+                                .text(" เพิ่ม")
                                 .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, modal => move || {
                                     Self::save(modal.clone(), app.clone());
                                 }), not(modal.has_selected()), app.state()))
@@ -531,9 +548,12 @@ impl MedReconcileRemed {
                             html!("button", {
                                 .attr("type", "button")
                                 .class(class::BTN_GRAY)
-                                .attr("data-bs-dismiss", "modal")
                                 .child(html!("i", {.class(class::FA_X)}))
-                                .text(" Cancel")
+                                .text(" ปิด")
+                                .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    modal.this_visible.set(false);
+                                })
                             }),
                         ])
                     }),

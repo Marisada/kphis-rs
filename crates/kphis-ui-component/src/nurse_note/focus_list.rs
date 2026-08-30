@@ -65,18 +65,15 @@ pub struct FocusListCpn {
     fclist_status: Mutable<String>,
 
     loaded_groups: Mutable<bool>,
-    // group_select_redraw: Mutable<bool>,
     groups: Mutable<Vec<TmpGroup>>,
     smp_id: Mutable<String>,
 
     loaded_subgroups: Mutable<bool>,
-    // subgroup_select_redraw: Mutable<bool>,
     subgroups: Mutable<Vec<TmpSubGroup>>,
     subgroup: Mutable<String>,
 
     loaded_focus: Mutable<bool>,
     focuses: Mutable<Vec<TmpFocus>>,
-    // focus_select_redraw: Mutable<bool>,
     focus_id: Mutable<String>,
     focus_text: Mutable<String>,
 
@@ -135,8 +132,6 @@ impl FocusListCpn {
         self.version.set_neq(0);
         self.used.set_neq(false);
         self.form_changed.set_neq(false);
-
-        // self.group_select_redraw.set_neq(true);
     }
 
     fn set_day_last(&self, days: u64, from_now: bool) {
@@ -199,7 +194,6 @@ impl FocusListCpn {
                 match TmpGroup::call_api_get(&TmpParams::default(), app.state()).await {
                     Ok(responses) => {
                         page.groups.set(responses);
-                        // page.group_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -227,7 +221,6 @@ impl FocusListCpn {
                                 page.loaded_goal.set(false);
                             } else {
                                 page.subgroups.set(responses);
-                                // page.subgroup_select_redraw.set(true);
                             }
                         }
                         Err(e) => {
@@ -252,7 +245,6 @@ impl FocusListCpn {
                 match TmpFocus::call_api_get(&params, app.state()).await {
                     Ok(responses) => {
                         page.focuses.set(responses);
-                        // page.focus_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -277,7 +269,6 @@ impl FocusListCpn {
                     match TmpGoal::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.goals.set(responses);
-                            // page.goal_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -291,7 +282,6 @@ impl FocusListCpn {
     fn load_focus_list_row(row: Rc<FocusList>, page: Rc<Self>, app: Rc<App>) {
         page.fclist_id.set_neq(row.fclist_id);
         page.smp_id.set_neq(row.smp_id.to_string());
-        // page.group_select_redraw.set(true);
 
         page.focus_text.set_neq(row.focus_text.clone().unwrap_or_default());
         page.goal_text.set_neq(row.goal_text.clone().unwrap_or_default());
@@ -318,7 +308,6 @@ impl FocusListCpn {
                     Ok(responses) => {
                         page.subgroups.set(responses);
                         page.subgroup.set_neq(row.subgroup.map(|i| i.to_string()).unwrap_or_default());
-                        // page.subgroup_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -336,7 +325,6 @@ impl FocusListCpn {
                     Ok(responses) => {
                         page.focuses.set(responses);
                         page.focus_id.set(row.focus_id.to_string());
-                        // page.focus_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -861,33 +849,6 @@ impl FocusListCpn {
                 }
                 async {}
             })))
-            // .future(page.group_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-            //     if redraw {
-            //         if let Some(elm) = app.get_id("search_temp_smp") {
-            //             NiceSelect::new_default_with_value(&elm, &page.smp_id.lock_ref());
-            //             page.group_select_redraw.set(false);
-            //         }
-            //     }
-            //     async {}
-            // })))
-            // .future(page.subgroup_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-            //     if redraw {
-            //         if let Some(elm) = app.get_id("search_temp_subgroup") {
-            //             NiceSelect::new_default_with_value(&elm, &page.subgroup.lock_ref());
-            //             page.subgroup_select_redraw.set(false);
-            //         }
-            //     }
-            //     async {}
-            // })))
-            // .future(page.focus_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-            //     if redraw {
-            //         if let Some(elm) = app.get_id("tmp_focus") {
-            //             NiceSelect::new_default_with_value(&elm, &page.focus_id.lock_ref());
-            //             page.focus_select_redraw.set(false);
-            //         }
-            //     }
-            //     async {}
-            // })))
             .class(class::CARD)
             .child(html!("div", {
                 //.attr("id", "event_focuslist")
@@ -954,39 +915,6 @@ impl FocusListCpn {
                                                                 }).collect(),
                                                             ))
                                                         })))
-                                                        // .child(html!("select" => HtmlSelectElement, {
-                                                        //     .class("form-control")
-                                                        //     .attr("id", "search_temp_smp")
-                                                        //     .child(html!("option", {.attr("value","").text("เลือก")}))
-                                                        //     .children_signal_vec(page.groups.signal_cloned().to_signal_vec().map(|group| {
-                                                        //         html!("option", {
-                                                        //             .attr("value", &group.smp_id.to_string())
-                                                        //             .text(&group.smp_name.unwrap_or_default())
-                                                        //         })
-                                                        //     }))
-                                                        //     .prop_signal("value", page.smp_id.signal_cloned())
-                                                        //     .with_node!(element => {
-                                                        //         .future(page.used.signal().for_each(clone!(page, element => move |v| {
-                                                        //             element.set_disabled(v);
-                                                        //             page.group_select_redraw.set(true);
-                                                        //             async {}
-                                                        //         })))
-                                                        //         .event(clone!(page => move |_: events::Change| {
-                                                        //             page.smp_id.set_neq(element.value());
-                                                        //             page.subgroup.set_neq(String::new());
-                                                        //             page.subgroups.lock_mut().clear();
-                                                        //             page.focus_id.set_neq(String::new());
-                                                        //             page.focuses.lock_mut().clear();
-                                                        //             page.focus_text.set_neq(String::new());
-                                                        //             page.goals.lock_mut().clear();
-                                                        //             page.goal_ids.lock_mut().clear();
-                                                        //             page.goal_text.set_neq(String::new());
-                                                        //             page.form_changed.set_neq(true);
-                                                        //             // page.loaded_focus.set(false);
-                                                        //             page.loaded_subgroups.set(false);
-                                                        //         }))
-                                                        //     })
-                                                        // }))
                                                     }),
                                                 ])
                                             }),
@@ -1031,37 +959,6 @@ impl FocusListCpn {
                                                                 options,
                                                             ))
                                                         })))
-                                                        // .child(html!("select" => HtmlSelectElement, {
-                                                        //     .class("form-control")
-                                                        //     .attr("id", "search_temp_subgroup")
-                                                        //     .child(html!("option", {.attr("value","").text("เลือก")}))
-                                                        //     .children_signal_vec(page.subgroups.signal_cloned().to_signal_vec().map(|subgroup| {
-                                                        //         html!("option", {
-                                                        //             .attr("value", &subgroup.subgroup.to_string())
-                                                        //             .text(&subgroup.subgroup_name.unwrap_or_default())
-                                                        //         })
-                                                        //     }))
-                                                        //     .child(html!("option", {.attr("value","0").text("**ไม่ระบุ(แสดงเสมอ)**")}))
-                                                        //     .prop_signal("value", page.subgroup.signal_cloned())
-                                                        //     .with_node!(element => {
-                                                        //         .future(page.used.signal().for_each(clone!(page, element => move |v| {
-                                                        //             element.set_disabled(v);
-                                                        //             page.subgroup_select_redraw.set(true);
-                                                        //             async {}
-                                                        //         })))
-                                                        //         .event(clone!(page => move |_: events::Change| {
-                                                        //             page.subgroup.set_neq(element.value());
-                                                        //             page.focus_id.set_neq(String::new());
-                                                        //             page.focuses.lock_mut().clear();
-                                                        //             page.focus_text.set_neq(String::new());
-                                                        //             page.goals.lock_mut().clear();
-                                                        //             page.goal_ids.lock_mut().clear();
-                                                        //             page.goal_text.set_neq(String::new());
-                                                        //             page.loaded_focus.set(false);
-                                                        //             page.loaded_goal.set(false);
-                                                        //         }))
-                                                        //     })
-                                                        // }))
                                                     }),
                                                 ])
                                             }),
@@ -1121,53 +1018,6 @@ impl FocusListCpn {
                                                                 options,
                                                             ))
                                                         })))
-                                                        // .child(html!("select" => HtmlSelectElement, {
-                                                        //     .class("form-control")
-                                                        //     .attr("id", "tmp_focus")
-                                                        //     .child(html!("option", {.attr("value","").text("เลือก")}))
-                                                        //     .children_signal_vec(page.focuses.signal_cloned().to_signal_vec().map(|focus| {
-                                                        //         html!("option", {
-                                                        //             .attr("value", &focus.focus_id.to_string())
-                                                        //             .text(&focus.focus_name.unwrap_or_default())
-                                                        //         })
-                                                        //     }))
-                                                        //     .child(html!("option", {.attr("value","999").text("อื่นๆ")}))
-                                                        //     .prop_signal("value", page.focus_id.signal_cloned())
-                                                        //     .with_node!(element => {
-                                                        //         .future(page.used.signal().for_each(clone!(page, element => move |v| {
-                                                        //             element.set_disabled(v);
-                                                        //             page.focus_select_redraw.set(true);
-                                                        //             async {}
-                                                        //         })))
-                                                        //         .event(clone!(page => move |_: events::Change| {
-                                                        //             let value = element.value();
-                                                        //             let focus_id = value.parse::<u32>().unwrap_or_default();
-                                                        //             page.focus_id.set_neq(value);
-                                                        //             // focus and goal are relate to subgroup except focus = `อื่นๆ`
-                                                        //             let mut refresh_subgroup_and_goals = false;
-                                                        //             // `อื่นๆ` will set subgroup to 0 and refresh goals
-                                                        //             if focus_id == 999 {
-                                                        //                 page.subgroup.set_neq(String::from("0"));
-                                                        //                 refresh_subgroup_and_goals = true;
-                                                        //             // when swich back from `อื่นๆ`, reclaim subgroup and refresh goals
-                                                        //             } else if let Some(focus) = page.focuses.lock_ref().iter().find(|focus| focus.focus_id == focus_id) {
-                                                        //                 if page.subgroup.lock_ref().parse::<u32>().unwrap_or_default() != focus.subgroup {
-                                                        //                     page.subgroup.set(focus.subgroup.to_string());
-                                                        //                     refresh_subgroup_and_goals = true;
-                                                        //                 }
-                                                        //             }
-                                                        //             if refresh_subgroup_and_goals {
-                                                        //                 page.subgroup_select_redraw.set(true);
-                                                        //                 page.goals.lock_mut().clear();
-                                                        //                 page.goal_ids.lock_mut().clear();
-                                                        //                 page.goal_text.set_neq(String::new());
-                                                        //                 page.loaded_goal.set(false);
-                                                        //             }
-                                                        //             page.focus_text.set_neq(String::new());
-                                                        //             page.form_changed.set_neq(true);
-                                                        //         }))
-                                                        //     })
-                                                        // }))
                                                     }),
                                                 ])
                                             }),

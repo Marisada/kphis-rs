@@ -605,8 +605,10 @@ impl ContinuousForm {
                                         let hn = page.patient.lock_ref().as_ref().and_then(|pt| pt.hn());
                                         let searchbox = MedSearchboxCpn::new(hn, false);
                                         html!("div", {
-                                            .child(MedSearchboxCpn::render(None, searchbox.clone(), page.clone(), app.clone()))
-                                            .children(MedSearchboxCpn::render_modals(searchbox))
+                                            .children([
+                                                MedSearchboxCpn::render(None, searchbox.clone(), page.clone(), app.clone()),
+                                                MedSearchboxCpn::render_modals(searchbox, app.clone()),
+                                            ])
                                         })
                                     })
                                 })))

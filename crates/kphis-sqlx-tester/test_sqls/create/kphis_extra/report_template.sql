@@ -6,12 +6,12 @@ CREATE TABLE `kphis_extra`.`report_template` (
 	`statement` TEXT NULL DEFAULT NULL,
 	`statement_params` TEXT NULL DEFAULT NULL,
 	`info` TEXT NULL DEFAULT NULL,
-    `disabled` TINYINT(1) NULL DEFAULT NULL,
+	`disabled` TINYINT(1) NULL DEFAULT NULL,
 	`create_user` VARCHAR(250) COLLATE 'tis620_thai_ci' NOT NULL,
 	`create_datetime` DATETIME NOT NULL,
 	`update_user` VARCHAR(250) COLLATE 'tis620_thai_ci' NOT NULL,
 	`update_datetime` DATETIME NOT NULL,
 	`version` INT(11) NOT NULL,
 	PRIMARY KEY (`template_id`) USING BTREE,
-    UNIQUE INDEX `template_name` (`template_name`) USING BTREE
+	UNIQUE INDEX `template_name` (`template_name`) USING BTREE
 ) ENGINE=InnoDB CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;

@@ -145,21 +145,26 @@ impl IpdDocumentScanCpn {
                         .class("row")
                         .child_signal(page.can_add.signal_vec_cloned().is_empty().map(clone!(page => move |is_empty| {
                             (!is_empty).then(|| {
+                                let dropdown_opened = Mutable::new(false);
                                 html!("div", {
                                     .class("col-md-auto")
                                     .child(html!("div", {
                                         .class("dropdown")
                                         .children([
                                             html!("button", {
-                                                .class(class::BTN_DROP_TGL_CYAN)
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle","dropdown")
-                                                .attr("aria-expanded","false")
+                                                .class(class::BTN_DROP_TGL_CYAN)
+                                                .class_signal("show", dropdown_opened.signal())
+                                                .prop_signal("aria-expanded", dropdown_opened.signal().map(|show| if show {"true"} else {"false"}))
                                                 .child(html!("em", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่มเอกสาร")
+                                                .event(clone!(dropdown_opened => move |_: events::Click| {
+                                                    dropdown_opened.set(!dropdown_opened.get());
+                                                }))
                                             }),
                                             html!("ul", {
                                                 .class("dropdown-menu")
+                                                .class_signal("show", dropdown_opened.signal())
                                                 .children_signal_vec(page.can_add.signal_vec_cloned().map(clone!(page => move |document_type| {
                                                     html!("li", {
                                                         .class("dropdown-item")
@@ -172,6 +177,7 @@ impl IpdDocumentScanCpn {
                                                 })))
                                             })
                                         ])
+                                        .apply(mixins::dropdown_closing_mixin(dropdown_opened.clone()))
                                     }))
                                 })
                             })

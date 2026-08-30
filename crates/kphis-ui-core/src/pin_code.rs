@@ -108,6 +108,7 @@ impl PinCode {
                                     Some(html!("i", {.class(class::FA_EYE)}))
                                 }
                             }))
+                            .text_signal(page.is_visible.signal().map(|is_visible| if is_visible {" ซ่อน"} else {" แสดง"}))
                             .event(clone!(page => move |_:events::Click| {
                                 page.is_visible.set(!page.is_visible.get());
                                 page.focus_at.set(page.focus_at.get());

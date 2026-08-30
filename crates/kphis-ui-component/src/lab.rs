@@ -25,10 +25,7 @@ use kphis_util::{
     util::{opt_zero_none, str_some, zero_none},
 };
 
-use crate::{
-    gadget::pdf_button::PdfButtons,
-    modal::{blank_modal, lab_history::LabHistory},
-};
+use crate::{gadget::pdf_button::PdfButtons, modal::lab_history::LabHistory};
 
 #[derive(Clone, Default, PartialEq)]
 enum LabStatus {
@@ -455,18 +452,12 @@ impl LabCpn {
                         opt.as_ref().map(|detail| Self::render_detail(cpn_id, detail.clone(), page.clone(), app.clone()))
                     })))
                 }),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", &["lab-history-modal-", cpn_id].concat())
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.lab_history_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                        opt.as_ref().map(clone!(app, page => move |modal| {
-                            LabHistory::render(modal.clone(), app, Some(page.lab_order_number.clone()))
-                        })).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.lab_history_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    LabHistory::render_modal(modal.clone(), page.lab_history_modal.clone(), Some(page.lab_order_number.clone()), app.clone())
+                })
+            })))
         })
     }
 
@@ -715,14 +706,14 @@ impl LabCpn {
                                 }))
                             }))
                         }))
-                        .children(Self::render_detail_groups(cpn_id, detail.lab_items_group.clone(), page.clone(), app.clone()))
+                        .children(Self::render_detail_groups(detail.lab_items_group.clone(), page.clone(), app.clone()))
                     }))
                 }),
             ])
         })
     }
 
-    fn render_detail_groups(cpn_id: &'static str, groups: Vec<LabItemsGroup>, page: Rc<Self>, app: Rc<App>) -> impl Iterator<Item = Dom> {
+    fn render_detail_groups(groups: Vec<LabItemsGroup>, page: Rc<Self>, app: Rc<App>) -> impl Iterator<Item = Dom> {
         groups.into_iter().map(move |group| {
             html!("div", {
                 .class(class::CARD)
@@ -783,10 +774,8 @@ impl LabCpn {
                                                         .child(html!("button", {
                                                             .attr("type", "button")
                                                             .class(class::BTN_SM_FR_GRAY)
-                                                            .attr("data-bs-toggle", "modal")
-                                                            .attr("data-bs-target", &["#lab-history-modal-", cpn_id].concat())
                                                             .text("ประวัติ")
-                                                            .event(clone!(page, item => move |_:events::Click| {
+                                                            .event(clone!(app, page, item => move |_:events::Click| {
                                                                 if let Some(lab_items_code) = opt_zero_none(item.lab_items_code) {
                                                                     let lab_history_modal = LabHistory::new(
                                                                         page.hn.clone(),
@@ -796,6 +785,7 @@ impl LabCpn {
                                                                         &item.lab_order_number,
                                                                     );
                                                                     page.lab_history_modal.set(Some(lab_history_modal));
+                                                                    app.show_modal_backdrop();
                                                                 }
                                                             }))
                                                         }))

@@ -17,10 +17,7 @@ use kphis_model::{
 };
 
 use kphis_ui_app::App;
-use kphis_ui_component::{
-    gadget::searchbox::opd_visit::OpdVisitSearchboxCpn,
-    modal::{blank_modal, pre_admit_new::PreAdmitNew},
-};
+use kphis_ui_component::{gadget::searchbox::opd_visit::OpdVisitSearchboxCpn, modal::pre_admit_new::PreAdmitNew};
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_th_opt_relative, datetime_from_opt, datetime_th_opt_relative, datetime_th_relative, time_hm_opt},
@@ -56,7 +53,7 @@ pub struct IpdPreAdmitListPage {
     changed: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
-    is_desc: Mutable<bool>,
+    is_asc: Mutable<bool>,
 
     check_an: Mutable<String>,
     check_an_changed: Mutable<bool>,
@@ -73,7 +70,7 @@ impl IpdPreAdmitListPage {
         Rc::new(Self {
             view_by: Mutable::new(view_by.to_owned()),
             status: Mutable::new(String::from("pre")),
-            is_desc: Mutable::new(true),
+            is_asc: Mutable::new(true),
             ..Default::default()
         })
     }
@@ -97,7 +94,7 @@ impl IpdPreAdmitListPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::RegDateTime);
-                        page.is_desc.set_neq(true);
+                        page.is_asc.set_neq(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -168,9 +165,6 @@ impl IpdPreAdmitListPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    // if let Some(elm) = app.get_id("doctor_in_charge") {
-                    //     NiceSelect::new_default(&elm);
-                    // }
                     page.changed.set(true);
                 }
                 async {}
@@ -262,21 +256,6 @@ impl IpdPreAdmitListPage {
                                         |d| d.class(class::FORM_CTRL_SM), || {},
                                         doctor_select_option,
                                     ),
-                                    // html!("div", {
-                                    //     .class(class::FLEX_GROW1)
-                                    //     .child(html!("select" => HtmlSelectElement, {
-                                    //         .class(class::FORM_CTRL_SM)
-                                    //         .attr("id", "doctor_in_charge")
-                                    //         .child(html!("option", {
-                                    //             .attr("value","")
-                                    //             .text("ทั้งหมด")
-                                    //         }))
-                                    //         .children(doctor_select_option.iter().map(|option| {
-                                    //             doms::select_option(option, &page.doctor_in_charge.lock_ref())
-                                    //         }))
-                                    //         .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
-                                    //     }))
-                                    // }),
                                     html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_GRAY)
@@ -285,9 +264,6 @@ impl IpdPreAdmitListPage {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
                                             let neq = page.doctor_in_charge.lock_ref().as_str() != doctor_code.as_str();
                                             if neq {
-                                                // if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                //     NiceSelect::new_default_with_value(&elm, &doctor_code);
-                                                // }
                                                 page.doctor_in_charge.set_neq(doctor_code);
                                                 page.changed.set_neq(true);
                                             }
@@ -301,9 +277,6 @@ impl IpdPreAdmitListPage {
                                             let no_doctor = page.doctor_in_charge.lock_ref().is_empty();
                                             if !no_doctor {
                                                 page.doctor_in_charge.set_neq(String::new());
-                                                // if let Some(elm) = app.get_id("doctor_in_charge") {
-                                                //     NiceSelect::new_default_with_value(&elm, "");
-                                                // }
                                                 page.changed.set_neq(true);
                                             }
                                         }))
@@ -415,12 +388,11 @@ impl IpdPreAdmitListPage {
                                 html!("button", {
                                     .attr("type", "button")
                                     .class(class::BTN_SM_R_BLUE)
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", "#addPreAdmitModal")
                                     .child(html!("i", {.class(class::FA_PLUS)}))
                                     .text(" เพิ่มใบ Order ใหม่")
-                                    .event(clone!(page => move |_: events::Click| {
+                                    .event(clone!(app, page => move |_: events::Click| {
                                         page.pre_admit_new_modal.set(Some(PreAdmitNew::new()));
+                                        app.show_modal_backdrop();
                                     }))
                                 })
                             })
@@ -459,7 +431,7 @@ impl IpdPreAdmitListPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_desc.get() {
+                            if page.is_asc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::RegDateTime => items.sort_by(|a, b| datetime_from_opt(b.vstdate, b.vsttime).cmp(&datetime_from_opt(a.vstdate, a.vsttime))),
                                     SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
@@ -489,11 +461,11 @@ impl IpdPreAdmitListPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาที่มาถึง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::RegDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::RegDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                         ])
                                         .children_signal_vec(page.status.signal_cloned().map(clone!(page, sort_fn => move |stts| {
@@ -501,7 +473,7 @@ impl IpdPreAdmitListPage {
                                                 vec![
                                                     html!("th", {
                                                         .class("th-sm").attr("scope","col").text("AN")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                                     }),
                                                     html!("th", {.class("th-sm").attr("scope","col").text("แผนก")}),
                                                 ]
@@ -512,16 +484,16 @@ impl IpdPreAdmitListPage {
                                         .children([
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลา Order ล่าสุด")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col")
                                                 .attr("title","Med Reconciliation").text("MR")
@@ -557,17 +529,11 @@ impl IpdPreAdmitListPage {
                     }
                 })
             })))
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "addPreAdmitModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.pre_admit_new_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                    opt.as_ref().map(clone!(app, page => move |modal| {
-                        PreAdmitNew::render(modal.clone(), page.view_by.clone(), page.pre_admit_new_modal.clone(), page.changed.clone(), app)
-                    })).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.pre_admit_new_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    PreAdmitNew::render_modal(modal, page.view_by.clone(), page.pre_admit_new_modal.clone(), page.changed.clone(), app.clone())
+                })
+            })))
         })
     }
 

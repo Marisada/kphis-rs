@@ -22,7 +22,7 @@ use kphis_util::{
     util::{set_day_last, set_days_next, zero_none},
 };
 
-use crate::vital_sign::row::full_text;
+use crate::{modal::modal_show_option_mixins, vital_sign::row::full_text};
 
 /// - GET `EndPoint::IpdVitalSign`
 /// - GET `EndPoint::OpdErVitalSign`
@@ -120,7 +120,7 @@ impl VsSelector {
         }
     }
 
-    fn get_vs_hosxp(modal: Rc<Self>, app: Rc<App>) {
+    fn get_vs_hosxp(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) {
         let vn_opt = modal.patient.lock_ref().as_ref().and_then(|pt| pt.vn());
         if let Some(vn) = vn_opt {
             if !vn.is_empty() {
@@ -183,6 +183,8 @@ impl VsSelector {
                                     modal.parent_result.set([old_text.as_str(), spacer.as_str(), &vs_text].concat());
                                     modal.parent_changed.set(true);
                                 }
+                                app.clear_modal_backdrop();
+                                display.set(None);
                             }
                             Err(e) => {
                                 app.alert_app_error(&e).await;
@@ -194,7 +196,14 @@ impl VsSelector {
         }
     }
 
-    pub fn render(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -227,7 +236,15 @@ impl VsSelector {
                         .class("modal-header")
                         .children([
                             html!("h5", {.class("modal-title").text("เลือกสัญญาณชีพ")}),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -238,11 +255,10 @@ impl VsSelector {
                             .child(html!("button" => HtmlButtonElement, {
                                 .attr("type", "button")
                                 .class(class::BTN_FR_GRAY)
-                                .attr("data-bs-dismiss", "modal")
                                 .child(html!("i", {.class(class::FA_DOWNLOAD)}))
                                 .text(" HOSxP")
-                                .apply(mixins::click_with_loader_checked(clone!(app, modal => move || {
-                                    Self::get_vs_hosxp(modal.clone(), app.clone())
+                                .apply(mixins::click_with_loader_checked(clone!(app, modal, display => move || {
+                                    Self::get_vs_hosxp(modal.clone(), display.clone(), app.clone());
                                 }), app.state()))
                             }))
                         )
@@ -348,7 +364,7 @@ impl VsSelector {
                             html!("div", {
                                 .style("overflow-y","auto")
                                 .style("max-height","50vh")
-                                .child(doms::table_responsive(class::TABLE_STRIP, clone!(modal => move |table| { table
+                                .child(doms::table_responsive(class::TABLE_STRIP, clone!(app, modal, display => move |table| { table
                                     .children([
                                         html!("thead", {
                                             .child(html!("tr", {
@@ -359,12 +375,11 @@ impl VsSelector {
                                             }))
                                         }),
                                         html!("tbody", {
-                                            .children_signal_vec(modal.vs_result.signal_cloned().to_signal_vec().map(move |row| {
+                                            .children_signal_vec(modal.vs_result.signal_cloned().to_signal_vec().map(clone!(app, display => move |row| {
                                                 let birthday = modal.patient.lock_ref().as_ref().and_then(|pt| pt.birthday());
                                                 let (vital_sign_text, _) = full_text(row.clone(), birthday, app.clone());
                                                 html!("tr", {
                                                     .style("cursor","pointer")
-                                                    .attr("data-bs-dismiss", "modal")
                                                     .children([
                                                         html!("td", {
                                                             .class("text-nowrap")
@@ -377,7 +392,7 @@ impl VsSelector {
                                                         }),
                                                         html!("td", {.text(&vital_sign_text)}),
                                                     ])
-                                                    .event(clone!(modal => move |_:events::Click| {
+                                                    .event(clone!(app, modal, display => move |_:events::Click| {
                                                         let old_text = modal.parent_result.get_cloned();
                                                         let spacer = match (old_text.is_empty(), modal.with_datetime) {
                                                             (true, true) => ["- [", &datetime_th(&row.vs_datetime), "] "].concat(),
@@ -389,9 +404,11 @@ impl VsSelector {
                                                             old_text.as_str(), spacer.as_str(), &vital_sign_text
                                                         ].concat());
                                                         modal.parent_changed.set(true);
+                                                        app.clear_modal_backdrop();
+                                                        display.set(None);
                                                     }))
                                                 })
-                                            }))
+                                            })))
                                         }),
                                     ])
                                 })))
@@ -403,8 +420,12 @@ impl VsSelector {
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_GRAY)
-                            .attr("data-bs-dismiss", "modal")
-                            .text("ปิด")
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

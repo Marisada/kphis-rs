@@ -78,12 +78,6 @@ impl IpdOrderPharmacyPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |value| {
                 if value {
-                    // if let Some(elm) = app.get_id("ward") {
-                    //     NiceSelect::new_default_with_value(&elm, &app.ward_multiple_select.lock_ref());
-                    // }
-                    // if let Some(elm) = app.get_id("doctor_in_charge") {
-                    //     NiceSelect::new_default(&elm);
-                    // }
                     page.test_audio(app.clone());
                     page.changed.set(true);
                 }
@@ -148,34 +142,6 @@ impl IpdOrderPharmacyPage {
                                             clone!(app => move || app.to_local_storage()),
                                             ward_select_option,
                                         ),
-                                        // html!("div", {
-                                        //     .class(class::FLEX_GROW1)
-                                        //     .child(html!("select" => HtmlSelectElement, {
-                                        //         .class(class::FORM_CTRL_SM)
-                                        //         .attr("id", "ward")
-                                        //         .attr("multiple", "multiple")
-                                        //         .children(ward_select_option.iter().map(|option| {
-                                        //             doms::select_option(option, "")
-                                        //         }))
-                                        //         .with_node!(element => {
-                                        //             .event(clone!(app, page => move |_: events::Change| {
-                                        //                 let options = element.selected_options();
-                                        //                 let mut values = Vec::new();
-                                        //                 for j in 0..options.length() {
-                                        //                     if let Some(item) = options.item(j) {
-                                        //                         if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
-                                        //                             values.push(option.value());
-                                        //                         }
-                                        //                     }
-                                        //                 }
-                                        //                 app.ward_multiple_select.set_neq(values.join(","));
-                                        //                 app.to_local_storage();
-                                        //                 page.changed.set_neq(true);
-                                        //             }))
-                                        //         })
-                                        //         //.attr("onchange", "onchange_select_ward()")
-                                        //     }))
-                                        // }),
                                     ])
                                 })),
                                 doms::form_inline_radio(clone!(app, page => move |check| { check
@@ -242,21 +208,6 @@ impl IpdOrderPharmacyPage {
                                             |d| d.class(class::FORM_CTRL_SM), || {},
                                             doctor_select_option,
                                         ),
-                                        // html!("div", {
-                                        //     .class(class::FLEX_GROW1)
-                                        //     .child(html!("select" => HtmlSelectElement, {
-                                        //         .class(class::FORM_CTRL_SM)
-                                        //         .attr("id", "doctor_in_charge")
-                                        //         .child(html!("option", {
-                                        //             .attr("value", "")
-                                        //             .text("เลือก")
-                                        //         }))
-                                        //         .children(doctor_select_option.iter().map(|option| {
-                                        //             doms::select_option(option, "")
-                                        //         }))
-                                        //         .apply(mixins::string_value_select(page.doctor_in_charge.clone(), page.changed.clone()))
-                                        //     }))
-                                        // }),
                                     ])
                                 })),
                                 html!("div", {

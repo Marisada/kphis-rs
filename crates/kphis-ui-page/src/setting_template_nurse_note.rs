@@ -4,6 +4,7 @@ use futures_signals::{
     signal::{Mutable, Signal, SignalExt, not},
     signal_vec::SignalVecExt,
 };
+use kphis_ui_component::modal::modal_show_bool_mixins;
 use std::rc::Rc;
 use web_sys::{HtmlButtonElement, HtmlInputElement};
 
@@ -41,7 +42,6 @@ pub struct SettingTemplateNurseNotePage {
     loaded_groups: Mutable<bool>,
     groups: Mutable<Vec<TmpGroup>>,
     group_changed: Mutable<bool>,
-    // group_select_redraw: Mutable<bool>,
     smp_id: Mutable<String>,
     smp_name: Mutable<String>,
     // smp_group: Mutable<Option<i16>>,
@@ -51,7 +51,6 @@ pub struct SettingTemplateNurseNotePage {
     loaded_subgroups: Mutable<bool>,
     subgroups: Mutable<Vec<TmpSubGroup>>,
     subgroup_changed: Mutable<bool>,
-    // subgroup_select_redraw: Mutable<bool>,
     // subgroup_smp_id: Mutable<String>,
     subgroup: Mutable<String>,
     subgroup_name: Mutable<String>,
@@ -63,7 +62,6 @@ pub struct SettingTemplateNurseNotePage {
     loaded_focuses: Mutable<bool>,
     focuses: Mutable<Vec<TmpFocus>>,
     focus_changed: Mutable<bool>,
-    // focus_select_redraw: Mutable<bool>,
     focus_id: Mutable<String>,
     // focus_smp_id: Mutable<String>,
     // focus_subgroup: Mutable<String>,
@@ -74,7 +72,6 @@ pub struct SettingTemplateNurseNotePage {
     loaded_goals: Mutable<bool>,
     goals: Mutable<Vec<TmpGoal>>,
     goal_changed: Mutable<bool>,
-    // goal_select_redraw: Mutable<bool>,
     goal_id: Mutable<String>,
     // goal_smp_id: Mutable<String>,
     // goal_subgroup: Mutable<String>,
@@ -85,7 +82,6 @@ pub struct SettingTemplateNurseNotePage {
     loaded_intvts: Mutable<bool>,
     intvts: Mutable<Vec<TmpIntvt>>,
     intvt_changed: Mutable<bool>,
-    // intvt_select_redraw: Mutable<bool>,
     intvt_id: Mutable<String>,
     // intvt_smp_id: Mutable<String>,
     // intvt_subgroup: Mutable<String>,
@@ -96,10 +92,15 @@ pub struct SettingTemplateNurseNotePage {
     loaded_dlcs: Mutable<bool>,
     dlcs: Mutable<Vec<TmpDlc>>,
     dlc_changed: Mutable<bool>,
-    // dlc_select_redraw: Mutable<bool>,
     dlc_id: Mutable<String>,
     dlc_name: Mutable<String>,
     // dlc_order: Mutable<Option<u32>>,
+    show_smp_modal: Mutable<bool>,
+    show_sub_modal: Mutable<bool>,
+    show_focus_modal: Mutable<bool>,
+    show_goal_modal: Mutable<bool>,
+    show_intvt_modal: Mutable<bool>,
+    show_dlc_modal: Mutable<bool>,
 }
 
 impl SettingTemplateNurseNotePage {
@@ -135,7 +136,6 @@ impl SettingTemplateNurseNotePage {
                 match TmpGroup::call_api_get(&TmpParams::default(), app.state()).await {
                     Ok(responses) => {
                         page.groups.set(responses);
-                        // page.group_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -159,12 +159,15 @@ impl SettingTemplateNurseNotePage {
                 match group.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.smp_id.set(last_insert_id.to_string());
                             }
                             page.loaded_groups.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_smp_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -184,10 +187,13 @@ impl SettingTemplateNurseNotePage {
                 // DELETE `EndPoint::IpdTmpGroup`
                 match TmpGroup::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.smp_id.set(String::new());
                             page.loaded_groups.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_smp_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -211,7 +217,6 @@ impl SettingTemplateNurseNotePage {
                     match TmpSubGroup::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.subgroups.set(responses);
-                            // page.subgroup_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -236,12 +241,15 @@ impl SettingTemplateNurseNotePage {
                 match subgroup.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.subgroup.set(last_insert_id.to_string());
                             }
                             page.loaded_subgroups.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_sub_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -262,10 +270,13 @@ impl SettingTemplateNurseNotePage {
                 // DELETE `EndPoint::IpdTmpSubgroup`
                 match TmpSubGroup::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.subgroup.set(String::new());
                             page.loaded_subgroups.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_sub_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -291,7 +302,6 @@ impl SettingTemplateNurseNotePage {
                     match TmpFocus::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.focuses.set(responses);
-                            // page.focus_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -301,7 +311,6 @@ impl SettingTemplateNurseNotePage {
                     match TmpGoal::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.goals.set(responses);
-                            // page.goal_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -311,7 +320,6 @@ impl SettingTemplateNurseNotePage {
                     match TmpIntvt::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.intvts.set(responses);
-                            // page.intvt_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -338,7 +346,6 @@ impl SettingTemplateNurseNotePage {
                     match TmpFocus::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.focuses.set(responses);
-                            // page.focus_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -364,12 +371,15 @@ impl SettingTemplateNurseNotePage {
                 match focus.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.focus_id.set(last_insert_id.to_string());
                             }
                             page.loaded_focuses.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_focus_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -389,10 +399,13 @@ impl SettingTemplateNurseNotePage {
                 // DELETE `EndPoint::IpdTmpFocus`
                 match TmpFocus::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.focus_id.set(String::new());
                             page.loaded_focuses.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_focus_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -418,7 +431,6 @@ impl SettingTemplateNurseNotePage {
                     match TmpGoal::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.goals.set(responses);
-                            // page.goal_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -444,12 +456,15 @@ impl SettingTemplateNurseNotePage {
                 match goal.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.goal_id.set(last_insert_id.to_string());
                             }
                             page.loaded_goals.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_goal_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -469,10 +484,13 @@ impl SettingTemplateNurseNotePage {
                 // DELETE `EndPoint::IpdTmpGoal`
                 match TmpGoal::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.goal_id.set(String::new());
                             page.loaded_goals.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_goal_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -498,7 +516,6 @@ impl SettingTemplateNurseNotePage {
                     match TmpIntvt::call_api_get(&params, app.state()).await {
                         Ok(responses) => {
                             page.intvts.set(responses);
-                            // page.intvt_select_redraw.set(true);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -524,12 +541,15 @@ impl SettingTemplateNurseNotePage {
                 match intvt.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.intvt_id.set(last_insert_id.to_string());
                             }
                             page.loaded_intvts.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_intvt_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -549,10 +569,13 @@ impl SettingTemplateNurseNotePage {
                 // DELETE `EndPoint::IpdTmpIntvt`
                 match TmpIntvt::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.intvt_id.set(String::new());
                             page.loaded_intvts.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_intvt_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -571,7 +594,6 @@ impl SettingTemplateNurseNotePage {
                 match TmpDlc::call_api_get(&params, app.state()).await {
                     Ok(responses) => {
                         page.dlcs.set(responses);
-                        // page.dlc_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -593,12 +615,15 @@ impl SettingTemplateNurseNotePage {
                 match dlc.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.dlc_id.set(last_insert_id.to_string());
                             }
                             page.loaded_dlcs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_dlc_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -618,10 +643,13 @@ impl SettingTemplateNurseNotePage {
                 // DELETE `EndPoint::IpdTmpDlc`
                 match TmpDlc::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.dlc_id.set(String::new());
                             page.loaded_dlcs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_dlc_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -712,24 +740,6 @@ impl SettingTemplateNurseNotePage {
                 }
                 async {}
             })))
-            // .future(page.group_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-            //     if redraw {
-            //         if let Some(elm) = app.get_id("search_temp_smp") {
-            //             NiceSelect::new_default_with_value(&elm, &page.smp_id.lock_ref());
-            //         }
-            //         page.group_select_redraw.set(false);
-            //     }
-            //     async {}
-            // })))
-            // .future(page.subgroup_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-            //     if redraw {
-            //         if let Some(elm) = app.get_id("search_temp_subgroup") {
-            //             NiceSelect::new_default_with_value(&elm, &page.subgroup.lock_ref());
-            //         }
-            //         page.subgroup_select_redraw.set(false);
-            //     }
-            //     async {}
-            // })))
             .class("container-fluid")
             .child(html!("div", {
                 .children([
@@ -769,180 +779,58 @@ impl SettingTemplateNurseNotePage {
                         .class("row")
                         .child(html!("div", {
                             .class("col-sm-12")
-                            .children([
-                                html!("div", {
-                                    .class(class::FLEX_T2)
+                            .child(html!("div", {
+                                .class(class::FLEX_T2)
+                                .child(html!("div", {
+                                    .class("col-4")
                                     .child(html!("div", {
-                                        .class("col-4")
-                                        .child(html!("div", {
-                                            //.attr("id", "dropdown_data_smp")
-                                            .child_signal(page.groups.signal_cloned().map(clone!(page => move |groups| {
-                                                let options = groups.iter().map(|group| {
-                                                    SelectOption {
-                                                        key: group.smp_id.to_string(),
-                                                        value: group.smp_name.clone().unwrap_or_default(),
-                                                    }
-                                                }).collect();
-                                                Some(doms::select_box(
-                                                    "search_temp_smp", Some("เลือก"), false,
-                                                    page.smp_id.clone(),
-                                                    Mutable::new(true),
-                                                    |d| d.class("form-control"),
-                                                    clone!(page => move || {
-                                                        page.subgroup.set_neq(String::new());
-                                                        page.focuses.lock_mut().clear();
-                                                        page.goals.lock_mut().clear();
-                                                        page.intvts.lock_mut().clear();
-                                                        page.loaded_subgroups.set(false);
-                                                    }),
-                                                    options,
-                                                ))
-                                            })))
-                                            // .child(html!("select" => HtmlSelectElement, {
-                                            //     .class("form-control")
-                                            //     .attr("id", "search_temp_smp")
-                                            //     .child(html!("option", {.attr("value","").text("เลือก")}))
-                                            //     .children_signal_vec(page.groups.signal_cloned().to_signal_vec().map(|group| {
-                                            //         html!("option", {
-                                            //             .attr("value", &group.smp_id.to_string())
-                                            //             .text(&group.smp_name.unwrap_or_default())
-                                            //         })
-                                            //     }))
-                                            //     .prop_signal("value", page.smp_id.signal_cloned())
-                                            //     .with_node!(element => {
-                                            //         .event(clone!(page => move |_: events::Change| {
-                                            //             page.smp_id.set_neq(element.value());
-                                            //             page.subgroup.set_neq(String::new());
-                                            //             page.focuses.lock_mut().clear();
-                                            //             page.goals.lock_mut().clear();
-                                            //             page.intvts.lock_mut().clear();
-                                            //             page.loaded_subgroups.set(false);
-                                            //         }))
-                                            //     })
-                                            //     // onchange="table_data_seting_temp_smp_search()
-                                            // }))
-                                        }))
+                                        //.attr("id", "dropdown_data_smp")
+                                        .child_signal(page.groups.signal_cloned().map(clone!(page => move |groups| {
+                                            let options = groups.iter().map(|group| {
+                                                SelectOption {
+                                                    key: group.smp_id.to_string(),
+                                                    value: group.smp_name.clone().unwrap_or_default(),
+                                                }
+                                            }).collect();
+                                            Some(doms::select_box(
+                                                "search_temp_smp", Some("เลือก"), false,
+                                                page.smp_id.clone(),
+                                                Mutable::new(true),
+                                                |d| d.class("form-control"),
+                                                clone!(page => move || {
+                                                    page.subgroup.set_neq(String::new());
+                                                    page.focuses.lock_mut().clear();
+                                                    page.goals.lock_mut().clear();
+                                                    page.intvts.lock_mut().clear();
+                                                    page.loaded_subgroups.set(false);
+                                                }),
+                                                options,
+                                            ))
+                                        })))
                                     }))
-                                    // SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                    .apply_if(app.has_permission(Permission::NursingProgressnoteTemplateAdd), |dom| {
-                                        dom.child(html!("button", {
-                                            .attr("type", "button")
-                                            .class(class::BTN_R_BLUE)
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", "#AddTempSmpModal")
-                                            .child(html!("i", {.class(class::FA_PLUS)}))
-                                            .text(" เพิ่ม")
-                                            .event(clone!(page => move |_: events::Click| {
-                                                page.smp_id.set_neq(String::new());
-                                                page.smp_name.set_neq(String::new());
-                                                // page.smp_group.set_neq(None);
-                                                // page.smp_order.set_neq(None);
-                                                page.smp_status.set_neq(String::from("Y"));
-                                                page.group_changed.set_neq(false);
-                                                // page.group_select_redraw.set(true);
-                                            }))
-                                            // .attr("onclick", "add_setting_template_nurse_note_smp()")
+                                }))
+                                // SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                                .apply_if(app.has_permission(Permission::NursingProgressnoteTemplateAdd), |dom| {
+                                    dom.child(html!("button", {
+                                        .attr("type", "button")
+                                        .class(class::BTN_R_BLUE)
+                                        .child(html!("i", {.class(class::FA_PLUS)}))
+                                        .text(" เพิ่ม")
+                                        .event(clone!(app, page => move |_: events::Click| {
+                                            page.smp_id.set_neq(String::new());
+                                            page.smp_name.set_neq(String::new());
+                                            // page.smp_group.set_neq(None);
+                                            // page.smp_order.set_neq(None);
+                                            page.smp_status.set_neq(String::from("Y"));
+                                            page.group_changed.set_neq(false);
+
+                                            page.show_smp_modal.set(true);
+                                            app.show_modal_backdrop();
                                         }))
-                                    })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempSmpModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempSmpModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ Template กลุ่มอาการ (Group)")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        //.attr("id", "form_temp_setting_smp")
-                                                        .children([
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    html!("label", {
-                                                                        .attr("for", "smp_name")
-                                                                        .text("กลุ่มอาการ")
-                                                                    }),
-                                                                    html!("input" => HtmlInputElement, {
-                                                                        .attr("type", "text")
-                                                                        .class(class::FORM_CTRL_T)
-                                                                        .attr("id", "smp_name")
-                                                                        .apply(mixins::string_value_not_empty(page.smp_name.clone(), page.group_changed.clone()))
-                                                                    }),
-                                                                ])
-                                                            }),
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    radio_input("smp_status1", page.smp_status.clone(), page.group_changed.clone(), "Y", "ยังใช้งานอยู่"),
-                                                                    radio_input("smp_status2", page.smp_status.clone(), page.group_changed.clone(), "N", "ยกเลิกการใช้งาน"),
-                                                                ])
-                                                            }),
-                                                        ])
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.smp_id.signal_cloned().map(clone!(app, page => move |smp_id| {
-                                                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
-                                                        (!smp_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpGroup, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                //.attr("id", "btn_delete_template_smp")
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_group(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                                // .attr("onclick", "delete_setting_template_nurse_note_smp();")
-                                                            })
-                                                        )
-                                                    })))
-                                                    // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                                    .child_signal(page.smp_id.signal_cloned().map(clone!(app, page => move |smp_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpGroup, false) &&
-                                                        if smp_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.group_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.group_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_group(page.clone(), app.clone());
-                                                                }), not(page.group_changed.signal()), app.state()))
-                                                                // .attr("onclick", "save_setting_template_nurse_note_smp();")
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
+                                        // .attr("onclick", "add_setting_template_nurse_note_smp()")
                                     }))
-                                }),
-                            ])
+                                })
+                            }))
                             .child_signal(map_ref!{
                                 let smp_id = page.smp_id.signal_cloned(),
                                 let groups =  page.groups.signal_cloned() =>
@@ -991,8 +879,6 @@ impl SettingTemplateNurseNotePage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempSmpModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
                                                                     .event(clone!(page => move |_: events::Click| {
                                                                         page.smp_id.set_neq(group.smp_id.to_string());
@@ -1001,6 +887,9 @@ impl SettingTemplateNurseNotePage {
                                                                         // page.smp_order.set_neq(group.smp_order);
                                                                         page.smp_status.set_neq(group.smp_status.clone().unwrap_or_default());
                                                                         page.group_changed.set_neq(false);
+
+                                                                        page.show_smp_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1016,6 +905,125 @@ impl SettingTemplateNurseNotePage {
                     }))
                 }),
             ])
+            .child_signal(page.show_smp_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_smp_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_smp_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_smp_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_smp_modal.clone(), app))
+        })
+    }
+
+    fn render_smp_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ Template กลุ่มอาการ (Group)")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_smp_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            //.attr("id", "form_temp_setting_smp")
+                            .children([
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        html!("label", {
+                                            .attr("for", "smp_name")
+                                            .text("กลุ่มอาการ")
+                                        }),
+                                        html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class(class::FORM_CTRL_T)
+                                            .attr("id", "smp_name")
+                                            .apply(mixins::string_value_not_empty(page.smp_name.clone(), page.group_changed.clone()))
+                                        }),
+                                    ])
+                                }),
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        radio_input("smp_status1", page.smp_status.clone(), page.group_changed.clone(), "Y", "ยังใช้งานอยู่"),
+                                        radio_input("smp_status2", page.smp_status.clone(), page.group_changed.clone(), "N", "ยกเลิกการใช้งาน"),
+                                    ])
+                                }),
+                            ])
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.smp_id.signal_cloned().map(clone!(app, page => move |smp_id| {
+                            // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
+                            (!smp_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpGroup, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    //.attr("id", "btn_delete_template_smp")
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_group(page.clone(), app.clone());
+                                    }), app.state()))
+                                    // .attr("onclick", "delete_setting_template_nurse_note_smp();")
+                                })
+                            )
+                        })))
+                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                        .child_signal(page.smp_id.signal_cloned().map(clone!(app, page => move |smp_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpGroup, false) &&
+                            if smp_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.group_changed.signal())
+                                    .class_signal("btn-secondary", not(page.group_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_group(page.clone(), app.clone());
+                                    }), not(page.group_changed.signal()), app.state()))
+                                    // .attr("onclick", "save_setting_template_nurse_note_smp();")
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_smp_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -1036,177 +1044,57 @@ impl SettingTemplateNurseNotePage {
                         .class("row")
                         .child(html!("div", {
                             .class("col-sm-12")
-                            .children([
-                                html!("div", {
-                                    .class(class::FLEX_T2)
+                            .child(html!("div", {
+                                .class(class::FLEX_T2)
+                                .child(html!("div", {
+                                    .class("col-4")
                                     .child(html!("div", {
-                                        .class("col-4")
-                                        .child(html!("div", {
-                                            //.attr("id", "dropdown_data_subgroup")
-                                            .child_signal(page.subgroups.signal_cloned().map(clone!(page => move |subgroups| {
-                                                let mut options = subgroups.iter().map(|subgroup| {
-                                                    SelectOption {
-                                                        key: subgroup.subgroup.to_string(),
-                                                        value: subgroup.subgroup_name.clone().unwrap_or_default(),
-                                                    }
-                                                }).collect::<Vec<SelectOption>>();
-                                                options.push(SelectOption {
-                                                    key: String::from("0"),
-                                                    value: String::from("**ไม่ระบุ(แสดงเสมอ)**")
-                                                });
-                                                Some(doms::select_box(
-                                                    "search_temp_subgroup", Some("เลือก"), false,
-                                                    page.subgroup.clone(),
-                                                    Mutable::new(true),
-                                                    |d| d.class("form-control"),
-                                                    clone!(page => move || {
-                                                        page.loaded_focus_goal_intvt.set(false)
-                                                    }),
-                                                    options,
-                                                ))
-                                            })))
-                                            // .child(html!("select" => HtmlSelectElement, {
-                                            //     .class("form-control")
-                                            //     .attr("id", "search_temp_subgroup")
-                                            //     .child(html!("option", {.attr("value","").text("เลือก")}))
-                                            //     .children_signal_vec(page.subgroups.signal_cloned().to_signal_vec().map(|subgroup| {
-                                            //         html!("option", {
-                                            //             .attr("value", &subgroup.subgroup.to_string())
-                                            //             .text(&subgroup.subgroup_name.unwrap_or_default())
-                                            //         })
-                                            //     }))
-                                            //     .child(html!("option", {.attr("value","0").class("fw-bold").text("**ไม่ระบุ(แสดงเสมอ)**")}))
-                                            //     .prop_signal("value", page.subgroup.signal_cloned())
-                                            //     .with_node!(element => {
-                                            //         .event(clone!(page => move |_: events::Change| {
-                                            //             page.subgroup.set_neq(element.value());
-                                            //             page.loaded_focus_goal_intvt.set(false);
-                                            //         }))
-                                            //     })
-                                            //     // table_data_seting_temp_subgroup_search()
-                                            // }))
-                                        }))
+                                        //.attr("id", "dropdown_data_subgroup")
+                                        .child_signal(page.subgroups.signal_cloned().map(clone!(page => move |subgroups| {
+                                            let mut options = subgroups.iter().map(|subgroup| {
+                                                SelectOption {
+                                                    key: subgroup.subgroup.to_string(),
+                                                    value: subgroup.subgroup_name.clone().unwrap_or_default(),
+                                                }
+                                            }).collect::<Vec<SelectOption>>();
+                                            options.push(SelectOption {
+                                                key: String::from("0"),
+                                                value: String::from("**ไม่ระบุ(แสดงเสมอ)**")
+                                            });
+                                            Some(doms::select_box(
+                                                "search_temp_subgroup", Some("เลือก"), false,
+                                                page.subgroup.clone(),
+                                                Mutable::new(true),
+                                                |d| d.class("form-control"),
+                                                clone!(page => move || {
+                                                    page.loaded_focus_goal_intvt.set(false)
+                                                }),
+                                                options,
+                                            ))
+                                        })))
                                     }))
-                                    // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                    .apply_if(app.has_permission(Permission::NursingProgressnoteTemplateAdd), |dom| {
-                                        dom.child(html!("button", {
-                                            .attr("type", "button")
-                                            .class(class::BTN_R_BLUE)
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", "#AddTempSubgroupModal")
-                                            .child(html!("i", {.class(class::FA_PLUS)}))
-                                            .text(" เพิ่ม")
-                                            .event(clone!(page => move |_: events::Click| {
-                                                page.subgroup.set_neq(String::new());
-                                                page.subgroup_name.set_neq(String::new());
-                                                page.subgroup_order.set_neq(None);
-                                                page.subgroup_status.set_neq(String::from("Y"));
-                                                page.subgroup_changed.set_neq(false);
-                                                // page.subgroup_select_redraw.set(true);
-                                            }))
-                                            // .attr("onclick", "add_setting_template_nurse_note_subgroup()")
+                                }))
+                                // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                                .apply_if(app.has_permission(Permission::NursingProgressnoteTemplateAdd), |dom| {
+                                    dom.child(html!("button", {
+                                        .attr("type", "button")
+                                        .class(class::BTN_R_BLUE)
+                                        .child(html!("i", {.class(class::FA_PLUS)}))
+                                        .text(" เพิ่ม")
+                                        .event(clone!(app, page => move |_: events::Click| {
+                                            page.subgroup.set_neq(String::new());
+                                            page.subgroup_name.set_neq(String::new());
+                                            page.subgroup_order.set_neq(None);
+                                            page.subgroup_status.set_neq(String::from("Y"));
+                                            page.subgroup_changed.set_neq(false);
+
+                                            page.show_sub_modal.set(true);
+                                            app.show_modal_backdrop();
                                         }))
-                                    })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempSubgroupModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempSubgroupModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ Template กลุ่มอาการย่อย (Subgroup)")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        //.attr("id", "form_temp_setting_subgroup")
-                                                        .children([
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    html!("label", {
-                                                                        .attr("for", "subgroup_name")
-                                                                        .text("กลุ่มอาการ")
-                                                                    }),
-                                                                    html!("input" => HtmlInputElement, {
-                                                                        .attr("type", "text")
-                                                                        .class(class::FORM_CTRL_T)
-                                                                        .attr("id", "subgroup_name")
-                                                                        .apply(mixins::string_value_not_empty(page.subgroup_name.clone(), page.subgroup_changed.clone()))
-                                                                    }),
-                                                                ])
-                                                            }),
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    radio_input("subgroup_status1", page.subgroup_status.clone(), page.subgroup_changed.clone(), "Y", "ยังใช้งานอยู่"),
-                                                                    radio_input("subgroup_status2", page.subgroup_status.clone(), page.subgroup_changed.clone(), "N", "ยกเลิกการใช้งาน"),
-                                                                ])
-                                                            }),
-                                                        ])
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.subgroup.signal_cloned().map(clone!(app, page => move |subgroup| {
-                                                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
-                                                        (!subgroup.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpSubgroup, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                //.attr("id", "btn_delete_template_subgroup")
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_subgroup(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                                // .attr("onclick", "delete_setting_template_nurse_note_subgroup();")
-                                                            })
-                                                        )
-                                                    })))
-                                                    // .attr("onclick", "reset_setting_template_nurse_note_subgroup()")
-                                                    // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                                    .child_signal(page.subgroup.signal_cloned().map(clone!(app, page => move |subgroup| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpSubgroup, false) &&
-                                                        if subgroup.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.subgroup_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.subgroup_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_subgroup(page.clone(), app.clone());
-                                                                }), not(page.subgroup_changed.signal()), app.state()))
-                                                                // .attr("onclick", "save_setting_template_nurse_note_subgroup();")
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
+                                        // .attr("onclick", "add_setting_template_nurse_note_subgroup()")
                                     }))
-                                }),
-                            ])
+                                })
+                            }))
                             .child_signal(map_ref!{
                                 let subgroup_id = page.subgroup.signal_cloned(),
                                 let subgroups =  page.subgroups.signal_cloned() =>
@@ -1257,8 +1145,6 @@ impl SettingTemplateNurseNotePage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempSubgroupModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
                                                                     .event(clone!(page => move |_: events::Click| {
                                                                         page.subgroup.set_neq(subgroup.subgroup.to_string());
@@ -1266,6 +1152,9 @@ impl SettingTemplateNurseNotePage {
                                                                         page.subgroup_order.set_neq(subgroup.subgroup_order);
                                                                         page.subgroup_status.set_neq(subgroup.subgroup_status.clone().unwrap_or_default());
                                                                         page.subgroup_changed.set_neq(false);
+
+                                                                        page.show_sub_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1281,6 +1170,126 @@ impl SettingTemplateNurseNotePage {
                     }))
                 }),
             ])
+            .child_signal(page.show_sub_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_sub_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_sub_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_sub_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_sub_modal.clone(), app))
+        })
+    }
+
+    fn render_sub_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ Template กลุ่มอาการย่อย (Subgroup)")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_sub_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            //.attr("id", "form_temp_setting_subgroup")
+                            .children([
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        html!("label", {
+                                            .attr("for", "subgroup_name")
+                                            .text("กลุ่มอาการ")
+                                        }),
+                                        html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class(class::FORM_CTRL_T)
+                                            .attr("id", "subgroup_name")
+                                            .apply(mixins::string_value_not_empty(page.subgroup_name.clone(), page.subgroup_changed.clone()))
+                                        }),
+                                    ])
+                                }),
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        radio_input("subgroup_status1", page.subgroup_status.clone(), page.subgroup_changed.clone(), "Y", "ยังใช้งานอยู่"),
+                                        radio_input("subgroup_status2", page.subgroup_status.clone(), page.subgroup_changed.clone(), "N", "ยกเลิกการใช้งาน"),
+                                    ])
+                                }),
+                            ])
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.subgroup.signal_cloned().map(clone!(app, page => move |subgroup| {
+                            // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
+                            (!subgroup.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpSubgroup, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    //.attr("id", "btn_delete_template_subgroup")
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_subgroup(page.clone(), app.clone());
+                                    }), app.state()))
+                                    // .attr("onclick", "delete_setting_template_nurse_note_subgroup();")
+                                })
+                            )
+                        })))
+                        // .attr("onclick", "reset_setting_template_nurse_note_subgroup()")
+                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                        .child_signal(page.subgroup.signal_cloned().map(clone!(app, page => move |subgroup| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpSubgroup, false) &&
+                            if subgroup.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.subgroup_changed.signal())
+                                    .class_signal("btn-secondary", not(page.subgroup_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_subgroup(page.clone(), app.clone());
+                                    }), not(page.subgroup_changed.signal()), app.state()))
+                                    // .attr("onclick", "save_setting_template_nurse_note_subgroup();")
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_sub_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -1311,120 +1320,22 @@ impl SettingTemplateNurseNotePage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempFocusModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.focus_id.set_neq(String::new());
                                                     page.focus_name.set_neq(String::new());
                                                     // page.focus_order.set_neq(None);
                                                     page.focus_status.set_neq(String::from("Y"));
                                                     page.focus_changed.set_neq(false);
-                                                    // page.focus_select_redraw.set(true);
+
+                                                    page.show_focus_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                                 // .attr("onclick", "add_setting_template_nurse_note_focus()")
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempFocusModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempFocusModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ Template ปัญหา (Focus)")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        //.attr("id", "form_temp_setting_focus")
-                                                        .children([
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    html!("label", {
-                                                                        .attr("for", "focus_name")
-                                                                        .text("ปัญหา (Focus)")
-                                                                    }),
-                                                                    html!("input" => HtmlInputElement, {
-                                                                        .attr("type", "text")
-                                                                        .class(class::FORM_CTRL_T)
-                                                                        .attr("id", "focus_name")
-                                                                        .apply(mixins::string_value_not_empty(page.focus_name.clone(), page.focus_changed.clone()))
-                                                                    }),
-                                                                ])
-                                                            }),
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    radio_input("focus_status1", page.focus_status.clone(), page.focus_changed.clone(), "Y", "ยังใช้งานอยู่"),
-                                                                    radio_input("focus_status2", page.focus_status.clone(), page.focus_changed.clone(), "N", "ยกเลิกการใช้งาน"),
-                                                                ])
-                                                            }),
-                                                        ])
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.focus_id.signal_cloned().map(clone!(app, page => move |focus_id| {
-                                                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
-                                                        (!focus_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpFocus, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                //.attr("id", "btn_delete_template_focus")
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_focus(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                                // .attr("onclick", "delete_setting_template_nurse_note_focus();")
-                                                            })
-                                                        )
-                                                    })))
-                                                    // .attr("onclick", "reset_setting_template_nurse_note_focus()")
-                                                    // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                                    .child_signal(page.focus_id.signal_cloned().map(clone!(app, page => move |focus_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpFocus, false) &&
-                                                        if focus_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.focus_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.focus_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_focus(page.clone(), app.clone());
-                                                                }), not(page.focus_changed.signal()), app.state()))
-                                                                // .attr("onclick", "save_setting_template_nurse_note_focus();")
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     //.attr("id", "table_temp_setting_focus")
@@ -1444,7 +1355,7 @@ impl SettingTemplateNurseNotePage {
                                         }),
                                         html!("tbody", {
                                             //.attr("id", "table_temp_focus_body")
-                                            .children_signal_vec(page.focuses.signal_cloned().to_signal_vec().map(clone!(page => move |focus| {
+                                            .children_signal_vec(page.focuses.signal_cloned().to_signal_vec().map(clone!(app, page => move |focus| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.text(&focus.focus_name.clone().unwrap_or_default())}),
@@ -1471,15 +1382,16 @@ impl SettingTemplateNurseNotePage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempFocusModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.focus_id.set_neq(focus.focus_id.to_string());
                                                                         page.focus_name.set_neq(focus.focus_name.clone().unwrap_or_default());
                                                                         // page.focus_order.set_neq(focus.focus_order);
                                                                         page.focus_status.set_neq(focus.focus_status.clone().unwrap_or_default());
                                                                         page.focus_changed.set_neq(false);
+
+                                                                        page.show_focus_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1495,6 +1407,126 @@ impl SettingTemplateNurseNotePage {
                     }))
                 }),
             ])
+            .child_signal(page.show_focus_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_focus_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_focus_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_focus_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_focus_modal.clone(), app))
+        })
+    }
+
+    fn render_focus_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ Template ปัญหา (Focus)")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_focus_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            //.attr("id", "form_temp_setting_focus")
+                            .children([
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        html!("label", {
+                                            .attr("for", "focus_name")
+                                            .text("ปัญหา (Focus)")
+                                        }),
+                                        html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class(class::FORM_CTRL_T)
+                                            .attr("id", "focus_name")
+                                            .apply(mixins::string_value_not_empty(page.focus_name.clone(), page.focus_changed.clone()))
+                                        }),
+                                    ])
+                                }),
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        radio_input("focus_status1", page.focus_status.clone(), page.focus_changed.clone(), "Y", "ยังใช้งานอยู่"),
+                                        radio_input("focus_status2", page.focus_status.clone(), page.focus_changed.clone(), "N", "ยกเลิกการใช้งาน"),
+                                    ])
+                                }),
+                            ])
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.focus_id.signal_cloned().map(clone!(app, page => move |focus_id| {
+                            // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
+                            (!focus_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpFocus, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    //.attr("id", "btn_delete_template_focus")
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_focus(page.clone(), app.clone());
+                                    }), app.state()))
+                                    // .attr("onclick", "delete_setting_template_nurse_note_focus();")
+                                })
+                            )
+                        })))
+                        // .attr("onclick", "reset_setting_template_nurse_note_focus()")
+                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                        .child_signal(page.focus_id.signal_cloned().map(clone!(app, page => move |focus_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpFocus, false) &&
+                            if focus_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.focus_changed.signal())
+                                    .class_signal("btn-secondary", not(page.focus_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_focus(page.clone(), app.clone());
+                                    }), not(page.focus_changed.signal()), app.state()))
+                                    // .attr("onclick", "save_setting_template_nurse_note_focus();")
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_focus_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -1525,120 +1557,22 @@ impl SettingTemplateNurseNotePage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempGoalModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.goal_id.set_neq(String::new());
                                                     page.goal_name.set_neq(String::new());
                                                     // page.goal_order.set_neq(None);
                                                     page.goal_status.set_neq(String::from("Y"));
                                                     page.goal_changed.set_neq(false);
-                                                    // page.goal_select_redraw.set(true);
+
+                                                    page.show_goal_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                                 // .attr("onclick", "add_setting_template_nurse_note_goal()")
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempGoalModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempGoalModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ Template เป้าหมาย (Goal)")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        //.attr("id", "form_temp_setting_goal")
-                                                        .children([
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    html!("label", {
-                                                                        .attr("for", "goal_name")
-                                                                        .text("เป้าหมาย (Goal)")
-                                                                    }),
-                                                                    html!("input" => HtmlInputElement, {
-                                                                        .attr("type", "text")
-                                                                        .class(class::FORM_CTRL_T)
-                                                                        .attr("id", "goal_name")
-                                                                        .apply(mixins::string_value_not_empty(page.goal_name.clone(), page.goal_changed.clone()))
-                                                                    }),
-                                                                ])
-                                                            }),
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    radio_input("goal_status1", page.goal_status.clone(), page.goal_changed.clone(), "Y", "ยังใช้งานอยู่"),
-                                                                    radio_input("goal_status2", page.goal_status.clone(), page.goal_changed.clone(), "N", "ยกเลิกการใช้งาน"),
-                                                                ])
-                                                            }),
-                                                        ])
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.goal_id.signal_cloned().map(clone!(app, page => move |goal_id| {
-                                                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
-                                                        (!goal_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpGoal, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                //.attr("id", "btn_delete_template_goal")
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_goal(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                                // .attr("onclick", "delete_setting_template_nurse_note_goal();")
-                                                            })
-                                                        )
-                                                    })))
-                                                    // .attr("onclick", "reset_setting_template_nurse_note_goal()")
-                                                    // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                                    .child_signal(page.goal_id.signal_cloned().map(clone!(app, page => move |goal_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpGoal, false) &&
-                                                        if goal_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.goal_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.goal_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_goal(page.clone(), app.clone());
-                                                                }), not(page.goal_changed.signal()), app.state()))
-                                                                // .attr("onclick", "save_setting_template_nurse_note_goal();")
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     //.attr("id", "table_temp_setting_goal")
@@ -1658,7 +1592,7 @@ impl SettingTemplateNurseNotePage {
                                         }),
                                         html!("tbody", {
                                             //.attr("id", "table_temp_goal_body")
-                                            .children_signal_vec(page.goals.signal_cloned().to_signal_vec().map(clone!(page => move |goal| {
+                                            .children_signal_vec(page.goals.signal_cloned().to_signal_vec().map(clone!(app, page => move |goal| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.text(&goal.goal_name.clone().unwrap_or_default())}),
@@ -1685,15 +1619,16 @@ impl SettingTemplateNurseNotePage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempGoalModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.goal_id.set_neq(goal.goal_id.to_string());
                                                                         page.goal_name.set_neq(goal.goal_name.clone().unwrap_or_default());
                                                                         // page.goal_order.set_neq(goal.goal_order);
                                                                         page.goal_status.set_neq(goal.goal_status.clone().unwrap_or_default());
                                                                         page.goal_changed.set_neq(false);
+
+                                                                        page.show_goal_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1709,6 +1644,126 @@ impl SettingTemplateNurseNotePage {
                     }))
                 }),
             ])
+            .child_signal(page.show_goal_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_goal_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_goal_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_goal_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_goal_modal.clone(), app))
+        })
+    }
+
+    fn render_goal_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ Template เป้าหมาย (Goal)")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_goal_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            //.attr("id", "form_temp_setting_goal")
+                            .children([
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        html!("label", {
+                                            .attr("for", "goal_name")
+                                            .text("เป้าหมาย (Goal)")
+                                        }),
+                                        html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class(class::FORM_CTRL_T)
+                                            .attr("id", "goal_name")
+                                            .apply(mixins::string_value_not_empty(page.goal_name.clone(), page.goal_changed.clone()))
+                                        }),
+                                    ])
+                                }),
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        radio_input("goal_status1", page.goal_status.clone(), page.goal_changed.clone(), "Y", "ยังใช้งานอยู่"),
+                                        radio_input("goal_status2", page.goal_status.clone(), page.goal_changed.clone(), "N", "ยกเลิกการใช้งาน"),
+                                    ])
+                                }),
+                            ])
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.goal_id.signal_cloned().map(clone!(app, page => move |goal_id| {
+                            // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
+                            (!goal_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpGoal, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    //.attr("id", "btn_delete_template_goal")
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_goal(page.clone(), app.clone());
+                                    }), app.state()))
+                                    // .attr("onclick", "delete_setting_template_nurse_note_goal();")
+                                })
+                            )
+                        })))
+                        // .attr("onclick", "reset_setting_template_nurse_note_goal()")
+                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                        .child_signal(page.goal_id.signal_cloned().map(clone!(app, page => move |goal_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpGoal, false) &&
+                            if goal_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.goal_changed.signal())
+                                    .class_signal("btn-secondary", not(page.goal_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_goal(page.clone(), app.clone());
+                                    }), not(page.goal_changed.signal()), app.state()))
+                                    // .attr("onclick", "save_setting_template_nurse_note_goal();")
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_goal_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -1739,120 +1794,22 @@ impl SettingTemplateNurseNotePage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempIntvtModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.intvt_id.set_neq(String::new());
                                                     page.intvt_name.set_neq(String::new());
                                                     // page.intvt_order.set_neq(None);
                                                     page.intvt_status.set_neq(String::from("Y"));
                                                     page.intvt_changed.set_neq(false);
-                                                    // page.intvt_select_redraw.set(true);
+
+                                                    page.show_intvt_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                                 // .attr("onclick", "add_setting_template_nurse_note_intvt()")
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempIntvtModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempIntvtModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ Template Intervention")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        //.attr("id", "form_temp_setting_intvt")
-                                                        .children([
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    html!("label", {
-                                                                        .attr("for", "intvt_name")
-                                                                        .text("Intervention")
-                                                                    }),
-                                                                    html!("input" => HtmlInputElement, {
-                                                                        .attr("type", "text")
-                                                                        .class(class::FORM_CTRL_T)
-                                                                        .attr("id", "intvt_name")
-                                                                        .apply(mixins::string_value_not_empty(page.intvt_name.clone(), page.intvt_changed.clone()))
-                                                                    }),
-                                                                ])
-                                                            }),
-                                                            html!("div", {
-                                                                .class("mb-3")
-                                                                .children([
-                                                                    radio_input("intvt_status1", page.intvt_status.clone(), page.intvt_changed.clone(), "Y", "ยังใช้งานอยู่"),
-                                                                    radio_input("intvt_status2", page.intvt_status.clone(), page.intvt_changed.clone(), "N", "ยกเลิกการใช้งาน"),
-                                                                ])
-                                                            }),
-                                                        ])
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.intvt_id.signal_cloned().map(clone!(app, page => move |intvt_id| {
-                                                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
-                                                        (!intvt_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpIntvt, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                //.attr("id", "btn_delete_template_intvt")
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_intvt(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                                // .attr("onclick", "delete_setting_template_nurse_note_intvt();")
-                                                            })
-                                                        )
-                                                    })))
-                                                    // .attr("onclick", "reset_setting_template_nurse_note_intvt()")
-                                                    // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                                    .child_signal(page.intvt_id.signal_cloned().map(clone!(app, page => move |intvt_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpIntvt, false) &&
-                                                        if intvt_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.intvt_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.intvt_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_intvt(page.clone(), app.clone());
-                                                                }), not(page.intvt_changed.signal()), app.state()))
-                                                                // .attr("onclick", "save_setting_template_nurse_note_intvt();")
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     //.attr("id", "table_temp_setting_intvt")
@@ -1872,7 +1829,7 @@ impl SettingTemplateNurseNotePage {
                                         }),
                                         html!("tbody", {
                                             //.attr("id", "table_temp_intvt_body")
-                                            .children_signal_vec(page.intvts.signal_cloned().to_signal_vec().map(clone!(page => move |intvt| {
+                                            .children_signal_vec(page.intvts.signal_cloned().to_signal_vec().map(clone!(app, page => move |intvt| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {
@@ -1902,15 +1859,16 @@ impl SettingTemplateNurseNotePage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempIntvtModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.intvt_id.set_neq(intvt.intvt_id.to_string());
                                                                         page.intvt_name.set_neq(intvt.intvt_name.clone().unwrap_or_default());
                                                                         // page.intvt_order.set_neq(intvt.intvt_order);
                                                                         page.intvt_status.set_neq(intvt.intvt_status.clone().unwrap_or_default());
                                                                         page.intvt_changed.set_neq(false);
+
+                                                                        page.show_intvt_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1926,6 +1884,126 @@ impl SettingTemplateNurseNotePage {
                     }))
                 }),
             ])
+            .child_signal(page.show_intvt_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_intvt_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_intvt_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_intvt_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_intvt_modal.clone(), app))
+        })
+    }
+
+    fn render_intvt_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ Template Intervention")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_intvt_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            //.attr("id", "form_temp_setting_intvt")
+                            .children([
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        html!("label", {
+                                            .attr("for", "intvt_name")
+                                            .text("Intervention")
+                                        }),
+                                        html!("input" => HtmlInputElement, {
+                                            .attr("type", "text")
+                                            .class(class::FORM_CTRL_T)
+                                            .attr("id", "intvt_name")
+                                            .apply(mixins::string_value_not_empty(page.intvt_name.clone(), page.intvt_changed.clone()))
+                                        }),
+                                    ])
+                                }),
+                                html!("div", {
+                                    .class("mb-3")
+                                    .children([
+                                        radio_input("intvt_status1", page.intvt_status.clone(), page.intvt_changed.clone(), "Y", "ยังใช้งานอยู่"),
+                                        radio_input("intvt_status2", page.intvt_status.clone(), page.intvt_changed.clone(), "N", "ยกเลิกการใช้งาน"),
+                                    ])
+                                }),
+                            ])
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.intvt_id.signal_cloned().map(clone!(app, page => move |intvt_id| {
+                            // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
+                            (!intvt_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpIntvt, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    //.attr("id", "btn_delete_template_intvt")
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_intvt(page.clone(), app.clone());
+                                    }), app.state()))
+                                    // .attr("onclick", "delete_setting_template_nurse_note_intvt();")
+                                })
+                            )
+                        })))
+                        // .attr("onclick", "reset_setting_template_nurse_note_intvt()")
+                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                        .child_signal(page.intvt_id.signal_cloned().map(clone!(app, page => move |intvt_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpIntvt, false) &&
+                            if intvt_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.intvt_changed.signal())
+                                    .class_signal("btn-secondary", not(page.intvt_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_intvt(page.clone(), app.clone());
+                                    }), not(page.intvt_changed.signal()), app.state()))
+                                    // .attr("onclick", "save_setting_template_nurse_note_intvt();")
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_intvt_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -1955,109 +2033,20 @@ impl SettingTemplateNurseNotePage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempDlcModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.dlc_id.set_neq(String::new());
                                                     page.dlc_name.set_neq(String::new());
                                                     // page.intvt_order.set_neq(None);
                                                     page.dlc_changed.set_neq(false);
+
+                                                    page.show_dlc_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempDlcModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempDlcModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ Daily Care")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        //.attr("id", "form_temp_setting_dlc")
-                                                        .child(html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .attr("for", "dlc_name")
-                                                                    .text("Daily Care")
-                                                                }),
-                                                                html!("input" => HtmlInputElement, {
-                                                                    .attr("type", "text")
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "dlc_name")
-                                                                    .apply(mixins::string_value_not_empty(page.dlc_name.clone(), page.dlc_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }))
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.dlc_id.signal_cloned().map(clone!(app, page => move |dlc_id| {
-                                                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
-                                                        (!dlc_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpDlc, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                //.attr("id", "btn_delete_template_dlc")
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_dlc(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                            })
-                                                        )
-                                                    })))
-                                                    // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
-                                                    .child_signal(page.dlc_id.signal_cloned().map(clone!(app, page => move |dlc_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpDlc, false) &&
-                                                        if dlc_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.dlc_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.dlc_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_dlc(page.clone(), app.clone());
-                                                                }), map_ref!{
-                                                                    let changed = page.dlc_changed.signal(),
-                                                                    let name = page.dlc_name.signal_cloned() =>
-                                                                    !changed || name.is_empty()
-                                                                }, app.state()))
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     //.attr("id", "table_temp_setting_dlc")
@@ -2074,7 +2063,7 @@ impl SettingTemplateNurseNotePage {
                                         }),
                                         html!("tbody", {
                                             //.attr("id", "table_temp_dlc_body")
-                                            .children_signal_vec(page.dlcs.signal_cloned().to_signal_vec().map(clone!(page => move |dlc| {
+                                            .children_signal_vec(page.dlcs.signal_cloned().to_signal_vec().map(clone!(app, page => move |dlc| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.text(&dlc.dlc_name.clone())}),
@@ -2085,14 +2074,15 @@ impl SettingTemplateNurseNotePage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempDlcModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.dlc_id.set_neq(dlc.dlc_id.to_string());
                                                                         page.dlc_name.set_neq(dlc.dlc_name.clone());
                                                                         // page.dlc_order.set_neq(dlc.dlc_order);
                                                                         page.dlc_changed.set_neq(false);
+
+                                                                        page.show_dlc_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -2108,6 +2098,118 @@ impl SettingTemplateNurseNotePage {
                     }))
                 }),
             ])
+            .child_signal(page.show_dlc_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_dlc_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_dlc_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dlc_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_dlc_modal.clone(), app))
+        })
+    }
+
+    fn render_dlc_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ Daily Care")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_dlc_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            //.attr("id", "form_temp_setting_dlc")
+                            .child(html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .attr("for", "dlc_name")
+                                        .text("Daily Care")
+                                    }),
+                                    html!("input" => HtmlInputElement, {
+                                        .attr("type", "text")
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "dlc_name")
+                                        .apply(mixins::string_value_not_empty(page.dlc_name.clone(), page.dlc_changed.clone()))
+                                    }),
+                                ])
+                            }))
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.dlc_id.signal_cloned().map(clone!(app, page => move |dlc_id| {
+                            // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','REMOVE'))
+                            (!dlc_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdTmpDlc, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    //.attr("id", "btn_delete_template_dlc")
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_dlc(page.clone(), app.clone());
+                                    }), app.state()))
+                                })
+                            )
+                        })))
+                        // if(SessionManager::checkPermission('NURSING_PROGRESSNOTE_TEMPLATE','ADD'))
+                        .child_signal(page.dlc_id.signal_cloned().map(clone!(app, page => move |dlc_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdTmpDlc, false) &&
+                            if dlc_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.dlc_changed.signal())
+                                    .class_signal("btn-secondary", not(page.dlc_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_dlc(page.clone(), app.clone());
+                                    }), map_ref!{
+                                        let changed = page.dlc_changed.signal(),
+                                        let name = page.dlc_name.signal_cloned() =>
+                                        !changed || name.is_empty()
+                                    }, app.state()))
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_dlc_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 }

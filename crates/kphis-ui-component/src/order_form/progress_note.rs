@@ -26,7 +26,7 @@ use kphis_util::{
 
 use crate::{
     gadget::image::{ImageCpn, ImagePaths},
-    modal::{blank_modal, lab_selector::LabSelector, vs_selector::VsSelector},
+    modal::{lab_selector::LabSelector, vs_selector::VsSelector},
     order::{InsertTextAreaButton, OrderItemMutable},
 };
 
@@ -511,41 +511,39 @@ impl ProgressNoteForm {
                                         let is_allow = page.allow_vs_selector_signal(app.clone()),
                                         let not_pre_order = page.pre_order_master_id.signal_ref(|opt| opt.is_none()) =>
                                         *is_allow && *not_pre_order
-                                    }.map(clone!(page => move |ready| {
+                                    }.map(clone!(app, page => move |ready| {
                                         ready.then(|| {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_RT_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#vsSelectorModal")
                                                 .child(html!("i", {.class(class::FA_HEARTBEAT)}))
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.vs_selector_modal.set(Some(VsSelector::new(
                                                         false,
                                                         page.patient.clone(),
                                                         page.new_objective(),
                                                         page.changed.clone(),
                                                     )));
+                                                    app.show_modal_backdrop();
                                                 }))
                                             })
                                         })
                                     })))
                                     .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::LabHead, false), |dom| dom
-                                        .child_signal(page.pre_order_master_id.signal_cloned().map(clone!(page => move |opt| {
+                                        .child_signal(page.pre_order_master_id.signal_cloned().map(clone!(app, page => move |opt| {
                                             opt.is_none().then(|| {
                                                 html!("button", {
                                                     .attr("type", "button")
                                                     .class(class::BTN_SM_RT_BLUE)
-                                                    .attr("data-bs-toggle", "modal")
-                                                    .attr("data-bs-target", "#labSelectorModal")
                                                     .child(html!("i", {.class(class::FA_FLASK)}))
-                                                    .event(clone!(page => move |_: events::Click| {
+                                                    .event(clone!(app, page => move |_: events::Click| {
                                                         page.lab_selector_modal.set(Some(LabSelector::new(
                                                             false,
                                                             page.patient.clone(),
                                                             page.new_objective(),
                                                             page.changed.clone(),
                                                         )));
+                                                        app.show_modal_backdrop();
                                                     }))
                                                 })
                                             })
@@ -801,28 +799,16 @@ impl ProgressNoteForm {
                     }),
                 ])
             }))
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "vsSelectorModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app => move |opt| {
-                    opt.as_ref().map(clone!(app => move |modal| {
-                        VsSelector::render(modal.clone(), app)
-                    })).or(Some(blank_modal()))
-                })))
-            }))
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "labSelectorModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.lab_selector_modal.signal_cloned().map(clone!(app => move |opt| {
-                    opt.as_ref().map(clone!(app => move |modal| {
-                        LabSelector::render(modal.clone(), app)
-                    })).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone())
+                })
+            })))
+            .child_signal(page.lab_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    LabSelector::render_modal(modal.clone(), page.lab_selector_modal.clone(), app.clone())
+                })
+            })))
         })
     }
 

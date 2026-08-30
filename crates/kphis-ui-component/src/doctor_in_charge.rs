@@ -45,12 +45,6 @@ impl DoctorInChargeCpn {
     }
 
     fn new_form(&self) {
-        // if let Some(elm) = app.get_id("doctor") {
-        //     NiceSelect::new_default(&elm);
-        // }
-        // if let Some(elm) = app.get_id("spclty") {
-        //     NiceSelect::new_default(&elm);
-        // }
         self.doctor_in_charge_id.set_neq(0);
         self.doctor.set_neq(String::new());
         self.spclty.set_neq(String::new());
@@ -61,17 +55,9 @@ impl DoctorInChargeCpn {
     }
 
     fn edit_form(&self, row: &Rc<IpdDoctorInCharge>) {
-        let doctor = row.doctor.clone().unwrap_or_default();
-        let spclty = row.spclty.clone().unwrap_or_default();
-        // if let Some(elm) = app.get_id("doctor") {
-        //     NiceSelect::new_default_with_value(&elm, &doctor);
-        // }
-        // if let Some(elm) = app.get_id("spclty") {
-        //     NiceSelect::new_default_with_value(&elm, &spclty);
-        // }
         self.doctor_in_charge_id.set_neq(row.doctor_in_charge_id);
-        self.doctor.set_neq(doctor);
-        self.spclty.set_neq(spclty);
+        self.doctor.set_neq(row.doctor.clone().unwrap_or_default());
+        self.spclty.set_neq(row.spclty.clone().unwrap_or_default());
         self.status.set_neq(row.status.clone().unwrap_or_default());
         self.activated.set_neq(row.activated.clone().unwrap_or_default());
         self.version.set_neq(row.version);
@@ -185,12 +171,6 @@ impl DoctorInChargeCpn {
             ).for_each(clone!(app, page => move |ready| {
                 if ready {
                     Self::load_table(page.clone(), app.clone());
-                    // if let Some(elm) = app.get_id("doctor") {
-                    //     NiceSelect::new_default(&elm);
-                    // }
-                    // if let Some(elm) = app.get_id("spclty") {
-                    //     NiceSelect::new_default(&elm);
-                    // }
                     page.loaded_table.set(true);
                 }
                 async {}
@@ -325,27 +305,9 @@ impl DoctorInChargeCpn {
                                                         |d| d.class("form-control"), || {},
                                                         doctor_select_option,
                                                     ))
-                                                    // .child(html!("select" => HtmlSelectElement, {
-                                                    //     .class("form-control")
-                                                    //     .attr("id", "doctor")
-                                                    //     .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                    //     .children(doctor_select_option.iter().map(|option| {
-                                                    //         select_option(option, "")
-                                                    //     }))
-                                                    //     .apply(mixins::string_value_select(page.doctor.clone(), page.changed.clone()))
-                                                    // }))
                                                 }),
                                             ])
                                         }),
-                                        // html!("div", {
-                                        //     .class("mb-3")
-                                        //     .child(html!("div", {
-                                        //         .class(class::COL_SM6_MID)
-                                        //         .child(html!("div", {
-                                        //             .attr("id", "check_value_doctor")
-                                        //         }))
-                                        //     }))
-                                        // }),
                                         html!("div", {
                                             .class(class::ROW)
                                             .children([
@@ -363,27 +325,9 @@ impl DoctorInChargeCpn {
                                                         |d| d.class("form-control"), || {},
                                                         spclty_select_option,
                                                     ))
-                                                    // .child(html!("select" => HtmlSelectElement, {
-                                                    //     .class("form-control")
-                                                    //     .attr("id", "spclty")
-                                                    //     .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                    //     .children(spclty_select_option.iter().map(|option| {
-                                                    //         select_option(option, "")
-                                                    //     }))
-                                                    //     .apply(mixins::string_value_select(page.spclty.clone(), page.changed.clone()))
-                                                    // }))
                                                 }),
                                             ])
                                         }),
-                                        // html!("div", {
-                                        //     .class("mb-3")
-                                        //     .child(html!("div", {
-                                        //         .class(class::COL_SM6_MID)
-                                        //         .child(html!("div", {
-                                        //             .attr("id", "check_value_spclty")
-                                        //         }))
-                                        //     }))
-                                        // }),
                                         html!("div", {
                                             .class(class::ROW)
                                             .child(html!("div", {

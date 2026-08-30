@@ -12,7 +12,7 @@ use web_sys::HtmlInputElement;
 
 use kphis_model::search::searchbox::{DrugCheckParams, DrugDuplicateCheck, DrugInteractionCheck, MedSearchbox};
 use kphis_ui_app::App;
-use kphis_ui_core::{binding::Modal, class, doms};
+use kphis_ui_core::{class, doms};
 use kphis_util::{
     datetime::js_now,
     util::{opt_zero_none, str_some},
@@ -20,7 +20,7 @@ use kphis_util::{
 
 use super::dec_to_color;
 use crate::{
-    modal::{blank_modal, drug_duplication::DrugDuplication, drug_interaction::DrugInteraction, drug_notify::DrugNotify},
+    modal::{drug_duplication::DrugDuplication, drug_interaction::DrugInteraction, drug_notify::DrugNotify},
     order::{MedSearchable, OrderItemMutable},
 };
 
@@ -37,11 +37,11 @@ pub struct MedSearchboxCpn {
     pub status_text: Mutable<Option<String>>,
 
     pub selected_result: Mutable<Option<Rc<MedSearchbox>>>,
-    pub drug_notify_modal: Mutable<Option<DrugNotify>>,
+    pub drug_notify_modal: Mutable<Option<Rc<DrugNotify>>>,
     drug_duplication_checked: Mutable<bool>,
-    pub drug_duplication_modal: Mutable<Option<DrugDuplication>>,
+    pub drug_duplication_modal: Mutable<Option<Rc<DrugDuplication>>>,
     drug_interaction_checked: Mutable<bool>,
-    pub drug_interaction_modal: Mutable<Option<DrugInteraction>>,
+    pub drug_interaction_modal: Mutable<Option<Rc<DrugInteraction>>>,
     pub allowed: Mutable<bool>,
     rendered: Mutable<bool>,
 }
@@ -348,60 +348,24 @@ impl MedSearchboxCpn {
         })
     }
 
-    pub fn render_modals(page: Rc<Self>) -> Vec<Dom> {
-        vec![
-            html!("div", {
-                .future(page.drug_notify_modal.signal_cloned().map(|modal| modal.is_some()).for_each(|show| {
-                    if show {
-                        Modal::new("#drugNotifyModal").show();
-                    }
-                    async {}
-                }))
-                .class("modal")
-                .attr("id", "drugNotifyModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.drug_notify_modal.signal_cloned().map(clone!(page => move |opt| {
-                    opt.as_ref().map(|modal| {
-                        DrugNotify::render(modal, page.drug_notify_modal.clone())
-                    }).or(Some(blank_modal()))
-                })))
-            }),
-            html!("div", {
-                .future(page.drug_duplication_modal.signal_cloned().map(|modal| modal.is_some()).for_each(|show| {
-                    if show {
-                        Modal::new("#drugDuplicationModal").show();
-                    }
-                    async {}
-                }))
-                .class("modal")
-                .attr("id", "drugDuplicationModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.drug_duplication_modal.signal_cloned().map(clone!(page => move |opt| {
-                    opt.as_ref().map(|modal| {
-                        DrugDuplication::render(modal, page.drug_duplication_modal.clone(), page.allowed.clone())
-                    }).or(Some(blank_modal()))
-                })))
-            }),
-            html!("div", {
-                .future(page.drug_interaction_modal.signal_cloned().map(|modal| modal.is_some()).for_each(|show| {
-                    if show {
-                        Modal::new("#drugInteractionModal").show();
-                    }
-                    async {}
-                }))
-                .class("modal")
-                .attr("id", "drugInteractionModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.drug_interaction_modal.signal_cloned().map(clone!(page => move |opt| {
-                    opt.as_ref().map(|modal| {
-                        DrugInteraction::render(modal, page.drug_interaction_modal.clone(), page.allowed.clone())
-                    }).or(Some(blank_modal()))
-                })))
-            }),
-        ]
+    pub fn render_modals(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child_signal(page.drug_notify_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.as_ref().map(|modal| {
+                    DrugNotify::render_modal(modal, page.drug_notify_modal.clone(), app.clone())
+                })
+            })))
+            .child_signal(page.drug_duplication_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.as_ref().map(|modal| {
+                    DrugDuplication::render_modal(modal, page.drug_duplication_modal.clone(), page.allowed.clone(), app.clone())
+                })
+            })))
+            .child_signal(page.drug_interaction_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.as_ref().map(|modal| {
+                    DrugInteraction::render_modal(modal, page.drug_interaction_modal.clone(), page.allowed.clone(), app.clone())
+                })
+            })))
+        })
     }
 
     fn check_drug_duplication_and_interaction<T: MedSearchable + 'static>(generic_name: Option<String>, med_name_opt: Option<String>, order_form: Rc<T>, page: Rc<Self>, app: Rc<App>) {

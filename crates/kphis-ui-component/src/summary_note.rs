@@ -366,9 +366,7 @@ pub fn render_lab_alert(lab_alerts: MutableVec<Rc<LabAlertData>>, hn: Mutable<St
                                     ].concat())
                                     .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::LabItem, false), |dom| dom
                                         .attr("role","button")
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#labHistoryModal")
-                                        .event(clone!(hn, lab_history_modal => move |_:events::Click| {
+                                        .event(clone!(app, hn, lab_history_modal => move |_:events::Click| {
                                             if let Some(lab_items_code) = opt_zero_none(lab.lab_items_code) {
                                                 let lab_history = LabHistory::new(
                                                     hn.clone(),
@@ -378,6 +376,7 @@ pub fn render_lab_alert(lab_alerts: MutableVec<Rc<LabAlertData>>, hn: Mutable<St
                                                     &zero_none(lab.lab_order_number),
                                                 );
                                                 lab_history_modal.set(Some(lab_history));
+                                                app.show_modal_backdrop();
                                             }
                                         }))
                                     )

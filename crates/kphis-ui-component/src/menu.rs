@@ -31,9 +31,22 @@ use kphis_util::{
 };
 
 use crate::{
-    modal::{blank_modal, drug_details::DrugDetailModal},
+    modal::{drug_details::DrugDetailModal, modal_show_bool_mixins},
     order::ORDER_STYLE,
 };
+
+#[derive(Clone, Default, PartialEq)]
+enum DropDowns {
+    #[default]
+    None,
+    Doctor,
+    Nurse,
+    Pharmacist,
+    Other,
+    Setting,
+    Message,
+    User,
+}
 
 /// - POST `EndPoint::UserConfig`
 /// - PATCH `EndPoint::User`
@@ -43,6 +56,8 @@ use crate::{
 /// - PATCH `EndPoint::OpdErOrderOrder` (guarded, remove 'รคส' div)
 #[derive(Clone, Default)]
 pub struct MenuCpn {
+    active_dropdown: Mutable<DropDowns>,
+
     // check_once: Mutable<bool>,
     clear_cache: Mutable<bool>,
     logout: Mutable<bool>,
@@ -66,6 +81,7 @@ pub struct MenuCpn {
     token_2fa: Mutable<String>,
     token_2fa_result: Mutable<String>,
 
+    show_nurse_order_as_modal: Mutable<bool>,
     drug_details_modal: Mutable<Option<Rc<DrugDetailModal>>>,
 }
 
@@ -81,15 +97,6 @@ impl MenuCpn {
         self.msg_target_ward.set(String::new());
         self.msg_target_spclty.set(String::new());
         self.msg_route.set(String::new());
-        // if let Some(elm) = app.get_id("msg-target-user-select") {
-        //     NiceSelect::new_default(&elm);
-        // }
-        // if let Some(elm) = app.get_id("msg-target-ward-select") {
-        //     NiceSelect::new_default(&elm);
-        // }
-        // if let Some(elm) = app.get_id("msg-target-spclty-select") {
-        //     NiceSelect::new_default(&elm);
-        // }
     }
 
     fn read_single_msg(&self, message_id: u32, tab: SseMenuTab, app: Rc<App>) {
@@ -244,11 +251,13 @@ impl MenuCpn {
     }
 
     pub fn render(menu: Rc<Self>, app: Rc<App>) -> Dom {
+        let is_nav_collapsed = Mutable::new(false);
         let allow_get_ipd_order_as = app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderOrder, true) || app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderOrder, false);
         let allow_get_opd_er_order_as = app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErOrderOrder, false);
         let is_allow_summary = app.doctor_code().is_some() && app.has_permission(Permission::DataTypeDoctorUse) && app.endpoint_is_allow(&Method::POST, &EndPoint::IpdSummary, false);
 
         html!("nav", {
+            .apply(mixins::dropdown_closing_mixin(menu.active_dropdown.clone()))
             .future(app.visible.signal().for_each(clone!(app => move |visible| {
                 if !visible {
                     // log::debug!("hit info not-visible");
@@ -377,20 +386,22 @@ impl MenuCpn {
                     .apply_if(app.is_production(), |dom| dom.child(html!("i", {.class(class::FA_USER_SHIELD)})))
                 }),
                 html!("button", {
-                    .class(class::NAV_BAR_TGL)
                     .attr("type", "button")
-                    .attr("data-bs-toggle","collapse")
-                    .attr("data-bs-target","#collapsibleNavId")
+                    .class(class::NAV_BAR_TGL)
                     .attr("aria-controls","collapsibleNavId")
-                    .attr("aria-expanded","false")
                     .attr("aria-label","Toggle navigation")
+                    .prop_signal("aria-expanded", is_nav_collapsed.signal().map(|opened| if opened {"true"} else {"false"}))
                     .child(html!("span", {.class("navbar-toggler-icon")}))
+                    .event(clone!(is_nav_collapsed => move |_:events::Click| {
+                        is_nav_collapsed.set(!is_nav_collapsed.get());
+                    }))
                 }),
                 html!("div", {
                     .class(class::NAV_BAR_COLLAPSE)
+                    .class_signal("show", is_nav_collapsed.signal())
                     .attr("id", "collapsibleNavId")
                     .children([
-                        menu_items(app.clone()),
+                        Self::menu_items(menu.clone(), app.clone()),
                         html!("div", {
                             .class("navbar-nav")
                             .class(class::FLEX_ROW_C)
@@ -399,28 +410,19 @@ impl MenuCpn {
                                 app.endpoint_is_allow(&Method::GET, &EndPoint::DrugUseDuration, false)
                                 && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxMedHnText, false),
                             |dom| dom
-                                .children([
-                                    html!("div", {
-                                        // .class("ms-2")
-                                        .style("cursor","pointer")
-                                        .child(html!("i", {.class(class::FA_PILLS).style("font-size","24px")}))
-                                        .attr("title","Drug information")
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#drugInformationModal")
-                                        .event(clone!(app, menu => move |_:events::Click| {
-                                            menu.drug_details_modal.set(Some(DrugDetailModal::new(false)));
-                                        }))
-                                    }),
-                                    html!("div", {
-                                        .class("modal")
-                                        .attr("id", "drugInformationModal")
-                                        .attr("role", "dialog")
-                                        .attr("tabindex", "-1")
-                                        .child_signal(menu.drug_details_modal.signal_cloned().map(clone!(app, menu => move |opt| {
-                                            opt.map(|modal| DrugDetailModal::render(modal, menu.drug_details_modal.clone(), None, app.clone())).or(Some(blank_modal()))
-                                        })))
-                                    }),
-                                ])
+                                .child(html!("div", {
+                                    // .class("ms-2")
+                                    .style("cursor","pointer")
+                                    .child(html!("i", {.class(class::FA_PILLS).style("font-size","24px")}))
+                                    .attr("title","Drug information")
+                                    .event(clone!(app, menu => move |_:events::Click| {
+                                        menu.drug_details_modal.set(Some(DrugDetailModal::new(false)));
+                                        app.show_modal_backdrop();
+                                    }))
+                                }))
+                                .child_signal(menu.drug_details_modal.signal_cloned().map(clone!(app, menu => move |opt| {
+                                    opt.map(|modal| DrugDetailModal::render_modal(modal, menu.drug_details_modal.clone(), None, app.clone()))
+                                })))
                             )
                             // Confirm OrderAs
                             .apply_if(
@@ -431,39 +433,41 @@ impl MenuCpn {
                                 && app.has_permission(Permission::OpdErOrderCheck)
                                 && app.endpoint_is_allow(&Method::PATCH, &EndPoint::OpdErOrderOrder, false),
                             |dom| {
-                                dom.children([
-                                    html!("div", {
-                                        .class(class::RELATIVE_X)
-                                        .style("white-space","nowrap")
-                                        .style("max-width","65px")
-                                        .child(html!("button", {
-                                            .attr("type", "button")
-                                            .attr("title","ยืนยันการรับคำสั่งแพทย์ ที่บันทึกโดยพยาบาล")
-                                            .class(class::BTN_SM_WHITEO)
-                                            .child(html!("i", {.class(class::FA_MARKER)}))
-                                            .child(html!("span", {
-                                                .class(class::RESP_XL_SM)
-                                                .text(" รคส")
-                                            }))
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", "#checkOrderAsModal")
-                                        }))
-                                        .child_signal(app.count_order_as().map(doms::badge_count_red))
+                                dom.child(html!("div", {
+                                    .class(class::RELATIVE_X)
+                                    .style("white-space","nowrap")
+                                    .style("max-width","65px")
+                                    .child(html!("button", {
+                                        .attr("type", "button")
+                                        .attr("title","ยืนยันการรับคำสั่งแพทย์ ที่บันทึกโดยพยาบาล")
+                                        .class(class::BTN_SM_WHITEO)
+                                        .child(html!("i", {.class(class::FA_MARKER)}))
                                         .child(html!("span", {
-                                            .class(class::BADGE_FIX_RB_GRAY)
-                                            .style("cursor","default")
-                                            .style("padding","5px")
-                                            .style("color","#555")
-                                            .child(html!("i", {.class(class::FA_SYNC)}))
-                                            .event_with_options(&EventOptions::preventable(), clone!(menu => move |e: events::Click| {
-                                                e.prevent_default();
-                                                menu.load_ipd_order_as.set(true);
-                                                menu.load_opd_er_order_as.set(true);
-                                            }))
+                                            .class(class::RESP_XL_SM)
+                                            .text(" รคส")
                                         }))
-                                    }),
-                                    Self::render_confirm_order_as_modal(menu.clone(), app.clone()),
-                                ])
+                                        .event(clone!(app, menu => move |_:events::Click| {
+                                            menu.show_nurse_order_as_modal.set(true);
+                                            app.show_modal_backdrop();
+                                        }))
+                                    }))
+                                    .child_signal(app.count_order_as().map(doms::badge_count_red))
+                                    .child(html!("span", {
+                                        .class(class::BADGE_FIX_RB_GRAY)
+                                        .style("cursor","default")
+                                        .style("padding","5px")
+                                        .style("color","#555")
+                                        .child(html!("i", {.class(class::FA_SYNC)}))
+                                        .event_with_options(&EventOptions::preventable(), clone!(menu => move |e: events::Click| {
+                                            e.prevent_default();
+                                            menu.load_ipd_order_as.set(true);
+                                            menu.load_opd_er_order_as.set(true);
+                                        }))
+                                    }))
+                                }))
+                                .child_signal(menu.show_nurse_order_as_modal.signal().map(clone!(app, menu => move |show| {
+                                    show.then(|| Self::render_confirm_order_as_modal(menu.clone(), app.clone()))
+                                })))
                             })
                             // Summary alert
                             .apply_if(is_allow_summary, |dom| dom
@@ -509,6 +513,391 @@ impl MenuCpn {
         })
     }
 
+    fn menu_items(menu: Rc<Self>, app: Rc<App>) -> Dom {
+        // let is_ipd_doctor = app.has_permission(Permission::IpdDoctorMainProgramAccess);
+        // let is_opd_er_doctor = app.has_permission(Permission::OpdErDoctorProgramAccess);
+        // let is_ipd_nurse = app.has_permission(Permission::IpdNurseMainProgramAccess);
+        // let is_opd_er_nurse = app.has_permission(Permission::OpdErNurseProgramAccess);
+        // let is_ipd_pharm = app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess);
+        // let is_opd_er_pharm = app.has_permission(Permission::OpdErPharmacyOrderProgramAccess);
+        // let is_ipd_other = app.has_permission(Permission::IpdOtherOrderMainProgramAccess);
+        // let is_opd_er_other = app.has_permission(Permission::OpdErOtherOrderProgramAccess);
+
+        let ipd_doctor_children = vec![
+            link_checked(Route::IpdSearchPatientDr, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
+            link_checked(Route::IpdPreAdmitList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
+            link_checked(Route::IpdPostAdmitList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}), " สรุป Chart", app.state()),
+            link_checked(Route::IpdPreOrderList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
+            link_checked(
+                Route::IpdConsultList { view_by: String::from("doctor") },
+                html!("i", {.class(class::FA_COMMENTS).class("ms-2")}),
+                " รายการผู้ป่วย Consult",
+                app.state(),
+            ),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<Dom>>();
+
+        let opd_er_doctor_child = link_checked(
+            Route::OpdErOrderList { view_by: String::from("doctor") },
+            html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
+            " รายการผู้ป่วย ER",
+            app.state(),
+        );
+
+        let ipd_nurse_children = vec![
+            link_checked(Route::IpdSearchPatientNurse, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
+            link_checked(Route::IpdPreAdmitList { view_by: String::from("nurse") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
+            link_checked(
+                Route::IpdPostAdmitList { view_by: String::from("nurse") },
+                html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
+                " Audit Chart",
+                app.state(),
+            ),
+            link_checked(Route::IpdVitalSign, html!("i", {.class(class::FA_HEARTBEAT).class("ms-2")}), " IPD Vital Sign", app.state()),
+            link_checked(Route::IpdIndexPlan, html!("i", {.class(class::FA_SYRINGE).class("ms-2")}), " IPD Nurse Planning", app.state()),
+            link_checked(Route::IpdPreOrderList { view_by: String::from("nurse") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
+            link_checked(
+                Route::IpdConsultList { view_by: String::from("nurse") },
+                html!("i", {.class(class::FA_COMMENTS).class("ms-2")}),
+                " รายการผู้ป่วย Consult",
+                app.state(),
+            ),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<Dom>>();
+
+        let opd_er_nurse_children = vec![
+            link_checked(
+                Route::OpdErOrderList { view_by: String::from("nurse") },
+                html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
+                " รายการผู้ป่วย ER",
+                app.state(),
+            ),
+            link_checked(Route::OpdErVitalSign, html!("i", {.class(class::FA_HEARTBEAT).class("ms-2")}), " ER Vital Sign", app.state()),
+            link_checked(Route::OpdErIndexPlan, html!("i", {.class(class::FA_SYRINGE).class("ms-2")}), " ER Nurse Planning", app.state()),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<Dom>>();
+
+        let prescription_screen_child = link_checked(Route::PrescriptionScreen { hn: String::new() }, html!("i", {.class(class::FA_FILE_RX).class("ms-2")}), " Screen ใบสั่งยา", app.state());
+
+        let ipd_pharm_children = vec![
+            link_checked(Route::IpdOrderPharmacy, html!("i", {.class(class::FA_USER_CLOCK).class("ms-2")}), " IPD Order", app.state()),
+            link_checked(Route::IpdSearchPatientPharmacist, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
+            link_checked(Route::IpdPreAdmitList { view_by: String::from("pharmacist") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
+            link_checked(
+                Route::IpdPostAdmitList { view_by: String::from("pharmacist") },
+                html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
+                " Audit Chart",
+                app.state(),
+            ),
+            link_checked(
+                Route::IpdPreOrderList { view_by: String::from("pharmacist") },
+                html!("i", {.class(class::FA_PASTE).class("ms-2")}),
+                " Order ล่วงหน้า",
+                app.state(),
+            ),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<Dom>>();
+
+        let opd_er_pharm_children = vec![
+            link_checked(Route::OpdErOrderPharmacy, html!("i", {.class(class::FA_USER_CLOCK).class("ms-2")}), " ER Order", app.state()),
+            link_checked(
+                Route::OpdErOrderList { view_by: String::from("pharmacist") },
+                html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
+                " รายการผู้ป่วย ER",
+                app.state(),
+            ),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<Dom>>();
+
+        let ipd_other_children = vec![
+            link_checked(Route::IpdSearchPatientOther, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
+            link_checked(Route::IpdPreAdmitList { view_by: String::from("other") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
+            link_checked(
+                Route::IpdPostAdmitList { view_by: String::from("other") },
+                html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
+                " Audit Chart",
+                app.state(),
+            ),
+            link_checked(Route::IpdPreOrderList { view_by: String::from("other") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<Dom>>();
+
+        let opd_er_other_child = link_checked(
+            Route::OpdErOrderList { view_by: String::from("other") },
+            html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
+            " รายการผู้ป่วย ER",
+            app.state(),
+        );
+
+        let setting_children = vec![
+            link_checked(Route::DrugUseDuration, html!("i", {.class(class::FA_PILLS)}), " Drug Information", app.state()),
+            link_checked(Route::SettingTemplateNurseNote, html!("i", {.class(class::FA_NOTE_MED)}), " Template Nurse Note", app.state()),
+            link_checked(Route::SettingTemplateDcPlan, html!("i", {.class(class::FA_NOTE_MED)}), " Template D/C Plan", app.state()),
+            link_checked(Route::UserList, html!("i", {.class(class::FA_USER_LOCK)}), " จัดการผู้ใช้งาน", app.state()),
+            link_checked(Route::PermissionList, html!("i", {.class(class::FA_USER_SHIELD)}), " จัดการบทบาท", app.state()),
+            link_checked(Route::ReportViewer, html!("i", {.class(class::FA_FILE_PDF)}), " Report Viewer", app.state()),
+            link_checked(Route::ReportDesigner, html!("i", {.class(class::FA_EDIT)}), " Report Designer", app.state()),
+            link_checked(Route::Image, html!("i", {.class(class::FA_IMAGE)}), " Image Cache", app.state()),
+        ]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<Dom>>();
+
+        html!("ul", {
+            .class(class::NAV_BAR_NAV_LX)
+            .apply(|dom| {
+                if ipd_doctor_children.is_empty() && opd_er_doctor_child.is_none() {
+                    dom
+                } else {
+                    dom.child(html!("li", {
+                        .class(class::NAV_ITEM_DROP)
+                        .children([
+                            html!("a", {
+                                .attr("href","#")
+                                .class(class::NAV_LINK_DROP_TGL_TW_PY)
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Doctor)))
+                                .attr("id", "drDropdownId")
+                                .attr("aria-haspopup","true")
+                                .prop_signal("aria-expanded", menu.active_dropdown.signal_ref(|active| if matches!(active, DropDowns::Doctor) {"true"} else {"false"}))
+                                .child(html!("em", {.class(class::FA_USER_MD_L)}))
+                                .child(html!("span", {
+                                    .class(class::RESP_LG_SM)
+                                    .text(" แพทย์")
+                                }))
+                                .event_with_options(&EventOptions::preventable(), clone!(menu => move |event: events::Click| {
+                                    event.prevent_default();
+                                    let eq = matches!(menu.active_dropdown.get_cloned(), DropDowns::Doctor);
+                                    if eq {
+                                        menu.active_dropdown.set_neq(DropDowns::None);
+                                    } else {
+                                        menu.active_dropdown.set_neq(DropDowns::Doctor);
+                                    }
+                                }))
+                            }),
+                            html!("div", {
+                                .class("dropdown-menu")
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Doctor)))
+                                .attr("aria-labelledby","drDropdownId")
+                                .apply_if(!ipd_doctor_children.is_empty(), |d| d
+                                    .child(menu_header("IPD"))
+                                    .children(ipd_doctor_children)
+                                )
+                                .apply(|d| {
+                                    if let Some(child) = opd_er_doctor_child {
+                                        d.child(menu_header("OPD-ER"))
+                                        .child(child)
+                                    } else {
+                                        d
+                                    }
+                                })
+                            }),
+                        ])
+                    }))
+                }
+            })
+            .apply(|dom| {
+                if ipd_nurse_children.is_empty() && opd_er_nurse_children.is_empty() {
+                    dom
+                } else {
+                    dom.child(html!("li", {
+                        .class(class::NAV_ITEM_DROP)
+                        .children([
+                            html!("a", {
+                                .attr("href","#")
+                                .class(class::NAV_LINK_DROP_TGL_TW_PY)
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Nurse)))
+                                .attr("id", "nurseDropdownId")
+                                .attr("aria-haspopup","true")
+                                .prop_signal("aria-expanded", menu.active_dropdown.signal_ref(|active| if matches!(active, DropDowns::Nurse) {"true"} else {"false"}))
+                                .child(html!("em", {.class(class::FA_USER_NURSE_L)}))
+                                .child(html!("span", {
+                                    .class(class::RESP_LG_SM)
+                                    .text(" พยาบาล")
+                                }))
+                                .event_with_options(&EventOptions::preventable(), clone!(menu => move |event: events::Click| {
+                                    event.prevent_default();
+                                    let eq = matches!(menu.active_dropdown.get_cloned(), DropDowns::Nurse);
+                                    if eq {
+                                        menu.active_dropdown.set_neq(DropDowns::None);
+                                    } else {
+                                        menu.active_dropdown.set_neq(DropDowns::Nurse);
+                                    }
+                                }))
+                            }),
+                            html!("div", {
+                                .class("dropdown-menu")
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Nurse)))
+                                .attr("aria-labelledby","nurseDropdownId")
+                                .apply_if(!ipd_nurse_children.is_empty(), |d| d
+                                    .child(menu_header("IPD"))
+                                    .children(ipd_nurse_children)
+                                )
+                                .apply_if(!opd_er_nurse_children.is_empty(), |d| d
+                                    .child(menu_header("OPD-ER"))
+                                    .children(opd_er_nurse_children)
+                                )
+                            }),
+                        ])
+                    }))
+                }
+            })
+            .apply(|dom| {
+                if prescription_screen_child.is_none() && ipd_pharm_children.is_empty() && opd_er_pharm_children.is_empty() {
+                    dom
+                } else {
+                    dom.child(html!("li", {
+                        .class(class::NAV_ITEM_DROP)
+                        .children([
+                            html!("a", {
+                                .attr("href","#")
+                                .class(class::NAV_LINK_DROP_TGL_TW_PY)
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Pharmacist)))
+                                .attr("id", "pharmacyDropdownId")
+                                .attr("aria-haspopup","true")
+                                .prop_signal("aria-expanded", menu.active_dropdown.signal_ref(|active| if matches!(active, DropDowns::Pharmacist) {"true"} else {"false"}))
+                                .child(html!("em", {.class(class::FA_RX_L)}))
+                                .child(html!("span", {
+                                    .class(class::RESP_LG_SM)
+                                    .text(" เภสัชกร")
+                                }))
+                                .event_with_options(&EventOptions::preventable(), clone!(menu => move |event: events::Click| {
+                                    event.prevent_default();
+                                    let eq = matches!(menu.active_dropdown.get_cloned(), DropDowns::Pharmacist);
+                                    if eq {
+                                        menu.active_dropdown.set_neq(DropDowns::None);
+                                    } else {
+                                        menu.active_dropdown.set_neq(DropDowns::Pharmacist);
+                                    }
+                                }))
+                            }),
+                            html!("div", {
+                                .class("dropdown-menu")
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Pharmacist)))
+                                .attr("aria-labelledby","pharmacyDropdownId")
+                                .apply(|d| {
+                                    if let Some(child) = prescription_screen_child {
+                                        d.child(child)
+                                    } else {
+                                        d
+                                    }
+                                })
+                                .apply_if(!ipd_pharm_children.is_empty(), |d| d
+                                    .child(menu_header("IPD"))
+                                    .children(ipd_pharm_children)
+                                )
+                                .apply_if(!opd_er_pharm_children.is_empty(), |d| d
+                                    .child(menu_header("OPD-ER"))
+                                    .children(opd_er_pharm_children)
+                                )
+                            }),
+                        ])
+                    }))
+                }
+            })
+            .apply(|dom| {
+                if ipd_other_children.is_empty() && opd_er_other_child.is_none() {
+                    dom
+                } else {
+                    dom.child(html!("li", {
+                        .class(class::NAV_ITEM_DROP)
+                        .children([
+                            html!("a", {
+                                .attr("href","#")
+                                .class(class::NAV_LINK_DROP_TGL_TW_PY)
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Other)))
+                                .attr("id", "otherDropdownId")
+                                .attr("aria-haspopup","true")
+                                .prop_signal("aria-expanded", menu.active_dropdown.signal_ref(|active| if matches!(active, DropDowns::Other) {"true"} else {"false"}))
+                                .child(html!("em", {.class(class::FA_USER_TIE_L)}))
+                                .child(html!("span", {
+                                    .class(class::RESP_LG_SM)
+                                    .text(" อื่นๆ")
+                                }))
+                                .event_with_options(&EventOptions::preventable(), clone!(menu => move |event: events::Click| {
+                                    event.prevent_default();
+                                    let eq = matches!(menu.active_dropdown.get_cloned(), DropDowns::Other);
+                                    if eq {
+                                        menu.active_dropdown.set_neq(DropDowns::None);
+                                    } else {
+                                        menu.active_dropdown.set_neq(DropDowns::Other);
+                                    }
+                                }))
+                            }),
+                            html!("div", {
+                                .class("dropdown-menu")
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Other)))
+                                .attr("aria-labelledby","otherDropdownId")
+                                .apply_if(!ipd_other_children.is_empty(), |d| d
+                                    .child(menu_header("IPD"))
+                                    .children(ipd_other_children)
+                                )
+                                .apply(|d| {
+                                    if let Some(child) = opd_er_other_child {
+                                        d.child(menu_header("OPD-ER"))
+                                        .child(child)
+                                    } else {
+                                        d
+                                    }
+                                })
+                            }),
+                        ])
+                    }))
+                }
+            })
+            .apply(|dom| {
+                if setting_children.is_empty() {
+                    dom
+                } else {
+                    dom.child(html!("li", {
+                        .class(class::NAV_ITEM_DROP)
+                        .children([
+                            html!("a", {
+                                .attr("href","#")
+                                .class(class::NAV_LINK_DROP_TGL_TW_PY)
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Setting)))
+                                .attr("id", "settingDropdownId")
+                                .attr("aria-haspopup","true")
+                                .prop_signal("aria-expanded", menu.active_dropdown.signal_ref(|active| if matches!(active, DropDowns::Setting) {"true"} else {"false"}))
+                                .child(html!("em", {.class(class::FA_COG_L)}))
+                                .child(html!("span", {
+                                    .class(class::RESP_LG_SM)
+                                    .text(" Setting")
+                                }))
+                                .event_with_options(&EventOptions::preventable(), clone!(menu => move |event: events::Click| {
+                                    event.prevent_default();
+                                    let eq = matches!(menu.active_dropdown.get_cloned(), DropDowns::Setting);
+                                    if eq {
+                                        menu.active_dropdown.set_neq(DropDowns::None);
+                                    } else {
+                                        menu.active_dropdown.set_neq(DropDowns::Setting);
+                                    }
+                                }))
+                            }),
+                            html!("div", {
+                                .class("dropdown-menu")
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Setting)))
+                                .attr("aria-labelledby","settingDropdownId")
+                                .children(setting_children)
+                            })
+                        ])
+                    }))
+                }
+            })
+        })
+    }
+
     fn render_message_panel(menu: Rc<Self>, app: Rc<App>) -> Dom {
         html!("ul", {
             .class("navbar-nav")
@@ -518,13 +907,12 @@ impl MenuCpn {
                     html!("a", {
                         .attr("href","#")
                         .class(class::NAV_LINK_DROP_TGL_TW_PY)
+                        .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Message)))
                         .class(class::FLEX_C)
                         .class("mt-1")
                         .attr("id", "msgDropdownId")
-                        .attr("data-bs-toggle","dropdown")
-                        .attr("data-bs-auto-close","outside")
                         .attr("aria-haspopup","true")
-                        .attr("aria-expanded","false")
+                        .prop_signal("aria-expanded", menu.active_dropdown.signal_ref(|active| if matches!(active, DropDowns::Message) {"true"} else {"false"}))
                         .attr("title", "Message")
                         .child(html!("div", {
                             .class(class::CIRCLE_L)
@@ -550,11 +938,23 @@ impl MenuCpn {
                             }))
                             .child_signal(app.count_unread_all_msg().map(doms::badge_count_red))
                         }))
+                        .event_with_options(&EventOptions::preventable(), clone!(menu => move |event: events::Click| {
+                            event.prevent_default();
+                            let eq = matches!(menu.active_dropdown.get_cloned(), DropDowns::Message);
+                            if eq {
+                                menu.active_dropdown.set_neq(DropDowns::None);
+                            } else {
+                                menu.active_dropdown.set_neq(DropDowns::Message);
+                            }
+                        }))
                     }),
                     html!("div", {
                         .class(class::DROP_MENU_END)
+                        .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::Message)))
                         .style("min-width","420px")
                         .attr("aria-labelledby","msgDropdownId")
+                        // needed by "dropdown-menu-end" class
+                        .attr("data-bs-popper","static")
                         .children([
                             html!("div", {
                                 .class("text-center")
@@ -913,15 +1313,6 @@ impl MenuCpn {
         html!("div", {
             .future(is_window_loaded().for_each(clone!(app, menu => move |loaded| {
                 if loaded {
-                    // if let Some(elm) = app.get_id("msg-target-user-select") {
-                    //     NiceSelect::new_default_with_value(&elm, &menu.msg_target_user.lock_ref());
-                    // }
-                    // if let Some(elm) = app.get_id("msg-target-ward-select") {
-                    //     NiceSelect::new_default(&elm);
-                    // }
-                    // if let Some(elm) = app.get_id("msg-target-spclty-select") {
-                    //     NiceSelect::new_default(&elm);
-                    // }
                     if let Some(elm) = app.get_id("msg-message").and_then(|elm| elm.dyn_into::<HtmlTextAreaElement>().ok()) {
                         elm.focus().unwrap();
                     }
@@ -969,21 +1360,6 @@ impl MenuCpn {
                                     |d| d.class(class::FORM_CTRL_SM), || {},
                                     all_doctor_select_option,
                                 ),
-                                // html!("div", {
-                                //     .class(class::FLEX_GROW1)
-                                //     .child(html!("select" => HtmlSelectElement, {
-                                //         .class(class::FORM_CTRL_SM)
-                                //         .attr("id", "msg-target-user-select")
-                                //         .child(html!("option", {
-                                //             .attr("value", "")
-                                //             .text("เลือก")
-                                //         }))
-                                //         .children(all_doctor_select_option.iter().map(|option| {
-                                //             doms::select_option(option, "")
-                                //         }))
-                                //         .apply(mixins::string_value_select(menu.msg_target_user.clone(), Mutable::new(false)))
-                                //     }))
-                                // }),
                             ])
                         }),
                         html!("div", {
@@ -996,19 +1372,6 @@ impl MenuCpn {
                                     |d| d.class(class::FORM_CTRL_SM), || {},
                                     [vec![SelectOption {key: String::from("00"), value: String::from("ER")}], ward_select_option].concat(),
                                 ),
-                                // html!("div", {
-                                //     .class(class::FLEX_GROW1)
-                                //     .child(html!("select" => HtmlSelectElement, {
-                                //         .class(class::FORM_CTRL_SM)
-                                //         .attr("id", "msg-target-ward-select")
-                                //         .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                //         .child(html!("option", {.attr("value", "00").text("ER")}))
-                                //         .children(ward_select_option.iter().map(|option| {
-                                //             doms::select_option(option, "")
-                                //         }))
-                                //         .apply(mixins::string_value_select(menu.msg_target_ward.clone(), Mutable::new(false)))
-                                //     }))
-                                // }),
                             ])
                         }),
                         html!("div", {
@@ -1021,19 +1384,6 @@ impl MenuCpn {
                                     |d| d.class(class::FORM_CTRL_SM), || {},
                                     [vec![SelectOption {key: String::from("0"), value: String::from("ฝ่ายเภสัชกรรม")}], spclty_kphis_select_option].concat(),
                                 ),
-                                // html!("div", {
-                                //     .class(class::FLEX_GROW1)
-                                //     .child(html!("select" => HtmlSelectElement, {
-                                //         .class(class::FORM_CTRL_SM)
-                                //         .attr("id", "msg-target-spclty-select")
-                                //         .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                //         .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
-                                //         .children(spclty_kphis_select_option.iter().map(|option| {
-                                //             doms::select_option(option, "")
-                                //         }))
-                                //         .apply(mixins::string_value_select(menu.msg_target_spclty.clone(), Mutable::new(false)))
-                                //     }))
-                                // }),
                             ])
                         }),
                         html!("div", {
@@ -1122,19 +1472,6 @@ impl MenuCpn {
         };
 
         html!("div", {
-            // .future(is_window_loaded().for_each(clone!(app => move |loaded| {
-            //     if loaded {
-            //         if let Some(user) = app.user.lock_ref().as_ref() {
-            //             if let Some(elm) = app.get_id("msg-ward-select") {
-            //                 NiceSelect::new_default_with_value(&elm, &user.user.wards.lock_ref().join(","));
-            //             }
-            //             if let Some(elm) = app.get_id("msg-spclty-select") {
-            //                 NiceSelect::new_default_with_value(&elm, &user.user.spclty_ids.lock_ref().iter().map(|u| u.to_string()).collect::<Vec<String>>().join(","));
-            //             }
-            //         }
-            //     }
-            //     async {}
-            // })))
             .class(class::ROW_TC)
             .class("m-0")
             .apply(|dom| {
@@ -1175,34 +1512,6 @@ impl MenuCpn {
                                     }),
                                     [vec![SelectOption {key: String::from("00"), value: String::from("ER")}], ward_select_option].concat(),
                                 ),
-                                // html!("div", {
-                                //     .class(class::FLEX_GROW1)
-                                //     .child(html!("select" => HtmlSelectElement, {
-                                //         .class(class::FORM_CTRL_SM)
-                                //         .attr("id", "msg-ward-select")
-                                //         .attr("multiple", "multiple")
-                                //         .child(html!("option", {.attr("value", "00").text("ER")}))
-                                //         .children(ward_select_option.iter().map(|option| {
-                                //             doms::select_option(option, "")
-                                //         }))
-                                //         .with_node!(element => {
-                                //             .event(clone!(app => move |_: events::Change| {
-                                //                 let options = element.selected_options();
-                                //                 let mut values = Vec::new();
-                                //                 for j in 0..options.length() {
-                                //                     if let Some(item) = options.item(j) {
-                                //                         if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
-                                //                             values.push(option.value());
-                                //                         }
-                                //                     }
-                                //                 }
-                                //                 if let Some(user) = app.user.lock_ref().as_ref() {
-                                //                     user.user.wards.set(values);
-                                //                 }
-                                //             }))
-                                //         })
-                                //     }))
-                                // }),
                                 html!("div", {.class(class::FORM_TEXT_R).text("สามารถเลือกได้หลายหอผู้ป่วย")}),
                                 html!("label", {
                                     .attr("for", "msg-splcty-select")
@@ -1235,34 +1544,6 @@ impl MenuCpn {
                                     }),
                                     [vec![SelectOption {key: String::from("0"), value: String::from("ฝ่ายเภสัชกรรม")}], spclty_kphis_select_option].concat(),
                                 ),
-                                // html!("div", {
-                                //     .class(class::FLEX_GROW1)
-                                //     .child(html!("select" => HtmlSelectElement, {
-                                //         .class(class::FORM_CTRL_SM)
-                                //         .attr("id", "msg-spclty-select")
-                                //         .attr("multiple", "multiple")
-                                //         .child(html!("option", {.attr("value", "0").text("ฝ่ายเภสัชกรรม")}))
-                                //         .children(spclty_kphis_select_option.iter().map(|option| {
-                                //             doms::select_option(option, "")
-                                //         }))
-                                //         .with_node!(element => {
-                                //             .event(clone!(app => move |_: events::Change| {
-                                //                 let options = element.selected_options();
-                                //                 let mut values = Vec::new();
-                                //                 for j in 0..options.length() {
-                                //                     if let Some(item) = options.item(j) {
-                                //                         if let Ok(option) = item.dyn_into::<HtmlOptionElement>() {
-                                //                             values.push(option.value());
-                                //                         }
-                                //                     }
-                                //                 }
-                                //                 if let Some(user) = app.user.lock_ref().as_ref() {
-                                //                     user.user.spclty_ids.set(values.iter().filter_map(|s| s.parse::<u32>().ok()).collect::<Vec<u32>>());
-                                //                 }
-                                //             }))
-                                //         })
-                                //     }))
-                                // }),
                                 html!("div", {.class(class::FORM_TEXT_R).text("สามารถเลือกได้หลายแผนก")}),
                                 html!("div", {
                                     .child(html!("button" => HtmlButtonElement, {
@@ -1296,12 +1577,11 @@ impl MenuCpn {
                             html!("a", {
                                 .attr("href","#")
                                 .class(class::NAV_LINK_DROP_TGL_TW_PY)
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::User)))
                                 .class(class::FLEX_C)
                                 .attr("id", "userDropdownId")
-                                .attr("data-bs-toggle","dropdown")
-                                .attr("data-bs-auto-close","outside")
                                 .attr("aria-haspopup","true")
-                                .attr("aria-expanded","false")
+                                .prop_signal("aria-expanded", menu.active_dropdown.signal_ref(|active| if matches!(active, DropDowns::User) {"true"} else {"false"}))
                                 .prop_signal("title", user.user.name.signal_cloned())
                                 .children([
                                     html!("div", {
@@ -1321,11 +1601,23 @@ impl MenuCpn {
                                         .text_signal(user.user.name.signal_cloned())
                                     }),
                                 ])
+                                .event_with_options(&EventOptions::preventable(), clone!(menu => move |event: events::Click| {
+                                    event.prevent_default();
+                                    let eq = matches!(menu.active_dropdown.get_cloned(), DropDowns::User);
+                                    if eq {
+                                        menu.active_dropdown.set_neq(DropDowns::None);
+                                    } else {
+                                        menu.active_dropdown.set_neq(DropDowns::User);
+                                    }
+                                }))
                             }),
                             html!("div", {
                                 .class(class::DROP_MENU_END)
+                                .class_signal("show", menu.active_dropdown.signal_ref(|active| matches!(active, DropDowns::User)))
                                 .style("min-width","300px")
                                 .attr("aria-labelledby","userDropdownId")
+                                // needed by "dropdown-menu-end" class
+                                .attr("data-bs-popper","static")
                                 .child(menu_header("ROLES"))
                                 .children_signal_vec(user.roles.signal_vec_cloned().map(|role| {
                                     html!("span", {
@@ -1508,91 +1800,103 @@ impl MenuCpn {
 
     fn render_confirm_order_as_modal(menu: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
-            .class("modal")
             .class("text-dark") // fix menu's `text-light`
-            .attr("id", "checkOrderAsModal")
-            .attr("tabindex", "-1")
             .children([
                 html!("style", { .text(ORDER_STYLE)}),
-                html!("div", {
-                    .class(class::MODAL_DIALOG_XL)
-                    .child(html!("div", {
-                        .class("modal-content")
-                        .children([
-                            html!("div", {
-                                .class("modal-header")
-                                .children([
-                                    html!("h5", {
-                                        .class("modal-title")
-                                        .text("ยืนยันคำสั่งแพทย์ (รคส)")
-                                    }),
-                                    doms::close_modal_x_btn(),
-                                ])
-                            }),
-                            html!("div", {
-                                .class(class::MODAL_BODY_P2)
-                                .child_signal(app.ipd_order_as.signal_vec_cloned().len().map(clone!(app, menu => move |len| {
-                                    (len > 0).then(|| {
-                                        html!("div", {
-                                            .class(class::ROW_COL_RESP2_XL_G2)
-                                            .class("mb-2")
-                                            .children_signal_vec(app.ipd_order_as.signal_vec_cloned().map(clone!(app, menu => move |order| {
-                                                html!("div", {
-                                                    .class("col")
-                                                    .child(Self::render_order(order, menu.clone(), app.clone()))
-                                                })
-                                            })))
-                                        })
-                                    })
-                                })))
-                                .child_signal(app.opd_er_order_as.signal_vec_cloned().len().map(clone!(app, menu => move |len| {
-                                    (len > 0).then(|| {
-                                        html!("div", {
-                                            .class(class::ROW_COL_RESP2_XL_G2)
-                                            .children_signal_vec(app.opd_er_order_as.signal_vec_cloned().map(clone!(app, menu => move |order| {
-                                                html!("div", {
-                                                    .class("col")
-                                                    .child(Self::render_order(order, menu.clone(), app.clone()))
-                                                })
-                                            })))
-                                        })
-                                    })
-                                })))
-                                .child_signal(app.has_any_order_as().map(|any_as| {
-                                    (!any_as).then(|| {
-                                        html!("div", {
-                                            .class(class::BOX_ROUND_DARKS_BOLD_R_PX3)
-                                            .class("fw-bold")
-                                            .text("ไม่มีคำสั่ง รคส.")
-                                        })
-                                    })
-                                }))
-                            }),
-                            html!("div", {
-                                .class("modal-footer")
-                                .child_signal(app.has_any_order_as().map(clone!(app, menu => move |any_as| {
-                                    any_as.then(|| {
-                                        html!("button", {
-                                            .attr("type", "button")
-                                            .class(class::BTN_L_BLUE)
-                                            .text("ยืนยันทั้งหมด")
-                                            .event(clone!(app, menu => move |_: events::Click| {
-                                                Self::patch_order_all(menu.clone(), app.clone());
-                                            }))
-                                        })
-                                    })
-                                })))
-                                .child(html!("button", {
-                                    .attr("type", "button")
-                                    .class(class::BTN_GRAY)
-                                    .attr("data-bs-dismiss", "modal")
-                                    .text("Close")
-                                }))
-                            })
-                        ])
-                    }))
-                })
+                Self::render_confirm_order_as_modal_dialog(menu.clone(), app.clone()),
             ])
+            .apply(modal_show_bool_mixins(menu.show_nurse_order_as_modal.clone(), app))
+        })
+    }
+
+    fn render_confirm_order_as_modal_dialog(menu: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_XL)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .text("ยืนยันคำสั่งแพทย์ (รคส)")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .event(clone!(app, menu => move |_:events::Click| {
+                                    app.clear_modal_backdrop();
+                                    menu.show_nurse_order_as_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class(class::MODAL_BODY_P2)
+                        .child_signal(app.ipd_order_as.signal_vec_cloned().len().map(clone!(app, menu => move |len| {
+                            (len > 0).then(|| {
+                                html!("div", {
+                                    .class(class::ROW_COL_RESP2_XL_G2)
+                                    .class("mb-2")
+                                    .children_signal_vec(app.ipd_order_as.signal_vec_cloned().map(clone!(app, menu => move |order| {
+                                        html!("div", {
+                                            .class("col")
+                                            .child(Self::render_order(order, menu.clone(), app.clone()))
+                                        })
+                                    })))
+                                })
+                            })
+                        })))
+                        .child_signal(app.opd_er_order_as.signal_vec_cloned().len().map(clone!(app, menu => move |len| {
+                            (len > 0).then(|| {
+                                html!("div", {
+                                    .class(class::ROW_COL_RESP2_XL_G2)
+                                    .children_signal_vec(app.opd_er_order_as.signal_vec_cloned().map(clone!(app, menu => move |order| {
+                                        html!("div", {
+                                            .class("col")
+                                            .child(Self::render_order(order, menu.clone(), app.clone()))
+                                        })
+                                    })))
+                                })
+                            })
+                        })))
+                        .child_signal(app.has_any_order_as().map(|any_as| {
+                            (!any_as).then(|| {
+                                html!("div", {
+                                    .class(class::BOX_ROUND_DARKS_BOLD_R_PX3)
+                                    .class("fw-bold")
+                                    .text("ไม่มีคำสั่ง รคส.")
+                                })
+                            })
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(app.has_any_order_as().map(clone!(app, menu => move |any_as| {
+                            any_as.then(|| {
+                                html!("button", {
+                                    .attr("type", "button")
+                                    .class(class::BTN_L_BLUE)
+                                    .text("ยืนยันทั้งหมด")
+                                    .event(clone!(app, menu => move |_: events::Click| {
+                                        Self::patch_order_all(menu.clone(), app.clone());
+                                    }))
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .text("Close")
+                            .event(move |_:events::Click| {
+                                app.clear_modal_backdrop();
+                                menu.show_nurse_order_as_modal.set(false);
+                            })
+                        }))
+                    })
+                ])
+            }))
         })
     }
 
@@ -1763,11 +2067,10 @@ impl MenuCpn {
                         .class(class::BOLD_R)
                         .child(html!("button", {
                             .attr("type", "button")
-                            .attr("data-bs-dismiss", "modal")
                             .class(class::BTN_SM_RB_GOLD)
                             .child(html!("i",{.class(class::FA_L_ARROW_CIRCLE)}))
                             .text(" ไปยังคำสั่ง")
-                            .event(clone!(app, order => move |_: events::Click| {
+                            .event(clone!(app, order, menu => move |_: events::Click| {
                                 match &order.visit_type {
                                     VisitTypeId::Ipd(an)
                                     | VisitTypeId::PreAdmit(an) => {
@@ -1799,6 +2102,8 @@ impl MenuCpn {
                                     }
                                     VisitTypeId::Visit(_) => {}
                                 }
+                                app.clear_modal_backdrop();
+                                menu.show_nurse_order_as_modal.set(false);
                             }))
                         }))
                         .child(html!("button" => HtmlButtonElement, {
@@ -1926,356 +2231,6 @@ fn post_user_config(totp: Option<bool>, totp_qr_opt: Option<Mutable<String>>, ap
     }
 }
 
-fn menu_items(app: Rc<App>) -> Dom {
-    // let is_ipd_doctor = app.has_permission(Permission::IpdDoctorMainProgramAccess);
-    // let is_opd_er_doctor = app.has_permission(Permission::OpdErDoctorProgramAccess);
-    // let is_ipd_nurse = app.has_permission(Permission::IpdNurseMainProgramAccess);
-    // let is_opd_er_nurse = app.has_permission(Permission::OpdErNurseProgramAccess);
-    // let is_ipd_pharm = app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess);
-    // let is_opd_er_pharm = app.has_permission(Permission::OpdErPharmacyOrderProgramAccess);
-    // let is_ipd_other = app.has_permission(Permission::IpdOtherOrderMainProgramAccess);
-    // let is_opd_er_other = app.has_permission(Permission::OpdErOtherOrderProgramAccess);
-
-    let ipd_doctor_children = vec![
-        link_checked(Route::IpdSearchPatientDr, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(Route::IpdPreAdmitList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
-        link_checked(Route::IpdPostAdmitList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}), " สรุป Chart", app.state()),
-        link_checked(Route::IpdPreOrderList { view_by: String::from("doctor") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
-        link_checked(
-            Route::IpdConsultList { view_by: String::from("doctor") },
-            html!("i", {.class(class::FA_COMMENTS).class("ms-2")}),
-            " รายการผู้ป่วย Consult",
-            app.state(),
-        ),
-    ]
-    .into_iter()
-    .flatten()
-    .collect::<Vec<Dom>>();
-
-    let opd_er_doctor_child = link_checked(
-        Route::OpdErOrderList { view_by: String::from("doctor") },
-        html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
-        " รายการผู้ป่วย ER",
-        app.state(),
-    );
-
-    let ipd_nurse_children = vec![
-        link_checked(Route::IpdSearchPatientNurse, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(Route::IpdPreAdmitList { view_by: String::from("nurse") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
-        link_checked(
-            Route::IpdPostAdmitList { view_by: String::from("nurse") },
-            html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
-            " Audit Chart",
-            app.state(),
-        ),
-        link_checked(Route::IpdVitalSign, html!("i", {.class(class::FA_HEARTBEAT).class("ms-2")}), " IPD Vital Sign", app.state()),
-        link_checked(Route::IpdIndexPlan, html!("i", {.class(class::FA_SYRINGE).class("ms-2")}), " IPD Nurse Planning", app.state()),
-        link_checked(Route::IpdPreOrderList { view_by: String::from("nurse") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
-        link_checked(
-            Route::IpdConsultList { view_by: String::from("nurse") },
-            html!("i", {.class(class::FA_COMMENTS).class("ms-2")}),
-            " รายการผู้ป่วย Consult",
-            app.state(),
-        ),
-    ]
-    .into_iter()
-    .flatten()
-    .collect::<Vec<Dom>>();
-
-    let opd_er_nurse_children = vec![
-        link_checked(
-            Route::OpdErOrderList { view_by: String::from("nurse") },
-            html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
-            " รายการผู้ป่วย ER",
-            app.state(),
-        ),
-        link_checked(Route::OpdErVitalSign, html!("i", {.class(class::FA_HEARTBEAT).class("ms-2")}), " ER Vital Sign", app.state()),
-        link_checked(Route::OpdErIndexPlan, html!("i", {.class(class::FA_SYRINGE).class("ms-2")}), " ER Nurse Planning", app.state()),
-    ]
-    .into_iter()
-    .flatten()
-    .collect::<Vec<Dom>>();
-
-    let prescription_screen_child = link_checked(Route::PrescriptionScreen { hn: String::new() }, html!("i", {.class(class::FA_FILE_RX).class("ms-2")}), " Screen ใบสั่งยา", app.state());
-
-    let ipd_pharm_children = vec![
-        link_checked(Route::IpdOrderPharmacy, html!("i", {.class(class::FA_USER_CLOCK).class("ms-2")}), " IPD Order", app.state()),
-        link_checked(Route::IpdSearchPatientPharmacist, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(Route::IpdPreAdmitList { view_by: String::from("pharmacist") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
-        link_checked(
-            Route::IpdPostAdmitList { view_by: String::from("pharmacist") },
-            html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
-            " Audit Chart",
-            app.state(),
-        ),
-        link_checked(
-            Route::IpdPreOrderList { view_by: String::from("pharmacist") },
-            html!("i", {.class(class::FA_PASTE).class("ms-2")}),
-            " Order ล่วงหน้า",
-            app.state(),
-        ),
-    ]
-    .into_iter()
-    .flatten()
-    .collect::<Vec<Dom>>();
-
-    let opd_er_pharm_children = vec![
-        link_checked(Route::OpdErOrderPharmacy, html!("i", {.class(class::FA_USER_CLOCK).class("ms-2")}), " ER Order", app.state()),
-        link_checked(
-            Route::OpdErOrderList { view_by: String::from("pharmacist") },
-            html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
-            " รายการผู้ป่วย ER",
-            app.state(),
-        ),
-    ]
-    .into_iter()
-    .flatten()
-    .collect::<Vec<Dom>>();
-
-    let ipd_other_children = vec![
-        link_checked(Route::IpdSearchPatientOther, html!("i", {.class(class::FA_BED).class("ms-2")}), " รายการผู้ป่วยใน", app.state()),
-        link_checked(Route::IpdPreAdmitList { view_by: String::from("other") }, html!("i", {.class(class::FA_CLOCK).class("ms-2")}), " รอ Admit", app.state()),
-        link_checked(
-            Route::IpdPostAdmitList { view_by: String::from("other") },
-            html!("i", {.class(class::FA_LIST_CHECK).class("ms-2")}),
-            " Audit Chart",
-            app.state(),
-        ),
-        link_checked(Route::IpdPreOrderList { view_by: String::from("other") }, html!("i", {.class(class::FA_PASTE).class("ms-2")}), " Order ล่วงหน้า", app.state()),
-    ]
-    .into_iter()
-    .flatten()
-    .collect::<Vec<Dom>>();
-
-    let opd_er_other_child = link_checked(
-        Route::OpdErOrderList { view_by: String::from("other") },
-        html!("i", {.class(class::FA_USER_INJURED).class("ms-2")}),
-        " รายการผู้ป่วย ER",
-        app.state(),
-    );
-
-    let setting_children = vec![
-        link_checked(Route::DrugUseDuration, html!("i", {.class(class::FA_PILLS)}), " Drug Information", app.state()),
-        link_checked(Route::SettingTemplateNurseNote, html!("i", {.class(class::FA_NOTE_MED)}), " Template Nurse Note", app.state()),
-        link_checked(Route::SettingTemplateDcPlan, html!("i", {.class(class::FA_NOTE_MED)}), " Template D/C Plan", app.state()),
-        link_checked(Route::UserList, html!("i", {.class(class::FA_USER_LOCK)}), " จัดการผู้ใช้งาน", app.state()),
-        link_checked(Route::PermissionList, html!("i", {.class(class::FA_USER_SHIELD)}), " จัดการบทบาท", app.state()),
-        link_checked(Route::ReportViewer, html!("i", {.class(class::FA_FILE_PDF)}), " Report Viewer", app.state()),
-        link_checked(Route::ReportDesigner, html!("i", {.class(class::FA_EDIT)}), " Report Designer", app.state()),
-        link_checked(Route::Image, html!("i", {.class(class::FA_IMAGE)}), " Image Cache", app.state()),
-    ]
-    .into_iter()
-    .flatten()
-    .collect::<Vec<Dom>>();
-
-    html!("ul", {
-        .class(class::NAV_BAR_NAV_LX)
-        .apply(|dom| {
-            if ipd_doctor_children.is_empty() && opd_er_doctor_child.is_none() {
-                dom
-            } else {
-                dom.child(html!("li", {
-                    .class(class::NAV_ITEM_DROP)
-                    .children([
-                        html!("a", {
-                            .attr("href","#")
-                            .class(class::NAV_LINK_DROP_TGL_TW_PY)
-                            .attr("id", "drDropdownId")
-                            .attr("data-bs-toggle","dropdown")
-                            .attr("aria-haspopup","true")
-                            .attr("aria-expanded","false")
-                            .child(html!("em", {.class(class::FA_USER_MD_L)}))
-                            .child(html!("span", {
-                                .class(class::RESP_LG_SM)
-                                .text(" แพทย์")
-                            }))
-                            .event_with_options(&EventOptions::preventable(), |event: events::Click| {
-                                event.prevent_default();
-                            })
-                        }),
-                        html!("div", {
-                            .class("dropdown-menu")
-                            .attr("aria-labelledby","drDropdownId")
-                            .apply_if(!ipd_doctor_children.is_empty(), |d| d
-                                .child(menu_header("IPD"))
-                                .children(ipd_doctor_children)
-                            )
-                            .apply(|d| {
-                                if let Some(child) = opd_er_doctor_child {
-                                    d.child(menu_header("OPD-ER"))
-                                    .child(child)
-                                } else {
-                                    d
-                                }
-                            })
-                        }),
-                    ])
-                }))
-            }
-        })
-        .apply(|dom| {
-            if ipd_nurse_children.is_empty() && opd_er_nurse_children.is_empty() {
-                dom
-            } else {
-                dom.child(html!("li", {
-                    .class(class::NAV_ITEM_DROP)
-                    .children([
-                        html!("a", {
-                            .attr("href","#")
-                            .class(class::NAV_LINK_DROP_TGL_TW_PY)
-                            .attr("id", "nurseDropdownId")
-                            .attr("data-bs-toggle","dropdown")
-                            .attr("aria-haspopup","true")
-                            .attr("aria-expanded","false")
-                            .child(html!("em", {.class(class::FA_USER_NURSE_L)}))
-                            .child(html!("span", {
-                                .class(class::RESP_LG_SM)
-                                .text(" พยาบาล")
-                            }))
-                            .event_with_options(&EventOptions::preventable(), |event: events::Click| {
-                                event.prevent_default();
-                            })
-                        }),
-                        html!("div", {
-                            .class("dropdown-menu")
-                            .attr("aria-labelledby","nurseDropdownId")
-                            .apply_if(!ipd_nurse_children.is_empty(), |d| d
-                                .child(menu_header("IPD"))
-                                .children(ipd_nurse_children)
-                            )
-                            .apply_if(!opd_er_nurse_children.is_empty(), |d| d
-                                .child(menu_header("OPD-ER"))
-                                .children(opd_er_nurse_children)
-                            )
-                        }),
-                    ])
-                }))
-            }
-        })
-        .apply(|dom| {
-            if prescription_screen_child.is_none() && ipd_pharm_children.is_empty() && opd_er_pharm_children.is_empty() {
-                dom
-            } else {
-                dom.child(html!("li", {
-                    .class(class::NAV_ITEM_DROP)
-                    .children([
-                        html!("a", {
-                            .attr("href","#")
-                            .class(class::NAV_LINK_DROP_TGL_TW_PY)
-                            .attr("id", "pharmacyDropdownId")
-                            .attr("data-bs-toggle","dropdown")
-                            .attr("aria-haspopup","true")
-                            .attr("aria-expanded","false")
-                            .child(html!("em", {.class(class::FA_RX_L)}))
-                            .child(html!("span", {
-                                .class(class::RESP_LG_SM)
-                                .text(" เภสัชกร")
-                            }))
-                            .event_with_options(&EventOptions::preventable(), |event: events::Click| {
-                                event.prevent_default();
-                            })
-                        }),
-                        html!("div", {
-                            .class("dropdown-menu")
-                            .attr("aria-labelledby","pharmacyDropdownId")
-                            .apply(|d| {
-                                if let Some(child) = prescription_screen_child {
-                                    d.child(child)
-                                } else {
-                                    d
-                                }
-                            })
-                            .apply_if(!ipd_pharm_children.is_empty(), |d| d
-                                .child(menu_header("IPD"))
-                                .children(ipd_pharm_children)
-                            )
-                            .apply_if(!opd_er_pharm_children.is_empty(), |d| d
-                                .child(menu_header("OPD-ER"))
-                                .children(opd_er_pharm_children)
-                            )
-                        }),
-                    ])
-                }))
-            }
-        })
-        .apply(|dom| {
-            if ipd_other_children.is_empty() && opd_er_other_child.is_none() {
-                dom
-            } else {
-                dom.child(html!("li", {
-                    .class(class::NAV_ITEM_DROP)
-                    .children([
-                        html!("a", {
-                            .attr("href","#")
-                            .class(class::NAV_LINK_DROP_TGL_TW_PY)
-                            .attr("id", "otherDropdownId")
-                            .attr("data-bs-toggle","dropdown")
-                            .attr("aria-haspopup","true")
-                            .attr("aria-expanded","false")
-                            .child(html!("em", {.class(class::FA_USER_TIE_L)}))
-                            .child(html!("span", {
-                                .class(class::RESP_LG_SM)
-                                .text(" อื่นๆ")
-                            }))
-                            .event_with_options(&EventOptions::preventable(), |event: events::Click| {
-                                event.prevent_default();
-                            })
-                        }),
-                        html!("div", {
-                            .class("dropdown-menu")
-                            .attr("aria-labelledby","otherDropdownId")
-                            .apply_if(!ipd_other_children.is_empty(), |d| d
-                                .child(menu_header("IPD"))
-                                .children(ipd_other_children)
-                            )
-                            .apply(|d| {
-                                if let Some(child) = opd_er_other_child {
-                                    d.child(menu_header("OPD-ER"))
-                                    .child(child)
-                                } else {
-                                    d
-                                }
-                            })
-                        }),
-                    ])
-                }))
-            }
-        })
-        .apply(|dom| {
-            if setting_children.is_empty() {
-                dom
-            } else {
-                dom.child(html!("li", {
-                    .class(class::NAV_ITEM_DROP)
-                    .children([
-                        html!("a", {
-                            .attr("href","#")
-                            .class(class::NAV_LINK_DROP_TGL_TW_PY)
-                            .attr("id", "settingDropdownId")
-                            .attr("data-bs-toggle","dropdown")
-                            .attr("aria-haspopup","true")
-                            .attr("aria-expanded","false")
-                            .child(html!("em", {.class(class::FA_COG_L)}))
-                            .child(html!("span", {
-                                .class(class::RESP_LG_SM)
-                                .text(" Setting")
-                            }))
-                            .event_with_options(&EventOptions::preventable(), |event: events::Click| {
-                                event.prevent_default();
-                            })
-                        }),
-                        html!("div", {
-                            .class("dropdown-menu")
-                            .attr("aria-labelledby","settingDropdownId")
-                            .children(setting_children)
-                        })
-                    ])
-                }))
-            }
-        })
-    })
-}
-
 fn link_checked(route: Route, icon: Dom, label: &str, state: Rc<AppState>) -> Option<Dom> {
     if route.has_permission(state) {
         Some(link!(route.string(), {
@@ -2309,7 +2264,6 @@ fn theme_btn(theme: &'static str, app: Rc<App>) -> Dom {
             }
         })
         .attr("type", "button")
-        .attr("data-bs-toggle", "button")
         .child(html!("i", {.class(icon)}))
         .text(label)
         .apply(mixins::click_with_loader_checked(clone!(app => move || {
@@ -2334,7 +2288,6 @@ fn wide_screen_btn(wide_screen_mode: &'static str, app: Rc<App>) -> Dom {
             }
         })
         .attr("type", "button")
-        .attr("data-bs-toggle", "button")
         .child(html!("i", {.class(icon)}))
         .text(label)
         .apply(mixins::click_with_loader_checked(clone!(app => move || {
@@ -2350,7 +2303,6 @@ fn cache_control_btn(no_cache_mode: bool, app: Rc<App>) -> Dom {
         .class(class::BTN_BLUEO)
         .class_signal("active", app.no_cache_mode.signal_cloned().map(move |b| b == no_cache_mode))
         .attr("type", "button")
-        .attr("data-bs-toggle", "button")
         .child(html!("i", {.class(icon)}))
         .text(label)
         .event(move |_: events::Click| {

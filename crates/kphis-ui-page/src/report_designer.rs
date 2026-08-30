@@ -57,11 +57,9 @@ pub struct ReportDesignerPage {
     pan_state: Rc<PanState>,
 
     system_templates: MutableVec<SystemReport>,
-    // renew_system_templates_select_box: Mutable<bool>,
     selected_system_template: Mutable<Option<SystemReport>>,
 
     loaded_custom_templates_compact: Mutable<bool>,
-    // renew_custom_templates_select_box: Mutable<bool>,
     custom_templates_compact: MutableVec<CustomReport>,
     custom_template_disabled: Mutable<Option<bool>>,
     selected_custom_template_compact: Mutable<String>,
@@ -329,27 +327,6 @@ LIMIT 50;"#;
         }
     }
 
-    // fn renew_system_templates_select_box(page: Rc<Self>, app: Rc<App>) {
-    //     if let Some(elm) = app.get_id("system_templates") {
-    //         Timeout::new(
-    //             0,
-    //             clone!(page => move || {
-    //                 if let Some(template) = page.selected_system_template.get_cloned() {
-    //                     if page.system_templates.lock_ref().contains(&template) {
-    //                         NiceSelect::new_default_with_value(&elm, template.template_name());
-    //                     } else {
-    //                         page.selected_system_template.set(None);
-    //                         NiceSelect::new_default(&elm);
-    //                     }
-    //                 } else {
-    //                     NiceSelect::new_default(&elm);
-    //                 }
-    //             }),
-    //         )
-    //         .forget();
-    //     }
-    // }
-
     fn load_custom_templates_compact(page: Rc<Self>, app: Rc<App>) {
         app.async_load(
             true,
@@ -364,7 +341,6 @@ LIMIT 50;"#;
                     Ok(responses) => {
                         let mut lock = page.custom_templates_compact.lock_mut();
                         lock.replace_cloned(responses);
-                        // page.renew_custom_templates_select_box.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -374,22 +350,6 @@ LIMIT 50;"#;
             }),
         )
     }
-
-    // fn renew_custom_templates_select_box(page: Rc<Self>, app: Rc<App>) {
-    //     if let Some(elm) = app.get_id("custom_templates") {
-    //         Timeout::new(
-    //             0,
-    //             clone!(page => move || {
-    //                 if let Some(template) = str_some(page.selected_custom_template_compact.get_cloned()) {
-    //                     NiceSelect::new_default_with_value(&elm, &template);
-    //                 } else {
-    //                     NiceSelect::new_default(&elm);
-    //                 }
-    //             }),
-    //         )
-    //         .forget();
-    //     }
-    // }
 
     fn load_custom_template(page: Rc<Self>, app: Rc<App>) {
         let template_id = page.selected_custom_template_compact.lock_ref().parse::<u32>().ok();
@@ -642,19 +602,6 @@ LIMIT 50;"#;
         app.set_title("KPHIS - Report Designer");
 
         html!("section", {
-            // .future(is_window_loaded().for_each(clone!(app, page => move |ready| {
-            //     if ready {
-            //         Self::renew_system_templates_select_box(page.clone(), app.clone());
-            //     }
-            //     async{}
-            // })))
-            // .future(page.renew_system_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
-            //     if ready {
-            //         Self::renew_system_templates_select_box(page.clone(), app.clone());
-            //         page.renew_system_templates_select_box.set(false);
-            //     }
-            //     async{}
-            // })))
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
                 let load = page.loaded_custom_templates_compact.signal() =>
@@ -679,13 +626,6 @@ LIMIT 50;"#;
                 }
                 async {}
             })))
-            // .future(page.renew_custom_templates_select_box.signal().for_each(clone!(app, page => move |ready| {
-            //     if ready {
-            //         Self::renew_custom_templates_select_box(page.clone(), app.clone());
-            //         page.renew_custom_templates_select_box.set(false);
-            //     }
-            //     async{}
-            // })))
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
                 let load = page.load_system_template.signal() =>
@@ -784,7 +724,6 @@ LIMIT 50;"#;
                                         .attr("type", "button")
                                         .class(class::BTN_BLUEO)
                                         .class_signal("active", page.designer_mode.signal_ref(|dm| matches!(dm, DesignerMode::System)))
-                                        .attr("data-bs-toggle", "button")
                                         .text("System")
                                         .event(clone!(page => move |_: events::Click| {
                                             page.designer_mode.set(DesignerMode::System);
@@ -798,7 +737,6 @@ LIMIT 50;"#;
                                         .attr("type", "button")
                                         .class(class::BTN_BLUEO)
                                         .class_signal("active", page.designer_mode.signal_ref(|dm| matches!(dm, DesignerMode::Custom)))
-                                        .attr("data-bs-toggle", "button")
                                         .text("Custom")
                                         .event(clone!(page => move |_: events::Click| {
                                             page.designer_mode.set(DesignerMode::Custom);
@@ -813,7 +751,6 @@ LIMIT 50;"#;
                                         .attr("type", "button")
                                         .class(class::BTN_BLUEO)
                                         .class_signal("active", page.designer_mode.signal_ref(|dm| matches!(dm, DesignerMode::Demo)))
-                                        .attr("data-bs-toggle", "button")
                                         .text("Demo")
                                         .event(clone!(page => move |_: events::Click| {
                                             page.designer_mode.set(DesignerMode::Demo);
@@ -837,7 +774,6 @@ LIMIT 50;"#;
                                                 .attr("type", "button")
                                                 .class(class::BTN_SM_BLUEO)
                                                 .class_signal("active", page.is_new_custom.signal())
-                                                .attr("data-bs-toggle", "button")
                                                 .text("New")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.empty_custom();
@@ -851,7 +787,6 @@ LIMIT 50;"#;
                                                 .attr("type", "button")
                                                 .class(class::BTN_BLUEO)
                                                 .class_signal("active", not(page.is_new_custom.signal()))
-                                                .attr("data-bs-toggle", "button")
                                                 .text("Edit")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.custom_template_disabled.set_neq(None);
@@ -877,7 +812,6 @@ LIMIT 50;"#;
                                                 .attr("type", "button")
                                                 .class(class::BTN_BLUEO)
                                                 .class_signal("active", page.custom_template_disabled.signal().map(|opt| opt.is_none()))
-                                                .attr("data-bs-toggle", "button")
                                                 .text("All")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.custom_template_disabled.set(None);
@@ -890,7 +824,6 @@ LIMIT 50;"#;
                                                 .attr("type", "button")
                                                 .class(class::BTN_BLUEO)
                                                 .class_signal("active", page.custom_template_disabled.signal().map(|opt| opt == Some(false)))
-                                                .attr("data-bs-toggle", "button")
                                                 .text("Enabled")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.custom_template_disabled.set(Some(false));
@@ -903,7 +836,6 @@ LIMIT 50;"#;
                                                 .attr("type", "button")
                                                 .class(class::BTN_BLUEO)
                                                 .class_signal("active", page.custom_template_disabled.signal().map(|opt| opt == Some(true)))
-                                                .attr("data-bs-toggle", "button")
                                                 .text("Disabled")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.custom_template_disabled.set(Some(true));
@@ -920,7 +852,6 @@ LIMIT 50;"#;
                         .child_signal(page.designer_mode.signal_cloned().map(clone!(app, page => move |designer_mode| {
                             match designer_mode {
                                 DesignerMode::System => {
-                                    // page.renew_system_templates_select_box.set(true);
                                     Some(html!("div", {
                                         .class("col-12")
                                         .child(html!("div", {
@@ -966,31 +897,6 @@ LIMIT 50;"#;
                                                             options,
                                                         ))
                                                     })))
-                                                    // .child(html!("select" => HtmlSelectElement, {
-                                                    //     .class(class::FORM_CTRL_SM)
-                                                    //     .attr("id", "system_templates")
-                                                    //     .child(html!("option", {.attr("value","").text("เลือกรายงาน")}))
-                                                    //     .children_signal_vec(page.system_templates.signal_vec_cloned().map(|template| {
-                                                    //         html!("option", {
-                                                    //             .attr("value", template.template_name())
-                                                    //             .text(template.title())
-                                                    //         })
-                                                    //     }))
-                                                    //     .prop_signal("value", page.selected_system_template.signal_cloned().map(|opt| opt.as_ref().map(|selected| selected.template_name().to_owned()).unwrap_or_default()))
-                                                    //     .with_node!(element => {
-                                                    //         .event(clone!(page => move |_: events::Change| {
-                                                    //             let report_opt = SystemReport::new(&element.value());
-                                                    //             if let Some(report) = report_opt.as_ref() {
-                                                    //                 let params = ReportParam::from_cap_pipe(report.key_param()).iter().map(ReportParamInput::new).collect::<Vec<Rc<ReportParamInput>>>();
-                                                    //                 page.param_inputs.lock_mut().replace_cloned(params);
-                                                    //             }
-                                                    //             page.ids.set_neq(String::new());
-                                                    //             page.selected_system_template.set(report_opt);
-                                                    //             page.report_param_editor_modal.set(None);
-                                                    //             page.show_report_param_input_modal.set_neq(false);
-                                                    //         }))
-                                                    //     })
-                                                    // }))
                                                 }),
                                             ])
                                         }))
@@ -1051,17 +957,6 @@ LIMIT 50;"#;
                                                                 options,
                                                             ))
                                                         })))
-                                                        // .child(html!("select" => HtmlSelectElement, {
-                                                        //     .class(class::FORM_CTRL_SM)
-                                                        //     .attr("id", "custom_templates")
-                                                        //     .children_signal_vec(page.custom_templates_compact.signal_vec_cloned().map(|template| {
-                                                        //         html!("option", {
-                                                        //             .attr("value", &template.template_id.to_string())
-                                                        //             .text(&template.template_name)
-                                                        //         })
-                                                        //     }))
-                                                        //     .apply(mixins::string_value_select(page.selected_custom_template_compact.clone(), page.custom_template_changed.clone()))
-                                                        // }))
                                                     }))
                                                 }
                                             })))
@@ -1091,36 +986,33 @@ LIMIT 50;"#;
                                         .class(class::INPUT_GROUP_SM)
                                         .children([
                                             html!("button", {
+                                                .attr("type", "button")
                                                 .class("btn")
                                                 .class_signal("btn-outline-primary", page.typst_text.signal_ref(|s| !s.trim_start().is_empty()))
                                                 .class_signal("btn-outline-danger", page.typst_text.signal_ref(|s| s.trim_start().is_empty()))
-                                                .class_signal("active", page.editor_mode.signal_cloned().map(|editor_mode| matches!(editor_mode, EditorMode::Typst)))
-                                                .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class_signal("active", page.editor_mode.signal_ref(|editor_mode| matches!(editor_mode, EditorMode::Typst)))
                                                 .text("Typst")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.editor_mode.set_neq(EditorMode::Typst);
                                                 }))
                                             }),
                                             html!("button", {
+                                                .attr("type", "button")
                                                 .class("btn")
                                                 .class_signal("btn-outline-primary", page.sql_text.signal_ref(|s| !s.trim_start().is_empty()))
                                                 .class_signal("btn-outline-danger", page.sql_text.signal_ref(|s| s.trim_start().is_empty()))
-                                                .class_signal("active", page.editor_mode.signal_cloned().map(|editor_mode| matches!(editor_mode, EditorMode::MySql)))
-                                                .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class_signal("active", page.editor_mode.signal_ref(|editor_mode| matches!(editor_mode, EditorMode::MySql)))
                                                 .text("MySQL")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.editor_mode.set_neq(EditorMode::MySql);
                                                 }))
                                             }),
                                             html!("button", {
+                                                .attr("type", "button")
                                                 .class("btn")
                                                 .class_signal("btn-outline-primary", page.info_text.signal_ref(|s| !s.trim_start().is_empty()))
                                                 .class_signal("btn-outline-danger", page.info_text.signal_ref(|s| s.trim_start().is_empty()))
-                                                .class_signal("active", page.editor_mode.signal_cloned().map(|editor_mode| matches!(editor_mode, EditorMode::Info)))
-                                                .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class_signal("active", page.editor_mode.signal_ref(|editor_mode| matches!(editor_mode, EditorMode::Info)))
                                                 .text("Info")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.editor_mode.set_neq(EditorMode::Info);
@@ -1165,7 +1057,6 @@ LIMIT 50;"#;
                                                 .attr("type", "button")
                                                 .class(class::BTN_GREENO)
                                                 .class_signal("active", page.custom_disabled.signal().map(|opt| opt.is_none() || opt == Some(false)))
-                                                .attr("data-bs-toggle", "button")
                                                 .text("Enable")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.custom_disabled.set(Some(false));
@@ -1176,7 +1067,6 @@ LIMIT 50;"#;
                                                 .attr("type", "button")
                                                 .class(class::BTN_REDO)
                                                 .class_signal("active", page.custom_disabled.signal().map(|opt| opt == Some(true)))
-                                                .attr("data-bs-toggle", "button")
                                                 .text("Disable")
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.custom_disabled.set(Some(true));

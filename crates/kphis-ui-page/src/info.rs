@@ -1,4 +1,4 @@
-use dominator::{Dom, body, clone, html};
+use dominator::{Dom, body, clone, events, html};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt},
@@ -119,14 +119,14 @@ impl Announcement {
     }
 
     fn render(&self) -> Dom {
+        let is_show = Mutable::new(false);
         html!("div", {
             .class(class::CARD)
             .children([
                 html!("div", {
                     .class("card-header")
                     .attr("role","button")
-                    .attr("data-bs-toggle","collapse")
-                    .attr("data-bs-target",&["#info-",&self.date.to_string()].concat())
+                    .prop_signal("aria-expanded", is_show.signal().map(|show| if show {"true"} else {"false"}))
                     .child(html!("i",{.class(class::FA_BULLHORN)}))
                     .text("\u{00a0}\u{00a0}")
                     .text(&self.title)
@@ -134,11 +134,13 @@ impl Announcement {
                         .class("float-end")
                         .text(&date_th(&self.date))
                     }))
+                    .event(clone!(is_show => move |_:events::Click| {
+                        is_show.set(!is_show.get());
+                    }))
                 }),
                 html!("div",{
                     .class(["announcement","collapse"])
-                    .attr("id",&["info-",&self.date.to_string()].concat())
-                    .attr("data-bs-announce-date", &self.date.to_string())
+                    .class_signal("show", is_show.signal())
                     .child(html!("div",{
                         .class("card-body")
                         .child(html!("div",{

@@ -26,6 +26,8 @@ use kphis_util::{
     util::{str_some, zero_none},
 };
 
+use crate::modal::modal_show_bool_mixins;
+
 /// - GET `EndPoint::IpdMedReconcileNoteId` (guared, remove cancel btn)
 /// - GET `EndPoint::OpdErMedReconcileNoteId` (guared, remove cancel btn)
 /// - POST `EndPoint::IpdMedReconcileNoteId` (guared, remove 'Add Note' and edit btn)
@@ -64,9 +66,8 @@ pub struct MedReconForm {
 
     med_reconciliation_items: MutableVec<Rc<MedReconItem>>,
 
-    // note modal
+    show_modal_note: Mutable<bool>,
     modal_note_changed: Mutable<bool>,
-    // modal_note: Mutable<String>,
 }
 
 impl MedReconForm {
@@ -604,10 +605,10 @@ impl MedReconForm {
 
         html!("div", {
             .class(class::CARD)
+            .child_signal(page.show_modal_note.signal().map(clone!(app, page => move |show_note_modal| {
+                show_note_modal.then(|| Self::render_note_modal(page.clone(), app.clone()))
+            })))
             .children([
-                html!("div", {
-                    .child(Self::render_note_modal(page.clone(), app.clone()))
-                }),
                 html!("div", {
                     .class("card-body")
                     .child(html!("div", {
@@ -926,7 +927,7 @@ impl MedReconForm {
                             let phamacist_confirm_datetime = page.pharmacist_confirm_datetime.signal_cloned(),
                             let doctor_confirm_datetime = page.doctor_confirm_datetime.signal_cloned() =>
                             note.is_empty() && phamacist_confirm_datetime.is_empty() && doctor_confirm_datetime.is_empty()
-                        }.map(clone!(page => move |can| {
+                        }.map(clone!(app, page => move |can| {
                             can.then(|| {
                                 html!("div", {
                                     .class(class::ROW)
@@ -936,10 +937,12 @@ impl MedReconForm {
                                             .attr("type", "button")
                                             .class(class::BTN_SM_GRAY)
                                             .class(class::FLOAT_RT)
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", &["#medReconciliationNoteFormModal", &page.med_reconciliation_id.get().to_string()].concat())
                                             .child(html!("i", {.class(class::FA_PLUS)}))
                                             .text(" Add Note")
+                                            .event(clone!(app, page => move |_: events::Click| {
+                                                page.show_modal_note.set(true);
+                                                app.show_modal_backdrop();
+                                            }))
                                         }))
                                     }))
                                 })
@@ -963,15 +966,17 @@ impl MedReconForm {
                                                 let phamacist_confirm_datetime = page.pharmacist_confirm_datetime.signal_cloned(),
                                                 let doctor_confirm_datetime = page.doctor_confirm_datetime.signal_cloned() =>
                                                 phamacist_confirm_datetime.is_empty() && doctor_confirm_datetime.is_empty()
-                                            }.map(clone!(page => move |can| {
+                                            }.map(clone!(app, page => move |can| {
                                                 can.then(|| {
                                                     html!("button", {
                                                         .attr("type", "button")
                                                         .class(class::BTN_SM_FR_GRAY)
-                                                        .attr("data-bs-toggle", "modal")
-                                                        .attr("data-bs-target", &["#medReconciliationNoteFormModal", &page.med_reconciliation_id.get().to_string()].concat())
                                                         .child(html!("i", {.class(class::FA_EDIT)}))
                                                         .text(" Edit Note")
+                                                        .event(clone!(app, page => move |_: events::Click| {
+                                                            page.show_modal_note.set(true);
+                                                            app.show_modal_backdrop();
+                                                        }))
                                                     })
                                                 })
                                             })))
@@ -1223,9 +1228,13 @@ impl MedReconForm {
                             page.note_prev.set_neq(note);
                             page.pharmacist_confirm_datetime.set_neq(response.phamacist_confirm_datetime.map(|dt| dt.js_string()).unwrap_or_default());
                             page.modal_note_changed.set_neq(false);
+                            app.clear_modal_backdrop();
+                            page.show_modal_note.set(false);
                         }
                         Ok(None) => {
                             page.note.set_neq(page.note_prev.get_cloned());
+                            app.clear_modal_backdrop();
+                            page.show_modal_note.set(false);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -1258,6 +1267,8 @@ impl MedReconForm {
                                 page.note_prev.set_neq(page.note.get_cloned());
                                 page.modal_note_changed.set_neq(false);
                             }
+                            app.clear_modal_backdrop();
+                            page.show_modal_note.set(false);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -1270,74 +1281,82 @@ impl MedReconForm {
     }
 
     fn render_note_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_note_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_modal_note.clone(), app))
+        })
+    }
+
+    fn render_note_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
         let (is_ipd, is_pre_admit) = page.visit_type.is_ipd_and_is_pre_admit();
 
         html!("div", {
-            .class("modal")
-            .attr("id", &["medReconciliationNoteFormModal", &page.med_reconciliation_id.get().to_string()].concat())
-            .attr("role", "dialog")
+            .class(class::MODAL_DIALOG_LG)
+            .attr("role", "document")
             .child(html!("div", {
-                .class(class::MODAL_DIALOG_LG)
-                .attr("role", "document")
-                .child(html!("div", {
-                    .class("modal-content")
-                    .children([
-                        html!("div", {
-                            .class("modal-header")
-                            .children([
-                                html!("h5", {
-                                    .class("modal-title")
-                                    .text("Note")
-                                }),
-                                doms::close_modal_x_btn(),
-                            ])
-                        }),
-                        html!("div", {
-                            .class("modal-body")
-                            //.attr("id", "med_reconciliation_note_form_modal_body")
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .text("Note")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_modal_note.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        //.attr("id", "med_reconciliation_note_form_modal_body")
+                        .child(html!("div", {
+                            //.attr("id", "med-reconciliation-note-form")
                             .child(html!("div", {
-                                //.attr("id", "med-reconciliation-note-form")
-                                .child(html!("div", {
-                                    .class("mb-3")
-                                    .child(html!("textarea" => HtmlTextAreaElement, {
-                                        .attr("type", "text")
-                                        .class("form-control")
-                                        .apply(mixins::textarea_value_auto_expand(page.note.clone(), page.modal_note_changed.clone()))
-                                    }))
+                                .class("mb-3")
+                                .child(html!("textarea" => HtmlTextAreaElement, {
+                                    .attr("type", "text")
+                                    .class("form-control")
+                                    .apply(mixins::textarea_value_auto_expand(page.note.clone(), page.modal_note_changed.clone()))
                                 }))
                             }))
-                        }),
-                        html!("div", {
-                            .class("modal-footer")
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child(html!("button" => HtmlButtonElement, {
+                            .attr("type", "button")
+                            .class(class::BTN_BLUE)
+                            .child(html!("i", {.class(class::FA_SAVE)}))
+                            .text(" บันทึก")
+                            .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                Self::save_note(page.clone(), app.clone());
+                            }), app.state()))
+                        }))
+                        .apply_if(if is_ipd {
+                            app.endpoint_is_allow(&Method::GET, &EndPoint::IpdMedReconcileNoteId, is_pre_admit)
+                        } else {
+                            app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErMedReconcileNoteId, false)
+                        }, |dom| { dom
                             .child(html!("button" => HtmlButtonElement, {
                                 .attr("type", "button")
-                                .class(class::BTN_BLUE)
-                                .attr("data-bs-dismiss", "modal")
-                                .child(html!("i", {.class(class::FA_SAVE)}))
-                                .text(" Save")
+                                .class(class::BTN_GRAY)
+                                .child(html!("i", {.class(class::FA_X)}))
+                                .text(" ปิด")
                                 .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                    Self::save_note(page.clone(), app.clone());
+                                    Self::load(page.clone(), app.clone());
                                 }), app.state()))
                             }))
-                            .apply_if(if is_ipd {
-                                app.endpoint_is_allow(&Method::GET, &EndPoint::IpdMedReconcileNoteId, is_pre_admit)
-                            } else {
-                                app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErMedReconcileNoteId, false)
-                            }, |dom| { dom
-                                .child(html!("button" => HtmlButtonElement, {
-                                    .attr("type", "button")
-                                    .class(class::BTN_GRAY)
-                                    .attr("data-bs-dismiss", "modal")
-                                    .child(html!("i", {.class(class::FA_X)}))
-                                    .text(" Cancel")
-                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                        Self::load(page.clone(), app.clone());
-                                    }), app.state()))
-                                }))
-                            })
-                        }),
-                    ])
-                }))
+                        })
+                    }),
+                ])
             }))
         })
     }

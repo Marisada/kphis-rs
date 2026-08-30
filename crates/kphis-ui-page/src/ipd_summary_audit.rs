@@ -37,7 +37,7 @@ use kphis_ui_component::{
         pdf_button::PdfButtons,
         searchbox::{dx::DxSearchboxCpn, proc::ProcSearchboxCpn},
     },
-    modal::{blank_modal, lab_history::LabHistory},
+    modal::lab_history::LabHistory,
     show_patient_main::ShowPatientMainCpn,
     summary_note::{SummaryNoteCpn, render_lab_alert, render_problem_list},
 };
@@ -512,17 +512,11 @@ impl IpdSummaryAuditPage {
                     )
                 })
             })))
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "labHistoryModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.lab_history_modal.signal_cloned().map(move |opt| {
-                    opt.as_ref().map(clone!(app => move |modal| {
-                        LabHistory::render(modal.clone(), app, None)
-                    })).or(Some(blank_modal()))
-                }))
-            }))
+            .child_signal(page.lab_history_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    LabHistory::render_modal(modal, page.lab_history_modal.clone(), None, app.clone())
+                })
+            })))
         })
     }
 
@@ -1487,11 +1481,10 @@ impl IpdSummaryAuditMutable {
                                                 .class("input-group-text")
                                                 .text("Audit type")
                                             }),
-                                                html!("button", {
-                                                .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", audit.audit_type.signal_cloned().map(move |t| t == "I"))
+                                            html!("button", {
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class(class::BTN_SM_BLUEO)
+                                                .class_signal("active", audit.audit_type.signal_ref(move |t| t == "I"))
                                                 .text("Internal")
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.audit_type.set(String::from("I"));
@@ -1500,9 +1493,8 @@ impl IpdSummaryAuditMutable {
                                             }),
                                             html!("button", {
                                                 .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", audit.audit_type.signal_cloned().map(move |t| t == "E"))
+                                                .class_signal("active", audit.audit_type.signal_ref(move |t| t == "E"))
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
                                                 .text("External")
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.audit_type.set(String::from("E"));
@@ -1522,10 +1514,9 @@ impl IpdSummaryAuditMutable {
                                         }))
                                         .children(["UC","OFC","LGO","SSS"].into_iter().map(clone!(audit => move |payer| {
                                             html!("button", {
+                                                .attr("type", "button")
                                                 .class(class::BTN_SM_BLUEO)
                                                 .class_signal("active", audit.payer.signal_ref(move |t| t == payer))
-                                                .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
                                                 .text(payer)
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.payer.set(payer.to_string());
@@ -1544,11 +1535,10 @@ impl IpdSummaryAuditMutable {
                                                 .class("input-group-text")
                                                 .text("Physician's authentication")
                                             }),
-                                                html!("button", {
-                                                .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", audit.doctor_auth.signal_cloned().map(move |t| t == "N"))
+                                            html!("button", {
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class(class::BTN_SM_BLUEO)
+                                                .class_signal("active", audit.doctor_auth.signal_ref(move |t| t == "N"))
                                                 .text("No")
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.doctor_auth.set(String::from("N"));
@@ -1556,10 +1546,9 @@ impl IpdSummaryAuditMutable {
                                                 }))
                                             }),
                                             html!("button", {
-                                                .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", audit.doctor_auth.signal_cloned().map(move |t| t == "T"))
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class(class::BTN_SM_BLUEO)
+                                                .class_signal("active", audit.doctor_auth.signal_ref(move |t| t == "T"))
                                                 .text("Text")
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.doctor_auth.set(String::from("T"));
@@ -1567,10 +1556,9 @@ impl IpdSummaryAuditMutable {
                                                 }))
                                             }),
                                             html!("button", {
-                                                .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", audit.doctor_auth.signal_cloned().map(move |t| t == "C"))
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class(class::BTN_SM_BLUEO)
+                                                .class_signal("active", audit.doctor_auth.signal_ref(move |t| t == "C"))
                                                 .text("Cursive")
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.doctor_auth.set(String::from("C"));
@@ -1578,10 +1566,9 @@ impl IpdSummaryAuditMutable {
                                                 }))
                                             }),
                                             html!("button", {
-                                                .class(class::BTN_SM_BLUEO)
-                                                .class_signal("active", audit.doctor_auth.signal_cloned().map(move |t| t == "D"))
                                                 .attr("type", "button")
-                                                .attr("data-bs-toggle", "button")
+                                                .class(class::BTN_SM_BLUEO)
+                                                .class_signal("active", audit.doctor_auth.signal_ref(move |t| t == "D"))
                                                 .text("Digital")
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.doctor_auth.set(String::from("D"));

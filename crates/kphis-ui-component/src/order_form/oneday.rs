@@ -930,8 +930,10 @@ impl OneDayForm {
                                         let hn = page.patient.lock_ref().as_ref().and_then(|pt| pt.hn());
                                         let searchbox = MedSearchboxCpn::new(hn, false);
                                         html!("div", {
-                                            .child(MedSearchboxCpn::render(page.pre_order_master_id.get(), searchbox.clone(), page.clone(), app.clone()))
-                                            .children(MedSearchboxCpn::render_modals(searchbox))
+                                            .children([
+                                                MedSearchboxCpn::render(page.pre_order_master_id.get(), searchbox.clone(), page.clone(), app.clone()),
+                                                MedSearchboxCpn::render_modals(searchbox, app.clone()),
+                                            ])
                                         })
                                     })
                                 })))
@@ -1431,8 +1433,10 @@ impl OneDayForm {
                                         let hn = page.patient.lock_ref().as_ref().and_then(|pt| pt.hn());
                                         let searchbox = MedSearchboxCpn::new(hn, true);
                                         html!("div", {
-                                            .child(MedSearchboxCpn::render(page.pre_order_master_id.get(), searchbox.clone(), page.clone(), app.clone()))
-                                            .children(MedSearchboxCpn::render_modals(searchbox))
+                                            .children([
+                                                MedSearchboxCpn::render(page.pre_order_master_id.get(), searchbox.clone(), page.clone(), app.clone()),
+                                                MedSearchboxCpn::render_modals(searchbox, app.clone()),
+                                            ])
                                         })
                                     })
                                 })))

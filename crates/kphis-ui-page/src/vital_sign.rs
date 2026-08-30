@@ -138,11 +138,6 @@ impl VitalSignPage {
         html!("section", {
             .future(is_window_loaded().for_each(clone!(app, page => move |loaded| {
                 if loaded {
-                    // if page.is_ipd {
-                    //     if let Some(elm) = app.get_id("wards") {
-                    //         NiceSelect::new_default(&elm);
-                    //     }
-                    // }
                     page.search_changed.set(true);
                 }
                 async {}
@@ -222,21 +217,6 @@ impl VitalSignPage {
                                                 clone!(app => move || app.to_local_storage()),
                                                 ward_select_option,
                                             ))
-                                            // .child(html!("select" => HtmlSelectElement, {
-                                            //     .class(class::FORM_CTRL_SM)
-                                            //     .attr("id", "wards")
-                                            //     .children(ward_select_option.iter().map(|option| {
-                                            //         doms::select_option(option, &page.ward.lock_ref())
-                                            //     }))
-                                            //     .prop_signal("value", page.ward.signal_cloned())
-                                            //     .with_node!(element => {
-                                            //         .event(clone!(app, page, element => move |_: events::Change| {
-                                            //             page.ward.set_neq(element.value());
-                                            //             app.to_local_storage();
-                                            //             page.search_changed.set_neq(true);
-                                            //         }))
-                                            //     })
-                                            // }))
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
@@ -246,9 +226,6 @@ impl VitalSignPage {
                                                 let no_ward = page.ward.lock_ref().is_empty();
                                                 if !no_ward {
                                                     page.ward.set(String::new());
-                                                    // if let Some(elm) = app.get_id("wards") {
-                                                    //     NiceSelect::new_default(&elm);
-                                                    // }
                                                     page.search_changed.set_neq(true);
                                                 }
                                             }))

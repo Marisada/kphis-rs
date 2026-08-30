@@ -57,7 +57,6 @@ where
 // doms::form_inline_group_sm([]),
 /// child signature are
 /// - input-group-text : elm.class("input-group-text")
-/// - NiceSelect : div.class(class::FLEX_GROW1).child(NiceSelect.class(class::FORM_CTRL_SM))
 /// - select, input : select.class(class::FORM_SELECT_SM)
 /// - other : div.class("col-xx").child(other)
 pub fn form_inline_group_sm<F>(mixins: F) -> Dom
@@ -342,22 +341,30 @@ where
 //=====//
 
 pub fn antibiogram_dropdown(antibiograms: &[Rc<Antibiograms>]) -> Dom {
+    let dropdown_opened = Mutable::new(false);
     html!("li", {
         .class(class::NAV_ITEM_DROP_PY)
         .children([
             html!("a", {
                 .class(class::NAV_LINK_DROP_TGL)
+                .class_signal("show", dropdown_opened.signal())
                 .attr("href", "#")
                 .attr("id", "antibiogram-menu")
-                .attr("data-bs-toggle", "dropdown")
                 .attr("aria-haspopup", "true")
-                .attr("aria-expanded", "false")
+                .prop_signal("aria-expanded", dropdown_opened.signal().map(|show| if show {"true"} else {"false"}))
                 .text("Antibiogram")
                 .child(html!("i", {.class(class::FA_FILE_R)}))
+                .event_with_options(&EventOptions::preventable(), clone!(dropdown_opened => move |event: events::Click| {
+                    event.prevent_default();
+                    dropdown_opened.set(!dropdown_opened.get());
+                }))
             }),
             html!("div", {
                 .class(class::DROP_MENU_END)
+                .class_signal("show", dropdown_opened.signal())
                 .attr("aria-labelledby", "antibiogram-menu")
+                // needed by "dropdown-menu-end" class
+                .attr("data-bs-popper","static")
                 .children(antibiograms.iter().map(|antibiogram| {
                     html!("a", {
                         .class("dropdown-item")
@@ -369,6 +376,7 @@ pub fn antibiogram_dropdown(antibiograms: &[Rc<Antibiograms>]) -> Dom {
                 }))
             }),
         ])
+        .apply(mixins::dropdown_closing_mixin(dropdown_opened.clone()))
     })
 }
 
@@ -549,24 +557,6 @@ pub fn had_monitor_status(action: &IndexAction, order_item: &OrderItem, show_onl
     }
 }
 
-pub fn close_modal_btn() -> Dom {
-    html!("button", {
-        .attr("type", "button")
-        .class(class::BTN_GRAY)
-        .attr("data-bs-dismiss", "modal")
-        .text("Close")
-    })
-}
-
-pub fn close_modal_x_btn() -> Dom {
-    html!("button", {
-        .attr("type", "button")
-        .class("btn-close")
-        .attr("data-bs-dismiss", "modal")
-        .attr("aria-label", "Close")
-    })
-}
-
 /// use with `<input type="color" list="color-list">`
 pub fn color_picker() -> Dom {
     html!("datalist", {
@@ -672,10 +662,9 @@ fn order_item_types_btn(order_item_type: &'static str, order_item_type_mutable: 
         _ => (class::FA_LIST_CHECK, " ทั้งหมด"),
     };
     html!("button", {
-        .class(class::BTN_SM_BLUEO)
-        .class_signal("active", order_item_type_mutable.signal_cloned().map(move |t| t == order_item_type))
         .attr("type", "button")
-        .attr("data-bs-toggle", "button")
+        .class(class::BTN_SM_BLUEO)
+        .class_signal("active", order_item_type_mutable.signal_ref(move |t| t == order_item_type))
         .child(html!("i", {.class(icon)}))
         .text(label)
         .event(move |_: events::Click| {
@@ -703,10 +692,9 @@ fn is_discharged_btn(is_discharged: &'static str, is_discharged_mutable: Mutable
         _ => (class::FA_LIST_CHECK, " ทั้งหมด"),
     };
     html!("button", {
-        .class(class::BTN_SM_BLUEO)
-        .class_signal("active", is_discharged_mutable.signal_cloned().map(move |t| t == is_discharged))
         .attr("type", "button")
-        .attr("data-bs-toggle", "button")
+        .class(class::BTN_SM_BLUEO)
+        .class_signal("active", is_discharged_mutable.signal_ref(move |t| t == is_discharged))
         .child(html!("i", {.class(icon)}))
         .text(label)
         .event(move |_: events::Click| {
@@ -782,10 +770,9 @@ pub fn index_plan_status_radio(status: Mutable<Option<String>>, status_changed: 
 
 pub fn status_btn(status: AuditStatus, status_mutable: Mutable<AuditStatus>, changed: Mutable<bool>) -> Dom {
     html!("button", {
-        .class(["btn", status.btn_class()])
-        .class_signal("active", status_mutable.signal_cloned().map(clone!(status => move |st| st == status)))
         .attr("type", "button")
-        .attr("data-bs-toggle", "button")
+        .class(["btn", status.btn_class()])
+        .class_signal("active", status_mutable.signal_ref(clone!(status => move |st| st.eq(&status))))
         .text(status.status_text())
         .event(move |_: events::Click| {
             if status_mutable.get_cloned() != status {
@@ -1462,7 +1449,6 @@ pub fn td_text_value_u8_opt_match(mutable: Mutable<Option<u8>>, colspan: &str, i
     })
 }
 
-
 //============//
 // Select Box //
 //============//
@@ -1514,11 +1500,27 @@ impl<F: Fn() + 'static> SelectBox<F> {
             is_opened: Mutable::new(false),
         })
     }
+
     fn set_key(&self, key: String) {
         self.mutable.set(key);
         (self.finish_fn)();
         self.changed.set_neq(true);
     }
+
+    fn set_multiple(&self, with_set_focus: bool) {
+        let pairs = self.result_pairs.lock_ref();
+        let mut unsorted = pairs.iter().map(|(k, _)| k.as_str()).collect::<Vec<&str>>();
+        unsorted.sort();
+        let new = unsorted.join(",");
+        let is_neq = self.mutable.lock_ref().as_str() != &new;
+        if is_neq {
+            if with_set_focus {
+                self.set_focus(&new, false);
+            }
+            self.set_key(new);
+        }
+    }
+
     fn set_focus(&self, key: &str, and_set_result: bool) {
         if self.is_multiple {
             let mut new_pairs = Vec::new();
@@ -1571,7 +1573,7 @@ where
                         Some(html!("span", {
                             .class("multiple-options")
                             .style("pointer-events", "none")
-                            .style("vertical-align", "middle")
+                            .style("line-height", "2")
                             .text("เลือก")
                         }))
                     } else {
@@ -1644,15 +1646,7 @@ where
                                 "Escape" => {
                                     if state.is_opened.get() {
                                         if state.is_multiple {
-                                            let pairs = state.result_pairs.lock_ref();
-                                            let mut unsorted = pairs.iter().map(|(k,_)| k.as_str()).collect::<Vec<&str>>();
-                                            unsorted.sort();
-                                            let new = unsorted.join(",");
-                                            let is_neq = state.mutable.lock_ref().as_str() != &new;
-                                            if is_neq {
-                                                state.set_focus(&new, false);
-                                                state.set_key(new);
-                                            }
+                                            state.set_multiple(true);
                                         } else {
                                             state.set_focus("", false);
                                         }
@@ -1764,14 +1758,7 @@ where
             .global_event(clone!(state => move |e: events::KeyDown| {
                 if state.is_opened.get() && e.key() == "Escape" {
                     if state.is_multiple {
-                        let pairs = state.result_pairs.lock_ref();
-                        let mut unsorted = pairs.iter().map(|(k,_)| k.as_str()).collect::<Vec<&str>>();
-                        unsorted.sort();
-                        let new = unsorted.join(",");
-                        let is_neq = state.mutable.lock_ref().as_str() != &new;
-                        if is_neq {
-                            state.set_key(new);
-                        }
+                        state.set_multiple(false);
                     }
                     state.set_focus(&state.mutable.lock_ref(), false);
                     state.is_opened.set(false);
@@ -1786,6 +1773,9 @@ where
                         .unwrap_or(true);
 
                     if is_outside {
+                        if state.is_multiple {
+                            state.set_multiple(false);
+                        }
                         state.set_focus(&state.mutable.lock_ref(), false);
                         state.is_opened.set(false);
                     }
@@ -1793,11 +1783,16 @@ where
             }))
         })
         .event(clone!(state=> move  |e: events::Click| {
-            if e.target().and_then(|target| target.dyn_into::<web_sys::Element>().ok()).map(|elm| {
+            let is_container = e.target().and_then(|target| target.dyn_into::<web_sys::Element>().ok()).map(|elm| {
                 elm.class_list().contains("nice-select")
-            }).unwrap_or_default() {
+            }).unwrap_or_default();
+            if is_container {
                 let is_opened = state.is_opened.get();
-                if !is_opened {
+                if is_opened {
+                    if state.is_multiple {
+                        state.set_multiple(false);
+                    }
+                } else {
                     state.search_input.set_neq(String::new());
                     state.search_result.lock_mut().replace_cloned(state.options.clone());
                 }

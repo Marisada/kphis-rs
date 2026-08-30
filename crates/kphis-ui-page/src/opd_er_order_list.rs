@@ -16,7 +16,7 @@ use kphis_model::{
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_component::modal::{blank_modal, opd_er_order_new::OpdErOrderNew};
+use kphis_ui_component::modal::opd_er_order_new::OpdErOrderNew;
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
     datetime::{date_8601, datetime_8601, datetime_th_opt_relative, datetime_th_relative},
@@ -60,7 +60,7 @@ pub struct OpdErOrderListPage {
     changed: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
-    is_desc: Mutable<bool>,
+    is_asc: Mutable<bool>,
 
     timer_handle: Mutable<Option<i32>>,
     timer_second: Mutable<f32>,
@@ -116,7 +116,7 @@ impl OpdErOrderListPage {
                         lock.clear();
                         lock.extend(orders.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::BedNo);
-                        page.is_desc.set_neq(false);
+                        page.is_asc.set_neq(false);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -298,12 +298,11 @@ impl OpdErOrderListPage {
                                         html!("button", {
                                             .attr("type", "button")
                                             .class(class::BTN_SM_R_BLUE)
-                                            .attr("data-bs-toggle", "modal")
-                                            .attr("data-bs-target", "#addOpdErOrderModal")
                                             .child(html!("i", {.class(class::FA_PLUS)}))
                                             .text(" เพิ่มใบ Order ใหม่")
-                                            .event(clone!(page => move |_: events::Click| {
+                                            .event(clone!(app, page => move |_: events::Click| {
                                                 page.opd_er_order_new_modal.set(Some(OpdErOrderNew::new()));
+                                                app.show_modal_backdrop();
                                             }))
                                             // .attr("onclick", "onclickAddOpdErOrderMasterButton(event);")
                                         })
@@ -383,7 +382,7 @@ impl OpdErOrderListPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_desc.get() {
+                            if page.is_asc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
                                     SortBy::VisitDateTime => items.sort_by(|a, b| b.vstdate_time.cmp(&a.vstdate_time)),
@@ -431,40 +430,40 @@ impl OpdErOrderListPage {
                                             html!("th", {.attr("scope", "col").text("#")}),
                                             html!("th", {
                                                 .attr("scope", "col").text("เตียง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .attr("scope", "col").text("เวลาส่งตรวจ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::VisitDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::VisitDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .attr("scope", "col").text("เวลาที่มาถึง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::InitDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::InitDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .attr("scope", "col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .attr("scope", "col").text("QN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Qn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Qn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .attr("scope", "col").text("ชื่อ-นามสกุล")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .attr("scope", "col").text("อายุ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.attr("scope", "col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {
                                                 .attr("scope", "col").text("เวลาล่าสุด").child(html!("br")).text("Order")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .attr("scope", "col").text("เวลาล่าสุด").child(html!("br")).text("Vital Sign")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
                                             }),
                                             html!("th", {.attr("scope", "col").style("min-width","100px")
                                                 .text("EWS/qSOFA/SIRS")
@@ -484,17 +483,11 @@ impl OpdErOrderListPage {
                     }
                 })
             })))
-            .child(html!("div", {
-                .class("modal")
-                .attr("id", "addOpdErOrderModal")
-                .attr("role", "dialog")
-                .attr("tabindex", "-1")
-                .child_signal(page.opd_er_order_new_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                    opt.as_ref().map(clone!(app, page => move |modal| {
-                        OpdErOrderNew::render(modal.clone(), page.view_by.clone(), page.opd_er_order_new_modal.clone(), page.changed.clone(), app)
-                    })).or(Some(blank_modal()))
-                })))
-            }))
+            .child_signal(page.opd_er_order_new_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    OpdErOrderNew::render_modal(modal, page.view_by.clone(), page.opd_er_order_new_modal.clone(), page.changed.clone(), app.clone())
+                })
+            })))
         })
     }
 }

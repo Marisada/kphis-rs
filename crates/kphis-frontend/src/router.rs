@@ -1,8 +1,6 @@
 use dominator::{Dom, clone, html, routing};
 use futures_signals::{map_ref, signal::SignalExt, signal_vec::SignalVecExt};
 use std::rc::Rc;
-use wasm_bindgen::JsValue;
-use web_sys::js_sys;
 
 use kphis_model::{app::AppAsset, route::Route, tab::Tab};
 use kphis_ui_app::App;
@@ -52,22 +50,7 @@ pub fn render(app: Rc<App>) -> Dom {
 async fn render_inner(route: Route, app: Rc<App>) -> Dom {
     // log::debug!("Render {}", route.string());
 
-    // clear Bootstrap `modal-backdrop` if exists by
-    // 1. remove <div class="modal-backdrop"></div>
-    // 2. remove `class` and `style` from <body data-bs-theme="light" class="modal-open" style="overflow: hidden; padding-right: 15px;">
-    app.window.with(|w| {
-        if let Some(backdrop) = w.document().unwrap().get_elements_by_class_name("modal-backdrop").item(0) {
-            if let Some(backdrop_parent) = backdrop.parent_node() {
-                backdrop_parent.remove_child(&backdrop).unwrap();
-            }
-            let body = w.document().unwrap().body().unwrap();
-            let classes = js_sys::Array::new();
-            classes.push(&JsValue::from_str("modal-open"));
-            body.class_list().remove(&classes).unwrap();
-            body.style().remove_property("overflow").unwrap();
-            body.style().remove_property("padding-right").unwrap();
-        }
-    });
+    app.clear_modal_backdrop();
 
     if let Route::NotFound { path } = &route {
         // app.sse_end(true);

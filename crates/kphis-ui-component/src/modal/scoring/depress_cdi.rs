@@ -5,7 +5,10 @@ use futures_signals::{
 };
 use std::rc::Rc;
 
+use kphis_ui_app::App;
 use kphis_ui_core::{class, doms};
+
+use crate::modal::modal_show_option_mixins;
 
 const DEPRESS_CDI_INTRO: &str = r#"      แบบคัดกรองภาวะซึมเศร้าในเด็กอายุ 7-17 ปี มีข้อจำกัด ได้แก่
                         1. กลุ่มเป้าหมายต้องอ่านหนังสือออก และเล่าเรื่องราวเกี่ยวกับตนเองได้
@@ -221,7 +224,14 @@ impl DepressCdi {
         }
     }
 
-    pub fn render(modal: Rc<Self>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(modal.total_score_signal().for_each(clone!(modal => move |total_score| {
                 if let Some(total) = total_score {
@@ -244,7 +254,15 @@ impl DepressCdi {
                                     html!("div", {.text("Children's Depression Inventory : CDI")}),
                                 ])
                             }),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -487,7 +505,6 @@ impl DepressCdi {
                         .class("modal-footer")
                         .child(html!("button", {
                             .attr("type", "button")
-                            .attr("data-bs-dismiss", "modal")
                             .class("btn")
                             .class_signal("btn-secondary", not(modal.is_complete.signal()))
                             .class_signal("btn-primary", modal.is_complete.signal())
@@ -533,6 +550,8 @@ impl DepressCdi {
                                     modal.parent_result.set_neq(concat);
                                     modal.parent_changed.set_neq(true);
                                 }
+                                app.clear_modal_backdrop();
+                                display.set(None);
                             })
                         }))
                     }),

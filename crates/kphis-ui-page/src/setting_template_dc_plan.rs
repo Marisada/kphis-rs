@@ -14,7 +14,8 @@ use kphis_model::{
     user::permission::Permission,
 };
 use kphis_ui_app::App;
-use kphis_ui_core::{class, doms, mixins};
+use kphis_ui_component::modal::modal_show_bool_mixins;
+use kphis_ui_core::{class, mixins};
 use kphis_util::util::str_some;
 
 /// - GET `EndPoint::IpdDcPlanTmpDx`
@@ -37,7 +38,6 @@ pub struct SettingTemplateDcPlanPage {
     loaded_dxs: Mutable<bool>,
     dxs: Mutable<Vec<DcPlanTmpDx>>,
     dx_changed: Mutable<bool>,
-    // dx_select_redraw: Mutable<bool>,
     dx_id: Mutable<String>,
     dx_name: Mutable<String>,
     dx_knowledge: Mutable<String>,
@@ -67,6 +67,12 @@ pub struct SettingTemplateDcPlanPage {
     diet_changed: Mutable<bool>,
     diet_id: Mutable<String>,
     diet_text: Mutable<String>,
+
+    show_dx_modal: Mutable<bool>,
+    show_med_modal: Mutable<bool>,
+    show_env_modal: Mutable<bool>,
+    show_tx_modal: Mutable<bool>,
+    show_diet_modal: Mutable<bool>,
 }
 
 impl SettingTemplateDcPlanPage {
@@ -82,7 +88,6 @@ impl SettingTemplateDcPlanPage {
                 match DcPlanTmpDx::call_api_get(&DcPlanTmpParams::default(), app.state()).await {
                     Ok(responses) => {
                         page.dxs.set(responses);
-                        // page.dx_select_redraw.set(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -106,12 +111,15 @@ impl SettingTemplateDcPlanPage {
                 match dx.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.dx_id.set(last_insert_id.to_string());
                             }
                             page.loaded_dxs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_dx_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -130,10 +138,13 @@ impl SettingTemplateDcPlanPage {
                 // DELETE `EndPoint::IpdDcPlanTmpDx`
                 match DcPlanTmpDx::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.dx_id.set(String::new());
                             page.loaded_dxs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_dx_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -171,12 +182,15 @@ impl SettingTemplateDcPlanPage {
                 match med.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.med_id.set(last_insert_id.to_string());
                             }
                             page.loaded_meds.set(false);
-                        }).await;
+
+                            page.show_med_modal.set(false);
+                            app.clear_modal_backdrop();
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -195,10 +209,13 @@ impl SettingTemplateDcPlanPage {
                 // DELETE `EndPoint::IpdDcPlanTmpMed`
                 match DcPlanTmpMed::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.med_id.set(String::new());
                             page.loaded_meds.set(false);
-                        }).await;
+
+                            page.show_med_modal.set(false);
+                            app.clear_modal_backdrop();
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -236,12 +253,15 @@ impl SettingTemplateDcPlanPage {
                 match env.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.env_id.set(last_insert_id.to_string());
                             }
                             page.loaded_envs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_env_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -260,10 +280,13 @@ impl SettingTemplateDcPlanPage {
                 // DELETE `EndPoint::IpdDcPlanTmpEnv`
                 match DcPlanTmpEnv::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.env_id.set(String::new());
                             page.loaded_envs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_env_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -301,12 +324,15 @@ impl SettingTemplateDcPlanPage {
                 match tx.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.tx_id.set(last_insert_id.to_string());
                             }
                             page.loaded_txs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_tx_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -325,10 +351,13 @@ impl SettingTemplateDcPlanPage {
                 // DELETE `EndPoint::IpdDcPlanTmpTx`
                 match DcPlanTmpTx::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.tx_id.set(String::new());
                             page.loaded_txs.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_tx_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -366,12 +395,15 @@ impl SettingTemplateDcPlanPage {
                 match diet.call_api_post(app.state()).await {
                     Ok(response) => {
                         let last_insert_id = response.last_insert_id;
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             if last_insert_id > 0 {
                                 page.diet_id.set(last_insert_id.to_string());
                             }
                             page.loaded_diets.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_diet_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -390,10 +422,13 @@ impl SettingTemplateDcPlanPage {
                 // DELETE `EndPoint::IpdDcPlanTmpDiet`
                 match DcPlanTmpDiet::call_api_delete(&params, app.state()).await {
                     Ok(response) => {
-                        app.alert_execute_response(&response, async move {
+                        app.alert_execute_response(&response, clone!(app => async move {
                             page.diet_id.set(String::new());
                             page.loaded_diets.set(false);
-                        }).await;
+
+                            app.clear_modal_backdrop();
+                            page.show_diet_modal.set(false);
+                        })).await;
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -462,15 +497,6 @@ impl SettingTemplateDcPlanPage {
                 }
                 async {}
             })))
-            // .future(page.dx_select_redraw.signal().for_each(clone!(app, page => move |redraw| {
-            //     if redraw {
-            //         if let Some(elm) = app.get_id("search_temp_dx") {
-            //             NiceSelect::new_default_with_value(&elm, &page.dx_id.lock_ref());
-            //         }
-            //         page.dx_select_redraw.set(false);
-            //     }
-            //     async {}
-            // })))
             .class("container-fluid")
             .child(html!("div", {
                 .children([
@@ -518,151 +544,22 @@ impl SettingTemplateDcPlanPage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempDxModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.dx_id.set_neq(String::new());
                                                     page.dx_name.set_neq(String::new());
                                                     page.dx_knowledge.set_neq(String::new());
                                                     page.dx_revisit.set_neq(String::new());
                                                     page.dx_prevention.set_neq(String::new());
                                                     page.dx_changed.set_neq(false);
-                                                    // page.dx_select_redraw.set(true);
+
+                                                    page.show_dx_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempDxModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempDxModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ Template D: Diagnosis")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .children([
-                                                        html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "dx_name")
-                                                                    .text("ชื่อโรคที่เจ็บป่วย")
-                                                                }),
-                                                                html!("input" => HtmlInputElement, {
-                                                                    .attr("type", "text")
-                                                                    .attr("maxlength", "250")
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "dx_name")
-                                                                    .apply(mixins::string_value_not_empty(page.dx_name.clone(), page.dx_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }),
-                                                        html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "dx_knowledge")
-                                                                    .text("ความรู้เกี่ยวกับโรค")
-                                                                }),
-                                                                html!("textarea" => HtmlTextAreaElement, {
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "dx_knowledge")
-                                                                    .apply(mixins::textarea_value_auto_expand(page.dx_knowledge.clone(), page.dx_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }),
-                                                        html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "dx_revisit")
-                                                                    .text("T Treatment: อาการเร่งด่วนที่ต้องมา รพ.")
-                                                                }),
-                                                                html!("textarea" => HtmlTextAreaElement, {
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "dx_revisit")
-                                                                    .apply(mixins::textarea_value_auto_expand(page.dx_revisit.clone(), page.dx_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }),
-                                                        html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "dx_prevention")
-                                                                    .text("H Health: การฟื้นฟูสภาพร่างกาย, การป้องกันภาวะแทรกซ้อน")
-                                                                }),
-                                                                html!("textarea" => HtmlTextAreaElement, {
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "dx_prevention")
-                                                                    .apply(mixins::textarea_value_auto_expand(page.dx_prevention.clone(), page.dx_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.dx_id.signal_cloned().map(clone!(app, page => move |dx_id| {
-                                                        (!dx_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpDx, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_dx(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                            })
-                                                        )
-                                                    })))
-                                                    .child_signal(page.dx_id.signal_cloned().map(clone!(app, page => move |dx_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpDx, false) &&
-                                                        if dx_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.dx_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.dx_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_dx(page.clone(), app.clone());
-                                                                }), not(page.dx_changed.signal()), app.state()))
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     .class(class::TABLE_SM)
@@ -679,7 +576,7 @@ impl SettingTemplateDcPlanPage {
                                             }))
                                         }),
                                         html!("tbody", {
-                                            .children_signal_vec(page.dxs.signal_cloned().to_signal_vec().map(clone!(page => move |dx| {
+                                            .children_signal_vec(page.dxs.signal_cloned().to_signal_vec().map(clone!(app, page => move |dx| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.class("text-truncate").style("max-width","230px").text(&dx.dx_name.clone().unwrap_or_default())}),
@@ -692,16 +589,17 @@ impl SettingTemplateDcPlanPage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempDxModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.dx_id.set_neq(dx.dx_id.to_string());
                                                                         page.dx_name.set_neq(dx.dx_name.clone().unwrap_or_default());
                                                                         page.dx_knowledge.set_neq(dx.dx_knowledge.clone().unwrap_or_default());
                                                                         page.dx_revisit.set_neq(dx.dx_revisit.clone().unwrap_or_default());
                                                                         page.dx_prevention.set_neq(dx.dx_prevention.clone().unwrap_or_default());
                                                                         page.dx_changed.set_neq(false);
+
+                                                                        page.show_dx_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -717,6 +615,157 @@ impl SettingTemplateDcPlanPage {
                     }))
                 }),
             ])
+            .child_signal(page.show_dx_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_dx_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_dx_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dx_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_dx_modal.clone(), app))
+        })
+    }
+
+    fn render_dx_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ Template D: Diagnosis")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_dx_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .children([
+                            html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "dx_name")
+                                        .text("ชื่อโรคที่เจ็บป่วย")
+                                    }),
+                                    html!("input" => HtmlInputElement, {
+                                        .attr("type", "text")
+                                        .attr("maxlength", "250")
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "dx_name")
+                                        .apply(mixins::string_value_not_empty(page.dx_name.clone(), page.dx_changed.clone()))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "dx_knowledge")
+                                        .text("ความรู้เกี่ยวกับโรค")
+                                    }),
+                                    html!("textarea" => HtmlTextAreaElement, {
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "dx_knowledge")
+                                        .apply(mixins::textarea_value_auto_expand(page.dx_knowledge.clone(), page.dx_changed.clone()))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "dx_revisit")
+                                        .text("T Treatment: อาการเร่งด่วนที่ต้องมา รพ.")
+                                    }),
+                                    html!("textarea" => HtmlTextAreaElement, {
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "dx_revisit")
+                                        .apply(mixins::textarea_value_auto_expand(page.dx_revisit.clone(), page.dx_changed.clone()))
+                                    }),
+                                ])
+                            }),
+                            html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "dx_prevention")
+                                        .text("H Health: การฟื้นฟูสภาพร่างกาย, การป้องกันภาวะแทรกซ้อน")
+                                    }),
+                                    html!("textarea" => HtmlTextAreaElement, {
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "dx_prevention")
+                                        .apply(mixins::textarea_value_auto_expand(page.dx_prevention.clone(), page.dx_changed.clone()))
+                                    }),
+                                ])
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.dx_id.signal_cloned().map(clone!(app, page => move |dx_id| {
+                            (!dx_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpDx, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_dx(page.clone(), app.clone());
+                                    }), app.state()))
+                                })
+                            )
+                        })))
+                        .child_signal(page.dx_id.signal_cloned().map(clone!(app, page => move |dx_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpDx, false) &&
+                            if dx_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.dx_changed.signal())
+                                    .class_signal("btn-secondary", not(page.dx_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_dx(page.clone(), app.clone());
+                                    }), not(page.dx_changed.signal()), app.state()))
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_dx_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -744,104 +793,19 @@ impl SettingTemplateDcPlanPage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempMedModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.med_id.set_neq(String::new());
                                                     page.med_text.set_neq(String::new());
                                                     page.med_changed.set_neq(false);
+
+                                                    page.show_med_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempMedModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempMedModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ M: Medication")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        .child(html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "med_text")
-                                                                    .text("ยาและวิธีใช้ยาที่ได้รับกลับบ้าน")
-                                                                }),
-                                                                html!("textarea" => HtmlTextAreaElement, {
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "med_text")
-                                                                    .apply(mixins::textarea_value_auto_expand(page.med_text.clone(), page.med_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }))
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.med_id.signal_cloned().map(clone!(app, page => move |med_id| {
-                                                        (!med_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpMed, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_med(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                            })
-                                                        )
-                                                    })))
-                                                    .child_signal(page.med_id.signal_cloned().map(clone!(app, page => move |med_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpMed, false) &&
-                                                        if med_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.med_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.med_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_med(page.clone(), app.clone());
-                                                                }), map_ref!{
-                                                                    let changed = page.med_changed.signal(),
-                                                                    let med_text = page.med_text.signal_cloned() =>
-                                                                    !changed || med_text.is_empty()
-                                                                }, app.state()))
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     .class(class::TABLE_SM)
@@ -855,7 +819,7 @@ impl SettingTemplateDcPlanPage {
                                             }))
                                         }),
                                         html!("tbody", {
-                                            .children_signal_vec(page.meds.signal_cloned().to_signal_vec().map(clone!(page => move |med| {
+                                            .children_signal_vec(page.meds.signal_cloned().to_signal_vec().map(clone!(app, page => move |med| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.text(&med.med_text.clone().unwrap_or_default())}),
@@ -865,13 +829,14 @@ impl SettingTemplateDcPlanPage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempMedModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.med_id.set_neq(med.med_id.to_string());
                                                                         page.med_text.set_neq(med.med_text.clone().unwrap_or_default());
                                                                         page.med_changed.set_neq(false);
+
+                                                                        page.show_med_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -887,6 +852,114 @@ impl SettingTemplateDcPlanPage {
                     }))
                 }),
             ])
+            .child_signal(page.show_med_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_med_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_med_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_med_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_med_modal.clone(), app))
+        })
+    }
+
+    fn render_med_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ M: Medication")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_med_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            .child(html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "med_text")
+                                        .text("ยาและวิธีใช้ยาที่ได้รับกลับบ้าน")
+                                    }),
+                                    html!("textarea" => HtmlTextAreaElement, {
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "med_text")
+                                        .apply(mixins::textarea_value_auto_expand(page.med_text.clone(), page.med_changed.clone()))
+                                    }),
+                                ])
+                            }))
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.med_id.signal_cloned().map(clone!(app, page => move |med_id| {
+                            (!med_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpMed, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_med(page.clone(), app.clone());
+                                    }), app.state()))
+                                })
+                            )
+                        })))
+                        .child_signal(page.med_id.signal_cloned().map(clone!(app, page => move |med_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpMed, false) &&
+                            if med_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.med_changed.signal())
+                                    .class_signal("btn-secondary", not(page.med_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_med(page.clone(), app.clone());
+                                    }), map_ref!{
+                                        let changed = page.med_changed.signal(),
+                                        let med_text = page.med_text.signal_cloned() =>
+                                        !changed || med_text.is_empty()
+                                    }, app.state()))
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_med_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -914,104 +987,19 @@ impl SettingTemplateDcPlanPage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempEnvModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.env_id.set_neq(String::new());
                                                     page.env_text.set_neq(String::new());
                                                     page.env_changed.set_neq(false);
+
+                                                    page.show_env_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempEnvModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempEnvModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ E: Environment")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        .child(html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "env_text")
-                                                                    .text("สภาพแวดล้อมที่เหมาะสม")
-                                                                }),
-                                                                html!("textarea" => HtmlTextAreaElement, {
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "env_text")
-                                                                    .apply(mixins::textarea_value_auto_expand(page.env_text.clone(), page.env_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }))
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.env_id.signal_cloned().map(clone!(app, page => move |env_id| {
-                                                        (!env_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpEnv, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_env(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                            })
-                                                        )
-                                                    })))
-                                                    .child_signal(page.env_id.signal_cloned().map(clone!(app, page => move |env_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpEnv, false) &&
-                                                        if env_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.env_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.env_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_env(page.clone(), app.clone());
-                                                                }), map_ref!{
-                                                                    let changed = page.env_changed.signal(),
-                                                                    let env_text = page.env_text.signal_cloned() =>
-                                                                    !changed || env_text.is_empty()
-                                                                }, app.state()))
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     .class(class::TABLE_SM)
@@ -1025,7 +1013,7 @@ impl SettingTemplateDcPlanPage {
                                             }))
                                         }),
                                         html!("tbody", {
-                                            .children_signal_vec(page.envs.signal_cloned().to_signal_vec().map(clone!(page => move |env| {
+                                            .children_signal_vec(page.envs.signal_cloned().to_signal_vec().map(clone!(app, page => move |env| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.text(&env.env_text.clone().unwrap_or_default())}),
@@ -1035,13 +1023,14 @@ impl SettingTemplateDcPlanPage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempEnvModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.env_id.set_neq(env.env_id.to_string());
                                                                         page.env_text.set_neq(env.env_text.clone().unwrap_or_default());
                                                                         page.env_changed.set_neq(false);
+
+                                                                        page.show_env_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1057,6 +1046,114 @@ impl SettingTemplateDcPlanPage {
                     }))
                 }),
             ])
+            .child_signal(page.show_env_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_env_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_env_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_env_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_env_modal.clone(), app))
+        })
+    }
+
+    fn render_env_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ E: Environment")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_env_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            .child(html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "env_text")
+                                        .text("สภาพแวดล้อมที่เหมาะสม")
+                                    }),
+                                    html!("textarea" => HtmlTextAreaElement, {
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "env_text")
+                                        .apply(mixins::textarea_value_auto_expand(page.env_text.clone(), page.env_changed.clone()))
+                                    }),
+                                ])
+                            }))
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.env_id.signal_cloned().map(clone!(app, page => move |env_id| {
+                            (!env_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpEnv, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_env(page.clone(), app.clone());
+                                    }), app.state()))
+                                })
+                            )
+                        })))
+                        .child_signal(page.env_id.signal_cloned().map(clone!(app, page => move |env_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpEnv, false) &&
+                            if env_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.env_changed.signal())
+                                    .class_signal("btn-secondary", not(page.env_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_env(page.clone(), app.clone());
+                                    }), map_ref!{
+                                        let changed = page.env_changed.signal(),
+                                        let env_text = page.env_text.signal_cloned() =>
+                                        !changed || env_text.is_empty()
+                                    }, app.state()))
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                                .attr("type", "button")
+                                .class(class::BTN_GRAY)
+                                .child(html!("i", {.class(class::FA_X)}))
+                                .text(" ปิด")
+                                .event(move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_env_modal.set(false);
+                                })
+                            }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -1084,104 +1181,19 @@ impl SettingTemplateDcPlanPage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempTxModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.tx_id.set_neq(String::new());
                                                     page.tx_text.set_neq(String::new());
                                                     page.tx_changed.set_neq(false);
+
+                                                    page.show_tx_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempTxModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempTxModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ T: Treatment")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        .child(html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "tx_text")
-                                                                    .text("ข้อควรปฏิบัติ")
-                                                                }),
-                                                                html!("textarea" => HtmlTextAreaElement, {
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "tx_text")
-                                                                    .apply(mixins::textarea_value_auto_expand(page.tx_text.clone(), page.tx_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }))
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.tx_id.signal_cloned().map(clone!(app, page => move |tx_id| {
-                                                        (!tx_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpTx, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_tx(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                            })
-                                                        )
-                                                    })))
-                                                    .child_signal(page.tx_id.signal_cloned().map(clone!(app, page => move |tx_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpTx, false) &&
-                                                        if tx_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.tx_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.tx_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_tx(page.clone(), app.clone());
-                                                                }), map_ref!{
-                                                                    let changed = page.tx_changed.signal(),
-                                                                    let tx_text = page.tx_text.signal_cloned() =>
-                                                                    !changed || tx_text.is_empty()
-                                                                }, app.state()))
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     .class(class::TABLE_SM)
@@ -1195,7 +1207,7 @@ impl SettingTemplateDcPlanPage {
                                             }))
                                         }),
                                         html!("tbody", {
-                                            .children_signal_vec(page.txs.signal_cloned().to_signal_vec().map(clone!(page => move |tx| {
+                                            .children_signal_vec(page.txs.signal_cloned().to_signal_vec().map(clone!(app, page => move |tx| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.text(&tx.tx_text.clone().unwrap_or_default())}),
@@ -1205,13 +1217,14 @@ impl SettingTemplateDcPlanPage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempTxModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.tx_id.set_neq(tx.tx_id.to_string());
                                                                         page.tx_text.set_neq(tx.tx_text.clone().unwrap_or_default());
                                                                         page.tx_changed.set_neq(false);
+
+                                                                        page.show_tx_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1227,6 +1240,114 @@ impl SettingTemplateDcPlanPage {
                     }))
                 }),
             ])
+            .child_signal(page.show_tx_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_tx_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_tx_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_tx_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_tx_modal.clone(), app))
+        })
+    }
+
+    fn render_tx_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ T: Treatment")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_tx_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            .child(html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "tx_text")
+                                        .text("ข้อควรปฏิบัติ")
+                                    }),
+                                    html!("textarea" => HtmlTextAreaElement, {
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "tx_text")
+                                        .apply(mixins::textarea_value_auto_expand(page.tx_text.clone(), page.tx_changed.clone()))
+                                    }),
+                                ])
+                            }))
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.tx_id.signal_cloned().map(clone!(app, page => move |tx_id| {
+                            (!tx_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpTx, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_tx(page.clone(), app.clone());
+                                    }), app.state()))
+                                })
+                            )
+                        })))
+                        .child_signal(page.tx_id.signal_cloned().map(clone!(app, page => move |tx_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpTx, false) &&
+                            if tx_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.tx_changed.signal())
+                                    .class_signal("btn-secondary", not(page.tx_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_tx(page.clone(), app.clone());
+                                    }), map_ref!{
+                                        let changed = page.tx_changed.signal(),
+                                        let tx_text = page.tx_text.signal_cloned() =>
+                                        !changed || tx_text.is_empty()
+                                    }, app.state()))
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_tx_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 
@@ -1254,104 +1375,19 @@ impl SettingTemplateDcPlanPage {
                                             .child(html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_FR_R_BLUE)
-                                                .attr("data-bs-toggle", "modal")
-                                                .attr("data-bs-target", "#AddTempDietModal")
                                                 .child(html!("i", {.class(class::FA_PLUS)}))
                                                 .text(" เพิ่ม")
-                                                .event(clone!(page => move |_: events::Click| {
+                                                .event(clone!(app, page => move |_: events::Click| {
                                                     page.diet_id.set_neq(String::new());
                                                     page.diet_text.set_neq(String::new());
                                                     page.diet_changed.set_neq(false);
+
+                                                    page.show_diet_modal.set(true);
+                                                    app.show_modal_backdrop();
                                                 }))
                                             }))
                                         }))
                                     })
-                                }),
-                                html!("div", {
-                                    .class("modal")
-                                    .attr("id", "AddTempDietModal")
-                                    .attr("tabindex", "-1")
-                                    .attr("aria-labelledby", "AddTempDietModal")
-                                    .child(html!("div", {
-                                        .class(class::MODAL_DIALOG_C)
-                                        .child(html!("div", {
-                                            .class("modal-content")
-                                            .children([
-                                                html!("div", {
-                                                    .class("modal-header")
-                                                    .children([
-                                                        html!("h5", {
-                                                            .class("modal-title")
-                                                            .child(html!("i", {.class(class::FA_USER_COG)}))
-                                                            .text(" จัดการ D: Diet")
-                                                        }),
-                                                        doms::close_modal_x_btn(),
-                                                    ])
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-body")
-                                                    .child(html!("div", {
-                                                        .child(html!("div", {
-                                                            .class("mb-3")
-                                                            .children([
-                                                                html!("label", {
-                                                                    .class("fw-bold")
-                                                                    .attr("for", "diet_text")
-                                                                    .text("อาหารที่ควรงดหรือควรรับประทาน")
-                                                                }),
-                                                                html!("textarea" => HtmlTextAreaElement, {
-                                                                    .class(class::FORM_CTRL_T)
-                                                                    .attr("id", "diet_text")
-                                                                    .apply(mixins::textarea_value_auto_expand(page.diet_text.clone(), page.diet_changed.clone()))
-                                                                }),
-                                                            ])
-                                                        }))
-                                                    }))
-                                                }),
-                                                html!("div", {
-                                                    .class("modal-footer")
-                                                    .child_signal(page.diet_id.signal_cloned().map(clone!(app, page => move |diet_id| {
-                                                        (!diet_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpDiet, false)).then(||
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class(class::BTN_LX_RED)
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Delete")
-                                                                .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                                    Self::delete_diet(page.clone(), app.clone());
-                                                                }), app.state()))
-                                                            })
-                                                        )
-                                                    })))
-                                                    .child_signal(page.diet_id.signal_cloned().map(clone!(app, page => move |diet_id| {
-                                                        (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpDiet, false) &&
-                                                        if diet_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateEdit)
-                                                        } else {
-                                                            app.has_permission(Permission::NursingProgressnoteTemplateAdd)
-                                                        }).then(|| {
-                                                            html!("button" => HtmlButtonElement, {
-                                                                .attr("type", "button")
-                                                                .class("btn")
-                                                                .class_signal("btn-primary", page.diet_changed.signal())
-                                                                .class_signal("btn-secondary", not(page.diet_changed.signal()))
-                                                                .attr("data-bs-dismiss", "modal")
-                                                                .text("Save")
-                                                                .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                                                                    Self::save_diet(page.clone(), app.clone());
-                                                                }), map_ref!{
-                                                                    let changed = page.diet_changed.signal(),
-                                                                    let diet_text = page.diet_text.signal_cloned() =>
-                                                                    !changed || diet_text.is_empty()
-                                                                }, app.state()))
-                                                            })
-                                                        })
-                                                    })))
-                                                    .child(doms::close_modal_btn())
-                                                }),
-                                            ])
-                                        }))
-                                    }))
                                 }),
                                 html!("table", {
                                     .class(class::TABLE_SM)
@@ -1365,7 +1401,7 @@ impl SettingTemplateDcPlanPage {
                                             }))
                                         }),
                                         html!("tbody", {
-                                            .children_signal_vec(page.diets.signal_cloned().to_signal_vec().map(clone!(page => move |diet| {
+                                            .children_signal_vec(page.diets.signal_cloned().to_signal_vec().map(clone!(app, page => move |diet| {
                                                 html!("tr", {
                                                     .children([
                                                         html!("td", {.text(&diet.diet_text.clone().unwrap_or_default())}),
@@ -1375,13 +1411,14 @@ impl SettingTemplateDcPlanPage {
                                                                 dom.child(html!("button", {
                                                                     .attr("type", "button")
                                                                     .class(class::BTN_SM)
-                                                                    .attr("data-bs-toggle", "modal")
-                                                                    .attr("data-bs-target", "#AddTempDietModal")
                                                                     .child(html!("i",{.class(class::FA_EDIT)}))
-                                                                    .event(clone!(page => move |_: events::Click| {
+                                                                    .event(clone!(app, page => move |_: events::Click| {
                                                                         page.diet_id.set_neq(diet.diet_id.to_string());
                                                                         page.diet_text.set_neq(diet.diet_text.clone().unwrap_or_default());
                                                                         page.diet_changed.set_neq(false);
+
+                                                                        page.show_diet_modal.set(true);
+                                                                        app.show_modal_backdrop();
                                                                     }))
                                                                 }))
                                                             })
@@ -1397,6 +1434,114 @@ impl SettingTemplateDcPlanPage {
                     }))
                 }),
             ])
+            .child_signal(page.show_diet_modal.signal().map(clone!(app, page => move |show| {
+                show.then(|| Self::render_diet_modal(page.clone(), app.clone()))
+            })))
+        })
+    }
+
+    fn render_diet_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_diet_modal_dialog(page.clone(), app.clone()))
+            .apply(modal_show_bool_mixins(page.show_diet_modal.clone(), app))
+        })
+    }
+
+    fn render_diet_modal_dialog(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .class(class::MODAL_DIALOG_C)
+            .child(html!("div", {
+                .class("modal-content")
+                .children([
+                    html!("div", {
+                        .class("modal-header")
+                        .children([
+                            html!("h5", {
+                                .class("modal-title")
+                                .child(html!("i", {.class(class::FA_USER_COG)}))
+                                .text(" จัดการ D: Diet")
+                            }),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, page => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    page.show_diet_modal.set(false);
+                                }))
+                            }),
+                        ])
+                    }),
+                    html!("div", {
+                        .class("modal-body")
+                        .child(html!("div", {
+                            .child(html!("div", {
+                                .class("mb-3")
+                                .children([
+                                    html!("label", {
+                                        .class("fw-bold")
+                                        .attr("for", "diet_text")
+                                        .text("อาหารที่ควรงดหรือควรรับประทาน")
+                                    }),
+                                    html!("textarea" => HtmlTextAreaElement, {
+                                        .class(class::FORM_CTRL_T)
+                                        .attr("id", "diet_text")
+                                        .apply(mixins::textarea_value_auto_expand(page.diet_text.clone(), page.diet_changed.clone()))
+                                    }),
+                                ])
+                            }))
+                        }))
+                    }),
+                    html!("div", {
+                        .class("modal-footer")
+                        .child_signal(page.diet_id.signal_cloned().map(clone!(app, page => move |diet_id| {
+                            (!diet_id.is_empty() && app.endpoint_is_allow(&Method::DELETE, &EndPoint::IpdDcPlanTmpDiet, false)).then(||
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_LX_RED)
+                                    .text("Delete")
+                                    .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
+                                        Self::delete_diet(page.clone(), app.clone());
+                                    }), app.state()))
+                                })
+                            )
+                        })))
+                        .child_signal(page.diet_id.signal_cloned().map(clone!(app, page => move |diet_id| {
+                            (app.endpoint_is_allow(&Method::POST, &EndPoint::IpdDcPlanTmpDiet, false) &&
+                            if diet_id.parse::<u32>().map(|id| id > 0).unwrap_or_default() {
+                                app.has_permission(Permission::NursingProgressnoteTemplateEdit)
+                            } else {
+                                app.has_permission(Permission::NursingProgressnoteTemplateAdd)
+                            }).then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class("btn")
+                                    .class_signal("btn-primary", page.diet_changed.signal())
+                                    .class_signal("btn-secondary", not(page.diet_changed.signal()))
+                                    .text("Save")
+                                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
+                                        Self::save_diet(page.clone(), app.clone());
+                                    }), map_ref!{
+                                        let changed = page.diet_changed.signal(),
+                                        let diet_text = page.diet_text.signal_cloned() =>
+                                        !changed || diet_text.is_empty()
+                                    }, app.state()))
+                                })
+                            })
+                        })))
+                        .child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                page.show_diet_modal.set(false);
+                            })
+                        }))
+                    }),
+                ])
+            }))
         })
     }
 }

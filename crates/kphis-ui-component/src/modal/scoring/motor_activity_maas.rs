@@ -2,7 +2,10 @@ use dominator::{Dom, clone, events, html};
 use futures_signals::signal::{Mutable, SignalExt};
 use std::rc::Rc;
 
+use kphis_ui_app::App;
 use kphis_ui_core::{class, doms};
+
+use crate::modal::modal_show_option_mixins;
 
 const MAAS_INTRO: &str = r#"            สำหรับประเมินความเสี่ยงต่อการเลื่อนหลุดของท่อช่วยหายใจ ด้วยการประเมินระดับความรู้สึกตัวและพฤติกรรมการเคลื่อนไหว เพื่อวางแผนการผูกยึดร่างกายผู้ป่วย"#;
 const MAAS_INTRERPRET: &str = r#"            การแปลผล
@@ -21,7 +24,14 @@ impl MotorActivityMaas {
         Rc::new(Self { parent_result, parent_changed })
     }
 
-    pub fn render(modal: Rc<Self>) -> Dom {
+    pub fn render_modal(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
+        html!("div", {
+            .child(Self::render_dialog(modal, display.clone(), app.clone()))
+            .apply(modal_show_option_mixins(display, app))
+        })
+    }
+
+    fn render_dialog(modal: Rc<Self>, display: Mutable<Option<Rc<Self>>>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::MODAL_DIALOG_XL_FULL)
             .attr("role", "document")
@@ -32,7 +42,15 @@ impl MotorActivityMaas {
                         .class("modal-header")
                         .children([
                             html!("h5", {.class("modal-title").text("แบบประเมิน Motor Activity Assessment Scale: MAAS)")}),
-                            doms::close_modal_x_btn(),
+                            html!("button", {
+                                .attr("type", "button")
+                                .class("btn-close")
+                                .attr("aria-label", "Close")
+                                .event(clone!(app, display => move |_: events::Click| {
+                                    app.clear_modal_backdrop();
+                                    display.set(None);
+                                }))
+                            }),
                         ])
                     }),
                     html!("div", {
@@ -133,9 +151,13 @@ impl MotorActivityMaas {
                         .class("modal-footer")
                         .child(html!("button", {
                             .attr("type", "button")
-                            .attr("data-bs-dismiss", "modal")
-                            .class(class::BTN_BLUE)
-                            .text("ปิด")
+                            .class(class::BTN_GRAY)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .text(" ปิด")
+                            .event(move |_: events::Click| {
+                                app.clear_modal_backdrop();
+                                display.set(None);
+                            })
                         }))
                     }),
                 ])

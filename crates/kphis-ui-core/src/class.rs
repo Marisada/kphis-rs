@@ -10,11 +10,8 @@ pub const ABSOLUTE_FB: [&str; 4] = ["position-absolute","start-0","bottom-0","w-
 pub const ABSOLUTE_RT: [&str; 3] = ["position-absolute","end-0","top-0"];
 
 pub const ACCORDION_BTN_CYANS_P2: [&str; 3] = ["accordion-button","bg-info-subtle","p-2"];
-pub const ACCORDION_BTN_COLLAPSED_CYANS_P2: [&str; 4] = ["accordion-button","collapsed","bg-info-subtle","p-2"];
 pub const ACCORDION_BTN_GOLD_P2: [&str; 3] = ["accordion-button","bg-warning-subtle","p-2"];
-pub const ACCORDION_BTN_COLLAPSED_GOLD_P2: [&str; 4] = ["accordion-button","collapsed","bg-warning-subtle","p-2"];
 pub const ACCORDION_COLLAPSE: [&str; 2] = ["accordion-collapse","collapse"];
-pub const ACCORDION_COLLAPSE_SHOW: [&str; 3] = ["accordion-collapse","collapse","show"];
 
 pub const ALERT_BLUE: [&str; 2] = ["alert","alert-primary"];
 pub const ALERT_CYAN: [&str; 2] = ["alert","alert-info"];
@@ -493,6 +490,7 @@ pub const FA_MAX: [&str; 2] = ["fa-solid","fa-expand"];
 pub const FA_MEDICINE: [&str; 2] = ["fa-solid","fa-staff-snake"];
 pub const FA_MIN: [&str; 2] = ["fa-solid","fa-compress"];
 pub const FA_MINUS: [&str; 2] = ["fa-solid","fa-minus"];
+pub const FA_MINUS_SQ: [&str; 2] = ["fa-regular","fa-square-minus"];
 pub const FA_MOON: [&str; 2] = ["fa-regular","fa-moon"];
 pub const FA_NETWORK: [&str; 2] = ["fa-solid","fa-network-wired"];
 pub const FA_NOTE_MED: [&str; 2] = ["fa-solid","fa-notes-medical"];
@@ -727,6 +725,7 @@ pub const P_L0: [&str; 2] = ["p-3","ps-0"];
 pub const PY_L: [&str; 2] = ["py-1","me-2"];
 pub const PY_RX: [&str; 2] = ["py-1","ms-auto"];
 
+pub const MODAL_SHOW: [&str; 3] = ["modal","show","d-block"];
 pub const MODAL_BODY_P0: [&str; 2] = ["modal-body","p-0"];
 pub const MODAL_BODY_P2: [&str; 2] = ["modal-body","p-2"];
 pub const MODAL_CONTENT_X: [&str; 2] = ["modal-content","mx-3"];
@@ -759,9 +758,6 @@ pub const NAV_ITEM_DROP_PY: [&str; 3] = ["nav-item","dropdown","py-1"];
 pub const NAV_ITEM_LINK: [&str; 2] = ["nav-item","nav-link"];
 pub const NAV_ITEM_LINK_P2: [&str; 3] = ["nav-item","nav-link","p-2"];
 pub const NAV_ITEM_LINK_R: [&str; 3] = ["nav-item","nav-link","ms-auto"];
-pub const NAV_ITEM_LINK_ACTIVE: [&str; 3] = ["nav-item","nav-link","active"];
-pub const NAV_ITEM_LINK_ACTIVE_P2: [&str; 4] = ["nav-item","nav-link","active","p-2"];
-pub const NAV_LINK_ACTIVE: [&str; 2] = ["nav-link","active"];
 pub const NAV_LINK_DROP_TGL: [&str; 2] = ["nav-link","dropdown-toggle"];
 pub const NAV_LINK_DROP_TGL_TW_PY: [&str; 4] =["nav-link","dropdown-toggle","text-white","py-1"];
 
@@ -826,10 +822,6 @@ pub const TABLE_SM_NB: [&str; 3] = ["table","table-sm","table-hover"];
 pub const TABLE_SM_STRIP: [&str; 5] = ["table","table-sm","table-striped","table-bordered","table-hover"];
 
 pub const TABLE_BG_CYAN: [&str; 2] = ["table-info","text-nowrap"];
-
-pub const TAB_FADE_SHOW_ACTIVE: [&str; 4] = ["tab-pane","fade","show","active"];
-pub const TAB_ACTIVE: [&str; 2] = ["tab-pane","active"];
-pub const TAB_FADE: [&str; 2] = ["tab-pane","fade"];
 
 pub const TXT_BLUE_EM: [&str; 2] = ["text-primary-emphasis","me-1"];
 pub const TXT_BLUE_R: [&str; 2] = ["text-primary","ms-1"];

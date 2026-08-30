@@ -160,7 +160,7 @@ CREATE TABLE `kphis_extra`.`ipd_mra` (
 	`nn_9` TINYINT(1) UNSIGNED DEFAULT 0,
 	`nn_sub` TINYINT(1) UNSIGNED DEFAULT 0,
 	`nn_text` TEXT DEFAULT NULL,
-    `create_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
+	`create_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
 	`create_datetime` DATETIME NOT NULL,
 	`update_user` VARCHAR(250) CHARACTER SET tis620 COLLATE 'tis620_thai_ci' NOT NULL,
 	`update_datetime` DATETIME NOT NULL,

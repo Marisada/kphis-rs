@@ -9,7 +9,7 @@ use web_sys::{HtmlInputElement, HtmlSelectElement};
 
 use kphis_model::drug_use_duration::{DrugUseDuration, DrugUseDurationParams};
 use kphis_ui_app::App;
-use kphis_ui_component::modal::{blank_modal, drug_details::DrugDetailModal};
+use kphis_ui_component::modal::drug_details::DrugDetailModal;
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::util::str_some;
 
@@ -94,9 +94,9 @@ impl DrugUseDurationPage {
             .class("container-fluid")
             .attr("id", "content")
             .children([
-                doms::alert_row(clone!(page => move |alert| { alert
+                doms::alert_row(clone!(app, page => move |alert| { alert
                     .children([
-                        doms::form_inline(clone!(page => move |form| { form
+                        doms::form_inline(clone!(app, page => move |form| { form
                             .children([
                                 doms::form_inline_group_sm(clone!(page => move |group| { group
                                     .children([
@@ -170,16 +170,15 @@ impl DrugUseDurationPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_end(clone!(page => move |group| { group
+                                doms::form_inline_end(clone!(app, page => move |group| { group
                                     .child(html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_SM_BLUE)
-                                        .attr("data-bs-toggle", "modal")
-                                        .attr("data-bs-target", "#drugUseDurationFormModal")
                                         .child(html!("i", {.class(class::FA_PLUS)}))
                                         .text(" เพิ่ม")
                                         .event(clone!(page => move |_: events::Click| {
                                             page.drug_details_modal.set(Some(DrugDetailModal::new(true)));
+                                            app.show_modal_backdrop();
                                         }))
                                     }))
                                 }))
@@ -212,29 +211,21 @@ impl DrugUseDurationPage {
                         }),
                         html!("tbody", {
                             .children_signal_vec(page.drugs.signal_vec_cloned().enumerate().map(clone!(app, page => move |(i,row)| {
-                                Self::render_result(i.get().unwrap_or_default(), row, page.clone())
+                                Self::render_result(i.get().unwrap_or_default(), row, page.clone(), app.clone())
                             })))
                         }),
                     ])
                 })),
-                html!("div", {
-                    .class("modal")
-                    .attr("id", "drugUseDurationFormModal")
-                    .attr("role", "dialog")
-                    .attr("tabindex", "-1")
-                    .child_signal(page.drug_details_modal.signal_cloned().map(clone!(app => move |opt| {
-                        opt.map(|modal| DrugDetailModal::render(modal, page.drug_details_modal.clone(), Some(page.changed.clone()), app.clone())).or(Some(blank_modal()))
-                    })))
-                }),
             ])
+            .child_signal(page.drug_details_modal.signal_cloned().map(clone!(app => move |opt| {
+                opt.map(|modal| DrugDetailModal::render_modal(modal, page.drug_details_modal.clone(), Some(page.changed.clone()), app.clone()))
+            })))
         })
     }
 
-    fn render_result(i: usize, row: Rc<DrugUseDuration>, page: Rc<Self>) -> Dom {
+    fn render_result(i: usize, row: Rc<DrugUseDuration>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("tr", {
             .style("cursor","pointer")
-            .attr("data-bs-toggle", "modal")
-            .attr("data-bs-target", "#drugUseDurationFormModal")
             .children([
                 html!("td", {.class("text-center").text(&(i + 1).to_string())}),
                 html!("td", {.class("text-center").text(&row.icode.clone())}),
@@ -310,6 +301,7 @@ impl DrugUseDurationPage {
             ])
             .event(move |_:events::Click| {
                 page.drug_details_modal.set(Some(DrugDetailModal::new_with_med(&row)));
+                app.show_modal_backdrop();
             })
         })
     }

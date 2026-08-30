@@ -59,8 +59,7 @@ impl DocumentCpn {
                         (is_ipd && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdDocumentDatetimeAn, is_pre_admit)).then(|| {
                             html!("a", {
                                 .class(class::NAV_ITEM_LINK)
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Add)))
-                                .attr("data-bs-toggle", "tab")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Add)))
                                 .attr("href", "#")
                                 .attr("role", "tab")
                                 .text("เพิ่มเอกสาร")
@@ -79,8 +78,7 @@ impl DocumentCpn {
                         }).then(|| {
                             html!("a", {
                                 .class(class::NAV_ITEM_LINK)
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::Scan)))
-                                .attr("data-bs-toggle", "tab")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::Scan)))
                                 .attr("href", "#")
                                 .attr("role", "tab")
                                 .text("เอกสาร")
@@ -99,8 +97,7 @@ impl DocumentCpn {
                         }).then(|| {
                             html!("a", {
                                 .class(class::NAV_ITEM_LINK)
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::List)))
-                                .attr("data-bs-toggle", "tab")
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::List)))
                                 .attr("href", "#")
                                 .attr("role", "tab")
                                 .text("รวมเอกสาร")
@@ -297,7 +294,7 @@ impl PdfSource {
     }
 }
 
-pub fn check_used(level: u8, modal_hash: &str, label: &str, sources: Vec<PdfSource>, pdf_path_mutable: Mutable<Option<PdfInner>>, render_pdf_mutable: Mutable<bool>, app: Rc<App>) -> Dom {
+pub fn check_used(level: u8, label: &str, sources: Vec<PdfSource>, pdf_path_mutable: Mutable<Option<PdfInner>>, render_pdf_mutable: Mutable<bool>, app: Rc<App>) -> Dom {
     let (icon_checked, icon_unchecked, tab_class, label_class) = match level {
         0 => ("fa-check-square", "fa-square", "col-md-1", "col-md-11"),
         _ => ("fa-check-circle", "fa-circle", "col-md-2", "col-md-10"),
@@ -317,8 +314,6 @@ pub fn check_used(level: u8, modal_hash: &str, label: &str, sources: Vec<PdfSour
                                     .class(class::BADGE_WRAP_RT_GRAY)
                                     .style("cursor","pointer")
                                     .attr("href","#")
-                                    .attr("data-bs-toggle", "modal")
-                                    .attr("data-bs-target", modal_hash)
                                     .child(html!("i", {.class(class::FA_PRINT)}))
                                     .text(" PDF ")
                                     .text(s.tag())
