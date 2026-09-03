@@ -56,10 +56,10 @@ impl QueryString for IpdSearchPatientOtherRequest {
 impl IpdSearchPatientOtherRequest {
     pub fn not_empty(self) -> Self {
         Self {
-            ward: self.ward.and_then(str_some),
-            doctor_in_charge: self.doctor_in_charge.and_then(str_some),
-            patient: self.patient.and_then(str_some),
-            passcode: self.passcode.and_then(str_some),
+            ward: self.ward.as_ref().and_then(|s| str_some(s)),
+            doctor_in_charge: self.doctor_in_charge.as_ref().and_then(|s| str_some(s)),
+            patient: self.patient.as_ref().and_then(|s| str_some(s)),
+            passcode: self.passcode.as_ref().and_then(|s| str_some(s)),
         }
     }
 }

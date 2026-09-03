@@ -69,7 +69,8 @@ impl SummaryNoteCpn {
     }
 
     fn save_note(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(summary_id), Some(note)) = (zero_none(page.summary_id.get()), str_some(page.note_text.get_cloned())) {
+        let note_opt = str_some(&page.note_text.lock_ref());
+        if let (Some(summary_id), Some(note)) = (zero_none(page.summary_id.get()), note_opt) {
             app.async_load(
                 true,
                 clone!(app => async move {
@@ -94,7 +95,8 @@ impl SummaryNoteCpn {
     }
 
     fn update_note(summary_note_id: u32, page: Rc<Self>, app: Rc<App>) {
-        if let (Some(summary_id), Some(note)) = (zero_none(page.summary_id.get()), str_some(page.note_edit_text.get_cloned())) {
+        let note_opt = str_some(&page.note_edit_text.lock_ref());
+        if let (Some(summary_id), Some(note)) = (zero_none(page.summary_id.get()), note_opt) {
             app.async_load(
                 true,
                 clone!(app => async move {

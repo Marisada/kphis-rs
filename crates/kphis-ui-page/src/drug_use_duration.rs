@@ -40,11 +40,11 @@ impl DrugUseDurationPage {
     // send GET method
     fn submit(page: Rc<Self>, app: Rc<App>) {
         let params = DrugUseDurationParams {
-            icode: str_some(page.icode.get_cloned()),
-            med_name: str_some(page.med_name.get_cloned()),
-            due_status: str_some(page.due_status.get_cloned()),
-            monitor_status: str_some(page.monitor_status.get_cloned()),
-            info_status: str_some(page.info_status.get_cloned()),
+            icode: str_some(&page.icode.lock_ref()),
+            med_name: str_some(&page.med_name.lock_ref()),
+            due_status: str_some(&page.due_status.lock_ref()),
+            monitor_status: str_some(&page.monitor_status.lock_ref()),
+            info_status: str_some(&page.info_status.lock_ref()),
         };
         app.async_load(
             true,

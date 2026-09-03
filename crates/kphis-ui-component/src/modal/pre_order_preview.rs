@@ -332,8 +332,8 @@ impl PreOrderPreview {
                                             let command = PreOrderIntoCommand {
                                                 from: Some(String::from(from)),
                                                 into: Some(String::from(to)),
-                                                from_id: str_some(page.pre_order_master_id.get().to_string()),
-                                                into_id: str_some(page.caller_id.get_cloned()),
+                                                from_id: str_some(&page.pre_order_master_id.get().to_string()),
+                                                into_id: str_some(&page.caller_id.lock_ref()),
                                             };
                                             Self::pre_order_to(&command, parent_date_loaded.clone(), parent_count_loaded.clone(), display.clone(), page.clone(), app.clone());
                                             // use usePreOrderMaster(pre_order_master_id, pre_order_type) FROM ipd-dr-order.php OR ipd-dr-pre-order.php

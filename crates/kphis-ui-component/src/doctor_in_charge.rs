@@ -66,7 +66,8 @@ impl DoctorInChargeCpn {
 
     // ipd-nurse-doctor-in-charge-table.php
     fn load_table(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&&page.an.lock_ref());
+        if let Some(an) = an_opt {
             let params = DoctorInChargeParams { an: Some(an), ..Default::default() };
             app.async_load(
                 true,
@@ -92,12 +93,12 @@ impl DoctorInChargeCpn {
     fn add_or_edit(page: Rc<Self>, app: Rc<App>) {
         let saver = IpdDoctorInCharge {
             doctor_in_charge_id: page.doctor_in_charge_id.get(),
-            an: str_some(page.an.get_cloned()),
-            hn: str_some(page.hn.get_cloned()),
-            doctor: str_some(page.doctor.get_cloned()),
-            spclty: str_some(page.spclty.get_cloned()).map(|s| if s.len() == 1 { ["0", &s].concat() } else { s }),
-            status: str_some(page.status.get_cloned()),
-            activated: str_some(page.activated.get_cloned()),
+            an: str_some(&page.an.lock_ref()),
+            hn: str_some(&page.hn.lock_ref()),
+            doctor: str_some(&page.doctor.lock_ref()),
+            spclty: str_some(&page.spclty.lock_ref()).map(|s| if s.len() == 1 { ["0", &s].concat() } else { s }),
+            status: str_some(&page.status.lock_ref()),
+            activated: str_some(&page.activated.lock_ref()),
             version: page.version.get(),
             doctor_name: None,
             spclty_name: None,

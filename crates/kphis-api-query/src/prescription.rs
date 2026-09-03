@@ -30,7 +30,7 @@ pub async fn get_prescription_screen(
     hosxp: &str,
     kphis_extra: &str,
 ) -> Result<PrescriptionScreen, AppError> {
-    let patient_opt = params.search.and_then(str_some);
+    let patient_opt = params.search.as_ref().and_then(|s| str_some(s));
     let info = if patient_opt.is_some() {
         let mut info_opt = select_info_qn(&patient_opt, hlen, vlen, pool, hosxp).await?;
         if let Some(mut info) = info_opt.take() {
@@ -63,12 +63,12 @@ pub async fn get_prescription_screen(
         None
     };
 
-    let vn = info.as_ref().and_then(|info| info.vn.clone()).or(params.vn.and_then(str_some));
+    let vn = info.as_ref().and_then(|info| info.vn.clone()).or(params.vn.as_ref().and_then(|s| str_some(s)));
     let visit = match vn {
         Some(vn) => {
             let mut info_vn_opt = select_info_vn(&vn, pool, hosxp, kphis_extra).await?;
             if let Some(mut info_vn) = info_vn_opt.take() {
-                let an_opt = info_vn.an.clone().and_then(str_some);
+                let an_opt = info_vn.an.as_ref().and_then(|s| str_some(s));
                 info_vn.medicines = select_info_medicine(&vn, &an_opt, pool, hosxp).await?;
                 info_vn.next_app = select_next_app(&vn, pool, hosxp).await?;
                 info_vn.drug_interactions = select_info_drug_interaction(&vn, pool, hosxp).await?;

@@ -18,7 +18,7 @@ use kphis_worker::{JsMessage, MessageSend};
 kphis_worker::api! {
 
     pub async fn svg(template: String, data: String, user: String, token: String) -> Vec<u8> {
-        match compile(template, data, &user, kphis_util::util::str_some(token)) {
+        match compile(template, data, &user, kphis_util::util::str_some(&token)) {
             Ok(document) => {
                 let v = document.pages().iter().map(|page| {
                     let size = page.frame.size();
@@ -38,7 +38,7 @@ kphis_worker::api! {
     }
 
     pub async fn pdf(template: String, data: String, title: String, author: String, user: String, token: String) -> Vec<u8> {
-        match compile(template, data, &user, kphis_util::util::str_some(token)) {
+        match compile(template, data, &user, kphis_util::util::str_some(&token)) {
             Ok(mut document) => {
                 let now = js_sys::Date::now() as i64;
                 let dt = time::OffsetDateTime::from_unix_timestamp(now / 1000).unwrap();
@@ -51,7 +51,7 @@ kphis_worker::api! {
                     dt.second(),
                 ).map(typst_pdf::Timestamp::new_utc);
                 let info = document.info_mut();
-                info.title = kphis_util::util::str_some(title).map(|t| t.into());
+                info.title = kphis_util::util::str_some(&title).map(|t| t.into());
                 info.author = vec![author.into(), user.into()];
                 let pdf_option = typst_pdf::PdfOptions {
                     ident: typst_library::foundations::Smart::Auto,

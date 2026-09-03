@@ -1445,8 +1445,8 @@ impl MenuCpn {
                                     let route = Route::from_url(&menu.msg_route.lock_ref(), &app.host.lock_ref());
                                     let message = SsePostMessage {
                                         message: menu.msg_message.get_cloned(),
-                                        person: str_some(menu.msg_target_user.get_cloned()),
-                                        ward: str_some(menu.msg_target_ward.get_cloned()),
+                                        person: str_some(&menu.msg_target_user.lock_ref()),
+                                        ward: str_some(&menu.msg_target_ward.lock_ref()),
                                         spclty_id: menu.msg_target_spclty.lock_ref().parse::<u32>().ok(),
                                         route: (!matches!(route, Route::NotFound { path: _ } | Route::UnAuthorized { hash: _ })).then_some(route),
                                         reference: menu.msg_ref.get_cloned(),
@@ -2208,8 +2208,8 @@ fn post_user_config(totp: Option<bool>, totp_qr_opt: Option<Mutable<String>>, ap
             true,
             clone!(app => async move {
                 let user_config = UserConfig {
-                    theme: str_some(user.user.theme.get_cloned()),
-                    wide_screen: str_some(user.user.wide_screen.get_cloned()),
+                    theme: str_some(&user.user.theme.lock_ref()),
+                    wide_screen: str_some(&user.user.wide_screen.lock_ref()),
                     totp,
                 };
                 // POST `EndPoint::UserConfig`

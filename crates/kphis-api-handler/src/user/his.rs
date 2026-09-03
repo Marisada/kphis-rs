@@ -1,6 +1,6 @@
 use argon2::{
     Argon2,
-    password_hash::{PasswordHash, PasswordVerifier},
+    password_hash::{phc::PasswordHash, PasswordVerifier},
 };
 use axum::{
     Json,

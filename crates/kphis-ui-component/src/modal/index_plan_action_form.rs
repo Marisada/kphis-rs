@@ -252,7 +252,7 @@ impl IndexPlanActionForm {
                             order_item_id,
                             an: Some(an.clone()),
                             // current_date: Some(now),
-                            view_by: str_some(modal.view_by.get_cloned()),
+                            view_by: str_some(&modal.view_by.lock_ref()),
                             without_order,
                             ..Default::default()
                         };
@@ -272,7 +272,7 @@ impl IndexPlanActionForm {
                         let params = OrderParams {
                             order_item_id,
                             opd_er_order_master_id: Some(opd_er_order_master_id),
-                            view_by: str_some(modal.view_by.get_cloned()),
+                            view_by: str_some(&modal.view_by.lock_ref()),
                             without_order,
                             ..Default::default()
                         };
@@ -302,7 +302,7 @@ impl IndexPlanActionForm {
                 visit_type,
                 plan_id: modal.plan_id.get().and_then(zero_none),
                 order_item_id: zero_none(modal.order_item_id.get()),
-                plan_detail: str_some(modal.plan_detail.get_cloned()),
+                plan_detail: str_some(&modal.plan_detail.lock_ref()),
                 plan_date: date_8601(&modal.plan_date.lock_ref()),
                 plan_time: time_8601(&modal.plan_time.lock_ref()),
                 plan_sch_type: Some(modal.active_tab.lock_ref().as_str().to_owned()),
@@ -473,7 +473,7 @@ impl IndexPlanActionForm {
                 plan_id: modal.plan_id.get().and_then(zero_none),
                 action_id: modal.action_id.get().and_then(zero_none),
                 check_datetime: datetime_8601(&modal.check_datetime.lock_ref()),
-                check_person: str_some(modal.check_person.get_cloned()),
+                check_person: str_some(&modal.check_person.lock_ref()),
                 ..Default::default()
             };
             app.async_load(
@@ -504,15 +504,15 @@ impl IndexPlanActionForm {
                 plan_id: modal.plan_id.get().and_then(zero_none),
                 action_id: modal.action_id.get().and_then(zero_none),
                 check_datetime: datetime_8601(&modal.check_datetime.lock_ref()),
-                check_person: str_some(modal.check_person.get_cloned()),
-                action_result: str_some(modal.action_result.get_cloned()),
-                action_remark: str_some(modal.action_remark.get_cloned()),
+                check_person: str_some(&modal.check_person.lock_ref()),
+                action_result: str_some(&modal.action_result.lock_ref()),
+                action_remark: str_some(&modal.action_remark.lock_ref()),
                 action_date: date_8601(&modal.action_date.lock_ref()),
                 action_time: time_8601(&modal.action_time.lock_ref()),
-                action_report_back: str_some(modal.action_report_back.get_cloned()),
-                action_blood_had: str_some(modal.action_blood_had.get_cloned()),
-                action_person_1: str_some(modal.action_person_1.get_cloned()),
-                action_person_2: str_some(modal.action_person_2.get_cloned()),
+                action_report_back: str_some(&modal.action_report_back.lock_ref()),
+                action_blood_had: str_some(&modal.action_blood_had.lock_ref()),
+                action_person_1: str_some(&modal.action_person_1.lock_ref()),
+                action_person_2: str_some(&modal.action_person_2.lock_ref()),
                 ..Default::default()
             };
             app.async_load(
@@ -553,8 +553,8 @@ impl IndexPlanActionForm {
                 monitor_datetime: datetime_8601(&modal.monitor_datetime.lock_ref()),
                 monitor_doctor,
                 monitor_abnormal: modal.monitor_abnormal.get_cloned(),
-                monitor_result: str_some(modal.monitor_result.get_cloned()),
-                monitor_remark: str_some(modal.monitor_remark.get_cloned()),
+                monitor_result: str_some(&modal.monitor_result.lock_ref()),
+                monitor_remark: str_some(&modal.monitor_remark.lock_ref()),
                 monitor_doctor_name: None,
             };
             app.async_load(
@@ -2324,7 +2324,7 @@ impl IndexPlanActionForm {
                                                     }, |dom| { dom
                                                         .child_signal(map_ref!{
                                                             let action_id_opt = modal.action_id.signal().map(opt_zero_none),
-                                                            let dtx_opt = modal.action_result.signal_cloned().map(|s| str_some(s)),
+                                                            let dtx_opt = modal.action_result.signal_ref(|s| str_some(s)),
                                                             let has_dtx = modal.has_dtx_signal(),
                                                             let has_vs_id = modal.vs_id.signal().map(|opt| opt.is_some()) =>
                                                             (*action_id_opt, dtx_opt.clone(), *has_dtx, *has_vs_id)
@@ -3550,7 +3550,7 @@ fn nurse_assign_order_item(order_item: Rc<OrderItem>, nurse_assign_mutable: Muta
                 let save = OrderItemPatch {
                     order_item_id: order_item.order_item_id,
                     action: OrderItemPatchAction::NurseAssign,
-                    nurse_assign: str_some(nurse_assign_mutable.get_cloned()),
+                    nurse_assign: str_some(&nurse_assign_mutable.lock_ref()),
                     order_item_type: None,
                     due_doctor: None,
                     due_doctor_note: None,

@@ -603,7 +603,7 @@ impl ReferOutCpn {
                             | VisitTypeId::PreAdmit(an) => {
                                 let params = MedReconciliationParams {
                                     hn: patient.hn(),
-                                    an: str_some(an.to_owned()),
+                                    an: str_some(an),
                                     ..Default::default()
                                 };
                                 // GET `EndPoint::IpdMedReconcile`
@@ -666,7 +666,7 @@ impl ReferOutCpn {
                 true,
                 clone!(app, page => async move {
                     let params = OrderParams {
-                        an: str_some(an),
+                        an: str_some(&an),
                         order_type: Some(String::from("continuous")),
                         current_date: Some(js_now().date()),
                         view_by: Some(String::from("doctor")),
@@ -931,27 +931,27 @@ impl ReferOutCpn {
                 // use expire_date
                 due_date: date_8601(&page.expire_date.lock_ref()),
                 expire_date: date_8601(&page.expire_date.lock_ref()),
-                pre_diagnosis: str_some(sanity_tis620(&page.pre_diagnosis.lock_ref())),
+                pre_diagnosis: str_some(&sanity_tis620(&page.pre_diagnosis.lock_ref())),
                 // use pre_diagnosis
-                diagnosis_text: str_some(sanity_tis620(&page.pre_diagnosis.lock_ref())),
-                pmh: str_some(sanity_tis620(&page.pmh.lock_ref())),
-                hpi: str_some(sanity_tis620(&page.hpi.lock_ref())),
-                lab_text: str_some(sanity_tis620(&page.lab_text.lock_ref())),
-                treatment_text: str_some(sanity_tis620(&page.treatment_text.lock_ref())),
-                other_text: str_some(sanity_tis620(&page.other_text.lock_ref())),
-                request_text: str_some(sanity_tis620(&page.request_text.lock_ref())),
+                diagnosis_text: str_some(&sanity_tis620(&page.pre_diagnosis.lock_ref())),
+                pmh: str_some(&sanity_tis620(&page.pmh.lock_ref())),
+                hpi: str_some(&sanity_tis620(&page.hpi.lock_ref())),
+                lab_text: str_some(&sanity_tis620(&page.lab_text.lock_ref())),
+                treatment_text: str_some(&sanity_tis620(&page.treatment_text.lock_ref())),
+                other_text: str_some(&sanity_tis620(&page.other_text.lock_ref())),
+                request_text: str_some(&sanity_tis620(&page.request_text.lock_ref())),
 
-                department: str_some(page.department.get_cloned()).or(Some(String::from(if pt.is_admited() { "IPD" } else { "OPD" }))),
+                department: str_some(&page.department.lock_ref()).or(Some(String::from(if pt.is_admited() { "IPD" } else { "OPD" }))),
                 pttype: pt.pttype.clone(),
                 spclty: pt.spclty.clone(),
                 refer_type: page.refer_type.lock_ref().parse::<i8>().ok(),
                 refer_cause: page.refer_cause.lock_ref().parse::<i8>().ok(),
-                refer_point: str_some(page.refer_point.get_cloned()),
-                moph_refer_expire_type_id: page.moph_refer_expire_type_id.get_cloned().parse::<i32>().ok(),
+                refer_point: str_some(&page.refer_point.lock_ref()),
+                moph_refer_expire_type_id: page.moph_refer_expire_type_id.lock_ref().parse::<i32>().ok(),
 
                 refer_vital_sign_id: zero_none(page.refer_vital_sign_id.get()),
-                cc: str_some(sanity_tis620(&page.cc.lock_ref())),
-                pe: str_some(sanity_tis620(&page.pe.lock_ref())),
+                cc: str_some(&sanity_tis620(&page.cc.lock_ref())),
+                pe: str_some(&sanity_tis620(&page.pe.lock_ref())),
             };
             app.async_load(
                 true,
@@ -983,19 +983,19 @@ impl ReferOutCpn {
                 refer_hospcode: page.hospital_refer.get_cloned().map(|hosp| hosp.id.clone()),
                 refer_date: date_8601(&page.refer_date.lock_ref()),
                 refer_time: time_8601(&page.refer_time.lock_ref()),
-                docno: str_some(page.docno.get_cloned()),
-                pre_diagnosis: str_some(page.pre_diagnosis.get_cloned()),
+                docno: str_some(&page.docno.lock_ref()),
+                pre_diagnosis: str_some(&page.pre_diagnosis.lock_ref()),
                 // use pre_diagnosis
-                diagnosis_text: str_some(page.pre_diagnosis.get_cloned()),
-                pmh: str_some(page.pmh.get_cloned()),
-                hpi: str_some(page.hpi.get_cloned()),
-                lab_text: str_some(page.lab_text.get_cloned()),
-                treatment_text: str_some(page.treatment_text.get_cloned()),
-                other_text: str_some(page.other_text.get_cloned()),
-                request_text: str_some(page.request_text.get_cloned()),
+                diagnosis_text: str_some(&page.pre_diagnosis.lock_ref()),
+                pmh: str_some(&page.pmh.lock_ref()),
+                hpi: str_some(&page.hpi.lock_ref()),
+                lab_text: str_some(&page.lab_text.lock_ref()),
+                treatment_text: str_some(&page.treatment_text.lock_ref()),
+                other_text: str_some(&page.other_text.lock_ref()),
+                request_text: str_some(&page.request_text.lock_ref()),
 
-                cc: str_some(page.cc.get_cloned()),
-                pe: str_some(page.pe.get_cloned()),
+                cc: str_some(&page.cc.lock_ref()),
+                pe: str_some(&page.pe.lock_ref()),
             };
             app.async_load(
                 true,

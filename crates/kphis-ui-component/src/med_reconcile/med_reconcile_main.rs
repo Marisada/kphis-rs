@@ -91,7 +91,7 @@ impl MedSearchable for MedReconcileCpn {
     }
     fn an(&self) -> Option<String> {
         match self.patient.lock_ref().as_ref().map(|pt| pt.visit_type()) {
-            Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => str_some(an),
+            Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => str_some(&an),
             Some(VisitTypeId::OpdEr(_, _)) | Some(VisitTypeId::Visit(_)) | None => None,
         }
     }
@@ -202,7 +202,7 @@ impl MedReconcileCpn {
                         | VisitTypeId::PreAdmit(an) => {
                             let params = MedReconciliationParams {
                                 hn: patient.hn(),
-                                an: str_some(an.to_owned()),
+                                an: str_some(an),
                                 ..Default::default()
                             };
                             // GET `EndPoint::IpdMedReconcile`
@@ -253,22 +253,22 @@ impl MedReconcileCpn {
             true,
             clone!(app, page => async move {
                 // `med_name` and `custom_med_name` CANNOT EXISTS together
-                let med_name = str_some(page.med_name.get_cloned());
-                let custom_med_name = if med_name.is_some() {None} else {str_some(page.medrec_name.get_cloned())};
+                let med_name = str_some(&page.med_name.lock_ref());
+                let custom_med_name = if med_name.is_some() {None} else {str_some(&page.medrec_name.lock_ref())};
                 let items = vec![MedReconciliationItemSave {
-                    icode: str_some(page.icode.get_cloned()).or(app.state().hosxp_medrec_icode()),
+                    icode: str_some(&page.icode.lock_ref()).or(app.state().hosxp_medrec_icode()),
                     med_name,
                     custom_med_name,
-                    receive_from: str_some(page.receive_from.get_cloned()),
+                    receive_from: str_some(&page.receive_from.lock_ref()),
                     receive_date: date_8601(&page.receive_date.lock_ref()),
-                    old_drugusage: str_some(sanity_dot_space(&page.old_drugusage.lock_ref())),
+                    old_drugusage: str_some(&sanity_dot_space(&page.old_drugusage.lock_ref())),
                     receive_qty: page.receive_qty.lock_ref().parse::<i32>().ok(),
                 }];
                 let result_opt = match visit_type {
                     Some(VisitTypeId::Ipd(an))
                     | Some(VisitTypeId::PreAdmit(an)) => {
                         let params = MedReconciliationParams {
-                            an: str_some(an.to_owned()),
+                            an: str_some(&an),
                             ..Default::default()
                         };
                         // POST `EndPoint::IpdMedReconcile`
@@ -315,7 +315,7 @@ impl MedReconcileCpn {
                     Some(VisitTypeId::Ipd(an))
                     | Some(VisitTypeId::PreAdmit(an)) => {
                         let params = MedReconciliationParams {
-                            an: str_some(an.to_owned()),
+                            an: str_some(&an),
                             ..Default::default()
                         };
                         // POST `EndPoint::IpdMedReconcile`

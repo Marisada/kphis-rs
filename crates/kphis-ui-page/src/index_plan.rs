@@ -85,8 +85,8 @@ impl IndexPlanPage {
             clone!(app, page => async move {
                 if page.is_ipd {
                     let params = AvatarParams {
-                        ward: str_some(app.ward_select.get_cloned()),
-                        search: str_some(page.search.get_cloned()),
+                        ward: str_some(&app.ward_select.lock_ref()),
+                        search: str_some(&page.search.lock_ref()),
                     };
                     if params.is_empty() {
                         page.search_result.lock_mut().clear();
@@ -142,9 +142,9 @@ impl IndexPlanPage {
                         VisitTypeId::Ipd(an)
                         | VisitTypeId::PreAdmit(an) => {
                             let params = OrderParams {
-                                an: str_some(an.to_owned()),
+                                an: str_some(an),
                                 view_by: Some(String::from("doctor")),
-                                without_order: str_some(page.without_order.get_cloned()),
+                                without_order: str_some(&page.without_order.lock_ref()),
                                 ..Default::default()
                             };
                             // GET `EndPoint::IpdOrderItem`
@@ -174,7 +174,7 @@ impl IndexPlanPage {
                         VisitTypeId::OpdEr(_, opd_er_order_master_id) => {
                             let params = OrderParams {
                                 opd_er_order_master_id: zero_none(*opd_er_order_master_id),
-                                without_order: str_some(page.without_order.get_cloned()),
+                                without_order: str_some(&page.without_order.lock_ref()),
                                 ..Default::default()
                             };
                             // GET `EndPoint::OpdErOrderItem`
@@ -431,7 +431,7 @@ impl IndexPlanPage {
                                             ShowPatientMainCpn::new_with_id(*opd_er_order_master_id)
                                         }),
                                         VisitTypeId::Visit(vn) => (!vn.is_empty()).then(|| {
-                                            ShowPatientMainCpn::new_with_vn(vn.to_owned())
+                                            ShowPatientMainCpn::new_with_vn(vn)
                                         }),
                                     };
                                     show_patient_main_opt.map(|show_patient_main| {

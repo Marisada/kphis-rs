@@ -358,7 +358,7 @@ impl XrayCpn {
                         }),
                     ])
                     .apply(|dom| {
-                        if let Some(an) = opt_empty_none(report.an.clone()) {
+                        if let Some(an) = opt_empty_none(report.an.as_ref()) {
                             dom.child(html!("label", {
                                 .class("me-2")
                                 .child(html!("b", {.text("AN : ")}))
@@ -555,10 +555,10 @@ impl XrayCpn {
                                                     }),
                                                     html!("img", {
                                                         .attr("src", &[PATH_PREFIX_API_XRAY_THUMBNAIL, &PacsParams {
-                                                            study_uid: str_some(image.study_uid.to_owned()),
-                                                            series_uid: str_some(image.series_uid.to_owned()),
-                                                            object_uid: str_some(image.object_uid.to_owned()),
-                                                            file_path: str_some(image.file_path.to_owned()),
+                                                            study_uid: str_some(&image.study_uid),
+                                                            series_uid: str_some(&&image.series_uid),
+                                                            object_uid: str_some(&image.object_uid),
+                                                            file_path: str_some(&image.file_path),
                                                             ..Default::default()
                                                         }.query_string()].concat())
                                                         .attr("alt", "thumbnail")

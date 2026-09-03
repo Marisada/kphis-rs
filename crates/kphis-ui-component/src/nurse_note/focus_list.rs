@@ -156,7 +156,7 @@ impl FocusListCpn {
                     let params = FocusListParams {
                         start_date: date_8601(&page.start_date.lock_ref()),
                         end_date: date_8601(&page.end_date.lock_ref()),
-                        status: str_some(page.search_status.get_cloned()),
+                        status: str_some(&page.search_status.lock_ref()),
                         ..Default::default()
                     };
                     let result_opt = match visit_type {
@@ -382,9 +382,9 @@ impl FocusListCpn {
                 fclist_id: zero_none(page.fclist_id.get()),
                 smp_id,
                 focus_id,
-                focus_text: str_some(page.focus_text.get_cloned()),
+                focus_text: str_some(&page.focus_text.lock_ref()),
                 goal_ids: page.goal_ids.lock_ref().to_vec(),
-                goal_text: str_some(page.goal_text.get_cloned()),
+                goal_text: str_some(&page.goal_text.lock_ref()),
                 fclist_stdate: date_8601(&page.fclist_stdate.lock_ref()),
                 fclist_sttime,
                 fclist_enddate: date_8601(&page.fclist_enddate.lock_ref()),

@@ -51,7 +51,7 @@ pub struct IpdPostAdmitListPage {
     changed: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
-    is_asc: Mutable<bool>,
+    is_desc: Mutable<bool>,
 
     show_passcode_modal: Mutable<bool>,
 }
@@ -72,15 +72,15 @@ impl IpdPostAdmitListPage {
             (None, None)
         };
         let params = PostAdmitParams {
-            ward: str_some(app.ward_select.get_cloned()),
-            inscl: str_some(app.inscl_select.get_cloned()),
-            adm_doctor: str_some(app.adm_doctor_select.get_cloned()),
-            dch_doctor: str_some(app.dch_doctor_select.get_cloned()),
-            patient: str_some(page.patient.get_cloned()),
-            passcode: str_some(page.passcode.get_cloned()),
+            ward: str_some(&app.ward_select.lock_ref()),
+            inscl: str_some(&app.inscl_select.lock_ref()),
+            adm_doctor: str_some(&app.adm_doctor_select.lock_ref()),
+            dch_doctor: str_some(&app.dch_doctor_select.lock_ref()),
+            patient: str_some(&page.patient.lock_ref()),
+            passcode: str_some(&page.passcode.lock_ref()),
             start_dchdate,
             end_dchdate,
-            summary_status: str_some(app.summary_status_select.get_cloned()),
+            summary_status: str_some(&app.summary_status_select.lock_ref()),
         };
 
         app.async_load(
@@ -93,7 +93,7 @@ impl IpdPostAdmitListPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::DchDateTime);
-                        page.is_asc.set_neq(false);
+                        page.is_desc.set_neq(false);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -486,7 +486,7 @@ impl IpdPostAdmitListPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_asc.get() {
+                            if page.is_desc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::DchDateTime => items.sort_by(|a, b| datetime_from_opt(b.dchdate, b.dchtime).cmp(&datetime_from_opt(a.dchdate, a.dchtime))),
                                     SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
@@ -518,21 +518,21 @@ impl IpdPostAdmitListPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("Ward")}),
                                             // html!("th", {.class("th-sm").attr("scope","col").text("เวลา Admit")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("สถานะ D/C")}),
                                         ])
@@ -546,15 +546,15 @@ impl IpdPostAdmitListPage {
                                                 .children([
                                                     html!("th", {
                                                         .class("th-sm").attr("scope","col").text("เวลา D/C")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::DchDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::DchDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                                     }),
                                                     html!("th", {
                                                         .class("th-sm").attr("scope","col").text("เวลา Order ล่าสุด")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                                     }),
                                                     html!("th", {
                                                         .class("th-sm").attr("scope","col").text("เวลา Progress ล่าสุด")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::MaxProgressDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::MaxProgressDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                                     }),
                                                 ])
                                             }

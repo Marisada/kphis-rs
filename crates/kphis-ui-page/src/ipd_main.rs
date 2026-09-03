@@ -106,7 +106,8 @@ impl IpdMainPage {
     }
 
     fn loaded_med_reconciliation_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let Some(an) = an_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -125,7 +126,8 @@ impl IpdMainPage {
     }
 
     fn loaded_med_reconciliation_doctor_unconfirm_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let Some(an) = an_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -144,7 +146,8 @@ impl IpdMainPage {
     }
 
     fn loaded_lab_unreport_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let Some(an) = an_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -163,7 +166,8 @@ impl IpdMainPage {
     }
 
     fn loaded_lab_unread_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let Some(an) = an_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -182,7 +186,8 @@ impl IpdMainPage {
     }
 
     fn loaded_xray_unread_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let Some(an) = an_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {

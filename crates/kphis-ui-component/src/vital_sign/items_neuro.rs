@@ -63,7 +63,7 @@ pub fn render_neuro_result(row: Rc<VitalSign>, vs_id: Mutable<u32>, form_rendere
     let lt_leg = row.lt_leg_name.clone();
     let barthel = row.barthel_index.as_ref().and_then(|concat| concat.split(',').nth(0));
 
-    let had_name = opt_empty_none(row.had_name.clone());
+    let had_name = opt_empty_none(row.had_name.as_ref());
 
     html!("tr", {
         .class_signal("table-info", vs_id.signal().map(clone!(row => move |n| n == row.vs_id)))

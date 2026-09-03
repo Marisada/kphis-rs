@@ -143,10 +143,10 @@ impl IndexPlanCpn {
                     true,
                     clone!(app, page => async move {
                         let params = OrderParams {
-                            an: str_some(an),
+                            an: str_some(&an),
                             view_by: Some(String::from("doctor")),
                             plan_date: page.current_date.lock_ref().as_ref().map(|d| d.plan_date),
-                            without_order: str_some(page.without_order.get_cloned()),
+                            without_order: str_some(&page.without_order.lock_ref()),
                             ..Default::default()
                         };
                         // GET `EndPoint::IpdOrderItem`
@@ -183,7 +183,7 @@ impl IndexPlanCpn {
                     let params = OrderParams {
                         opd_er_order_master_id: zero_none(opd_er_order_master_id),
                         view_by: Some(String::from("doctor")),
-                        without_order: str_some(page.without_order.get_cloned()),
+                        without_order: str_some(&page.without_order.lock_ref()),
                         ..Default::default()
                     };
                     // GET `EndPoint::OpdErOrderItem`
@@ -515,8 +515,8 @@ pub fn redraw_index_plan(
     status: Mutable<Option<String>>,
     app: Rc<App>,
 ) {
-    let nurse_assign = str_some(nurse_assign.get_cloned());
-    let order_item_type = str_some(order_item_type.get_cloned());
+    let nurse_assign = str_some(&nurse_assign.lock_ref());
+    let order_item_type = str_some(&order_item_type.lock_ref());
     let items = match status.lock_ref().as_ref() {
         Some(status) => match status.as_str() {
             "wait" => order_items_all

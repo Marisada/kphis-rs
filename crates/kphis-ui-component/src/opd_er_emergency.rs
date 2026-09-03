@@ -305,29 +305,29 @@ impl OpdErEmergencyCpn {
             let trauma = TraumaHistory {
                 opd_er_pe_id: page.opd_er_pe_id.get(),
                 opd_er_order_master_id,
-                arc: str_some(page.arc.get_cloned()),
-                arc_npc_text: str_some(page.arc_npc_text.get_cloned()),
-                breathing_chest_wall: str_some(page.breathing_chest_wall.get_cloned()),
-                breathing_lung: str_some(page.breathing_lung.get_cloned()),
-                circulation_shock: str_some(page.circulation_shock.get_cloned()),
-                circulation_shock_text: str_some(page.circulation_shock_text.get_cloned()),
-                circulation_other: str_some(page.circulation_other.get_cloned()),
-                circulation_other_text: str_some(page.circulation_other_text.get_cloned()),
+                arc: str_some(&page.arc.lock_ref()),
+                arc_npc_text: str_some(&page.arc_npc_text.lock_ref()),
+                breathing_chest_wall: str_some(&page.breathing_chest_wall.lock_ref()),
+                breathing_lung: str_some(&page.breathing_lung.lock_ref()),
+                circulation_shock: str_some(&page.circulation_shock.lock_ref()),
+                circulation_shock_text: str_some(&page.circulation_shock_text.lock_ref()),
+                circulation_other: str_some(&page.circulation_other.lock_ref()),
+                circulation_other_text: str_some(&page.circulation_other_text.lock_ref()),
                 circulation_efast_date: date_8601(&page.circulation_efast_date.lock_ref()),
                 circulation_efast_time: time_8601(&page.circulation_efast_time.lock_ref()),
-                circulation_doctor: str_some(page.circulation_doctor.get_cloned()),
+                circulation_doctor: str_some(&page.circulation_doctor.lock_ref()),
                 circulation_doctor_name: None, // report use only
-                circulation: str_some(page.circulation.get_cloned()),
-                circulation_positive_text: str_some(page.circulation_positive_text.get_cloned()),
+                circulation: str_some(&page.circulation.lock_ref()),
+                circulation_positive_text: str_some(&page.circulation_positive_text.lock_ref()),
                 disability_e: page.disability_e.lock_ref().parse::<i32>().ok(),
-                disability_v: str_some(page.disability_v.get_cloned()),
+                disability_v: str_some(&page.disability_v.lock_ref()),
                 disability_m: page.disability_m.lock_ref().parse::<i32>().ok(),
                 disability_pupil_rt: Decimal::from_str_exact(&page.disability_pupil_rt.lock_ref()).ok(),
                 disability_pupil_lt: Decimal::from_str_exact(&page.disability_pupil_lt.lock_ref()).ok(),
-                disability_other: str_some(page.disability_other.get_cloned()),
-                exposure: str_some(page.exposure.get_cloned()),
-                doctor_pe: str_some(page.doctor_pe.get_cloned()),
-                doctor_name: str_some(page.trauma_doctor_name.get_cloned()),
+                disability_other: str_some(&page.disability_other.lock_ref()),
+                exposure: str_some(&page.exposure.lock_ref()),
+                doctor_pe: str_some(&page.doctor_pe.lock_ref()),
+                doctor_name: str_some(&page.trauma_doctor_name.lock_ref()),
                 // not use when insert/update
                 imgs: None,
                 version: page.trauma_version.get(),
@@ -411,8 +411,8 @@ impl OpdErEmergencyCpn {
     fn save_allergy(page: Rc<Self>, app: Rc<App>) {
         let visit_type = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type());
         if let Some(VisitTypeId::OpdEr(_vn, opd_er_order_master_id)) = visit_type {
-            let er_allergy_history_doctorcode = str_some(page.er_allergy_history_doctorcode.get_cloned());
-            let doctor_name = str_some(page.allergy_doctor_name.get_cloned());
+            let er_allergy_history_doctorcode = str_some(&page.er_allergy_history_doctorcode.lock_ref());
+            let doctor_name = str_some(&page.allergy_doctor_name.lock_ref());
             let version = page.allergy_version.get();
 
             let allergies = page
@@ -422,8 +422,8 @@ impl OpdErEmergencyCpn {
                 .map(|r| AllergyHistory {
                     er_allergy_history_id: 0,
                     opd_er_order_master_id: zero_none(opd_er_order_master_id),
-                    er_allergy_history_agent: str_some(r.agent.get_cloned()),
-                    er_allergy_history_symptom: str_some(r.symptom.get_cloned()),
+                    er_allergy_history_agent: str_some(&r.agent.lock_ref()),
+                    er_allergy_history_symptom: str_some(&r.symptom.lock_ref()),
                     er_allergy_history_doctorcode: er_allergy_history_doctorcode.clone(),
                     doctor_name: doctor_name.clone(),
                     version,
@@ -525,7 +525,8 @@ impl OpdErEmergencyCpn {
     fn save_screen(page: Rc<Self>, app: Rc<App>) {
         let visit_type = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type());
         if let Some(VisitTypeId::OpdEr(_vn, opd_er_order_master_id)) = visit_type {
-            if let Some(view_by) = str_some(page.view_by.get_cloned()) {
+            let view_by_opt = str_some(&page.view_by.lock_ref());
+            if let Some(view_by) = view_by_opt {
                 if ["doctor", "nurse"].contains(&view_by.as_str()) {
                     let params = OpdErMedicalHistoryParams {
                         view_by: Some(view_by.clone()),
@@ -534,8 +535,8 @@ impl OpdErEmergencyCpn {
                     let screen = NurseScreeningHistory {
                         opd_er_screening_id: page.opd_er_screening_id.get(),
                         opd_er_order_master_id,
-                        screening_emergency_level: str_some(page.screening_emergency_level.get_cloned()),
-                        screening_spclty: str_some(page.screening_spclty.get_cloned()),
+                        screening_emergency_level: str_some(&page.screening_emergency_level.lock_ref()),
+                        screening_spclty: str_some(&page.screening_spclty.lock_ref()),
                         screening_arrive_date: date_8601(&page.screening_arrive_date.lock_ref()),
                         screening_arrive_time: time_8601(&page.screening_arrive_time.lock_ref()),
                         screening_date: date_8601(&page.screening_date.lock_ref()),
@@ -544,10 +545,10 @@ impl OpdErEmergencyCpn {
                         screening_report_time: time_8601(&page.screening_report_time.lock_ref()),
                         screening_see_doctor_date: date_8601(&page.screening_see_doctor_date.lock_ref()),
                         screening_see_doctor_time: time_8601(&page.screening_see_doctor_time.lock_ref()),
-                        screening_doctor_doctorcode: str_some(page.screening_doctor_doctorcode.get_cloned()),
-                        screening_nurse_doctorcode: str_some(page.screening_nurse_doctorcode.get_cloned()),
-                        nurse_name: str_some(page.screen_nurse_name.get_cloned()),
-                        doctor_name: str_some(page.screen_doctor_name.get_cloned()),
+                        screening_doctor_doctorcode: str_some(&page.screening_doctor_doctorcode.lock_ref()),
+                        screening_nurse_doctorcode: str_some(&page.screening_nurse_doctorcode.lock_ref()),
+                        nurse_name: str_some(&page.screen_nurse_name.lock_ref()),
+                        doctor_name: str_some(&page.screen_doctor_name.lock_ref()),
                         version: page.screen_version.get(),
                     };
 
@@ -630,8 +631,8 @@ impl OpdErEmergencyCpn {
             let scan = ScanHistory {
                 opd_er_document_scan_id: page.opd_er_document_scan_id.get(),
                 opd_er_order_master_id,
-                opd_er_document_scan: str_some(page.opd_er_document_scan.get_cloned()),
-                opd_er_document_scan_doctorcode: str_some(page.opd_er_document_scan_doctorcode.get_cloned()),
+                opd_er_document_scan: str_some(&page.opd_er_document_scan.lock_ref()),
+                opd_er_document_scan_doctorcode: str_some(&page.opd_er_document_scan_doctorcode.lock_ref()),
                 version: page.scan_version.get(),
             };
 
@@ -711,8 +712,8 @@ impl OpdErEmergencyCpn {
     fn save_consult(page: Rc<Self>, app: Rc<App>) {
         let visit_type = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type());
         if let Some(VisitTypeId::OpdEr(_vn, opd_er_order_master_id)) = visit_type {
-            let er_consult_doctorcode = str_some(page.er_consult_doctorcode.get_cloned());
-            let doctor_name = str_some(page.consult_doctor_name.get_cloned());
+            let er_consult_doctorcode = str_some(&page.er_consult_doctorcode.lock_ref());
+            let doctor_name = str_some(&page.consult_doctor_name.lock_ref());
             let version = page.consult_version.get();
 
             let consults = page
@@ -723,11 +724,11 @@ impl OpdErEmergencyCpn {
                     ConsultHistory {
                         er_consult_id: 0,
                         opd_er_order_master_id: zero_none(opd_er_order_master_id),
-                        er_consult_ward: str_some(c.er_consult_ward.get_cloned()),
+                        er_consult_ward: str_some(&c.er_consult_ward.lock_ref()),
                         er_consult_ward_name: None, // report use only
                         er_consult_date: date_8601(&c.er_consult_date.lock_ref()),
                         er_consult_time: time_8601(&c.er_consult_time.lock_ref()),
-                        er_consult_doctor_reply: str_some(c.er_consult_doctor_reply.get_cloned()),
+                        er_consult_doctor_reply: str_some(&c.er_consult_doctor_reply.lock_ref()),
                         er_consult_date_reply: date_8601(&c.er_consult_date_reply.lock_ref()),
                         er_consult_time_reply: time_8601(&c.er_consult_time_reply.lock_ref()),
                         er_consult_doctorcode: er_consult_doctorcode.clone(),
@@ -817,8 +818,8 @@ impl OpdErEmergencyCpn {
                 opd_er_order_master_id: zero_none(opd_er_order_master_id),
                 set_ft_date: date_8601(&page.set_ft_date.lock_ref()),
                 set_ft_time: time_8601(&page.set_ft_time.lock_ref()),
-                set_ft_doctorcode: str_some(page.set_ft_doctorcode.get_cloned()),
-                doctor_name: str_some(page.ft_doctor_name.get_cloned()),
+                set_ft_doctorcode: str_some(&page.set_ft_doctorcode.lock_ref()),
+                doctor_name: str_some(&page.ft_doctor_name.lock_ref()),
                 version: page.ft_version.get(),
             };
 

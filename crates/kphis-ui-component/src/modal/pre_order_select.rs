@@ -159,14 +159,14 @@ impl PreOrderType {
 
                 let params = PreOrderMasterParams {
                     pre_order_master_id: None,
-                    hn: str_some(modal.hn.get_cloned()),
+                    hn: str_some(&modal.hn.lock_ref()),
                     start_order_date: date_8601(&modal.start_order_date.lock_ref()),
                     end_order_date: date_8601(&modal.end_order_date.lock_ref()),
-                    order_doctor: str_some(modal.order_doctor.get_cloned()),
-                    include_shared_template: str_some(modal.include_shared_template.get_cloned()),
+                    order_doctor: str_some(&modal.order_doctor.lock_ref()),
+                    include_shared_template: str_some(&modal.include_shared_template.lock_ref()),
                     pre_order_type: Some(modal.preorder_type.lock_ref().string()),
-                    template_name: str_some(modal.template_name.get_cloned()),
-                    used: str_some(modal.used.get_cloned()),
+                    template_name: str_some(&modal.template_name.lock_ref()),
+                    used: str_some(&modal.used.lock_ref()),
                 };
                 // GET `EndPoint::IpdPreOrderMaster`
                 match PreOrderMaster::call_api_get(&params, app.state()).await {

@@ -165,20 +165,20 @@ pub fn f32_rescale(number: f32, fraction: i32) -> f32 {
 }
 
 #[inline]
-pub fn str_some(s: String) -> Option<String> {
+pub fn str_some(s: &str) -> Option<String> {
     let s = s.trim();
     (!s.is_empty()).then_some(s.to_owned())
 }
 
 #[inline]
-pub fn zero_str_none(s: String) -> Option<String> {
+pub fn zero_str_none(s: &str) -> Option<String> {
     let s = s.trim();
     (!s.is_empty() && s != "0").then_some(s.to_owned())
 }
 
 #[inline]
-pub fn opt_empty_none(opt: Option<String>) -> Option<String> {
-    opt.and_then(str_some)
+pub fn opt_empty_none<S: AsRef<str>>(opt: Option<S>) -> Option<String> {
+    opt.and_then(|s| str_some(s.as_ref()))
 }
 
 #[inline]
@@ -189,11 +189,6 @@ pub fn zero_none<N: num::Zero>(n: N) -> Option<N> {
 #[inline]
 pub fn opt_zero_none<N: num::Zero>(opt: Option<N>) -> Option<N> {
     opt.and_then(zero_none)
-}
-
-#[inline]
-pub fn is_opt_str_some(opt: Option<&String>) -> bool {
-    opt.map(|s| !s.trim().is_empty()).unwrap_or_default()
 }
 
 /// "1234567.89" => "1,234,567.89"<br>

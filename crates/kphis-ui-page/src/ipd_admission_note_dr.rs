@@ -471,7 +471,7 @@ impl IpdAdmissionNoteDrPage {
                         }
                         // has note
                         if let Some(note) = response.admission_note.as_ref() {
-                            page.hn.set_neq(str_some(note.hn.to_owned()));
+                            page.hn.set_neq(str_some(&note.hn));
                             page.chief_complaints.set_neq(note.chief_complaints.to_owned().unwrap_or_default());
                             page.medical_history.set_neq(note.medical_history.to_owned().unwrap_or_default());
                             page.bp.set_neq(note.bp.to_owned().unwrap_or_default());
@@ -749,7 +749,7 @@ impl IpdAdmissionNoteDrPage {
                                 page.pr.set_neq(pe.pulse.map(|f| f.to_string()).unwrap_or_default());
                                 page.rr.set_neq(pe.rr.map(|f| f.to_string()).unwrap_or_default());
                             } else {
-                                page.hn.set_neq(str_some(patient.hn.get_cloned()));
+                                page.hn.set_neq(str_some(&patient.hn.lock_ref()));
                             }
                             // first kphis.ipd_vs_vital_sign of this AN
                             if let Some(vs) = response.vs.as_ref() {
@@ -5058,7 +5058,7 @@ impl IpdAdmissionNoteDrPage {
                                             }),
                                             html!("span", {
                                                 .class("input-group-text")
-                                                .text_signal(page.amphetamine_awq.signal_ref(|concat| concat.split(',').nth(0).and_then(|s| str_some(s.to_owned())).unwrap_or(String::from("รอการประเมิน"))))
+                                                .text_signal(page.amphetamine_awq.signal_ref(|concat| concat.split(',').nth(0).and_then(|s| str_some(s)).unwrap_or(String::from("รอการประเมิน"))))
                                             }),
                                         ])
                                         .child_signal(page.amphetamine_awq.signal_ref(|concat| concat.split(',').nth(1).and_then(|s| s.parse::<u8>().ok()).map(|score| {
@@ -6363,7 +6363,7 @@ impl IpdAdmissionNoteDrPage {
                                             admission_note_id,
                                             is_signed_by_me,
                                             page.patient.lock_ref().patient.clone(),
-                                            str_some(page.an.get_cloned()),
+                                            str_some(&page.an.lock_ref()),
                                             "", // will use ImageUsage internally, so we add nothing here
                                         ), app.clone()))
                                     }
@@ -6375,7 +6375,7 @@ impl IpdAdmissionNoteDrPage {
                                             ImageCpn::render("300px", ImageCpn::new_returning(
                                                 page.image_callback.clone(),
                                                 page.patient.lock_ref().patient.clone(),
-                                                str_some(an),
+                                                str_some(&an),
                                                 "IPD-ADMISSION-NOTE-DOCTOR",
                                             ), app.clone())
                                         })
@@ -7092,7 +7092,7 @@ impl IpdAdmissionNoteDrPage {
                                                     "-99999"|"" => None,
                                                     s => Some(s.to_owned()),
                                                 },
-                                                entryposition: str_some(user.user.entryposition.get_cloned()),
+                                                entryposition: str_some(&user.user.entryposition.lock_ref()),
                                             });
                                             page.admission_note_doctors.lock_mut().push_cloned(doctor);
                                             page.changed.set_neq(true);
@@ -7295,7 +7295,7 @@ impl IpdAdmissionNoteDrPage {
     fn finalized(page: Rc<Self>, app: Rc<App>) -> Option<IpdDrAdmissionNote> {
         let concat_with_space = app.concat_with_space();
 
-        page.hn.get_cloned().or(str_some(page.patient.lock_ref().hn.get_cloned())).map(|hn| {
+        page.hn.get_cloned().or(str_some(&page.patient.lock_ref().hn.lock_ref())).map(|hn| {
             IpdDrAdmissionNote {
                 hn,
                 an: page.an.get_cloned(),
@@ -7304,189 +7304,189 @@ impl IpdAdmissionNoteDrPage {
 
                 take_medication_by: Some(page.take_medication_by.lock_ref().string()),
                 arrive_by: Some(page.arrive_by.lock_ref().string()),
-                taken_by_relative: str_some(page.taken_by_relative.get_cloned()),
-                taken_by_nurse: str_some(page.taken_by_nurse.get_cloned()),
-                taken_by_crib: str_some(page.taken_by_crib.get_cloned()),
-                taken_by_etc: str_some(page.taken_by_etc.get_cloned()),
-                taken_by: str_some(page.taken_by.get_cloned()),
+                taken_by_relative: str_some(&page.taken_by_relative.lock_ref()),
+                taken_by_nurse: str_some(&page.taken_by_nurse.lock_ref()),
+                taken_by_crib: str_some(&page.taken_by_crib.lock_ref()),
+                taken_by_etc: str_some(&page.taken_by_etc.lock_ref()),
+                taken_by: str_some(&page.taken_by.lock_ref()),
                 informant_patient: page.informant_patient.get_cloned().or(Some(String::from("ผู้ป่วย"))),
                 informant_relatives: page.informant_relatives.get_cloned(),
                 informant_deliverer: page.informant_deliverer.get_cloned(),
                 informant_etc: page.informant_etc.get_cloned(),
-                chief_complaints: str_some(page.chief_complaints.get_cloned()),
-                medical_history: str_some(page.medical_history.get_cloned()),
+                chief_complaints: str_some(&page.chief_complaints.lock_ref()),
+                medical_history: str_some(&page.medical_history.lock_ref()),
 
-                bp: str_some(page.bp.get_cloned()),
+                bp: str_some(&page.bp.lock_ref()),
                 t: Decimal::from_str_exact(&page.t.lock_ref()).ok(), // decimal(3,1) unsigned
                 pr: page.pr.lock_ref().parse::<u32>().ok(),
                 rr: page.rr.lock_ref().parse::<i32>().ok(),
                 gcs: opt_zero_none(page.gcs.lock_ref().parse::<i32>().ok()),
-                e: zero_str_none(page.e.get_cloned()),
-                v: zero_str_none(page.v.get_cloned()),
-                m: zero_str_none(page.m.get_cloned()),
-                braden_scale: str_some(page.braden_scale.get_cloned()),
+                e: zero_str_none(&page.e.lock_ref()),
+                v: zero_str_none(&page.v.lock_ref()),
+                m: zero_str_none(&page.m.lock_ref()),
+                braden_scale: str_some(&page.braden_scale.lock_ref()),
 
-                disease: str_some(page.disease.get_cloned()),                                           //.or(Some(String::from("ไม่มี"))),
-                disease_detail: str_some(concat_mutable_vec(&page.disease_details, concat_with_space)), // disease_name + ' ' + disease_year + ' ' + disease_hospital
+                disease: str_some(&page.disease.lock_ref()),                                           //.or(Some(String::from("ไม่มี"))),
+                disease_detail: str_some(&concat_mutable_vec(&page.disease_details, concat_with_space)), // disease_name + ' ' + disease_year + ' ' + disease_hospital
                 disease_etc: page.disease_etc.get_cloned(),                                             // unused
                 last_dose_taken_time: datetime_8601(&page.last_dose_taken_time.lock_ref()),
-                last_dose_taken_remark: opt_empty_none(page.last_dose_taken_remark.get_cloned()),
-                operation_history: opt_empty_none(page.operation_history.get_cloned()),                     //.or(Some(String::from("ไม่มี"))),
-                allergy_history: str_some(page.allergy_history.get_cloned()),                               //.or(Some(String::from("ไม่มี"))),
-                allergy_drug_history: str_some(concat_mutable_vec(&page.allergy_drugs, concat_with_space)), // agent + ' ' + symptom + ' ' + agent + ..
-                allergy_drug_history_hosxp: str_some(page.allergy_drug_history_hosxp.get_cloned()),
+                last_dose_taken_remark: opt_empty_none(page.last_dose_taken_remark.lock_ref().as_ref()),
+                operation_history: opt_empty_none(page.operation_history.lock_ref().as_ref()),                     //.or(Some(String::from("ไม่มี"))),
+                allergy_history: str_some(&page.allergy_history.lock_ref()),                               //.or(Some(String::from("ไม่มี"))),
+                allergy_drug_history: str_some(&concat_mutable_vec(&page.allergy_drugs, concat_with_space)), // agent + ' ' + symptom + ' ' + agent + ..
+                allergy_drug_history_hosxp: str_some(&page.allergy_drug_history_hosxp.lock_ref()),
                 allergy_drug_pharmacy_check_person: page.allergy_drug_pharmacy_check_person.get_cloned(),              // unused
                 allergy_drug_pharmacy_check_datetime: page.allergy_drug_pharmacy_check_datetime.get_cloned(),          // unused
-                allergy_food_history: str_some(concat_mutable_vec(&page.allergy_foods, concat_with_space)),            // agent + ' ' + symptom + ' ' + agent + ..
-                allergy_etc_history: str_some(concat_mutable_vec(&page.allergy_etcs, concat_with_space)),              // agent + ' ' + symptom + ' ' + agent + ..
+                allergy_food_history: str_some(&concat_mutable_vec(&page.allergy_foods, concat_with_space)),            // agent + ' ' + symptom + ' ' + agent + ..
+                allergy_etc_history: str_some(&concat_mutable_vec(&page.allergy_etcs, concat_with_space)),              // agent + ' ' + symptom + ' ' + agent + ..
                 allergy_detail: page.allergy_detail.get_cloned(),                                                      // unused
-                family_medical_history: str_some(page.family_medical_history.get_cloned()),                            //.or(Some(String::from("ไม่มี"))),
-                family_medical_history_detail: str_some(concat_mutable_vec(&page.family_medicals, concat_with_space)), // disease + ' ' + relation + ' ' + disease + ..
+                family_medical_history: str_some(&page.family_medical_history.lock_ref()),                            //.or(Some(String::from("ไม่มี"))),
+                family_medical_history_detail: str_some(&concat_mutable_vec(&page.family_medicals, concat_with_space)), // disease + ' ' + relation + ' ' + disease + ..
 
-                receives_immunisation_history_kid: opt_empty_none(page.receives_immunisation_history_kid.get_cloned()).or(Some(String::from("ครบตามวัย"))),
-                developmentally_kid: opt_empty_none(page.developmentally_kid.get_cloned()), //.or(Some(String::from("ปกติ"))),
+                receives_immunisation_history_kid: opt_empty_none(page.receives_immunisation_history_kid.lock_ref().as_ref()).or(Some(String::from("ครบตามวัย"))),
+                developmentally_kid: opt_empty_none(page.developmentally_kid.lock_ref().as_ref()), //.or(Some(String::from("ปกติ"))),
                 g: page.g.lock_ref().parse::<i32>().ok(),                                   //.or(Some(0)),
-                p: str_some(page.p.get_cloned()),                                           //.or(Some(String::from("0"))),
-                anc: str_some(page.anc.get_cloned()),
+                p: str_some(&page.p.lock_ref()),                                           //.or(Some(String::from("0"))),
+                anc: str_some(&page.anc.lock_ref()),
                 tt: opt_zero_none(page.tt.lock_ref().parse::<i32>().ok()),
-                gestational_age: zero_str_none(page.gestational_age.get_cloned()),
-                gestational_day: zero_str_none(page.gestational_day.get_cloned()),
+                gestational_age: zero_str_none(&page.gestational_age.lock_ref()),
+                gestational_day: zero_str_none(&page.gestational_day.lock_ref()),
                 last_child: page.last_child.lock_ref().parse::<i32>().ok(),
-                last_abort: str_some(page.last_abort.get_cloned()),
-                curette: str_some(page.curette.get_cloned()),
+                last_abort: str_some(&page.last_abort.lock_ref()),
+                curette: str_some(&page.curette.lock_ref()),
                 lmp: date_8601(&page.lmp.lock_ref()),
                 edc: date_8601(&page.edc.lock_ref()),
-                pb_no: str_some(page.pb_no.get_cloned()),
-                giant_baby: str_some(page.giant_baby.get_cloned()),
-                distocia: str_some(page.distocia.get_cloned()),
+                pb_no: str_some(&page.pb_no.lock_ref()),
+                giant_baby: str_some(&page.giant_baby.lock_ref()),
+                distocia: str_some(&page.distocia.lock_ref()),
                 extraction: page.extraction.get_cloned(),
-                pph: str_some(page.pph.get_cloned()),
+                pph: str_some(&page.pph.lock_ref()),
                 pb_etc: page.pb_etc.get_cloned(),
                 hf: page.hf.lock_ref().parse::<i32>().ok(),
-                hf_position: str_some(page.hf_position.get_cloned()),
+                hf_position: str_some(&page.hf_position.lock_ref()),
                 mem_ruptured_hours: page.mem_ruptured_hours.lock_ref().as_ref().and_then(|s| s.parse::<u16>().ok()),
 
-                lr_back_fetus: str_some(page.lr_back_fetus.get_cloned()),
-                lr_presentation: str_some(page.lr_presentation.get_cloned()),
-                lr_engagement: str_some(page.lr_engagement.get_cloned()),
-                lr_prominence: str_some(page.lr_prominence.get_cloned()),
-                lr_attitude: str_some(page.lr_attitude.get_cloned()),
+                lr_back_fetus: str_some(&page.lr_back_fetus.lock_ref()),
+                lr_presentation: str_some(&page.lr_presentation.lock_ref()),
+                lr_engagement: str_some(&page.lr_engagement.lock_ref()),
+                lr_prominence: str_some(&page.lr_prominence.lock_ref()),
+                lr_attitude: str_some(&page.lr_attitude.lock_ref()),
                 lr_fhr: page.lr_fhr.lock_ref().parse::<u16>().ok(),
-                lr_fhr_irrigular: str_some(page.lr_fhr_irrigular.get_cloned()),
+                lr_fhr_irrigular: str_some(&page.lr_fhr_irrigular.lock_ref()),
                 lr_efw: page.lr_efw.lock_ref().parse::<u16>().ok(),
-                lr_interval: str_some(lr_int_to_quote(&page.lr_interval_m.lock_ref(), &page.lr_interval_s.lock_ref())),
+                lr_interval: str_some(&lr_int_to_quote(&page.lr_interval_m.lock_ref(), &page.lr_interval_s.lock_ref())),
                 lr_duration: page.lr_duration.lock_ref().parse::<u8>().ok(),
-                lr_intensity: str_some(page.lr_intensity.get_cloned()),
+                lr_intensity: str_some(&page.lr_intensity.lock_ref()),
                 lr_pelvic_diagonal: Decimal::from_str_exact(&page.lr_pelvic_diagonal.lock_ref()).ok(),
                 lr_pelvic_interspinous: Decimal::from_str_exact(&page.lr_pelvic_interspinous.lock_ref()).ok(),
-                lr_pelvic_sidewall: str_some(page.lr_pelvic_sidewall.get_cloned()),
-                lr_ischeal_spine: str_some(page.lr_ischeal_spine.get_cloned()),
-                lr_sacral_curve: str_some(page.lr_sacral_curve.get_cloned()),
+                lr_pelvic_sidewall: str_some(&page.lr_pelvic_sidewall.lock_ref()),
+                lr_ischeal_spine: str_some(&page.lr_ischeal_spine.lock_ref()),
+                lr_sacral_curve: str_some(&page.lr_sacral_curve.lock_ref()),
                 lr_pubic_angle: page.lr_pubic_angle.lock_ref().parse::<u8>().ok(),
-                lr_pelvic_ok: str_some(page.lr_pelvic_ok.get_cloned()),
+                lr_pelvic_ok: str_some(&page.lr_pelvic_ok.lock_ref()),
                 lr_cx_dilate: page.lr_cx_dilate.lock_ref().parse::<u8>().ok(),
                 lr_cx_efface: page.lr_cx_efface.lock_ref().parse::<u8>().ok(),
                 lr_cx_station: page.lr_cx_station.lock_ref().parse::<i8>().ok(),
-                lr_cx_position: str_some(page.lr_cx_position.get_cloned()),
-                lr_cx_consistency: str_some(page.lr_cx_consistency.get_cloned()),
+                lr_cx_position: str_some(&page.lr_cx_position.lock_ref()),
+                lr_cx_consistency: str_some(&page.lr_cx_consistency.lock_ref()),
                 lr_cx_bishop: page.lr_cx_bishop.lock_ref().parse::<u8>().ok(),
-                lr_cx_ok: str_some(page.lr_cx_ok.get_cloned()),
-                lr_membrane: str_some(page.lr_membrane.get_cloned()),
-                lr_amniotic_color: str_some(page.lr_amniotic_color.get_cloned()),
-                lr_amniotic_smell: str_some(page.lr_amniotic_smell.get_cloned()),
+                lr_cx_ok: str_some(&page.lr_cx_ok.lock_ref()),
+                lr_membrane: str_some(&page.lr_membrane.lock_ref()),
+                lr_amniotic_color: str_some(&page.lr_amniotic_color.lock_ref()),
+                lr_amniotic_smell: str_some(&page.lr_amniotic_smell.lock_ref()),
 
-                hiv: str_some(page.hiv.get_cloned()),
-                vdrl: str_some(page.vdrl.get_cloned()),
-                hbs_ag: str_some(page.hbs_ag.get_cloned()),
+                hiv: str_some(&page.hiv.lock_ref()),
+                vdrl: str_some(&page.vdrl.lock_ref()),
+                hbs_ag: str_some(&page.hbs_ag.lock_ref()),
                 hct: Decimal::from_str_exact(&page.hct.lock_ref()).ok(), // decimal(3,1)
-                hiv2: str_some(page.hiv2.get_cloned()),
-                vdrl2: str_some(page.vdrl2.get_cloned()),
-                hbs_ag2: str_some(page.hbs_ag2.get_cloned()),
+                hiv2: str_some(&page.hiv2.lock_ref()),
+                vdrl2: str_some(&page.vdrl2.lock_ref()),
+                hbs_ag2: str_some(&page.hbs_ag2.lock_ref()),
                 hct2: Decimal::from_str_exact(&page.hct2.lock_ref()).ok(), // decimal(3,1)
-                gr: str_some(page.gr.get_cloned()),
-                thalassemia: str_some(page.thalassemia.get_cloned()),
-                husband: str_some(page.husband.get_cloned()),
-                condition_pregnant: opt_empty_none(page.condition_pregnant.get_cloned()), //.or(Some(String::from("ปกติ"))),
-                deliver_anomalies: opt_empty_none(page.deliver_anomalies.get_cloned()),   //.or(Some(String::from("ปกติ"))),
-                deliver_anomalies_means: str_some(page.deliver_anomalies_means.get_cloned()),
-                deliver_location: str_some(page.deliver_location.get_cloned()),
+                gr: str_some(&page.gr.lock_ref()),
+                thalassemia: str_some(&page.thalassemia.lock_ref()),
+                husband: str_some(&page.husband.lock_ref()),
+                condition_pregnant: opt_empty_none(page.condition_pregnant.lock_ref().as_ref()), //.or(Some(String::from("ปกติ"))),
+                deliver_anomalies: opt_empty_none(page.deliver_anomalies.lock_ref().as_ref()),   //.or(Some(String::from("ปกติ"))),
+                deliver_anomalies_means: str_some(&page.deliver_anomalies_means.lock_ref()),
+                deliver_location: str_some(&page.deliver_location.lock_ref()),
                 deliver_first_weight: Decimal::from_str_exact(&page.deliver_first_weight.lock_ref()).ok(), // decimal(5,0)
-                deliver_first_health: str_some(page.deliver_first_health.get_cloned()),
+                deliver_first_health: str_some(&page.deliver_first_health.lock_ref()),
                 fant_breast_feeding_end_age_month: opt_zero_none(page.fant_breast_feeding_end_age_month.lock_ref().as_ref().and_then(|m| m.parse::<i32>().ok())),
                 fant_artificial_feeding_start_age_month: opt_zero_none(page.fant_artificial_feeding_start_age_month.lock_ref().as_ref().and_then(|m| m.parse::<i32>().ok())),
                 fant_feeding_etc: page.fant_feeding_etc.get_cloned(),
-                supplementary_feeding: str_some(page.supplementary_feeding.get_cloned()), //.or(Some(String::from("ยังไม่ได้รับ"))),
+                supplementary_feeding: str_some(&page.supplementary_feeding.lock_ref()), //.or(Some(String::from("ยังไม่ได้รับ"))),
                 supplementary_feeding_start_age_month: opt_zero_none(page.supplementary_feeding_start_age_month.lock_ref().parse::<i32>().ok()),
                 disease_operation_allergy: page.disease_operation_allergy.get_cloned(), // unused
-                inpatient_history: str_some(page.inpatient_history.get_cloned()),       //.or(Some(String::from("ไม่เคย"))),
-                inpatient_last_date: str_some(page.inpatient_last_date.get_cloned()),
-                inpatient_location: str_some(page.inpatient_location.get_cloned()),
-                inpatient_because: str_some(page.inpatient_because.get_cloned()),
+                inpatient_history: str_some(&page.inpatient_history.lock_ref()),       //.or(Some(String::from("ไม่เคย"))),
+                inpatient_last_date: str_some(&page.inpatient_last_date.lock_ref()),
+                inpatient_location: str_some(&page.inpatient_location.lock_ref()),
+                inpatient_because: str_some(&page.inpatient_because.lock_ref()),
 
-                pe_general: str_some(page.pe_general.get_cloned()),
-                pe_skin: str_some(page.pe_skin.get_cloned()),
-                pe_heent: str_some(page.pe_heent.get_cloned()),
-                pe_neck: str_some(page.pe_neck.get_cloned()),
-                pe_breastthorax: str_some(page.pe_breastthorax.get_cloned()),
-                pe_heart: str_some(page.pe_heart.get_cloned()),
-                pe_lungs: str_some(page.pe_lungs.get_cloned()),
-                pe_abdomen: str_some(page.pe_abdomen.get_cloned()),
-                pe_rectalgenitalia: str_some(page.pe_rectalgenitalia.get_cloned()),
-                pe_extremities: str_some(page.pe_extremities.get_cloned()),
-                pe_neurological: str_some(page.pe_neurological.get_cloned()),
-                pe_ob_gynexam: str_some(page.pe_ob_gynexam.get_cloned()),
-                pe_other: str_some(page.pe_other.get_cloned()),
-                pe_text: str_some(page.pe_text.get_cloned()),
+                pe_general: str_some(&page.pe_general.lock_ref()),
+                pe_skin: str_some(&page.pe_skin.lock_ref()),
+                pe_heent: str_some(&page.pe_heent.lock_ref()),
+                pe_neck: str_some(&page.pe_neck.lock_ref()),
+                pe_breastthorax: str_some(&page.pe_breastthorax.lock_ref()),
+                pe_heart: str_some(&page.pe_heart.lock_ref()),
+                pe_lungs: str_some(&page.pe_lungs.lock_ref()),
+                pe_abdomen: str_some(&page.pe_abdomen.lock_ref()),
+                pe_rectalgenitalia: str_some(&page.pe_rectalgenitalia.lock_ref()),
+                pe_extremities: str_some(&page.pe_extremities.lock_ref()),
+                pe_neurological: str_some(&page.pe_neurological.lock_ref()),
+                pe_ob_gynexam: str_some(&page.pe_ob_gynexam.lock_ref()),
+                pe_other: str_some(&page.pe_other.lock_ref()),
+                pe_text: str_some(&page.pe_text.lock_ref()),
 
-                ros_eent: str_some(page.ros_eent.get_cloned()),
-                ros_neuro: str_some(page.ros_neuro.get_cloned()),
-                ros_lung: str_some(page.ros_lung.get_cloned()),
-                ros_tb: str_some(page.ros_tb.get_cloned()),
-                ros_ht: str_some(page.ros_ht.get_cloned()),
-                ros_heart: str_some(page.ros_heart.get_cloned()),
-                ros_liver: str_some(page.ros_liver.get_cloned()),
-                ros_gi: str_some(page.ros_gi.get_cloned()),
-                ros_endocrine: str_some(page.ros_endocrine.get_cloned()),
-                ros_kidney: str_some(page.ros_kidney.get_cloned()),
-                ros_tumour: str_some(page.ros_tumour.get_cloned()),
-                ros_hemato: str_some(page.ros_hemato.get_cloned()),
-                ros_rheumato: str_some(page.ros_rheumato.get_cloned()),
-                ros_psychia: str_some(page.ros_psychia.get_cloned()),
-                ros_other: str_some(page.ros_other.get_cloned()),
+                ros_eent: str_some(&page.ros_eent.lock_ref()),
+                ros_neuro: str_some(&page.ros_neuro.lock_ref()),
+                ros_lung: str_some(&page.ros_lung.lock_ref()),
+                ros_tb: str_some(&page.ros_tb.lock_ref()),
+                ros_ht: str_some(&page.ros_ht.lock_ref()),
+                ros_heart: str_some(&page.ros_heart.lock_ref()),
+                ros_liver: str_some(&page.ros_liver.lock_ref()),
+                ros_gi: str_some(&page.ros_gi.lock_ref()),
+                ros_endocrine: str_some(&page.ros_endocrine.lock_ref()),
+                ros_kidney: str_some(&page.ros_kidney.lock_ref()),
+                ros_tumour: str_some(&page.ros_tumour.lock_ref()),
+                ros_hemato: str_some(&page.ros_hemato.lock_ref()),
+                ros_rheumato: str_some(&page.ros_rheumato.lock_ref()),
+                ros_psychia: str_some(&page.ros_psychia.lock_ref()),
+                ros_other: str_some(&page.ros_other.lock_ref()),
 
-                addict: str_some(page.addict.get_cloned()),
-                addict_assist: str_some(concat_mutable_vec(&page.addict_assists, concat_with_space)),
-                addict_inj: str_some(page.addict_inj.get_cloned()),
-                addict_inj_often: str_some(page.addict_inj_often.get_cloned()),
-                amphetamine_awq: str_some(page.amphetamine_awq.get_cloned()),
-                aggression_oas: str_some(page.aggression_oas.get_cloned()),
+                addict: str_some(&page.addict.lock_ref()),
+                addict_assist: str_some(&concat_mutable_vec(&page.addict_assists, concat_with_space)),
+                addict_inj: str_some(&page.addict_inj.lock_ref()),
+                addict_inj_often: str_some(&page.addict_inj_often.lock_ref()),
+                amphetamine_awq: str_some(&page.amphetamine_awq.lock_ref()),
+                aggression_oas: str_some(&page.aggression_oas.lock_ref()),
                 motivation_scale: page.motivation_scale.lock_ref().parse::<u8>().ok(),
                 craving_scale: page.craving_scale.lock_ref().parse::<u8>().ok(),
                 stage_of_change_id: page.stage_of_change_id.lock_ref().parse::<u8>().ok(),
-                alcohol_audit: str_some(page.alcohol_audit.get_cloned()),
-                alcohol_aws: str_some(page.alcohol_aws.get_cloned()),
-                alcohol_ciwa: str_some(page.alcohol_ciwa.get_cloned()),
-                depress_2q: str_some(page.depress_2q.get_cloned()),
-                depress_9q: str_some(page.depress_9q.get_cloned()),
-                depress_cdi: str_some(page.depress_cdi.get_cloned()),
-                depress_cesd: str_some(page.depress_cesd.get_cloned()),
-                depress_phqa: str_some(page.depress_phqa.get_cloned()),
-                nicotin_ftnd: str_some(page.nicotin_ftnd.get_cloned()),
-                ptsd_screen: str_some(page.ptsd_screen.get_cloned()),
-                ptsd_pisces: str_some(page.ptsd_pisces.get_cloned()),
-                ptsd_cries: str_some(page.ptsd_cries.get_cloned()),
-                suicide_8q: str_some(page.suicide_8q.get_cloned()),
-                stress_st5: str_some(page.stress_st5.get_cloned()),
+                alcohol_audit: str_some(&page.alcohol_audit.lock_ref()),
+                alcohol_aws: str_some(&page.alcohol_aws.lock_ref()),
+                alcohol_ciwa: str_some(&page.alcohol_ciwa.lock_ref()),
+                depress_2q: str_some(&page.depress_2q.lock_ref()),
+                depress_9q: str_some(&page.depress_9q.lock_ref()),
+                depress_cdi: str_some(&page.depress_cdi.lock_ref()),
+                depress_cesd: str_some(&page.depress_cesd.lock_ref()),
+                depress_phqa: str_some(&page.depress_phqa.lock_ref()),
+                nicotin_ftnd: str_some(&page.nicotin_ftnd.lock_ref()),
+                ptsd_screen: str_some(&page.ptsd_screen.lock_ref()),
+                ptsd_pisces: str_some(&page.ptsd_pisces.lock_ref()),
+                ptsd_cries: str_some(&page.ptsd_cries.lock_ref()),
+                suicide_8q: str_some(&page.suicide_8q.lock_ref()),
+                stress_st5: str_some(&page.stress_st5.lock_ref()),
 
                 svg_tag: page.canvas.lock_ref().as_ref().and_then(|c| (!c.get_objects().is_empty()).then(|| c.to_svg_suppress_preamble()).filter(|s| s.contains("path"))),
 
-                impression: str_some(page.impression.get_cloned()),
-                diff_dx: str_some(page.diff_dx.get_cloned()),
-                plan_management: str_some(page.plan_management.get_cloned()),
+                impression: str_some(&page.impression.lock_ref()),
+                diff_dx: str_some(&page.diff_dx.lock_ref()),
+                plan_management: str_some(&page.plan_management.lock_ref()),
 
-                nurse_name: str_some(page.nurse_name.get_cloned()),
-                nurse_pos: str_some(page.nurse_pos.get_cloned()),
-                nurse_licenseno: str_some(page.nurse_licenseno.get_cloned()),
+                nurse_name: str_some(&page.nurse_name.lock_ref()),
+                nurse_pos: str_some(&page.nurse_pos.lock_ref()),
+                nurse_licenseno: str_some(&page.nurse_licenseno.lock_ref()),
                 doc_name: page.doc_name.get_cloned(), // unused
                 doc_pos: page.doc_pos.get_cloned(),   // unused
 

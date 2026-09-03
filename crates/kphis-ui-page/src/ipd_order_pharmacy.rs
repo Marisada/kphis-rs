@@ -390,13 +390,13 @@ impl IpdOrderPharmacyPage {
 // ipd-pharmacy-order-monitor-table.php
 fn submit(page: Rc<IpdOrderPharmacyPage>, app: Rc<App>) {
     let request = IpdOrderPharmacyParams {
-        wards: str_some(app.ward_multiple_select.get_cloned()),
-        inverse_ward_select: str_some(app.inverse_ward_select.get_cloned()),
-        doctor_in_charge: str_some(page.doctor_in_charge.get_cloned()),
+        wards: str_some(&app.ward_multiple_select.lock_ref()),
+        inverse_ward_select: str_some(&app.inverse_ward_select.lock_ref()),
+        doctor_in_charge: str_some(&page.doctor_in_charge.lock_ref()),
         order_date_from: date_8601(&page.order_date_from.lock_ref()),
         order_date_to: date_8601(&page.order_date_to.lock_ref()),
-        is_discharged: str_some(app.ipd_pharmacy_order_monitor_is_discharged.get_cloned()),
-        patient: str_some(page.patient.get_cloned()),
+        is_discharged: str_some(&app.ipd_pharmacy_order_monitor_is_discharged.lock_ref()),
+        patient: str_some(&page.patient.lock_ref()),
     };
 
     app.async_load(

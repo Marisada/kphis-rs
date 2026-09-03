@@ -90,7 +90,8 @@ impl MedReconcileRemed {
     }
 
     fn load_opd_med(modal: Rc<Self>, app: Rc<App>) {
-        if let Some(vn) = str_some(modal.search_vn.get_cloned()) {
+        let vn_opt = str_some(&modal.search_vn.lock_ref());
+        if let Some(vn) = vn_opt {
             modal.opd_meds.lock_mut().clear();
             let params = MedReconciliationParams { vn: Some(vn), ..Default::default() };
             app.async_load(
@@ -111,7 +112,8 @@ impl MedReconcileRemed {
     }
 
     fn load_ipd_med(modal: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(modal.search_an.get_cloned()) {
+        let an_opt = str_some(&modal.search_an.lock_ref());
+        if let Some(an) = an_opt {
             modal.ipd_meds.lock_mut().clear();
             let params = MedReconciliationParams { an: Some(an), ..Default::default() };
             app.async_load(

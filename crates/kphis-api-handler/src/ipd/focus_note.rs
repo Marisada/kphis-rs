@@ -61,7 +61,7 @@ pub async fn post_ipd_focus_note(Path(an): Path<String>, Query(params): Query<Fo
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
-    if let (Some(hn), Some(ward)) = (params.hn.and_then(str_some), params.ward.and_then(str_some)) {
+    if let (Some(hn), Some(ward)) = (params.hn.as_ref().and_then(|s| str_some(s)), params.ward.as_ref().and_then(|s| str_some(s))) {
         let result = focus_note::post_focus_note(&an, &hn, &ward, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
 
         Ok(Json(result))

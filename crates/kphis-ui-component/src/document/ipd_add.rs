@@ -31,7 +31,8 @@ impl IpdDocumentAddCpn {
     }
 
     fn load(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let Some(an) = an_opt {
             app.async_load(
                 true,
                 clone!(app => async move {

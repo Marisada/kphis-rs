@@ -411,8 +411,8 @@ async fn vn_in_pre_admit_and_ipt(vn: &str, pool: &Pool<MySql>, hosxp: &str, kphi
 async fn update_pre_admit(where_vn: &str, an: &str, prev_an: &str, user: &str, pool: &Pool<MySql>, kphis: &str) -> Result<ExecuteResponse, AppError> {
     let sql = pre_admit::update_pre_admit(kphis);
     sqlx::query(AssertSqlSafe(sql))
-        .bind(str_some(an.to_owned()))
-        .bind(str_some(prev_an.to_owned()))
+        .bind(str_some(an))
+        .bind(str_some(prev_an))
         .bind(user)
         .bind(where_vn)
         .execute(pool)

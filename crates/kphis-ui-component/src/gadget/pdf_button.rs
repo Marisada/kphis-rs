@@ -67,7 +67,7 @@ where
                         })
                         .event(clone!(app, report_modal, handle => move |_: events::Click| {
                             if let Some(id) = handle.id.lock_ref().option_string() {
-                                report_modal.set(Some(ReportPreview::new(handle.report.clone(), id, str_some((handle.json_fn)()), can_signed, None)));
+                                report_modal.set(Some(ReportPreview::new(handle.report.clone(), id, str_some(&(handle.json_fn)()), can_signed, None)));
                                 app.show_modal_backdrop();
                             }
                         }))
@@ -129,16 +129,16 @@ impl ReportId for u32 {
 
 impl ReportId for String {
     fn option_string(&self) -> Option<String> {
-        str_some(self.to_owned())
+        str_some(self)
     }
     fn is_valid(&self) -> bool {
-        str_some(self.to_owned()).is_some()
+        str_some(self).is_some()
     }
 }
 
 impl ReportId for Option<String> {
     fn option_string(&self) -> Option<String> {
-        self.clone().and_then(str_some)
+        self.as_ref().and_then(|s| str_some(s))
     }
     fn is_valid(&self) -> bool {
         self.is_some()
@@ -157,14 +157,14 @@ impl ReportId for Option<u32> {
 impl ReportId for VisitTypeId {
     fn option_string(&self) -> Option<String> {
         match self {
-            VisitTypeId::Ipd(an) | VisitTypeId::PreAdmit(an) => str_some(an.to_owned()),
+            VisitTypeId::Ipd(an) | VisitTypeId::PreAdmit(an) => str_some(an),
             // report always use vn as key
-            VisitTypeId::OpdEr(vn, _) | VisitTypeId::Visit(vn) => str_some(vn.to_owned()),
+            VisitTypeId::OpdEr(vn, _) | VisitTypeId::Visit(vn) => str_some(vn),
         }
     }
     fn is_valid(&self) -> bool {
         match self {
-            VisitTypeId::Ipd(an) | VisitTypeId::PreAdmit(an) => str_some(an.to_owned()).is_some(),
+            VisitTypeId::Ipd(an) | VisitTypeId::PreAdmit(an) => str_some(an).is_some(),
             // some component use opd_er_order_master_id as checker, none use vn
             VisitTypeId::OpdEr(_vn, id) => zero_none(*id).is_some(),
             VisitTypeId::Visit(_) => false,

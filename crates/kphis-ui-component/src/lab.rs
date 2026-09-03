@@ -136,7 +136,7 @@ impl LabCpn {
                 clone!(app => async move {
                     let prev = page.prev.lock_ref().parse::<i32>().unwrap_or(1);
                     let params = LabHeadParams {
-                        hn: str_some(page.hn.get_cloned()),
+                        hn: str_some(&page.hn.lock_ref()),
                         id: zero_none(lab_order_number),
                         prev: Some(prev),
                         with_scan: Some(prev < 2),

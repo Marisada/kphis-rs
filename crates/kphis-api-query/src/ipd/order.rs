@@ -870,7 +870,7 @@ async fn delete_order_item(order_id: u32, pool: &Pool<MySql>, kphis: &str) -> Re
 
 async fn insert_medplan_ipd(medplan: &MedPlanItem, med_rec_icode: &str, user: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<ExecuteResponse, AppError> {
     let is_ivfluid = medplan.order_item_type.as_ref().map(|s| s == "ivfluid").unwrap_or_default();
-    let (drugusage_opt, order_item_detail_opt) = if let Some(order_item_detail) = opt_empty_none(medplan.order_item_detail.clone()) {
+    let (drugusage_opt, order_item_detail_opt) = if let Some(order_item_detail) = opt_empty_none(medplan.order_item_detail.as_ref()) {
         if medplan.icode.as_ref().map(|icode| icode == med_rec_icode).unwrap_or_default() {
             (None, Some([&medplan.med_name.clone().unwrap_or_default(), " ", &order_item_detail].concat()))
         } else {
@@ -882,7 +882,7 @@ async fn insert_medplan_ipd(medplan: &MedPlanItem, med_rec_icode: &str, user: &s
     let (drugusage, sp_use) = match drugusage_opt {
         Some(du) => (Some(du), None),
         None => {
-            let sp_use_opt = if let Some(order_item_detail) = opt_empty_none(order_item_detail_opt) {
+            let sp_use_opt = if let Some(order_item_detail) = opt_empty_none(order_item_detail_opt.as_ref()) {
                 if let Some(sp_use) = bump_and_get_sp_use(pool, hosxp).await? {
                     let (line1, line2, line3) = split_to_three(&order_item_detail, is_ivfluid);
                     if insert_sp_use(&sp_use, &line1, &line2, &line3, user, pool, hosxp).await.is_ok() { Some(sp_use) } else { None }

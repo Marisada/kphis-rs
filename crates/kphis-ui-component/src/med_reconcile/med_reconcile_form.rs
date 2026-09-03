@@ -354,24 +354,24 @@ impl MedReconForm {
             .map(|item| OrderItem {
                 visit_type: page.visit_type.clone(),
                 order_item_type: Some(String::from("home-medication")),
-                order_item_detail: str_some(item.changed_drugusage.get_cloned()).or(str_some(item.old_drugusage.get_cloned())),
-                icode: str_some(item.icode.get_cloned()),
-                med_name: str_some(item.med_name.get_cloned()).or(str_some(item.custom_med_name.get_cloned())),
-                generic_name: str_some(item.generic_name.get_cloned()),
-                dosageform: str_some(item.dosageform.get_cloned()),
-                allergy_agent_symptom: str_some(item.allergy_agent.get_cloned()).map(|agent| [&agent, item.allergy_agent_symptom.lock_ref().as_str()].join("=")),
-                due_usage: str_some(item.due_usage.get_cloned()),
-                due_status: str_some(item.due_status.get_cloned()),
-                info: str_some(item.info.get_cloned()),
-                info_status: str_some(item.info_status.get_cloned()),
+                order_item_detail: str_some(&item.changed_drugusage.lock_ref()).or(str_some(&item.old_drugusage.lock_ref())),
+                icode: str_some(&item.icode.lock_ref()),
+                med_name: str_some(&item.med_name.lock_ref()).or(str_some(&item.custom_med_name.lock_ref())),
+                generic_name: str_some(&item.generic_name.lock_ref()),
+                dosageform: str_some(&item.dosageform.lock_ref()),
+                allergy_agent_symptom: str_some(&item.allergy_agent.lock_ref()).map(|agent| [&agent, item.allergy_agent_symptom.lock_ref().as_str()].join("=")),
+                due_usage: str_some(&item.due_usage.lock_ref()),
+                due_status: str_some(&item.due_status.lock_ref()),
+                info: str_some(&item.info.lock_ref()),
+                info_status: str_some(&item.info_status.lock_ref()),
 
                 med_reconciliation_item_id: zero_none(item.med_reconciliation_item_id.get()),
-                old_drugusage: str_some(item.old_drugusage.get_cloned()),
-                receive_from: str_some(item.receive_from.get_cloned()),
+                old_drugusage: str_some(&item.old_drugusage.lock_ref()),
+                receive_from: str_some(&item.receive_from.lock_ref()),
                 receive_date: date_8601(&item.receive_date.lock_ref()),
                 receive_qty: item.receive_qty.lock_ref().parse::<i32>().ok(),
                 last_dose_taken_time: datetime_8601(&item.last_dose_taken_time.lock_ref()),
-                last_dose_taken_remark: str_some(item.last_dose_taken_remark.get_cloned()),
+                last_dose_taken_remark: str_some(&item.last_dose_taken_remark.lock_ref()),
                 ..Default::default()
             })
             .collect();
@@ -449,25 +449,25 @@ impl MedReconForm {
                 } else {
                     Some(String::from("med"))
                 },
-                order_item_detail: str_some(item.changed_drugusage.get_cloned()).or(str_some(item.old_drugusage.get_cloned())),
-                icode: str_some(item.icode.get_cloned()),
-                med_name: str_some(item.med_name.get_cloned()).or(str_some(item.custom_med_name.get_cloned())),
-                generic_name: str_some(item.generic_name.get_cloned()),
-                dosageform: str_some(item.dosageform.get_cloned()),
-                due_usage: str_some(item.due_usage.get_cloned()),
-                due_status: str_some(item.due_status.get_cloned()),
-                info: str_some(item.info.get_cloned()),
-                info_status: str_some(item.info_status.get_cloned()),
+                order_item_detail: str_some(&item.changed_drugusage.lock_ref()).or(str_some(&item.old_drugusage.lock_ref())),
+                icode: str_some(&item.icode.lock_ref()),
+                med_name: str_some(&item.med_name.lock_ref()).or(str_some(&item.custom_med_name.lock_ref())),
+                generic_name: str_some(&item.generic_name.lock_ref()),
+                dosageform: str_some(&item.dosageform.lock_ref()),
+                due_usage: str_some(&item.due_usage.lock_ref()),
+                due_status: str_some(&item.due_status.lock_ref()),
+                info: str_some(&item.info.lock_ref()),
+                info_status: str_some(&item.info_status.lock_ref()),
 
-                allergy_agent_symptom: str_some(item.allergy_agent.get_cloned()).map(|agent| [&agent, item.allergy_agent_symptom.lock_ref().as_str()].join("=")),
+                allergy_agent_symptom: str_some(&item.allergy_agent.lock_ref()).map(|agent| [&agent, item.allergy_agent_symptom.lock_ref().as_str()].join("=")),
 
                 med_reconciliation_item_id: zero_none(item.med_reconciliation_item_id.get()),
-                old_drugusage: str_some(item.old_drugusage.get_cloned()),
-                receive_from: str_some(item.receive_from.get_cloned()),
+                old_drugusage: str_some(&item.old_drugusage.lock_ref()),
+                receive_from: str_some(&item.receive_from.lock_ref()),
                 receive_date: date_8601(&item.receive_date.lock_ref()),
                 receive_qty: item.receive_qty.lock_ref().parse::<i32>().ok(),
                 last_dose_taken_time: datetime_8601(&item.last_dose_taken_time.lock_ref()),
-                last_dose_taken_remark: str_some(item.last_dose_taken_remark.get_cloned()),
+                last_dose_taken_remark: str_some(&item.last_dose_taken_remark.lock_ref()),
                 ..Default::default()
             })
             .partition(|item| item.order_item_type.as_ref().map(|order_item_type| order_item_type == "injection").unwrap_or_default());
@@ -1430,14 +1430,14 @@ fn new_patch_item(item: &Rc<MedReconItem>) -> MedReconciliationItemPatch {
     MedReconciliationItemPatch {
         med_reconciliation_item_id: item.med_reconciliation_item_id.get(),
 
-        old_drugusage: str_some(item.old_drugusage.get_cloned()),
+        old_drugusage: str_some(&item.old_drugusage.lock_ref()),
         receive_qty: item.receive_qty.lock_ref().parse::<i32>().ok(),
-        receive_from: str_some(item.receive_from.get_cloned()),
+        receive_from: str_some(&item.receive_from.lock_ref()),
         receive_date: date_8601(&item.receive_date.lock_ref()),
 
-        changed_drugusage: str_some(item.changed_drugusage.get_cloned()),
+        changed_drugusage: str_some(&item.changed_drugusage.lock_ref()),
         last_dose_taken_time: datetime_8601(&item.last_dose_taken_time.lock_ref()),
-        last_dose_taken_remark: str_some(item.last_dose_taken_remark.get_cloned()),
-        used: str_some(item.used.get_cloned()),
+        last_dose_taken_remark: str_some(&item.last_dose_taken_remark.lock_ref()),
+        used: str_some(&item.used.get_cloned()),
     }
 }

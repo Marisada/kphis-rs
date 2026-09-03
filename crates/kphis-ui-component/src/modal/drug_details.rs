@@ -180,7 +180,7 @@ impl DrugDetailModal {
 
     fn load_item(modal: Rc<Self>, app: Rc<App>) {
         let params = DrugUseDurationParams {
-            icode: str_some(modal.icode.get_cloned()),
+            icode: str_some(&modal.icode.lock_ref()),
             ..Default::default()
         };
         app.async_load(
@@ -215,22 +215,22 @@ impl DrugDetailModal {
             icode: modal.icode.get_cloned(),
             med_name: None,
 
-            usage: str_some(modal.usage.get_cloned()),
+            usage: str_some(&modal.usage.lock_ref()),
             duration1: modal.duration1.lock_ref().parse::<i16>().ok(),
-            exceed_duration1_color: str_some(modal.exceed_duration1_color.get_cloned()),
+            exceed_duration1_color: str_some(&modal.exceed_duration1_color.lock_ref()),
             duration2: modal.duration2.lock_ref().parse::<i16>().ok(),
-            exceed_duration2_color: str_some(modal.exceed_duration2_color.get_cloned()),
+            exceed_duration2_color: str_some(&modal.exceed_duration2_color.lock_ref()),
             duration3: modal.duration3.lock_ref().parse::<i16>().ok(),
-            exceed_duration3_color: str_some(modal.exceed_duration3_color.get_cloned()),
-            status: str_some(modal.status.get_cloned()),
+            exceed_duration3_color: str_some(&modal.exceed_duration3_color.lock_ref()),
+            status: str_some(&modal.status.lock_ref()),
 
-            monitor: str_some(modal.monitor.get_cloned()),
+            monitor: str_some(&modal.monitor.lock_ref()),
             monitor_count: modal.monitor_count.lock_ref().parse::<u8>().ok(),
             monitor_duration: modal.monitor_duration.lock_ref().parse::<u32>().ok(),
-            monitor_status: str_some(modal.monitor_status.get_cloned()),
+            monitor_status: str_some(&modal.monitor_status.lock_ref()),
 
-            info: str_some(modal.info.get_cloned()),
-            info_status: str_some(modal.info_status.get_cloned()),
+            info: str_some(&modal.info.lock_ref()),
+            info_status: str_some(&modal.info_status.lock_ref()),
         };
 
         app.async_load(

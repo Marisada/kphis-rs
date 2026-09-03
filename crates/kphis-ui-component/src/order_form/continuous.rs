@@ -75,7 +75,7 @@ impl MedSearchable for ContinuousForm {
     }
     fn an(&self) -> Option<String> {
         match self.patient.lock_ref().as_ref().map(|pt| pt.visit_type()) {
-            Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => str_some(an),
+            Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => str_some(&an),
             Some(VisitTypeId::OpdEr(_, _)) | Some(VisitTypeId::Visit(_)) | None => None,
         }
     }

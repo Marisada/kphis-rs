@@ -943,9 +943,9 @@ where
 /// 1. SortBy enum with #[derive(Clone, Default, PartialEq)]
 /// 2. State's
 ///     - sorted_by: Mutable<SortBy>
-///     - is_asc: Mutable<bool>
+///     - is_desc: Mutable<bool>
 /// 3. `sort_fn` closure
-/// 4. Optional reset `sorted_by` and `is_asc` to default value at some function
+/// 4. Optional reset `sorted_by` and `is_desc` to default value at some function
 pub fn sortable_header_mixin<E, F>(sort_by: E, sort_by_mutable: Mutable<E>, is_asc_mutable: Mutable<bool>, sort_fn: F) -> impl FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>
 where
     E: PartialEq + Clone + 'static,
@@ -957,11 +957,11 @@ where
             .style("white-space", "nowrap")
             .child_signal(map_ref! {
                 let is_this = sort_by_mutable.signal_ref(clone!(sort_by => move |sb| *sb == sort_by)),
-                let is_asc = is_asc_mutable.signal() =>
+                let is_desc = is_asc_mutable.signal() =>
                 if *is_this {
                     Some(html!("i", {
                         .class("ms-1")
-                        .class(if *is_asc {
+                        .class(if *is_desc {
                             class::FA_UP
                         } else {
                             class::FA_DOWN

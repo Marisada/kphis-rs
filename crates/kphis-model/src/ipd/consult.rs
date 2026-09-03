@@ -98,12 +98,12 @@ impl QueryString for IpdConsultListParams {
 impl IpdConsultListParams {
     pub fn not_empty(self) -> Self {
         Self {
-            spclty: self.spclty.and_then(str_some),
-            search_consult_status: self.search_consult_status.and_then(str_some),
-            consult_dr_search: self.consult_dr_search.and_then(str_some),
-            consult_dr_reply_search: self.consult_dr_reply_search.and_then(str_some),
-            search_consult_emergency: self.search_consult_emergency.and_then(str_some),
-            patient: self.patient.and_then(str_some),
+            spclty: self.spclty.as_ref().and_then(|s| str_some(s)),
+            search_consult_status: self.search_consult_status.as_ref().and_then(|s| str_some(s)),
+            consult_dr_search: self.consult_dr_search.as_ref().and_then(|s| str_some(s)),
+            consult_dr_reply_search: self.consult_dr_reply_search.as_ref().and_then(|s| str_some(s)),
+            search_consult_emergency: self.search_consult_emergency.as_ref().and_then(|s| str_some(s)),
+            patient: self.patient.as_ref().and_then(|s| str_some(s)),
         }
     }
 }

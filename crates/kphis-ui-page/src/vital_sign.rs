@@ -75,8 +75,8 @@ impl VitalSignPage {
             clone!(app, page => async move {
                 if page.is_ipd {
                     let params = AvatarParams {
-                        ward: str_some(page.ward.get_cloned()),
-                        search: str_some(page.search.get_cloned()),
+                        ward: str_some(&page.ward.lock_ref()),
+                        search: str_some(&page.search.lock_ref()),
                     };
                     if params.is_empty() {
                         page.search_result.lock_mut().clear();
@@ -329,7 +329,7 @@ impl VitalSignPage {
                                                 ShowPatientMainCpn::new_with_id(*opd_er_order_master_id)
                                             }),
                                             VisitTypeId::Visit(vn) => (!vn.is_empty()).then(|| {
-                                                ShowPatientMainCpn::new_with_vn(vn.to_owned())
+                                                ShowPatientMainCpn::new_with_vn(vn)
                                             }),
                                         };
                                         show_patient_main_opt.map(|show_patient_main| {

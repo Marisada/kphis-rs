@@ -222,7 +222,7 @@ impl SummaryPage {
 
     // ipd-summary-2-data.php
     fn load(page: Rc<Self>, app: Rc<App>) {
-        let an = str_some(page.an.get_cloned());
+        let an = str_some(&page.an.lock_ref());
         if an.is_some() {
             let params = SummaryParams { an, ..Default::default() };
             app.async_load(
@@ -507,7 +507,7 @@ impl SummaryPage {
             .draggables
             .lock_ref()
             .first()
-            .and_then(|d| d.state.lock_ref().as_ref().map(|dx| (str_some(dx.icd10.clone()), dx.ename.clone())))
+            .and_then(|d| d.state.lock_ref().as_ref().map(|dx| (str_some(&dx.icd10), dx.ename.clone())))
             .unwrap_or_default();
         let hospital_refer = page.hospital_refer.lock_ref();
         SummaryData {
@@ -515,26 +515,26 @@ impl SummaryPage {
             an: page.an.get_cloned(),
             principal_diagnosis,
             principal_diagnosis_icd10,
-            operating_room: str_some(page.operating_room.get_cloned()),
-            tracheostomy: str_some(page.tracheostomy.get_cloned()),
-            mechanical_ventilation: str_some(page.mechanical_ventilation.get_cloned()),
-            packed_redcells: str_some(page.packed_redcells.get_cloned()),
-            fresh_frozen_plasma: str_some(page.fresh_frozen_plasma.get_cloned()),
-            platelets: str_some(page.platelets.get_cloned()),
-            cryoprecipitate: str_some(page.cryoprecipitate.get_cloned()),
-            whole_blood: str_some(page.whole_blood.get_cloned()),
-            computer_tomography: str_some(page.computer_tomography.get_cloned()),
-            computer_tomography_text: str_some(page.computer_tomography_text.get_cloned()),
-            chemotherapy: str_some(page.chemotherapy.get_cloned()),
-            mri: str_some(page.mri.get_cloned()),
-            mri_text: str_some(page.mri_text.get_cloned()),
-            hemodialysis: str_some(page.hemodialysis.get_cloned()),
-            non_or_other: str_some(page.non_or_other.get_cloned()),
-            non_or_other_text: str_some(page.non_or_other_text.get_cloned()),
-            special_other: str_some(page.special_other.get_cloned()),
-            special_other_text: str_some(page.special_other_text.get_cloned()),
-            discharge_status: str_some(page.discharge_status.get_cloned()),
-            discharge_type: str_some(page.discharge_type.get_cloned()),
+            operating_room: str_some(&page.operating_room.lock_ref()),
+            tracheostomy: str_some(&page.tracheostomy.lock_ref()),
+            mechanical_ventilation: str_some(&page.mechanical_ventilation.lock_ref()),
+            packed_redcells: str_some(&page.packed_redcells.lock_ref()),
+            fresh_frozen_plasma: str_some(&page.fresh_frozen_plasma.lock_ref()),
+            platelets: str_some(&page.platelets.lock_ref()),
+            cryoprecipitate: str_some(&page.cryoprecipitate.lock_ref()),
+            whole_blood: str_some(&page.whole_blood.lock_ref()),
+            computer_tomography: str_some(&page.computer_tomography.lock_ref()),
+            computer_tomography_text: str_some(&page.computer_tomography_text.lock_ref()),
+            chemotherapy: str_some(&page.chemotherapy.lock_ref()),
+            mri: str_some(&page.mri.lock_ref()),
+            mri_text: str_some(&page.mri_text.lock_ref()),
+            hemodialysis: str_some(&page.hemodialysis.lock_ref()),
+            non_or_other: str_some(&page.non_or_other.lock_ref()),
+            non_or_other_text: str_some(&page.non_or_other_text.lock_ref()),
+            special_other: str_some(&page.special_other.lock_ref()),
+            special_other_text: str_some(&page.special_other_text.lock_ref()),
+            discharge_status: str_some(&page.discharge_status.lock_ref()),
+            discharge_type: str_some(&page.discharge_type.lock_ref()),
             hospital_refer: hospital_refer.as_ref().map(|hosp| hosp.id.clone()),
             hosptype: hospital_refer.as_ref().and_then(|h| h.hosptype.clone()),
             hospname: hospital_refer.as_ref().and_then(|h| h.hospname.clone()),
@@ -557,7 +557,7 @@ impl SummaryPage {
             .draggables
             .lock_ref()
             .first()
-            .and_then(|d| d.state.lock_ref().as_ref().map(|dx| (str_some(dx.icd10.clone()), dx.ename.clone())))
+            .and_then(|d| d.state.lock_ref().as_ref().map(|dx| (str_some(&dx.icd10), dx.ename.clone())))
             .unwrap_or_default();
         // status CODE, REVIEW, AUDIT, CLAIM, DONE will turn to CODE/APPROVE/NULL
         // read `kphis_model::ipd::summary::sql_where_having` for more information
@@ -571,26 +571,26 @@ impl SummaryPage {
             an: page.an.get_cloned(),
             principal_diagnosis,
             principal_diagnosis_icd10,
-            operating_room: str_some(page.operating_room.get_cloned()),
-            tracheostomy: str_some(page.tracheostomy.get_cloned()),
-            mechanical_ventilation: str_some(page.mechanical_ventilation.get_cloned()),
-            packed_redcells: str_some(page.packed_redcells.get_cloned()),
-            fresh_frozen_plasma: str_some(page.fresh_frozen_plasma.get_cloned()),
-            platelets: str_some(page.platelets.get_cloned()),
-            cryoprecipitate: str_some(page.cryoprecipitate.get_cloned()),
-            whole_blood: str_some(page.whole_blood.get_cloned()),
-            computer_tomography: str_some(page.computer_tomography.get_cloned()),
-            computer_tomography_text: str_some(page.computer_tomography_text.get_cloned()),
-            chemotherapy: str_some(page.chemotherapy.get_cloned()),
-            mri: str_some(page.mri.get_cloned()),
-            mri_text: str_some(page.mri_text.get_cloned()),
-            hemodialysis: str_some(page.hemodialysis.get_cloned()),
-            non_or_other: str_some(page.non_or_other.get_cloned()),
-            non_or_other_text: str_some(page.non_or_other_text.get_cloned()),
-            special_other: str_some(page.special_other.get_cloned()),
-            special_other_text: str_some(page.special_other_text.get_cloned()),
-            discharge_status: str_some(page.discharge_status.get_cloned()),
-            discharge_type: str_some(page.discharge_type.get_cloned()),
+            operating_room: str_some(&page.operating_room.lock_ref()),
+            tracheostomy: str_some(&page.tracheostomy.lock_ref()),
+            mechanical_ventilation: str_some(&page.mechanical_ventilation.lock_ref()),
+            packed_redcells: str_some(&page.packed_redcells.lock_ref()),
+            fresh_frozen_plasma: str_some(&page.fresh_frozen_plasma.lock_ref()),
+            platelets: str_some(&page.platelets.lock_ref()),
+            cryoprecipitate: str_some(&page.cryoprecipitate.lock_ref()),
+            whole_blood: str_some(&page.whole_blood.lock_ref()),
+            computer_tomography: str_some(&page.computer_tomography.lock_ref()),
+            computer_tomography_text: str_some(&page.computer_tomography_text.lock_ref()),
+            chemotherapy: str_some(&page.chemotherapy.lock_ref()),
+            mri: str_some(&page.mri.lock_ref()),
+            mri_text: str_some(&page.mri_text.lock_ref()),
+            hemodialysis: str_some(&page.hemodialysis.lock_ref()),
+            non_or_other: str_some(&page.non_or_other.lock_ref()),
+            non_or_other_text: str_some(&page.non_or_other_text.lock_ref()),
+            special_other: str_some(&page.special_other.lock_ref()),
+            special_other_text: str_some(&page.special_other_text.lock_ref()),
+            discharge_status: str_some(&page.discharge_status.lock_ref()),
+            discharge_type: str_some(&page.discharge_type.lock_ref()),
             hospital_refer: page.hospital_refer.lock_ref().as_ref().map(|hosp| hosp.id.clone()),
             status: status.as_data(),
         }
@@ -647,7 +647,8 @@ impl SummaryPage {
     }
 
     fn save_code(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(summary_id), Some(an)) = (zero_none(page.summary_id.get()), str_some(page.an.get_cloned())) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let (Some(summary_id), Some(an)) = (zero_none(page.summary_id.get()), an_opt) {
             app.async_load(
                 true,
                 clone!(app => async move {
@@ -1420,27 +1421,27 @@ impl SummaryPage {
                                                     page.coder_name.set(coder_name);
                                                     found = true;
                                                 }
-                                                let principal_diagnosis_code = str_some(group_to_comma_string(page.principal_diagnosis_group.get_cloned()));
+                                                let principal_diagnosis_code = str_some(&group_to_comma_string(page.principal_diagnosis_group.get_cloned()));
                                                 if page.principal_diagnosis_code.get_cloned() != principal_diagnosis_code {
                                                     page.principal_diagnosis_code.set(principal_diagnosis_code);
                                                     found = true;
                                                 }
-                                                let pre_admission_comorbidity_codes = str_some(group_to_comma_string(page.pre_admission_comorbidity_group.get_cloned()));
+                                                let pre_admission_comorbidity_codes = str_some(&group_to_comma_string(page.pre_admission_comorbidity_group.get_cloned()));
                                                 if page.pre_admission_comorbidity_codes.get_cloned() != pre_admission_comorbidity_codes {
                                                     page.pre_admission_comorbidity_codes.set(pre_admission_comorbidity_codes);
                                                     found = true;
                                                 }
-                                                let post_admission_comorbidity_codes = str_some(group_to_comma_string(page.post_admission_comorbidity_group.get_cloned()));
+                                                let post_admission_comorbidity_codes = str_some(&group_to_comma_string(page.post_admission_comorbidity_group.get_cloned()));
                                                 if page.post_admission_comorbidity_codes.get_cloned() != post_admission_comorbidity_codes {
                                                     page.post_admission_comorbidity_codes.set(post_admission_comorbidity_codes);
                                                     found = true;
                                                 }
-                                                let other_diagnosis_codes = str_some(group_to_comma_string(page.other_diagnosis_group.get_cloned()));
+                                                let other_diagnosis_codes = str_some(&group_to_comma_string(page.other_diagnosis_group.get_cloned()));
                                                 if page.other_diagnosis_codes.get_cloned() != other_diagnosis_codes {
                                                     page.other_diagnosis_codes.set(other_diagnosis_codes);
                                                     found = true;
                                                 }
-                                                let external_cause_codes = str_some(group_to_comma_string(page.external_cause_group.get_cloned()));
+                                                let external_cause_codes = str_some(&group_to_comma_string(page.external_cause_group.get_cloned()));
                                                 if page.external_cause_codes.get_cloned() != external_cause_codes {
                                                     page.external_cause_codes.set(external_cause_codes);
                                                     found = true;
@@ -2311,7 +2312,7 @@ fn group_to_dxdatas(group: Rc<Group<Rc<Icd10>>>, ty: i32) -> Vec<DxData> {
             d.state.lock_ref().as_ref().map(|s| DxData {
                 ty,
                 detail: s.ename.clone(),
-                icd: str_some(s.icd10.clone()),
+                icd: str_some(&s.icd10),
             })
         })
         .collect()

@@ -101,7 +101,7 @@ impl AdmissionNoteCpn {
             Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => Some(an),
             Some(VisitTypeId::OpdEr(_, _)) | Some(VisitTypeId::Visit(_)) | None => None,
         } {
-            let params = IndexNoteParams { an: str_some(an), nurse_index_note_id: None };
+            let params = IndexNoteParams { an: str_some(&an), nurse_index_note_id: None };
             // GET `EndPoint::IpdIndexNote`
             match IndexNote::call_api_get(&params, app.state()).await {
                 Ok(response) => {
@@ -752,8 +752,8 @@ impl AdmissionNoteCpn {
                                             | Some(VisitTypeId::PreAdmit(an)) => {
                                                 let index_note = IndexNote {
                                                     nurse_index_note_id: page.nurse_index_note_id.get(),
-                                                    an: str_some(an),
-                                                    nurse_index_note: str_some(page.nurse_index_note.get_cloned()),
+                                                    an: str_some(&an),
+                                                    nurse_index_note: str_some(&page.nurse_index_note.lock_ref()),
                                                 };
                                                 // POST `EndPoint::IpdIndexNote`
                                                 page.index_note_modal.set(Some(IndexNoteForm::load(&index_note)));

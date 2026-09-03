@@ -54,14 +54,15 @@ impl IpdDocumentListCpn {
         Rc::new(Self {
             is_full,
             vn,
-            an: str_some(an.to_owned()),
+            an: str_some(an),
             ..Default::default()
         })
     }
 
     // opd-document-main-data.php
     fn load(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(vn), Some(an)) = (page.vn.get_cloned().and_then(str_some), page.an.clone()) {
+        let vn_opt = page.vn.lock_ref().as_ref().and_then(|s| str_some(s));
+        if let (Some(vn), Some(an)) = (vn_opt, page.an.clone()) {
             app.async_load(
                 true,
                 clone!(app => async move {

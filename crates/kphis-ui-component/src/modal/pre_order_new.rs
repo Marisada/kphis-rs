@@ -291,8 +291,8 @@ impl PreOrderNew {
                 order_for_date: date_8601(&modal.order_for_date.lock_ref()),
                 order_for_time: None,
                 order_doctor,
-                hn: str_some(modal.hn.get_cloned()),
-                template_name: str_some(modal.template_name.get_cloned()),
+                hn: str_some(&modal.hn.lock_ref()),
+                template_name: str_some(&modal.template_name.lock_ref()),
                 shared_template: None,
                 used: None,
             };

@@ -394,7 +394,7 @@ impl MedSearchboxCpn {
                         generic_name: generic_name.clone(),
                         exclude_order_id: opt_zero_none(order_form.order_id()),
                         off_order_item_ids,
-                        additional_icodes: str_some(additional_icodes.into_iter().collect::<Vec<String>>().join(",")),
+                        additional_icodes: str_some(&additional_icodes.into_iter().collect::<Vec<String>>().join(",")),
                     };
 
                     // Check Drug Duplication
@@ -413,7 +413,7 @@ impl MedSearchboxCpn {
                                                 results.push(DrugDuplicateCheck {
                                                     icode: Some(icode),
                                                     med_name: med.med_name.get_cloned(),
-                                                    order_item_detail: str_some(med.order_item_detail.get_cloned()),
+                                                    order_item_detail: str_some(&med.order_item_detail.lock_ref()),
                                                     order_date: Some(now.date()),
                                                     order_time: Some(now.time()),
                                                 });
