@@ -266,7 +266,7 @@ impl ScanImage {
     pub fn new_warn(warn: &str) -> Self {
         Self {
             image: ImageBase64::new_warn(),
-            note: str_some(warn.to_owned()),
+            note: str_some(warn),
         }
     }
 

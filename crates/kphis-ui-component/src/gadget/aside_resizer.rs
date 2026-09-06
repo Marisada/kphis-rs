@@ -125,10 +125,8 @@ impl AsideResizerCpn {
     }
 
     fn load_and_render_template(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(template), Some(vnan)) = (
-            page.selected_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
-            str_some(page.vnan.get_cloned()),
-        ) {
+        let vnan_opt = str_some(&page.vnan.lock_ref());
+        if let (Some(template), Some(vnan)) = (page.selected_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())), vnan_opt) {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -139,7 +137,8 @@ impl AsideResizerCpn {
     }
 
     fn load_and_render_document(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(doc_type_id), Some(vnan)) = (page.selected_document.get_cloned().map(|selected| selected as u8), str_some(page.vnan.get_cloned())) {
+        let vnan_opt = str_some(&page.vnan.lock_ref());
+        if let (Some(doc_type_id), Some(vnan)) = (page.selected_document.get_cloned().map(|selected| selected as u8), vnan_opt) {
             app.async_load(
                 true,
                 clone!(app, page => async move {

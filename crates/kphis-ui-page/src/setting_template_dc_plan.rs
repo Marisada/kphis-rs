@@ -102,10 +102,10 @@ impl SettingTemplateDcPlanPage {
             clone!(app => async move {
                 let dx = DcPlanTmpDx {
                     dx_id: page.dx_id.lock_ref().parse::<u32>().unwrap_or_default(),
-                    dx_name: str_some(page.dx_name.lock_ref().trim().to_owned()),
-                    dx_knowledge: str_some(page.dx_knowledge.lock_ref().trim().to_owned()),
-                    dx_revisit: str_some(page.dx_revisit.lock_ref().trim().to_owned()),
-                    dx_prevention: str_some(page.dx_prevention.lock_ref().trim().to_owned()),
+                    dx_name: str_some(&page.dx_name.lock_ref()),
+                    dx_knowledge: str_some(&page.dx_knowledge.lock_ref()),
+                    dx_revisit: str_some(&page.dx_revisit.lock_ref()),
+                    dx_prevention: str_some(&page.dx_prevention.lock_ref()),
                 };
                 // POST `EndPoint::IpdDcPlanTmpDx`
                 match dx.call_api_post(app.state()).await {
@@ -176,7 +176,7 @@ impl SettingTemplateDcPlanPage {
             clone!(app => async move {
                 let med = DcPlanTmpMed {
                     med_id: page.med_id.lock_ref().parse::<u32>().unwrap_or_default(),
-                    med_text: str_some(page.med_text.lock_ref().trim().to_owned()),
+                    med_text: str_some(&page.med_text.lock_ref()),
                 };
                 // POST `EndPoint::IpdDcPlanTmpMed`
                 match med.call_api_post(app.state()).await {
@@ -247,7 +247,7 @@ impl SettingTemplateDcPlanPage {
             clone!(app => async move {
                 let env = DcPlanTmpEnv {
                     env_id: page.env_id.lock_ref().parse::<u32>().unwrap_or_default(),
-                    env_text: str_some(page.env_text.lock_ref().trim().to_owned()),
+                    env_text: str_some(&page.env_text.lock_ref()),
                 };
                 // POST `EndPoint::IpdDcPlanTmpEnv`
                 match env.call_api_post(app.state()).await {
@@ -318,7 +318,7 @@ impl SettingTemplateDcPlanPage {
             clone!(app => async move {
                 let tx = DcPlanTmpTx {
                     tx_id: page.tx_id.lock_ref().parse::<u32>().unwrap_or_default(),
-                    tx_text: str_some(page.tx_text.lock_ref().trim().to_owned()),
+                    tx_text: str_some(&page.tx_text.lock_ref()),
                 };
                 // POST `EndPoint::IpdDcPlanTmpTx`
                 match tx.call_api_post(app.state()).await {
@@ -389,7 +389,7 @@ impl SettingTemplateDcPlanPage {
             clone!(app => async move {
                 let diet = DcPlanTmpDiet {
                     diet_id: page.diet_id.lock_ref().parse::<u32>().unwrap_or_default(),
-                    diet_text: str_some(page.diet_text.lock_ref().trim().to_owned()),
+                    diet_text: str_some(&page.diet_text.lock_ref()),
                 };
                 // POST `EndPoint::IpdDcPlanTmpDiet`
                 match diet.call_api_post(app.state()).await {

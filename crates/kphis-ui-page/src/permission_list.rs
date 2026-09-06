@@ -61,7 +61,7 @@ pub struct PermissionListPage {
     show_delete_modal: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
-    is_asc: Mutable<bool>,
+    is_desc: Mutable<bool>,
 
     modal_changed: Mutable<bool>,
     modal_parents: MutableVec<String>,
@@ -123,7 +123,7 @@ impl PermissionListPage {
     fn role_option(roles: Vec<Rc<Role>>, modal_role: &str, page: Rc<Self>) -> Vec<Dom> {
         let mut options: Vec<Dom> = Vec::new();
         let mut space = 0;
-        let modal_role_with_child = page.roles_with_children(modal_role.to_owned());
+        let modal_role_with_child = page.roles_with_children(modal_role);
         let (heads, tails): (Vec<Rc<Role>>, Vec<Rc<Role>>) = roles.clone().into_iter().partition(|role| role.parent_role.is_none());
         let heads_len = heads.len();
         if heads_len > 0 {
@@ -190,7 +190,7 @@ impl PermissionListPage {
         result.into_iter()
     }
 
-    fn roles_with_children(&self, role: String) -> Vec<String> {
+    fn roles_with_children(&self, role: &str) -> Vec<String> {
         if let Some(selected) = str_some(role) {
             let roles = self.roles.lock_ref().to_vec();
             let mut exacts = HashSet::new();
@@ -208,8 +208,8 @@ impl PermissionListPage {
             true,
             clone!(app, page => async move {
                 let params = UserRoleParams {
-                    role: str_some(page.roles_with_children(page.role.get_cloned()).join(",")),
-                    permission: str_some(page.permission.get_cloned()),
+                    role: str_some(&page.roles_with_children(&page.role.lock_ref()).join(",")),
+                    permission: str_some(&page.permission.lock_ref()),
                     ..Default::default()
                 };
                 // GET `EndPoint::UserRoleRole`
@@ -220,7 +220,7 @@ impl PermissionListPage {
                             roles_lock.clear();
                             roles_lock.extend(responses.clone().into_iter().map(Rc::new));
                             page.sorted_by.set(SortBy::Role);
-                            page.is_asc.set_neq(false);
+                            page.is_desc.set_neq(false);
                         }
                         if !page.set_all.get() {
                             page.all_role_permissions.lock_mut().extend(responses.into_iter().map(Rc::new));
@@ -266,10 +266,10 @@ impl PermissionListPage {
 
     fn save(page: Rc<Self>, display: Mutable<bool>, app: Rc<App>) {
         let save = RolePermissionSave {
-            role_prev: str_some(page.modal_role_prev.get_cloned()),
+            role_prev: str_some(&page.modal_role_prev.lock_ref()),
             role: page.modal_role.get_cloned(),
             role_desc: page.modal_role_desc.get_cloned(),
-            parent_role: str_some(page.modal_parent_role.get_cloned()),
+            parent_role: str_some(&page.modal_parent_role.lock_ref()),
             permissions: page.modal_permissions.lock_ref().to_vec(),
         };
         app.async_load(
@@ -295,8 +295,8 @@ impl PermissionListPage {
 
     fn delete(page: Rc<Self>, display: Mutable<bool>, app: Rc<App>) {
         let params = UserRoleParams {
-            role: str_some(page.modal_role.get_cloned()),
-            parent_role: str_some(page.modal_parent_role.get_cloned()),
+            role: str_some(&page.modal_role.lock_ref()),
+            parent_role: str_some(&page.modal_parent_role.lock_ref()),
             ..Default::default()
         };
         app.async_load(
@@ -488,7 +488,7 @@ impl PermissionListPage {
                     .child_signal(page.active_tab.signal_cloned().map(clone!(app, page => move |tab| {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.role_permissions.lock_ref().to_vec();
-                            if page.is_asc.get() {
+                            if page.is_desc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::Role => items.sort_by(|a, b| b.role_desc.cmp(&a.role_desc)),
                                     SortBy::ParentRole => items.sort_by(|a, b| b.parent_role_desc.cmp(&a.parent_role_desc)),
@@ -517,45 +517,42 @@ impl PermissionListPage {
                                                 .child(html!("div", {
                                                     .class("col")
                                                     .style("column-width","480px")
-                                                    .children([
-                                                        html!("ul", {
+                                                    .child_signal(page.role.signal_cloned().map(clone!(app, page => move |index_role| {
+                                                        Some(html!("ul", {
                                                             .children_signal_vec(page.role_permissions.signal_vec_cloned().to_signal_cloned().map(clone!(app, page => move |roles| {
-                                                                match str_some(page.role.get_cloned()) {
-                                                                    // show only selected role
-                                                                    Some(index_role) => {
-                                                                        if let Some(head) = roles.iter().find(|role| role.role == index_role) {
-                                                                            vec![html!("li", {
-                                                                                .style("break-inside","avoid")
-                                                                                .children(Self::render_li(head.clone(), page.clone(), app.clone()))
-                                                                                .apply_if(roles.iter().any(|x| x.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default()), clone!(app, page, roles => move |dom| {
-                                                                                    dom.child(html!("ul", {
-                                                                                        .children(Self::render_li_recursive(head, &roles, page, app))
-                                                                                    }))
-                                                                                }))
-                                                                            })]
-                                                                        } else {
-                                                                            Vec::new()
-                                                                        }
-                                                                    }
+                                                                if index_role.is_empty() {
                                                                     // show all
-                                                                    None => {
-                                                                        let (heads, tails): (Vec<Rc<RolePermissionList>>,Vec<Rc<RolePermissionList>>) = roles.into_iter().partition(|role| role.parent_role.is_none());
-                                                                        heads.into_iter().map(clone!(app, page => move |head| {
-                                                                            html!("li", {
-                                                                                .style("break-inside","avoid")
-                                                                                .children(Self::render_li(head.clone(), page.clone(), app.clone()))
-                                                                                .apply_if(tails.iter().any(|x| x.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default()), clone!(app, page, tails => move |dom| {
-                                                                                    dom.child(html!("ul", {
-                                                                                        .children(Self::render_li_recursive(&head, &tails, page, app))
-                                                                                    }))
+                                                                    let (heads, tails): (Vec<Rc<RolePermissionList>>,Vec<Rc<RolePermissionList>>) = roles.into_iter().partition(|role| role.parent_role.is_none());
+                                                                    heads.into_iter().map(clone!(app, page => move |head| {
+                                                                        html!("li", {
+                                                                            .style("break-inside","avoid")
+                                                                            .children(Self::render_li(head.clone(), page.clone(), app.clone()))
+                                                                            .apply_if(tails.iter().any(|x| x.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default()), clone!(app, page, tails => move |dom| {
+                                                                                dom.child(html!("ul", {
+                                                                                    .children(Self::render_li_recursive(&head, &tails, page, app))
                                                                                 }))
-                                                                            })
-                                                                        })).collect::<Vec<Dom>>()
+                                                                            }))
+                                                                        })
+                                                                    })).collect::<Vec<Dom>>()
+                                                                } else {
+                                                                    // show only selected role
+                                                                    if let Some(head) = roles.iter().find(|role| role.role == index_role) {
+                                                                        vec![html!("li", {
+                                                                            .style("break-inside","avoid")
+                                                                            .children(Self::render_li(head.clone(), page.clone(), app.clone()))
+                                                                            .apply_if(roles.iter().any(|x| x.parent_role.as_ref().map(|r| r == &head.role).unwrap_or_default()), clone!(app, page, roles => move |dom| {
+                                                                                dom.child(html!("ul", {
+                                                                                    .children(Self::render_li_recursive(head, &roles, page, app))
+                                                                                }))
+                                                                            }))
+                                                                        })]
+                                                                    } else {
+                                                                        Vec::new()
                                                                     }
                                                                 }
                                                             })).to_signal_vec())
-                                                        }),
-                                                    ])
+                                                        }))
+                                                    })))
                                                 }))
                                             }))
                                         }),
@@ -572,11 +569,11 @@ impl PermissionListPage {
                                                     html!("th", {.class("th-sm").attr("scope", "col").text("#")}),
                                                     html!("th", {
                                                         .class("th-sm").attr("scope", "col").text("Role")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::Role, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::Role, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                                     }),
                                                     html!("th", {
                                                         .class("th-sm").attr("scope", "col").text("Parent role")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::ParentRole, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::ParentRole, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                                     }),
                                                 ])
                                             }))
@@ -599,7 +596,7 @@ impl PermissionListPage {
                                                     html!("th", {.class("th-sm").attr("scope", "col").text("#")}),
                                                     html!("th", {
                                                         .class("th-sm").attr("scope", "col").text("Role")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::Role, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::Role, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                                     }),
                                                     html!("th", {
                                                         .class("th-sm").attr("scope", "col").text("Permission")
@@ -628,7 +625,7 @@ impl PermissionListPage {
                                                     }),
                                                     html!("th", {
                                                         .class("th-sm").attr("scope", "col").text("Parent role")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::ParentRole, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::ParentRole, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                                     }),
                                                 ])
                                             }))

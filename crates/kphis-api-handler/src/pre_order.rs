@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 use sqlx::{MySql, Pool};
 
@@ -36,8 +35,7 @@ use kphis_util::error::AppError;
     params(PreOrderMasterParams),
 )]
 pub async fn get_ipd_pre_order_list(Query(params): Query<PreOrderMasterParams>, ctx: RequestState) -> Result<Json<Vec<PreOrderMaster>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = master::get_pre_order_list(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -55,8 +53,7 @@ pub async fn get_ipd_pre_order_list(Query(params): Query<PreOrderMasterParams>, 
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_pre_order_master(ctx: RequestState, Json(payload): Json<PreOrderMasterSave>) -> Result<Json<(u32, ExecuteResponse)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = master::post_pre_order_master(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -77,8 +74,7 @@ pub async fn post_ipd_pre_order_master(ctx: RequestState, Json(payload): Json<Pr
     params(PreOrderParams),
 )]
 pub async fn get_ipd_pre_order(Query(params): Query<PreOrderParams>, ctx: RequestState) -> Result<Json<Vec<PreOrder>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let orders = get_ipd_pre_order_bundle(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -118,8 +114,7 @@ pub async fn get_ipd_pre_order_bundle(params: &PreOrderParams, intern_roles: &[S
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_pre_order(ctx: RequestState, Json(payload): Json<PreOrderSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order::post_order(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -137,8 +132,7 @@ pub async fn post_ipd_pre_order(ctx: RequestState, Json(payload): Json<PreOrderS
     params(PreProgressNoteParams),
 )]
 pub async fn get_ipd_pre_progress_note(Query(params): Query<PreProgressNoteParams>, ctx: RequestState) -> Result<Json<Vec<PreProgressNote>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let progress_notes = get_ipd_pre_progress_note_bundle(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -173,8 +167,7 @@ pub async fn get_ipd_pre_progress_note_bundle(params: &PreProgressNoteParams, in
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_pre_progress_note(ctx: RequestState, Json(payload): Json<PreProgressNoteSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = progress_note::post_progress_note(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -198,8 +191,7 @@ pub async fn post_ipd_pre_progress_note(ctx: RequestState, Json(payload): Json<P
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn post_ipd_pre_order_into(ctx: RequestState, Json(payload): Json<PreOrderIntoCommand>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = if payload.is_valid() {
         // check AN is valid (pre-admit was admited or admit was revoked)
@@ -227,8 +219,7 @@ pub async fn post_ipd_pre_order_into(ctx: RequestState, Json(payload): Json<PreO
     ),
 )]
 pub async fn delete_ipd_pre_order_master(Path(pre_order_master_id): Path<u32>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = master::delete_pre_order_by_master_id(pre_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -249,8 +240,7 @@ pub async fn delete_ipd_pre_order_master(Path(pre_order_master_id): Path<u32>, c
     ),
 )]
 pub async fn delete_ipd_pre_order(Path(order_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order::delete_pre_order(order_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -270,8 +260,7 @@ pub async fn delete_ipd_pre_order(Path(order_id): Path<u32>, ctx: RequestState) 
     ),
 )]
 pub async fn delete_ipd_pre_progress_note(Path(progress_note_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = progress_note::delete_progress_note(progress_note_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

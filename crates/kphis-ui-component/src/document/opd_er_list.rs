@@ -51,7 +51,8 @@ impl OpdErDocumentListCpn {
 
     // opd-document-main-data.php
     fn load(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(vn), Some(opd_er_order_master_id)) = (page.vn.get_cloned().and_then(str_some), zero_none(page.opd_er_order_master_id.get())) {
+        let vn_opt = page.vn.lock_ref().as_ref().and_then(|s| str_some(s));
+        if let (Some(vn), Some(opd_er_order_master_id)) = (vn_opt, zero_none(page.opd_er_order_master_id.get())) {
             app.async_load(
                 true,
                 clone!(app => async move {

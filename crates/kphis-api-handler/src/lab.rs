@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -28,8 +27,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_wbc_band(Path((key, value)): Path<(String, String)>, ctx: RequestState) -> Result<Json<Vec<LabWbcBand>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = lab::get_wbc_band(
         &key,
@@ -54,8 +52,7 @@ pub async fn get_wbc_band(Path((key, value)): Path<(String, String)>, ctx: Reque
     params(LabHeadParams),
 )]
 pub async fn get_lab_head(Query(params): Query<LabHeadParams>, ctx: RequestState) -> Result<Json<Vec<LabHead>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = lab::get_lab_head(&params, &ctx.user_state.user.doctorcode, &ctx.user_state.user.groupname, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -72,8 +69,7 @@ pub async fn get_lab_head(Query(params): Query<LabHeadParams>, ctx: RequestState
     params(LabItemParams),
 )]
 pub async fn get_lab_item(Query(params): Query<LabItemParams>, ctx: RequestState) -> Result<Json<Vec<LabItem>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = lab::get_lab_item(&params, &ctx.user_state.user.doctorcode, &ctx.user_state.user.groupname, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
@@ -92,8 +88,7 @@ pub async fn get_lab_item(Query(params): Query<LabItemParams>, ctx: RequestState
     ),
 )]
 pub async fn post_lab_read(Path(lab_order_number): Path<i32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let result = lab::post_lab_read(lab_order_number, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -112,8 +107,7 @@ pub async fn post_lab_read(Path(lab_order_number): Path<i32>, ctx: RequestState)
     ),
 )]
 pub async fn delete_lab_read(Path(lab_order_number): Path<i32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let result = lab::delete_lab_read(lab_order_number, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

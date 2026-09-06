@@ -119,9 +119,9 @@ impl SseData {
         Self {
             message_id,
             message_datetime: Some(message_datetime),
-            message: str_some(message.message.to_owned()),
+            message: str_some(&message.message),
             sender_code: sender_code.clone().unwrap_or_default(),
-            sender_name: str_some(sender_name.to_owned()),
+            sender_name: str_some(sender_name),
             person: message.person.to_owned(),
             ward: message.ward.to_owned(),
             spclty_id: message.spclty_id,

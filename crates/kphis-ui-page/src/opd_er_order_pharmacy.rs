@@ -301,8 +301,8 @@ fn submit(page: Rc<OpdErOrderPharmacyPage>, app: Rc<App>) {
     let request = OpdErOrderPharmacyParams {
         order_date_from: date_8601(&page.order_date_from.lock_ref()),
         order_date_to: date_8601(&page.order_date_to.lock_ref()),
-        is_discharged: str_some(app.opd_er_pharmacy_order_monitor_is_discharged.get_cloned()),
-        patient: str_some(page.patient.get_cloned()),
+        is_discharged: str_some(&app.opd_er_pharmacy_order_monitor_is_discharged.lock_ref()),
+        patient: str_some(&page.patient.lock_ref()),
     };
 
     app.async_load(

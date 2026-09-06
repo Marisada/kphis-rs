@@ -31,7 +31,7 @@ async fn api_all_not_and_login() {
     let mut server = new_test_app(&state).await;
 
     // test all NOT LOG-IN
-    api_all_run(&server, StatusCode::BAD_REQUEST).await;
+    api_all_run(&server, StatusCode::UNAUTHORIZED).await;
 
     let user = login(&server).await;
     server.add_header("Authorization", &["bearer ", &user.token].concat());

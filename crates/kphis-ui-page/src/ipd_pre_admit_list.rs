@@ -53,7 +53,7 @@ pub struct IpdPreAdmitListPage {
     changed: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
-    is_asc: Mutable<bool>,
+    is_desc: Mutable<bool>,
 
     check_an: Mutable<String>,
     check_an_changed: Mutable<bool>,
@@ -70,7 +70,7 @@ impl IpdPreAdmitListPage {
         Rc::new(Self {
             view_by: Mutable::new(view_by.to_owned()),
             status: Mutable::new(String::from("pre")),
-            is_asc: Mutable::new(true),
+            is_desc: Mutable::new(true),
             ..Default::default()
         })
     }
@@ -78,10 +78,10 @@ impl IpdPreAdmitListPage {
     // send GET method
     fn submit(page: Rc<Self>, app: Rc<App>) {
         let params = PreAdmitParams {
-            status: str_some(page.status.get_cloned()),
-            doctor_in_charge: str_some(page.doctor_in_charge.get_cloned()),
-            patient: str_some(page.patient.get_cloned()),
-            all: str_some(page.all.get_cloned()),
+            status: str_some(&page.status.lock_ref()),
+            doctor_in_charge: str_some(&page.doctor_in_charge.lock_ref()),
+            patient: str_some(&page.patient.lock_ref()),
+            all: str_some(&page.all.lock_ref()),
         };
 
         app.async_load(
@@ -94,7 +94,7 @@ impl IpdPreAdmitListPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::RegDateTime);
-                        page.is_asc.set_neq(true);
+                        page.is_desc.set_neq(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -135,7 +135,8 @@ impl IpdPreAdmitListPage {
     }
 
     fn any_an_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.check_an.get_cloned()) {
+        let an_opt = str_some(&page.check_an.lock_ref());
+        if let Some(an) = an_opt {
             app.async_load(
                 true,
                 clone!(app => async move {
@@ -348,7 +349,7 @@ impl IpdPreAdmitListPage {
                                                     }
                                                 }))
                                                 .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
-                                                    if let (Some(an), Some(vn)) = (str_some(page.check_an.get_cloned()), str_some(page.revoke_to_vn.get_cloned())) {
+                                                    if let (Some(an), Some(vn)) = (str_some(&page.check_an.lock_ref()), str_some(&page.revoke_to_vn.lock_ref())) {
                                                         Self::patch(PreAdmitPatch::RevokeVnAn(vn, an), page.clone(), app.clone());
                                                     } else {
                                                         page.display_patient_searchbox.set_neq(true);
@@ -431,7 +432,7 @@ impl IpdPreAdmitListPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_asc.get() {
+                            if page.is_desc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::RegDateTime => items.sort_by(|a, b| datetime_from_opt(b.vstdate, b.vsttime).cmp(&datetime_from_opt(a.vstdate, a.vsttime))),
                                     SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
@@ -461,11 +462,11 @@ impl IpdPreAdmitListPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาที่มาถึง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::RegDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::RegDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                         ])
                                         .children_signal_vec(page.status.signal_cloned().map(clone!(page, sort_fn => move |stts| {
@@ -473,7 +474,7 @@ impl IpdPreAdmitListPage {
                                                 vec![
                                                     html!("th", {
                                                         .class("th-sm").attr("scope","col").text("AN")
-                                                        .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                        .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                                     }),
                                                     html!("th", {.class("th-sm").attr("scope","col").text("แผนก")}),
                                                 ]
@@ -484,16 +485,16 @@ impl IpdPreAdmitListPage {
                                         .children([
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลา Order ล่าสุด")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col")
                                                 .attr("title","Med Reconciliation").text("MR")

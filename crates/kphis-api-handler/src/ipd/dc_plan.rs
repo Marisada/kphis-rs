@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -27,9 +26,8 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_ipd_dc_plan(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<DischargePlan>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = dc_plan::get_dc_plan(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis_extra()).await?;
 
@@ -50,9 +48,8 @@ pub async fn get_ipd_dc_plan(Path(an): Path<String>, ctx: RequestState) -> Resul
     ),
 )]
 pub async fn post_ipd_dc_plan(Path(an): Path<String>, ctx: RequestState, Json(payload): Json<DischargePlanSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -76,8 +73,7 @@ pub async fn post_ipd_dc_plan(Path(an): Path<String>, ctx: RequestState, Json(pa
     ),
 )]
 pub async fn delete_ipd_dc_plan(Path(_an): Path<String>, Query(params): Query<DischargePlanParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(dc_plan_id), Some(version)) = (params.dc_plan_id, params.version) {
         let result = dc_plan::delete_dc_plan(dc_plan_id, version, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;

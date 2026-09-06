@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -21,8 +21,7 @@ use kphis_util::error::AppError;
     params(DcPlanTmpParams),
 )]
 pub async fn get_ipd_dc_plan_tmp_dx(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<Vec<DcPlanTmpDx>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = dc_plan_tmp::get_dx(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -40,8 +39,7 @@ pub async fn get_ipd_dc_plan_tmp_dx(Query(params): Query<DcPlanTmpParams>, ctx: 
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_dc_plan_tmp_dx(ctx: RequestState, Json(payload): Json<DcPlanTmpDx>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.dx_name.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post DcPlanTmpDx"))
@@ -63,8 +61,7 @@ pub async fn post_ipd_dc_plan_tmp_dx(ctx: RequestState, Json(payload): Json<DcPl
     params(DcPlanTmpParams),
 )]
 pub async fn delete_ipd_dc_plan_tmp_dx(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = dc_plan_tmp::delete_dx(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
@@ -85,8 +82,7 @@ pub async fn delete_ipd_dc_plan_tmp_dx(Query(params): Query<DcPlanTmpParams>, ct
     params(DcPlanTmpParams),
 )]
 pub async fn get_ipd_dc_plan_tmp_med(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<Vec<DcPlanTmpMed>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = dc_plan_tmp::get_med(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -104,8 +100,7 @@ pub async fn get_ipd_dc_plan_tmp_med(Query(params): Query<DcPlanTmpParams>, ctx:
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_dc_plan_tmp_med(ctx: RequestState, Json(payload): Json<DcPlanTmpMed>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.med_text.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post DcPlanTmpMed"))
@@ -127,8 +122,7 @@ pub async fn post_ipd_dc_plan_tmp_med(ctx: RequestState, Json(payload): Json<DcP
     params(DcPlanTmpParams),
 )]
 pub async fn delete_ipd_dc_plan_tmp_med(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = dc_plan_tmp::delete_med(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
@@ -149,8 +143,7 @@ pub async fn delete_ipd_dc_plan_tmp_med(Query(params): Query<DcPlanTmpParams>, c
     params(DcPlanTmpParams),
 )]
 pub async fn get_ipd_dc_plan_tmp_env(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<Vec<DcPlanTmpEnv>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = dc_plan_tmp::get_env(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -168,8 +161,7 @@ pub async fn get_ipd_dc_plan_tmp_env(Query(params): Query<DcPlanTmpParams>, ctx:
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_dc_plan_tmp_env(ctx: RequestState, Json(payload): Json<DcPlanTmpEnv>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.env_text.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post DcPlanTmpEnv"))
@@ -191,8 +183,7 @@ pub async fn post_ipd_dc_plan_tmp_env(ctx: RequestState, Json(payload): Json<DcP
     params(DcPlanTmpParams),
 )]
 pub async fn delete_ipd_dc_plan_tmp_env(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = dc_plan_tmp::delete_env(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
@@ -213,8 +204,7 @@ pub async fn delete_ipd_dc_plan_tmp_env(Query(params): Query<DcPlanTmpParams>, c
     params(DcPlanTmpParams),
 )]
 pub async fn get_ipd_dc_plan_tmp_tx(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<Vec<DcPlanTmpTx>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = dc_plan_tmp::get_tx(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -232,8 +222,7 @@ pub async fn get_ipd_dc_plan_tmp_tx(Query(params): Query<DcPlanTmpParams>, ctx: 
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_dc_plan_tmp_tx(ctx: RequestState, Json(payload): Json<DcPlanTmpTx>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.tx_text.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post DcPlanTmpTx"))
@@ -255,8 +244,7 @@ pub async fn post_ipd_dc_plan_tmp_tx(ctx: RequestState, Json(payload): Json<DcPl
     params(DcPlanTmpParams),
 )]
 pub async fn delete_ipd_dc_plan_tmp_tx(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = dc_plan_tmp::delete_tx(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
@@ -277,8 +265,7 @@ pub async fn delete_ipd_dc_plan_tmp_tx(Query(params): Query<DcPlanTmpParams>, ct
     params(DcPlanTmpParams),
 )]
 pub async fn get_ipd_dc_plan_tmp_diet(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<Vec<DcPlanTmpDiet>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = dc_plan_tmp::get_diet(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -296,8 +283,7 @@ pub async fn get_ipd_dc_plan_tmp_diet(Query(params): Query<DcPlanTmpParams>, ctx
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_dc_plan_tmp_diet(ctx: RequestState, Json(payload): Json<DcPlanTmpDiet>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.diet_text.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post DcPlanTmpDiet"))
@@ -319,8 +305,7 @@ pub async fn post_ipd_dc_plan_tmp_diet(ctx: RequestState, Json(payload): Json<Dc
     params(DcPlanTmpParams),
 )]
 pub async fn delete_ipd_dc_plan_tmp_diet(Query(params): Query<DcPlanTmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = dc_plan_tmp::delete_diet(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;

@@ -168,7 +168,7 @@ impl SummaryAudit {
                     audit_type: String::from("I"),
                     doctor_auth: Some(String::from("T")),
                     com_hn: patient.hn.clone(),
-                    com_an: str_some(summary.an.clone()),
+                    com_an: str_some(&summary.an),
                     com_adm_datetime: datetime_from_opt(patient.regdate, patient.regtime),
                     com_dch_datetime: Some(com_dch_datetime),
                     com_leaveday: patient.leave_home_day,
@@ -218,7 +218,7 @@ impl SummaryAudit {
                     audit_type: String::from("I"),
                     doctor_auth: Some(String::from("T")),
                     com_hn: patient.hn.clone(),
-                    com_an: str_some(summary.an.clone()),
+                    com_an: str_some(&summary.an),
                     com_adm_datetime: datetime_from_opt(patient.regdate, patient.regtime),
                     com_dch_datetime: Some(com_dch_datetime),
                     com_leaveday: patient.leave_home_day,
@@ -322,7 +322,7 @@ impl SummaryAuditItem {
     pub fn new(ty: &str, summary_id: u32, sum_dx: &Option<String>, sum_icd: &Option<String>, com_icd: &Option<String>) -> Self {
         Self {
             summary_id,
-            ty: str_some(ty.to_owned()),
+            ty: str_some(ty),
             sum_dx: sum_dx.to_owned(),
             sum_icd: sum_icd.to_owned(),
             com_icd: com_icd.to_owned(),

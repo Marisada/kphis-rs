@@ -176,7 +176,7 @@ pub async fn post_progress_note(save: &ProgressNoteSave, user: &str, pool: &Pool
             }
             if progress_note_id > 0 {
                 for progress_note_item in save.progress_note_items.iter() {
-                    let insert_progress_note_item_result = insert_progress_note_item(progress_note_id, &str_some(an.to_owned()), progress_note_item, user, pool, kphis).await?;
+                    let insert_progress_note_item_result = insert_progress_note_item(progress_note_id, &str_some(an), progress_note_item, user, pool, kphis).await?;
                     results.push(ExecuteResponse::from_query_result(insert_progress_note_item_result, "Insert ProgressNoteItem"));
                 }
             }

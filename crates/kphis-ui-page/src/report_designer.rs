@@ -299,7 +299,8 @@ LIMIT 50;"#;
     }
 
     fn load_system_template(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(template), Some(ids)) = (page.selected_system_template.get_cloned(), str_some(page.ids.get_cloned())) {
+        let ids_opt = str_some(&page.ids.lock_ref());
+        if let (Some(template), Some(ids)) = (page.selected_system_template.get_cloned(), ids_opt) {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -404,7 +405,8 @@ LIMIT 50;"#;
     }
 
     fn load_json_from_query(page: Rc<Self>, app: Rc<App>) {
-        if let Some(statement) = str_some(page.sql_text.get_cloned()) {
+        let sql_opt = str_some(&page.sql_text.lock_ref());
+        if let Some(statement) = sql_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -441,9 +443,9 @@ LIMIT 50;"#;
                     template_name: page.custom_template_name.get_cloned(),
                     title: page.custom_title.get_cloned(),
                     content: page.typst_text.get_cloned(),
-                    statement: str_some(page.sql_text.get_cloned()),
-                    statement_params: str_some(page.custom_params.get_cloned()),
-                    info: str_some(page.info_text.get_cloned()),
+                    statement: str_some(&page.sql_text.lock_ref()),
+                    statement_params: str_some(&page.custom_params.lock_ref()),
+                    info: str_some(&page.info_text.lock_ref()),
                     disabled: page.custom_disabled.get(),
                     update_username: None,
                     update_datetime: None,

@@ -41,7 +41,7 @@ pub struct IpdSearchPatientOtherPage {
     search_result: MutableVec<Rc<IpdSearchPatientOtherResponse>>,
 
     sorted_by: Mutable<SortBy>,
-    is_asc: Mutable<bool>,
+    is_desc: Mutable<bool>,
 
     changed: Mutable<bool>,
 }
@@ -54,10 +54,10 @@ impl IpdSearchPatientOtherPage {
     // ipd-other-search-patient-table.php
     fn submit(page: Rc<Self>, app: Rc<App>) {
         let request = IpdSearchPatientOtherRequest {
-            ward: str_some(app.ward_select.get_cloned()),
-            doctor_in_charge: str_some(page.doctor_in_charge.get_cloned()),
-            patient: str_some(page.patient.get_cloned()),
-            passcode: str_some(page.passcode.get_cloned()),
+            ward: str_some(&app.ward_select.lock_ref()),
+            doctor_in_charge: str_some(&page.doctor_in_charge.lock_ref()),
+            patient: str_some(&page.patient.lock_ref()),
+            passcode: str_some(&page.passcode.lock_ref()),
         };
 
         app.async_load(
@@ -70,7 +70,7 @@ impl IpdSearchPatientOtherPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::BedNo);
-                        page.is_asc.set_neq(false);
+                        page.is_desc.set_neq(false);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -230,7 +230,7 @@ impl IpdSearchPatientOtherPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_asc.get() {
+                            if page.is_desc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
                                     SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
@@ -264,36 +264,36 @@ impl IpdSearchPatientOtherPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("#")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เตียง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("อายุ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Age, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Vital Sign")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxVsDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Nurse Note")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxFcNoteDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxFcNoteDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เวลาล่าสุด").child(html!("br")).text("Order")
-                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::MaxOrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                             }),
                                         ])
                                     }))

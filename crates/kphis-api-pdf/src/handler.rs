@@ -2,7 +2,7 @@ use axum::{
     Json,
     body::Bytes,
     extract::{Path, State},
-    http::{Method, Response, header},
+    http::{Response, header},
 };
 use http_body_util::Full;
 use time::OffsetDateTime;
@@ -122,8 +122,7 @@ pub async fn get_custom_template(Path(template_with_ext): Path<String>, State(ap
     ),
 )]
 pub async fn get_single_pdf(Path((template, report_type, ids)): Path<(String, String, String)>, ctx: RequestState) -> Result<Response<Full<Bytes>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     if report_type.as_str() == "system" {
         if ["full-general", "full-labour", "full-psychia"].contains(&template.as_str()) {
@@ -152,8 +151,7 @@ pub async fn get_single_pdf(Path((template, report_type, ids)): Path<(String, St
     ),
 )]
 pub async fn get_raw_single_template(Path((template, report_type, ids)): Path<(String, String, String)>, ctx: RequestState) -> Result<Json<TypstRaw>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(typst_report) = new_typst_report(template, report_type, &ctx.api_state).await? {
         let (typ, data_json) = prepare_template_data(&typst_report, &ids, &ctx.api_state, &ctx.user_state).await?;

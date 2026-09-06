@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -22,8 +22,7 @@ use kphis_util::error::AppError;
     params(UserRoleParams),
 )]
 pub async fn get_user_role_list(Query(params): Query<UserRoleParams>, ctx: RequestState) -> Result<Json<UserRoleList>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = role::get_user_role_list(params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
@@ -39,8 +38,7 @@ pub async fn get_user_role_list(Query(params): Query<UserRoleParams>, ctx: Reque
     responses(DocOne<UserRoleOptions>),
 )]
 pub async fn get_user_role_prelude(ctx: RequestState) -> Result<Json<UserRoleOptions>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = role::get_user_role_prelude(&ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -57,8 +55,7 @@ pub async fn get_user_role_prelude(ctx: RequestState) -> Result<Json<UserRoleOpt
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn post_user_role(ctx: RequestState, Json(payload): Json<UserRoleSave>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let loginname = payload.loginname.clone();
     let mut responses = role::post_user_role(payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -84,8 +81,7 @@ pub async fn post_user_role(ctx: RequestState, Json(payload): Json<UserRoleSave>
     params(UserRoleParams),
 )]
 pub async fn get_role_permission_list(Query(params): Query<UserRoleParams>, ctx: RequestState) -> Result<Json<Vec<RolePermissionList>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = role::get_role_permission_list(params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -102,8 +98,7 @@ pub async fn get_role_permission_list(Query(params): Query<UserRoleParams>, ctx:
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn post_role_permission(ctx: RequestState, Json(payload): Json<RolePermissionSave>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let role_prev_opt = payload.role_prev.as_ref().map(|r| r.to_owned());
     let mut responses = role::post_role_permission(payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -133,8 +128,7 @@ pub async fn post_role_permission(ctx: RequestState, Json(payload): Json<RolePer
     params(UserRoleParams),
 )]
 pub async fn delete_role_permission(Query(params): Query<UserRoleParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let role_opt = params.role.as_ref().map(|r| r.to_owned());
     let mut responses = role::delete_role_permission(params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;

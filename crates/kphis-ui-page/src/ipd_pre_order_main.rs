@@ -138,9 +138,9 @@ impl IpdPreOrderPage {
             order_for_date: date_8601(&page.order_for_date.lock_ref()),
             order_for_time: None,
             order_doctor: if order_doctor.is_empty() { app.doctor_code().unwrap_or_default() } else { order_doctor },
-            hn: str_some(page.hn.get_cloned()),
-            template_name: str_some(page.template_name.get_cloned()),
-            shared_template: str_some(page.shared_template.get_cloned()),
+            hn: str_some(&page.hn.lock_ref()),
+            template_name: str_some(&page.template_name.lock_ref()),
+            shared_template: str_some(&page.shared_template.lock_ref()),
             used: None,
         };
 

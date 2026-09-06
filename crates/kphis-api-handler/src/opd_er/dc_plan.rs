@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -27,8 +26,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_opd_er_dc_plan(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState) -> Result<Json<Vec<DischargePlan>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = dc_plan::get_dc_plan(opd_er_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis_extra()).await?;
 
@@ -48,8 +46,7 @@ pub async fn get_opd_er_dc_plan(Path(opd_er_order_master_id): Path<u32>, ctx: Re
     ),
 )]
 pub async fn post_opd_er_dc_plan(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState, Json(payload): Json<DischargePlanSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let result = dc_plan::post_dc_plan(opd_er_order_master_id, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -70,8 +67,7 @@ pub async fn post_opd_er_dc_plan(Path(opd_er_order_master_id): Path<u32>, ctx: R
     ),
 )]
 pub async fn delete_opd_er_dc_plan(Path(_opd_er_order_master_id): Path<u32>, Query(params): Query<DischargePlanParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(dc_plan_id), Some(version)) = (params.dc_plan_id, params.version) {
         let result = dc_plan::delete_dc_plan(dc_plan_id, version, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;

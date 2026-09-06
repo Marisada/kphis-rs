@@ -62,7 +62,7 @@ impl ShowPatientMainCpn {
         })
     }
 
-    pub fn new_with_vn(vn: String) -> Rc<Self> {
+    pub fn new_with_vn(vn: &str) -> Rc<Self> {
         Rc::new(Self {
             is_ipd: false,
             vn: Mutable::new(str_some(vn)),
@@ -325,14 +325,14 @@ pub fn render_patient_info(is_compact: bool, info: Rc<PatientInfo>, update_aller
                                 })
                                 .text("ข้อมูลผู้ป่วย")
                                 .apply(|dom| {
-                                    if let Some(ward_name) = opt_empty_none(info.ward_name.clone()) {
+                                    if let Some(ward_name) = opt_empty_none(info.ward_name.as_ref()) {
                                         dom.text(" ").text(&ward_name)
                                     } else {
                                         dom
                                     }
                                 })
                                 .apply(|dom| {
-                                    if let Some(bedno) = opt_empty_none(info.bedno.clone()) {
+                                    if let Some(bedno) = opt_empty_none(info.bedno.as_ref()) {
                                         dom.text(" เตียง ").text(&bedno)
                                     } else {
                                         dom
@@ -340,7 +340,7 @@ pub fn render_patient_info(is_compact: bool, info: Rc<PatientInfo>, update_aller
                                 })
                             }))
                             .apply(|dom| {
-                                if let Some(ward_name) = opt_empty_none(info.ward_name.clone()) {
+                                if let Some(ward_name) = opt_empty_none(info.ward_name.as_ref()) {
                                     dom.child(html!("span", {
                                         .apply(|d| {
                                             if mini || is_compact { d
@@ -359,7 +359,7 @@ pub fn render_patient_info(is_compact: bool, info: Rc<PatientInfo>, update_aller
                                 }
                             })
                             .apply(|dom| {
-                                if let Some(bedno) = opt_empty_none(info.bedno.clone()) {
+                                if let Some(bedno) = opt_empty_none(info.bedno.as_ref()) {
                                     dom.child(html!("span", {
                                         .apply(|d| {
                                             if mini || is_compact { d
@@ -460,7 +460,7 @@ pub fn render_patient_info(is_compact: bool, info: Rc<PatientInfo>, update_aller
                                 }
                             })
                             .apply(|dom| {
-                                if let Some(spclty_name) = opt_empty_none(info.spclty_name.clone()) {
+                                if let Some(spclty_name) = opt_empty_none(info.spclty_name.as_ref()) {
                                     dom.child(html!("span", {
                                         .class("d-inline-block")
                                         .children([
@@ -633,9 +633,9 @@ pub fn render_patient_info(is_compact: bool, info: Rc<PatientInfo>, update_aller
                                     html!("span", {.text(&info.hometel.clone().unwrap_or_default())}),
                                 ])
                                 .attr("title", &[
-                                    "บ้าน : ", &opt_empty_none(info.hometel.clone()).as_ref().map(|ht| ["โทร ", ht].concat()).unwrap_or_default(), " ", &info.homeaddr.clone().unwrap_or_default(), "\n",
-                                    "ที่ทำงาน : ", &opt_empty_none(info.worktel.clone()).as_ref().map(|wt| ["โทร ", wt].concat()).unwrap_or_default(), " ", &info.workaddr.clone().unwrap_or_default(), "\n",
-                                    "ผู้ติดต่อ : ", &opt_empty_none(info.informtel.clone()).as_ref().map(|it| ["โทร ", it].concat()).unwrap_or_default(), " ", &info.informname.clone().unwrap_or_default(), " ",
+                                    "บ้าน : ", &opt_empty_none(info.hometel.as_ref()).as_ref().map(|ht| ["โทร ", ht].concat()).unwrap_or_default(), " ", &info.homeaddr.clone().unwrap_or_default(), "\n",
+                                    "ที่ทำงาน : ", &opt_empty_none(info.worktel.as_ref()).as_ref().map(|wt| ["โทร ", wt].concat()).unwrap_or_default(), " ", &info.workaddr.clone().unwrap_or_default(), "\n",
+                                    "ผู้ติดต่อ : ", &opt_empty_none(info.informtel.as_ref()).as_ref().map(|it| ["โทร ", it].concat()).unwrap_or_default(), " ", &info.informname.clone().unwrap_or_default(), " ",
                                     &info.informrelation.as_ref().map(|ir| [" (", ir,")"].concat()).unwrap_or_default(), " ", &info.informaddr.clone().unwrap_or_default()
                                 ].concat())
                             }))

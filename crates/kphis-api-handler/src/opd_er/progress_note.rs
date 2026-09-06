@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 use sqlx::{MySql, Pool};
 
@@ -27,8 +26,7 @@ use kphis_util::error::AppError;
     params(ProgressNoteParams),
 )]
 pub async fn get_opd_er_progress_note(Query(params): Query<ProgressNoteParams>, ctx: RequestState) -> Result<Json<Vec<ProgressNote>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let progress_notes = get_opd_er_progress_note_bundle(
         &params,
@@ -71,8 +69,7 @@ pub async fn get_opd_er_progress_note_bundle(params: &ProgressNoteParams, intern
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_opd_er_progress_note(ctx: RequestState, Json(payload): Json<ProgressNoteSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = progress_note::post_progress_note(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -92,8 +89,7 @@ pub async fn post_opd_er_progress_note(ctx: RequestState, Json(payload): Json<Pr
     ),
 )]
 pub async fn delete_opd_er_progress_note(Path(progress_note_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = progress_note::delete_progress_note(progress_note_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

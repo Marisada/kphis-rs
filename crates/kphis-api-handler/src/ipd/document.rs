@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -25,8 +25,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_ipd_document_list(Path((vn, an)): Path<(String, String)>, ctx: RequestState) -> Result<Json<IpdDocumentExists>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = document::get_ipd_document_list(&vn, &an, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
@@ -45,8 +44,7 @@ pub async fn get_ipd_document_list(Path((vn, an)): Path<(String, String)>, ctx: 
     ),
 )]
 pub async fn get_ipd_document_datetime(Path(an): Path<String>, ctx: RequestState) -> Result<Json<IpdDocumentDatetime>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = document::get_ipd_document_datetime(&an, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -65,8 +63,7 @@ pub async fn get_ipd_document_datetime(Path(an): Path<String>, ctx: RequestState
     ),
 )]
 pub async fn get_ipd_document_types(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<DocumentScan>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = document::get_ipd_document_types(&an, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -87,8 +84,7 @@ pub async fn get_ipd_document_types(Path(an): Path<String>, ctx: RequestState) -
     ),
 )]
 pub async fn post_ipd_document_type(Path(an): Path<String>, ctx: RequestState, Json(payload): Json<DocumentType>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -112,8 +108,7 @@ pub async fn post_ipd_document_type(Path(an): Path<String>, ctx: RequestState, J
     ),
 )]
 pub async fn delete_ipd_document_type(Path(an): Path<String>, ctx: RequestState, Json(payload): Json<DocumentType>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;

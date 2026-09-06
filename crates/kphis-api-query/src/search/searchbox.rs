@@ -291,13 +291,13 @@ mod tests {
 
         let found_item = get_med_searchbox("0001234", "RACE", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_item.len(), 1);
-        assert!(found_item.into_iter().all(|m| m.allergy_agent.and_then(str_some).is_some()));
+        assert!(found_item.into_iter().all(|m| m.allergy_agent.as_ref().and_then(|s| str_some(s)).is_some()));
         let found_note = get_med_searchbox("0001234", "para", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_note.len(), 1);
-        assert!(found_note.into_iter().all(|m| m.allergy_agent.and_then(str_some).is_some()));
+        assert!(found_note.into_iter().all(|m| m.allergy_agent.as_ref().and_then(|s| str_some(s)).is_some()));
         let found_no_allergy = get_med_searchbox("0001234", "FAR", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_no_allergy.len(), 1);
-        assert!(found_no_allergy.into_iter().all(|m| m.allergy_agent.and_then(str_some).is_none()));
+        assert!(found_no_allergy.into_iter().all(|m| m.allergy_agent.as_ref().and_then(|s| str_some(s)).is_none()));
         let not_found = get_med_searchbox("0001234", "xxxx", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert!(not_found.is_empty());
     }
@@ -317,14 +317,14 @@ mod tests {
         let found_item = get_med_searchbox_without_hn("RACE", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_item.len(), 1);
         // this function NOT DETECTING DRUG ALLERGY!!!
-        assert!(found_item.into_iter().all(|m| m.allergy_agent.and_then(str_some).is_none()));
+        assert!(found_item.into_iter().all(|m| m.allergy_agent.as_ref().and_then(|s| str_some(s)).is_none()));
         let found_note = get_med_searchbox_without_hn("para", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_note.len(), 1);
         // this function NOT DETECTING DRUG ALLERGY!!!
-        assert!(found_note.into_iter().all(|m| m.allergy_agent.and_then(str_some).is_none()));
+        assert!(found_note.into_iter().all(|m| m.allergy_agent.as_ref().and_then(|s| str_some(s)).is_none()));
         let found_no_allergy = get_med_searchbox_without_hn("FAR", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_no_allergy.len(), 1);
-        assert!(found_no_allergy.into_iter().all(|m| m.allergy_agent.and_then(str_some).is_none()));
+        assert!(found_no_allergy.into_iter().all(|m| m.allergy_agent.as_ref().and_then(|s| str_some(s)).is_none()));
         let not_found = get_med_searchbox_without_hn("xxxx", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert!(not_found.is_empty());
     }

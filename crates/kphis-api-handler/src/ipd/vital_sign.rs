@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -26,9 +25,8 @@ use kphis_util::error::AppError;
     params(VitalSignParams),
 )]
 pub async fn get_ipd_vital_sign(Query(params): Query<VitalSignParams>, ctx: RequestState) -> Result<Json<Vec<VitalSign>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = vital_sign::get_vital_sign(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -48,9 +46,8 @@ pub async fn get_ipd_vital_sign(Query(params): Query<VitalSignParams>, ctx: Requ
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_vital_sign(Query(params): Query<VitalSignParams>, ctx: RequestState, Json(payload): Json<VitalSignSave>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let (Some(an), Some(hn)) = (&params.an, &params.hn) {
         // check AN is valid (pre-admit was admited or admit was revoked)
@@ -77,9 +74,8 @@ pub async fn post_ipd_vital_sign(Query(params): Query<VitalSignParams>, ctx: Req
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn put_ipd_vital_sign(Query(params): Query<VitalSignParams>, ctx: RequestState, Json(payload): Json<VitalSignSave>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::PUT, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let (Some(an), Some(hn)) = (&params.an, &params.hn) {
         // check AN is valid (pre-admit was admited or admit was revoked)
@@ -106,8 +102,7 @@ pub async fn put_ipd_vital_sign(Query(params): Query<VitalSignParams>, ctx: Requ
     ),
 )]
 pub async fn delete_ipd_vital_sign(Path(vs_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = vital_sign::delete_vital_sign(vs_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

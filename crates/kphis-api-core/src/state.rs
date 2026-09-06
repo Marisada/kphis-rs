@@ -1,11 +1,8 @@
 use axum::{
+    Extension, RequestPartsExt,
     body::Bytes,
-    extract::{ConnectInfo, FromRef, FromRequestParts, MatchedPath, State},
-    http::{Method, request::Parts, uri::PathAndQuery},
-};
-use axum_extra::{
-    TypedHeader,
-    headers::{Authorization, authorization::Bearer},
+    extract::{FromRef, FromRequestParts, MatchedPath, State},
+    http::{Method, request::Parts},
 };
 use base64::{Engine, engine::general_purpose};
 use config::Config;
@@ -18,7 +15,7 @@ use sqlx::{MySql, Pool};
 use std::{
     collections::{HashMap, HashSet},
     env,
-    net::{IpAddr, SocketAddr},
+    net::SocketAddr,
     path::Path,
     str::FromStr,
     sync::{Arc, LazyLock, RwLock},
@@ -33,7 +30,7 @@ use x509_certificate::{CapturedX509Certificate, InMemorySigningKeyPair};
 
 use kphis_api_query::{
     assets::{load_app_asset, new_app_asset},
-    log, query_utils,
+    query_utils,
     transform::trigger::{add_ipt_delete_trigger, add_ipt_insert_trigger, select_exists_trg_kphis_ipt_log_delete, select_exists_trg_kphis_ipt_log_insert},
     user::role::{get_all_role, get_role_permission_list},
 };
@@ -58,10 +55,7 @@ use kphis_util::{
     // util::hash_to_base64_string,
 };
 
-use crate::{
-    pdf::{core::JsonActorHandle, signer::PdfSigner},
-    token::get_claim_public,
-};
+use crate::pdf::{core::JsonActorHandle, signer::PdfSigner};
 
 pub static BUILD_TIME: LazyLock<PrimitiveDateTime> = LazyLock::new(|| {
     env::var("SOURCE_DATE_EPOCH")
@@ -877,40 +871,33 @@ pub struct RequestState {
     pub api_state: ApiState,
     pub user_state: UserState,
     matched_path: MatchedPath,
-    path_query: Option<PathAndQuery>,
+    method: Method,
 }
 
 impl RequestState {
-    /// May error `403`, `500`
-    pub async fn authorize_and_access_log(&self, method: &Method, is_pre_admit: bool) -> Result<(), AppError> {
+    /// - Error 400 when user_state is None
+    /// - Error 403 when not-production and (non-get-read_only or endpoint-not-allowed)
+    pub async fn authorize(&self, is_pre_admit: bool) -> Result<(), AppError> {
         let endpoint_with_prefix = self.matched_path.as_str();
         let endpoint_striped = endpoint_with_prefix.strip_prefix(API_PREFIX).unwrap_or(endpoint_with_prefix);
         let endpoint = EndPoint::from_str(endpoint_striped).unwrap_or(EndPoint::Unknown);
         // debug!("convert MatchedPath: {} to Endpoint.base(): {}", matched_path.as_str(), endpoint.base());
 
-        let accepted = !self.api_state.production() || ((!self.api_state.read_only() || matches!(method, &Method::GET)) && endpoint.is_allow(method, &self.user_state.permissions, is_pre_admit));
+        let accepted = !self.api_state.production() || ((!self.api_state.read_only() || matches!(self.method, Method::GET)) && endpoint.is_allow(&self.method, &self.user_state.permissions, is_pre_admit));
 
-        if accepted || !self.api_state.access_log_only_authorized() {
-            let access_detail = access_detail(method, &self.path_query, accepted);
-
-            let result = log::insert_access_log(&self.user_state.user.loginname, &self.user_state.addr.to_string(), &access_detail, &self.api_state.db_pool, &self.api_state.kphis_log()).await?;
-            if result.rows_affected() == 0 {
-                return Err(Source::App.to_error(500, "Failed Insert AccessLog", "Insert AccessLog"));
-            }
-        }
         if accepted {
             Ok(())
         } else {
-            Err(Source::App.to_error(403, [&endpoint.to_string(), " not allowed"].concat(), "Authorize and AccessLog"))
+            Err(Source::App.to_error(403, [&endpoint.to_string(), " not allowed"].concat(), "Authorize"))
         }
     }
 }
 
-fn access_detail(method: &Method, path_query: &Option<PathAndQuery>, accepted: bool) -> String {
-    let path = path_query.as_ref().map(|pq| pq.to_string()).unwrap_or_default();
-    let status = if accepted { "accepted" } else { "rejected" };
-    ["{\"method\":\"", method.as_ref(), "\",\"path\":\"", &path, "\",\"status\":\"", status, "\"}"].concat()
-}
+// fn access_detail(method: &Method, path_query: &Option<PathAndQuery>, accepted: bool) -> String {
+//     let path = path_query.as_ref().map(|pq| pq.to_string()).unwrap_or_default();
+//     let status = if accepted { "accepted" } else { "rejected" };
+//     ["{\"method\":\"", method.as_ref(), "\",\"path\":\"", &path, "\",\"status\":\"", status, "\"}"].concat()
+// }
 
 impl<S> FromRequestParts<S> for RequestState
 where
@@ -920,28 +907,32 @@ where
     type Rejection = AppError;
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
-        let ConnectInfo(addr): ConnectInfo<SocketAddr> = ConnectInfo::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "SocketAddr Not Found", "ExtractUser"))?;
-        let matched_path = MatchedPath::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "MatchedPath Not Found", "ExtractUser"))?;
-        let State(api_state): State<ApiState> = State::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "ApiState Not Found", "ExtractUser"))?;
-        let TypedHeader(Authorization(bearer)): TypedHeader<Authorization<Bearer>> = TypedHeader::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(400, "Token Not Found", "ExtractUser"))?;
-        let path_query = parts.uri.path_and_query().cloned();
-        let real_addr = api_state
-            .app_config
-            .real_ip_header
-            .as_ref()
-            .and_then(|real_ip_header| parts.headers.get(real_ip_header))
-            .and_then(|v| v.to_str().ok())
-            .and_then(|v| v.parse::<IpAddr>().ok())
-            .map(|ip| SocketAddr::new(ip, addr.port()))
-            .unwrap_or(addr);
-        let user_state = UserState::from_token(bearer.token(), real_addr, &api_state).await?;
+        let method = parts.method.clone();
+        let matched_path = MatchedPath::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "MatchedPath Not Found", "Extract MatchedPath"))?;
+        let State(api_state): State<ApiState> = State::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "ApiState Not Found", "Extract State"))?;
+        // let path_query = parts.uri.path_and_query().cloned();
+        let Extension(real_addr) = parts.extract::<Extension<SocketAddr>>().await.map_err(|_| Source::App.to_error(500, "RealAddr Not Found", "Extract SocketAddr"))?;
 
-        Ok(Self {
-            api_state,
-            user_state,
-            matched_path,
-            path_query,
-        })
+        let state_id_opt = parts.extract::<Extension<u128>>().await.ok().map(|Extension(state_id)| state_id);
+        let user_state = match state_id_opt {
+            Some(state_id) => {
+                let user = api_state
+                    .online_get(state_id)
+                    .await
+                    .ok_or_else(|| Source::App.to_error(401, "กรุณาเข้าสู่ระบบใหม่", "Get UserState").with_title(ErrorTitle::NoUserState))?;
+
+                if user.addr.ip() == real_addr.ip() {
+                    user
+                } else {
+                    return Err(Source::App.to_error(401, "Mismatched IP Address", "Get UserState"));
+                }
+            }
+            None => {
+                return Err(Source::App.to_error(401, "Token Not Found", "Authorize"));
+            }
+        };
+
+        Ok(Self { api_state, user_state, matched_path, method })
     }
 }
 
@@ -954,31 +945,31 @@ pub struct UserState {
     pub addr: SocketAddr,
 }
 
-impl UserState {
-    /// May error 401, 500
-    pub async fn from_token(token: &str, addr: SocketAddr, app: &ApiState) -> Result<Self, AppError> {
-        let claims = get_claim_public(token, &app.paseto.public)?;
-        let now_ts = get_timestamp_server()?;
-        if claims.iat > now_ts || claims.exp < now_ts {
-            return Err(AppError::app_401("Verify Token").with_title(ErrorTitle::Security));
-        }
-        let state_id = get_state_id(&claims)?;
-        let user_state = app
-            .online_get(state_id)
-            .await
-            .ok_or_else(|| Source::App.to_error(401, "กรุณาเข้าสู่ระบบใหม่", "Get UserState").with_title(ErrorTitle::NoUserState))?;
+// impl UserState {
+//     /// May error 401, 500
+//     pub async fn from_token(token: &str, addr: SocketAddr, app: &ApiState) -> Result<Self, AppError> {
+//         let claims = get_claim_public(token, &app.paseto.public)?;
+//         let now_ts = get_timestamp_server()?;
+//         if claims.iat > now_ts || claims.exp < now_ts {
+//             return Err(AppError::app_401("Verify Token").with_title(ErrorTitle::Security));
+//         }
+//         let state_id = get_state_id(&claims)?;
+//         let user_state = app
+//             .online_get(state_id)
+//             .await
+//             .ok_or_else(|| Source::App.to_error(401, "กรุณาเข้าสู่ระบบใหม่", "Get UserState").with_title(ErrorTitle::NoUserState))?;
 
-        if user_state.addr.ip() == addr.ip() {
-            Ok(user_state)
-        } else {
-            Err(Source::App.to_error(401, "Mismatched IP Address", "Get UserState"))
-        }
-    }
+//         if user_state.addr.ip() == addr.ip() {
+//             Ok(user_state)
+//         } else {
+//             Err(Source::App.to_error(401, "Mismatched IP Address", "Get UserState"))
+//         }
+//     }
 
-    pub fn trace_req_by(&self) {
-        tracing::debug!("requested by {} from {}", self.user.name, self.addr);
-    }
-}
+//     pub fn trace_req_by(&self) {
+//         tracing::debug!("requested by {} from {}", self.user.name, self.addr);
+//     }
+// }
 
 pub fn get_state_id(claims: &Claims) -> Result<u128, AppError> {
     let Ulid(state_id) = Ulid::from_string(&claims.sub).map_err(|e| Source::UlidDecode.to_error(401, e, "Claims"))?;

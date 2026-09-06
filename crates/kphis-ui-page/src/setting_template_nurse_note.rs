@@ -150,10 +150,10 @@ impl SettingTemplateNurseNotePage {
             clone!(app => async move {
                 let group = TmpGroup {
                     smp_id: page.smp_id.lock_ref().parse::<u32>().unwrap_or_default(),
-                    smp_name: str_some(page.smp_name.lock_ref().trim().to_owned()),
+                    smp_name: str_some(&page.smp_name.lock_ref()),
                     smp_group: None,
                     smp_order: None,
-                    smp_status: str_some(page.smp_status.get_cloned()),
+                    smp_status: str_some(&page.smp_status.lock_ref()),
                 };
                 // POST `EndPoint::IpdTmpGroup`
                 match group.call_api_post(app.state()).await {
@@ -233,9 +233,9 @@ impl SettingTemplateNurseNotePage {
                 let subgroup = TmpSubGroup {
                     smp_id: page.smp_id.lock_ref().parse::<u32>().unwrap_or_default(),
                     subgroup: page.subgroup.lock_ref().parse::<u32>().unwrap_or_default(),
-                    subgroup_name: str_some(page.subgroup_name.lock_ref().trim().to_owned()),
+                    subgroup_name: str_some(&page.subgroup_name.lock_ref()),
                     subgroup_order: None,
-                    subgroup_status: str_some(page.subgroup_status.get_cloned()),
+                    subgroup_status: str_some(&page.subgroup_status.lock_ref()),
                 };
                 // POST `EndPoint::IpdTmpSubgroup`
                 match subgroup.call_api_post(app.state()).await {
@@ -363,9 +363,9 @@ impl SettingTemplateNurseNotePage {
                     focus_id: page.focus_id.lock_ref().parse::<u32>().unwrap_or_default(),
                     smp_id: page.smp_id.lock_ref().parse::<u32>().unwrap_or_default(),
                     subgroup: page.subgroup.lock_ref().parse::<u32>().unwrap_or_default(),
-                    focus_name: str_some(page.focus_name.lock_ref().trim().to_owned()),
+                    focus_name: str_some(&page.focus_name.lock_ref()),
                     focus_order: None,
-                    focus_status: str_some(page.focus_status.get_cloned()),
+                    focus_status: str_some(&page.focus_status.lock_ref()),
                 };
                 // POST `EndPoint::IpdTmpFocus`
                 match focus.call_api_post(app.state()).await {
@@ -448,9 +448,9 @@ impl SettingTemplateNurseNotePage {
                     goal_id: page.goal_id.lock_ref().parse::<u32>().unwrap_or_default(),
                     smp_id: page.smp_id.lock_ref().parse::<u32>().unwrap_or_default(),
                     subgroup: page.subgroup.lock_ref().parse::<u32>().unwrap_or_default(),
-                    goal_name: str_some(page.goal_name.lock_ref().trim().to_owned()),
+                    goal_name: str_some(&page.goal_name.lock_ref()),
                     goal_order: None,
-                    goal_status: str_some(page.goal_status.get_cloned()),
+                    goal_status: str_some(&page.goal_status.lock_ref()),
                 };
                 // POST `EndPoint::IpdTmpGoal`
                 match goal.call_api_post(app.state()).await {
@@ -533,9 +533,9 @@ impl SettingTemplateNurseNotePage {
                     intvt_id: page.intvt_id.lock_ref().parse::<u32>().unwrap_or_default(),
                     smp_id: page.smp_id.lock_ref().parse::<u32>().unwrap_or_default(),
                     subgroup: page.subgroup.lock_ref().parse::<u32>().unwrap_or_default(),
-                    intvt_name: str_some(page.intvt_name.lock_ref().trim().to_owned()),
+                    intvt_name: str_some(&page.intvt_name.lock_ref()),
                     intvt_order: None,
-                    intvt_status: str_some(page.intvt_status.get_cloned()),
+                    intvt_status: str_some(&page.intvt_status.lock_ref()),
                 };
                 // POST `EndPoint::IpdTmpIntvt`
                 match intvt.call_api_post(app.state()).await {

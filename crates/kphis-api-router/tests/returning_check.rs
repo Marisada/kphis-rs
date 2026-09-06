@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 
 use axum::{
-    Json,
+    Extension, Json,
     body::Bytes,
-    extract::{ConnectInfo, Multipart, Path, Query, State},
-    http::{HeaderMap, Response},
+    extract::{Multipart, Path, Query, State},
+    http::Response,
 };
 use http_body_util::Full;
 use std::{net::SocketAddr, rc::Rc};
@@ -21,7 +21,8 @@ use kphis_model::{
 };
 use kphis_util::error::AppError;
 
-// Generic function that enforces return type checked
+/// - js: `async fn xxx(app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(ctx: RequestState) -> Result<Json<T>, AppError>`
 fn check_rj<H, F, HFut, FFut, T>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(RequestState) -> HFut,
@@ -34,6 +35,9 @@ where
 //=====   =====//
 // query alone //
 //=====   =====//
+
+/// - js: `async fn xxx(params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Query(params): Query<Q>, ctx: RequestState) -> Result<Json<T>, AppError>`
 fn check_q_rj<'a, H, F, HFut, FFut, T, Q>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Query<Q>, RequestState) -> HFut,
@@ -43,6 +47,9 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(any: A, params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Query(params): Query<Q>, ctx: RequestState) -> Result<Json<T>, AppError>`
 fn check_q_add_rj<'a, H, F, HFut, FFut, T, Q, A>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Query<Q>, RequestState) -> HFut,
@@ -56,22 +63,31 @@ where
 //=====  =====//
 // path alone //
 //=====  =====//
-fn check_pi_rj<H, F, HFut, FFut, T, I>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(p: P, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(p): Path<P>, ctx: RequestState) -> Result<Json<T>, AppError>`
+fn check_pi_rj<H, F, HFut, FFut, T, P>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(Path<I>, RequestState) -> HFut,
-    F: Fn(I, Rc<AppState>) -> FFut,
+    H: Fn(Path<P>, RequestState) -> HFut,
+    F: Fn(P, Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_pi_add_rj<H, F, HFut, FFut, T, I, A>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(any: A, p: P, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(p): Path<P>, ctx: RequestState) -> Result<Json<T>, AppError>`
+fn check_pi_add_rj<H, F, HFut, FFut, T, P, A>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(Path<I>, RequestState) -> HFut,
-    F: Fn(A, I, Rc<AppState>) -> FFut,
+    H: Fn(Path<P>, RequestState) -> HFut,
+    F: Fn(A, P, Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(s: &str, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(s): Path<String>, ctx: RequestState) -> Result<Json<T>, AppError>`
 fn check_ps_rj<'a, H, F, HFut, FFut, T>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Path<String>, RequestState) -> HFut,
@@ -80,6 +96,9 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(s1: &str, s2: &str, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path((s1, s2)): Path<(String, String)>, ctx: RequestState) -> Result<Json<T>, AppError>`
 fn check_pss_rj<'a, H, F, HFut, FFut, T>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Path<(String, String)>, RequestState) -> HFut,
@@ -88,6 +107,9 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(s1: &str, s2: &str, s3: &str, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path((s1, s2, s3)): Path<(String, String, String)>, ctx: RequestState) -> Result<Json<T>, AppError>`
 fn check_psss_rj<'a, H, F, HFut, FFut, T>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Path<(String, String, String)>, RequestState) -> HFut,
@@ -96,18 +118,24 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_psi_rj<'a, H, F, HFut, FFut, T, I>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(s: &str, p: P, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path((s, p)): Path<(String, P)>, ctx: RequestState) -> Result<Json<T>, AppError>`
+fn check_psi_rj<'a, H, F, HFut, FFut, T, P>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(Path<(String, I)>, RequestState) -> HFut,
-    F: Fn(&'a str, I, Rc<AppState>) -> FFut,
+    H: Fn(Path<(String, P)>, RequestState) -> HFut,
+    F: Fn(&'a str, P, Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_pxi_rj<'a, H, F, HFut, FFut, T, X: 'a, I>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(x: &X, p: P, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path((x, p)): Path<(X, P)>, ctx: RequestState) -> Result<Json<T>, AppError>`
+fn check_pxi_rj<'a, H, F, HFut, FFut, T, X: 'a, P>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(Path<(X, I)>, RequestState) -> HFut,
-    F: Fn(&'a X, I, Rc<AppState>) -> FFut,
+    H: Fn(Path<(X, P)>, RequestState) -> HFut,
+    F: Fn(&'a X, P, Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
@@ -116,6 +144,9 @@ where
 //===== ===== =====//
 // multipart alone //
 //===== ===== =====//
+
+/// - js: `async fn xxx(x: X, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(ctx: RequestState, multipart: Multipart) -> Result<Json<T>, AppError>`
 fn check_multipart_rj<H, F, HFut, FFut, T, X>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(RequestState, Multipart) -> HFut,
@@ -128,6 +159,9 @@ where
 //===== === =====//
 // payload alone //
 //===== === =====//
+
+/// - js: `async fn xxx(payload: &X, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
 fn check_payload_rj<'a, H, F, HFut, FFut, T, X: 'a>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(RequestState, Json<X>) -> HFut,
@@ -136,6 +170,9 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(payload: &X, any: A, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
 fn check_payload_add_rj<'a, H, F, HFut, FFut, T, X: 'a, A>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(RequestState, Json<X>) -> HFut,
@@ -144,6 +181,9 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(payload: &[X], app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(ctx: RequestState, Json(payloads): Json<Vec<X>>) -> Result<Json<T>, AppError>`
 fn check_payloads_rj<'a, H, F, HFut, FFut, T, X: 'a>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(RequestState, Json<Vec<X>>) -> HFut,
@@ -152,18 +192,13 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_payloads_add_rj<'a, H, F, HFut, FFut, T, X: 'a, A>(_handler_fn: H, _fetch_fn: F)
-where
-    H: Fn(RequestState, Json<Vec<X>>) -> HFut,
-    F: Fn(&'a [X], A, Rc<AppState>) -> FFut,
-    HFut: Future<Output = Result<Json<T>, AppError>>,
-    FFut: Future<Output = Result<T, AppError>>,
-{
-}
 
 // =====  ===== //
 // path + query //
 // =====  ===== //
+
+/// - js: `async fn xxx(s: &str, params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(s): Path<String>, Query(params): Query<Q>, ctx: RequestState) -> Result<Json<T>, AppError>`
 fn check_ps_q_rj<'a, H, F, HFut, FFut, T, Q>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Path<String>, Query<Q>, RequestState) -> HFut,
@@ -173,10 +208,13 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_pi_q_rj<'a, H, F, HFut, FFut, T, Q, I>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(p: P, params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(p): Path<P>, Query(params): Query<Q>, ctx: RequestState) -> Result<Json<T>, AppError>`
+fn check_pi_q_rj<'a, H, F, HFut, FFut, T, Q, P>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(Path<I>, Query<Q>, RequestState) -> HFut,
-    F: Fn(I, &'a Q, Rc<AppState>) -> FFut,
+    H: Fn(Path<P>, Query<Q>, RequestState) -> HFut,
+    F: Fn(P, &'a Q, Rc<AppState>) -> FFut,
     Q: QueryString + 'a,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
@@ -186,6 +224,9 @@ where
 //===== ==== =====//
 // path + payload //
 //===== ==== =====//
+
+/// - js: `async fn xxx(payload: &X, s: &str, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(s): Path<String>, ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
 fn check_ps_payload_rj<'a, H, F, HFut, FFut, T, X: 'a>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Path<String>, RequestState, Json<X>) -> HFut,
@@ -194,18 +235,24 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_pi_payload_rj<'a, H, F, HFut, FFut, T, I, X: 'a>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(payload: &X, p: P, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(p): Path<P>, ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
+fn check_pi_payload_rj<'a, H, F, HFut, FFut, T, P, X: 'a>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(Path<I>, RequestState, Json<X>) -> HFut,
-    F: Fn(&'a X, I, Rc<AppState>) -> FFut,
+    H: Fn(Path<P>, RequestState, Json<X>) -> HFut,
+    F: Fn(&'a X, P, Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_pi_payload_add_rj<'a, H, F, HFut, FFut, T, I, X: 'a, A>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(payload: &X, any: A, p: P, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(p): Path<P>, ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
+fn check_pi_payload_add_rj<'a, H, F, HFut, FFut, T, P, X: 'a, A>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(Path<I>, RequestState, Json<X>) -> HFut,
-    F: Fn(&'a X, A, I, Rc<AppState>) -> FFut,
+    H: Fn(Path<P>, RequestState, Json<X>) -> HFut,
+    F: Fn(&'a X, A, P, Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
@@ -214,6 +261,9 @@ where
 // ===== ==== ===== //
 // query + payload  //
 // ===== ==== ===== //
+
+/// - js: `async fn xxx(payload: &X, params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Query(params): Query<Q>, ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
 fn check_q_payload_rj<'a, H, F, HFut, FFut, T, Q, X: 'a>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Query<Q>, RequestState, Json<X>) -> HFut,
@@ -223,6 +273,9 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(payload: &X, any1: A, any2: B, params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Query(params): Query<Q>, ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
 fn check_q_payload_add2_rj<'a, H, F, HFut, FFut, T, Q, X: 'a, A, B>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Query<Q>, RequestState, Json<X>) -> HFut,
@@ -232,6 +285,9 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(any: A, payload: &[X], params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Query(params): Query<Q>, ctx: RequestState, Json(payload): Json<Vec<X>>>) -> Result<Json<T>, AppError>`
 fn check_q_payloads_add_rj<'a, H, F, HFut, FFut, T, Q, X: 'a, A>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Query<Q>, RequestState, Json<Vec<X>>) -> HFut,
@@ -241,9 +297,13 @@ where
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
 // ===== ===== ===== ===== //
 // path + query + payload  //
 // ===== ===== ===== ===== //
+
+/// - js: `async fn xxx(payload: &X, s: &str, params: &Q, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Path(s): Path<String>, Query(params): Query<Q>, ctx: RequestState, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
 fn check_ps_q_payload_rj<'a, H, F, HFut, FFut, T, Q, X: 'a>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Path<String>, Query<Q>, RequestState, Json<X>) -> HFut,
@@ -257,27 +317,47 @@ where
 //===== ===== =====//
 // login specific  //
 //===== ===== =====//
+
+/// - js: `async fn xxx(app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Extension(socket_addr): Extension<SocketAddr>, State(app): State<ApiState>, cookies: Cookies) -> Result<Json<T>, AppError>`
 fn check_login_rj<H, F, HFut, FFut, T>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(ConnectInfo<SocketAddr>, HeaderMap, State<ApiState>, Cookies) -> HFut,
+    H: Fn(Extension<SocketAddr>, State<ApiState>, Cookies) -> HFut,
     F: Fn(Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
+
+/// - js: `async fn xxx(s1: &str, s2: &str, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Extension(socket_addr): Extension<SocketAddr>, State(app): State<ApiState>, cookies: Cookies, Json(payload): Json<X>) -> Result<Json<T>, AppError>`
 fn check_login_payload_rj<'a, H, F, HFut, FFut, T, X>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(ConnectInfo<SocketAddr>, HeaderMap, State<ApiState>, Cookies, Json<X>) -> HFut,
+    H: Fn(Extension<SocketAddr>, State<ApiState>, Cookies, Json<X>) -> HFut,
     F: Fn(&'a str, &'a str, Rc<AppState>) -> FFut,
     HFut: Future<Output = Result<Json<T>, AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
-fn check_login_payload_add_rj<'a, H, F, HFut, FFut, T, X, A>(_handler_fn: H, _fetch_fn: F)
+
+/// - js: `async fn xxx(s1: &str, s2: &str, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Extension(socket_addr): Extension<SocketAddr>, State(app): State<ApiState>, cookies: Cookies, Json(payload): Json<X>) -> Result<(Extension<E>, Json<T>), AppError>`
+fn check_login_payload_rej<'a, H, F, HFut, FFut, T, X, E>(_handler_fn: H, _fetch_fn: F)
 where
-    H: Fn(ConnectInfo<SocketAddr>, HeaderMap, State<ApiState>, Cookies, Json<X>) -> HFut,
+    H: Fn(Extension<SocketAddr>, State<ApiState>, Cookies, Json<X>) -> HFut,
+    F: Fn(&'a str, &'a str, Rc<AppState>) -> FFut,
+    HFut: Future<Output = Result<(Extension<E>, Json<T>), AppError>>,
+    FFut: Future<Output = Result<T, AppError>>,
+{
+}
+
+/// - js: `async fn xxx(any: A, s1: &str, s2: &str, app: Rc<AppState>) -> Result<T, AppError>`
+/// - handler: `async fn xxx(Extension(socket_addr): Extension<SocketAddr>, State(app): State<ApiState>, cookies: Cookies, Json(payload): Json<X>) -> Result<(Extension<E>, Json<T>), AppError>`
+fn check_login_payload_add_rej<'a, H, F, HFut, FFut, T, X, A, E>(_handler_fn: H, _fetch_fn: F)
+where
+    H: Fn(Extension<SocketAddr>, State<ApiState>, Cookies, Json<X>) -> HFut,
     F: Fn(A, &'a str, &'a str, Rc<AppState>) -> FFut,
-    HFut: Future<Output = Result<Json<T>, AppError>>,
+    HFut: Future<Output = Result<(Extension<E>, Json<T>), AppError>>,
     FFut: Future<Output = Result<T, AppError>>,
 {
 }
@@ -285,6 +365,9 @@ where
 //===== =====//
 // with Blob //
 //===== =====//
+
+/// - js: `async fn xxx(s1: &str, s2: &str, s3: &str, app: Rc<Self>) -> Result<Blob, AppError>`
+/// - handler: `async fn xxx(Path((s1, s2, s3)): Path<(String, String, String)>, ctx: RequestState) -> Result<Response<Full<Bytes>>, AppError>`
 fn check_psss_rb<'a, H, F, HFut, FFut>(_handler_fn: H, _fetch_fn: F)
 where
     H: Fn(Path<(String, String, String)>, RequestState) -> HFut,
@@ -873,11 +956,11 @@ fn test_handler_fetch_match(endpoint: EndPoint) {
             // GET
             check_login_rj(kphis_api_handler::user::his::refresh_token, user::his::LoginResponse::call_api_get_access_renew);
             // POST
-            check_login_payload_rj(kphis_api_handler::user::his::check_login, user::his::LoginResponse::call_api_post_access);
+            check_login_payload_rej(kphis_api_handler::user::his::check_login, user::his::LoginResponse::call_api_post_access);
             // PUT
             check_login_payload_rj(kphis_api_handler::user::his::refresh_cookie, user::his::LoginResponse::call_api_put_refresh_renew);
             // PATCH
-            check_login_payload_add_rj(kphis_api_handler::user::his::check_totp, user::his::LoginResponse::call_api_patch_access_2fa);
+            check_login_payload_add_rej(kphis_api_handler::user::his::check_totp, user::his::LoginResponse::call_api_patch_access_2fa);
         }
         EndPoint::UserConfig => {
             check_payload_rj(kphis_api_handler::user::config::post_user_config, user::config::UserConfigResponse::call_api_post);

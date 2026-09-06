@@ -198,10 +198,10 @@ impl PatientInfo {
         self.visit_type.clone()
     }
     pub fn hn(&self) -> Option<String> {
-        self.hn.clone().and_then(str_some)
+        self.hn.as_ref().and_then(|s| str_some(s))
     }
     pub fn vn(&self) -> Option<String> {
-        self.vn.clone().and_then(str_some)
+        self.vn.as_ref().and_then(|s| str_some(s))
     }
     pub fn regdate(&self) -> Option<Date> {
         if self.is_ipd() { self.regdate } else { self.vstdate }

@@ -1,12 +1,9 @@
 use axum::{
     Router,
     body::Body,
-    extract::DefaultBodyLimit,
-    http::{
-        Request,
-        StatusCode,
-        // header::{self, HeaderValue},
-    },
+    extract::{DefaultBodyLimit, OriginalUri},
+    http::{Request, StatusCode},
+    middleware,
     routing::{delete, get, patch, post},
 };
 use std::time::Duration;
@@ -17,7 +14,6 @@ use tower_http::{
         CompressionLayer,
         predicate::{NotForContentType, Predicate, SizeAbove},
     },
-    // set_header::SetResponseHeaderLayer,
     timeout::TimeoutLayer,
     trace::TraceLayer,
 };
@@ -25,6 +21,8 @@ use tracing::Level;
 
 use kphis_api_core::state::ApiState;
 use kphis_model::{PATH_API_PATIENT_IMAGE, PATH_API_XRAY_IMAGE, PATH_API_XRAY_THUMBNAIL, endpoint::EndPoint};
+
+use super::middleware::{log_middleware, real_ip_middleware, token_id_middleware};
 
 // we use handler name from kphis's php function name
 #[rustfmt::skip]
@@ -486,26 +484,31 @@ pub fn api_router(state: ApiState) -> Router {
         .route(&EndPoint::UserRoleUser,
             get(kphis_api_handler::user::role::get_user_role_list)
             .post(kphis_api_handler::user::role::post_user_role))
-        .with_state(state)
+        .with_state(state.clone())
+        // NOTE: layer of middlewares like an onions, handlers as a core
+        // - request comes outer into core (bottom to top)
+        // - response go out from core to outer (top to bottom) 
         // we do not use Authorization layer because we need UserStage in handlers
         // so we authorized in UserState extraction (see.. impl<S> FromRequestParts<S> for UserState)
-        .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(30)))
         .layer(CookieManagerLayer::new())
-        .layer(
-            TraceLayer::new_for_http().make_span_with(|request: &Request<Body>| {
-                tracing::span!(
-                    Level::DEBUG,
-                    "request",
-                    method = tracing::field::display(request.method()),
-                    uri = tracing::field::display(request.uri()),
-                    version = tracing::field::debug(request.version()),
-                    request_id = tracing::field::display(ulid::Ulid::generate()),
-                )
-            }),
-        )
+        .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(30)))
         .layer(DefaultBodyLimit::max(request_body_limited_mb * 1024 * 1024))
         .layer(CompressionLayer::new().compress_when(compression_predicate))
+        .layer(middleware::from_fn_with_state(state.clone(), log_middleware))
+        .layer(middleware::from_fn_with_state(state.clone(), token_id_middleware))
+        .layer(middleware::from_fn_with_state(state, real_ip_middleware))
         .layer(governor_layer)
+        .layer(TraceLayer::new_for_http().make_span_with(|request: &Request<Body>| {
+            let uri = request.extensions().get::<OriginalUri>().map(|uri| uri.to_string()).unwrap_or(request.uri().to_string());
+            // use span at ERROR (lowest) level to always show `request` on any filter level
+            tracing::span!(
+                Level::ERROR,
+                "request",
+                method = tracing::field::display(request.method()),
+                uri = tracing::field::display(uri),
+                id = tracing::field::display(ulid::Ulid::generate()),
+            )
+        }).on_failure(()))
 }
 
 #[rustfmt::skip]
@@ -513,8 +516,22 @@ pub fn sse_get_router(state: ApiState) -> Router {
     Router::new()
         .route("/any", get(kphis_api_handler::sse::get_sse))
         .route("/id/{state_id}", get(kphis_api_handler::sse::get_sse_by_id))
-        .with_state(state)
+        .with_state(state.clone())
         .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(30)))
+        .layer(middleware::from_fn_with_state(state.clone(), log_middleware))
+        .layer(middleware::from_fn_with_state(state.clone(), token_id_middleware))
+        .layer(middleware::from_fn_with_state(state, real_ip_middleware))
+        .layer(TraceLayer::new_for_http().make_span_with(|request: &Request<Body>| {
+            let uri = request.extensions().get::<OriginalUri>().map(|uri| uri.to_string()).unwrap_or(request.uri().to_string());
+            // use span at ERROR (lowest) level to always show `request` on any filter level
+            tracing::span!(
+                Level::ERROR,
+                "request",
+                method = tracing::field::display(request.method()),
+                uri = tracing::field::display(uri),
+                id = tracing::field::display(ulid::Ulid::generate()),
+            )
+        }).on_failure(()))
 }
 
 #[rustfmt::skip]

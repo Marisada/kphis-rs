@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
 use kphis_api_query::refer_out;
@@ -20,8 +20,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_his_referout_data(Path(vnan): Path<String>, ctx: RequestState) -> Result<Json<Vec<HisReferOutData>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = refer_out::select_his_referout_data(&vnan, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
@@ -41,8 +40,7 @@ pub async fn get_his_referout_data(Path(vnan): Path<String>, ctx: RequestState) 
     ),
 )]
 pub async fn post_his_referout(Path(vnan): Path<String>, ctx: RequestState, Json(payload): Json<HisReferOutSave>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.vn == vnan {
         let results = refer_out::post_his_referout(&payload, &ctx.user_state.user.doctorcode, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;

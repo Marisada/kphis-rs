@@ -211,7 +211,7 @@ impl ImageCpn {
 
     fn edit_title(page: Rc<Self>, app: Rc<App>) {
         if let Some(mut edited) = page.edited.get_cloned() {
-            edited.title = str_some(page.edited_title.get_cloned());
+            edited.title = str_some(&page.edited_title.lock_ref());
             match &page.mechanic {
                 ImageCpnMechanic::WithKey(_, _) => {
                     app.loader_load(clone!(app, page => async move {
@@ -854,7 +854,7 @@ impl ImageCpn {
                         vnan.to_owned(),
                         Some(data_json),
                         false,
-                        str_some(page.pdf_title.clone()),
+                        str_some(&page.pdf_title),
                     )));
                     app.show_modal_backdrop();
                 } else if let Some(vnan) = &page.vnan {
@@ -868,7 +868,7 @@ impl ImageCpn {
                         vnan.to_owned(),
                         Some(data_json),
                         false,
-                        str_some(page.pdf_title.clone()),
+                        str_some(&page.pdf_title),
                     )));
                     app.show_modal_backdrop();
                 }

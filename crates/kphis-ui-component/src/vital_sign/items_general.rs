@@ -76,7 +76,7 @@ pub fn render_vs_result(row: Rc<VitalSign>, vs_id: Mutable<u32>, form_rendered: 
     } else {
         row.urine.clone().unwrap_or_default()
     };
-    let had_name = opt_empty_none(row.had_name.clone());
+    let had_name = opt_empty_none(row.had_name.as_ref());
 
     html!("tr", {
         .class_signal("table-info", vs_id.signal().map(clone!(row => move |n| n == row.vs_id)))

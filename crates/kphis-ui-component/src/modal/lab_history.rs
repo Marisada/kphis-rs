@@ -73,7 +73,7 @@ impl LabHistory {
 
     fn load(modal: Rc<Self>, app: Rc<App>) {
         let params = LabItemParams {
-            hn: str_some(modal.hn.get_cloned()),
+            hn: str_some(&modal.hn.lock_ref()),
             lab_items_code: zero_none(modal.lab_items_code.get()),
             ..Default::default()
         };

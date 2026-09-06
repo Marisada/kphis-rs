@@ -133,7 +133,8 @@ impl IpdSummaryAuditPage {
     }
 
     fn load_list(page: Rc<Self>, app: Rc<App>) {
-        if let Some(an) = str_some(page.an.get_cloned()) {
+        let an_opt = str_some(&page.an.lock_ref());
+        if let Some(an) = an_opt {
             page.ipd_summary_audit_selected.set(None);
             page.ipd_summary_audit_mutable.set(None);
             page.ipd_summary_audit_list.lock_mut().clear();
@@ -165,19 +166,19 @@ impl IpdSummaryAuditPage {
                                     Some(s) => {
                                         match s.as_str() {
                                             "1" => {
-                                                his_pdx.push(DxData::new(1, dx.icd10.clone(), str_some(icd_worker.get_icd10_desc(dx.icd10.clone().unwrap_or_default()).await)));
+                                                his_pdx.push(DxData::new(1, dx.icd10.clone(), str_some(&icd_worker.get_icd10_desc(dx.icd10.clone().unwrap_or_default()).await)));
                                                 if let Some(icd) = dx.icd10.as_ref() {
                                                     page.his_dagger_asterisk_state.insert_code(icd);
                                                 }
                                             }
                                             "2" | "3" => {
-                                                his_sdxs.push(DxData::new(2, dx.icd10.clone(), str_some(icd_worker.get_icd10_desc(dx.icd10.clone().unwrap_or_default()).await)));
+                                                his_sdxs.push(DxData::new(2, dx.icd10.clone(), str_some(&icd_worker.get_icd10_desc(dx.icd10.clone().unwrap_or_default()).await)));
                                                 if let Some(icd) = dx.icd10.as_ref() {
                                                     page.his_dagger_asterisk_state.insert_code(icd);
                                                 }
                                             }
                                             "4" => {
-                                                his_odxs.push(DxData::new(4, dx.icd10.clone(), str_some(icd_worker.get_icd10_desc(dx.icd10.clone().unwrap_or_default()).await)));
+                                                his_odxs.push(DxData::new(4, dx.icd10.clone(), str_some(&icd_worker.get_icd10_desc(dx.icd10.clone().unwrap_or_default()).await)));
                                                 if let Some(icd) = dx.icd10.as_ref() {
                                                     page.his_dagger_asterisk_state.insert_code(icd);
                                                 }
@@ -202,7 +203,7 @@ impl IpdSummaryAuditPage {
                         Ok(responses) => {
                             let mut his_ops = Vec::with_capacity(responses.len());
                             for op in responses {
-                                his_ops.push(DxData::new(9, op.icd9.clone(), str_some(icd_worker.get_proc_desc(op.icd9.clone().unwrap_or_default()).await)));
+                                his_ops.push(DxData::new(9, op.icd9.clone(), str_some(&icd_worker.get_proc_desc(op.icd9.clone().unwrap_or_default()).await)));
                             }
                             page.his_ops.lock_mut().extend(his_ops);
                         }
@@ -220,7 +221,7 @@ impl IpdSummaryAuditPage {
                                 page.doctor_pdx.lock_mut().extend(vec![DxData::new(1, sum.principal_diagnosis_icd10.clone(), sum.principal_diagnosis.clone())]);
                                 if let Some(code) = sum.principal_diagnosis_code.as_ref() {
                                     let icd = code.trim().replace('.', "");
-                                    page.coder_pdxs.lock_mut().push_cloned(DxData::new(1, str_some(icd.to_owned()), str_some(icd_worker.get_icd10_desc(icd.to_owned()).await)));
+                                    page.coder_pdxs.lock_mut().push_cloned(DxData::new(1, str_some(&icd), str_some(&icd_worker.get_icd10_desc(icd.to_owned()).await)));
                                     page.coder_dagger_asterisk_state.insert_code(&icd);
                                 }
                                 // SDx + ODx codes
@@ -229,21 +230,21 @@ impl IpdSummaryAuditPage {
                                 if let Some(codes) = sum.pre_admission_comorbidity_codes.as_ref() {
                                     for code in codes.split(',') {
                                         let icd = code.trim().replace('.', "");
-                                        coder_sdxs.push(DxData::new(2, str_some(icd.to_owned()), str_some(icd_worker.get_icd10_desc(icd.to_owned()).await)));
+                                        coder_sdxs.push(DxData::new(2, str_some(&icd), str_some(&icd_worker.get_icd10_desc(icd.to_owned()).await)));
                                         page.coder_dagger_asterisk_state.insert_code(&icd);
                                     }
                                 }
                                 if let Some(codes) = sum.post_admission_comorbidity_codes.as_ref() {
                                     for code in codes.split(',') {
                                         let icd = code.trim().replace('.', "");
-                                        coder_sdxs.push(DxData::new(3, str_some(icd.to_owned()), str_some(icd_worker.get_icd10_desc(icd.to_owned()).await)));
+                                        coder_sdxs.push(DxData::new(3, str_some(&icd), str_some(&icd_worker.get_icd10_desc(icd.to_owned()).await)));
                                         page.coder_dagger_asterisk_state.insert_code(&icd);
                                     }
                                 }
                                 if let Some(codes) = sum.other_diagnosis_codes.as_ref() {
                                     for code in codes.split(',') {
                                         let icd = code.trim().replace('.', "");
-                                        coder_odxs.push(DxData::new(4, str_some(icd.to_owned()), str_some(icd_worker.get_icd10_desc(icd.to_owned()).await)));
+                                        coder_odxs.push(DxData::new(4, str_some(&icd), str_some(&icd_worker.get_icd10_desc(icd.to_owned()).await)));
                                         page.coder_dagger_asterisk_state.insert_code(&icd);
                                     }
                                 }
@@ -254,10 +255,10 @@ impl IpdSummaryAuditPage {
                                 let other_procs = sum.other_procedure_codes.as_ref().map(|concat| concat.split(',').map(|s| s.trim().to_owned()).collect::<Vec<String>>()).unwrap_or_default();
                                 let mut sum_procs = Vec::with_capacity(other_procs.len() + 1);
                                 if let Some(main_proc) = &sum.main_procedure_code {
-                                    sum_procs.push(DxData::new(9, str_some(main_proc.to_owned()), str_some(icd_worker.get_proc_desc(main_proc.to_owned()).await)));
+                                    sum_procs.push(DxData::new(9, str_some(main_proc), str_some(&icd_worker.get_proc_desc(main_proc.to_owned()).await)));
                                 }
                                 for other_proc in other_procs {
-                                    sum_procs.push(DxData::new(9, str_some(other_proc.to_owned()), str_some(icd_worker.get_proc_desc(other_proc.to_owned()).await)));
+                                    sum_procs.push(DxData::new(9, str_some(&other_proc), str_some(&icd_worker.get_proc_desc(other_proc.to_owned()).await)));
                                 }
                                 page.coder_ops.lock_mut().extend(sum_procs);
                                 // Op dx-text
@@ -1147,7 +1148,7 @@ impl IpdSummaryAuditMutable {
     }
 
     fn is_creator_signal(&self, app: Rc<App>) -> impl Signal<Item = bool> + use<> {
-        self.create_username.signal_cloned().map(clone!(app => move |username| {
+        self.create_username.signal_ref(clone!(app => move |username| {
             str_some(username).and_then(|s| app.user_name().map(|uname| uname == s)).unwrap_or(true)
         }))
     }
@@ -1254,40 +1255,40 @@ impl IpdSummaryAuditMutable {
         SummaryAudit {
             summary_audit_id: self.summary_audit_id.get(),
             summary_id: self.summary_id.get(),
-            payer: str_some(self.payer.get_cloned()),
+            payer: str_some(&self.payer.lock_ref()),
             audit_type: self.audit_type.get_cloned(),
-            doctor_auth: str_some(self.doctor_auth.get_cloned()),
-            com_hn: str_some(self.com_hn.get_cloned()),
-            com_an: str_some(self.com_an.get_cloned()),
-            com_adm_datetime: datetime_8601(&self.com_adm_datetime.get_cloned()),
-            com_dch_datetime: datetime_8601(&self.com_dch_datetime.get_cloned()),
-            com_leaveday: self.com_leaveday.get_cloned().parse::<i32>().ok(),
-            com_sex: str_some(self.com_sex.get_cloned()),
-            com_birthday: date_8601(&self.com_birthday.get_cloned()),
-            com_bw: self.com_bw.get_cloned().parse::<i32>().ok(),
-            com_dchstts: str_some(self.com_dchstts.get_cloned()),
-            com_dchtype: str_some(self.com_dchtype.get_cloned()),
-            com_pid: str_some(self.com_pid.get_cloned()),
-            com_drg: str_some(self.com_drg.get_cloned()),
-            com_rw: self.com_rw.get_cloned().parse::<f64>().ok(),
-            com_adjrw: self.com_adjrw.get_cloned().parse::<f64>().ok(),
-            rev_hn: str_some(self.rev_hn.get_cloned()),
-            rev_an: str_some(self.rev_an.get_cloned()),
-            rev_adm_datetime: datetime_8601(&self.rev_adm_datetime.get_cloned()),
-            rev_dch_datetime: datetime_8601(&self.rev_dch_datetime.get_cloned()),
-            rev_leaveday: self.rev_leaveday.get_cloned().parse::<i32>().ok(),
-            rev_sex: str_some(self.rev_sex.get_cloned()),
+            doctor_auth: str_some(&self.doctor_auth.lock_ref()),
+            com_hn: str_some(&self.com_hn.lock_ref()),
+            com_an: str_some(&self.com_an.lock_ref()),
+            com_adm_datetime: datetime_8601(&self.com_adm_datetime.lock_ref()),
+            com_dch_datetime: datetime_8601(&self.com_dch_datetime.lock_ref()),
+            com_leaveday: self.com_leaveday.lock_ref().parse::<i32>().ok(),
+            com_sex: str_some(&self.com_sex.lock_ref()),
+            com_birthday: date_8601(&self.com_birthday.lock_ref()),
+            com_bw: self.com_bw.lock_ref().parse::<i32>().ok(),
+            com_dchstts: str_some(&self.com_dchstts.lock_ref()),
+            com_dchtype: str_some(&self.com_dchtype.lock_ref()),
+            com_pid: str_some(&self.com_pid.lock_ref()),
+            com_drg: str_some(&self.com_drg.lock_ref()),
+            com_rw: self.com_rw.lock_ref().parse::<f64>().ok(),
+            com_adjrw: self.com_adjrw.lock_ref().parse::<f64>().ok(),
+            rev_hn: str_some(&self.rev_hn.lock_ref()),
+            rev_an: str_some(&self.rev_an.lock_ref()),
+            rev_adm_datetime: datetime_8601(&self.rev_adm_datetime.lock_ref()),
+            rev_dch_datetime: datetime_8601(&self.rev_dch_datetime.lock_ref()),
+            rev_leaveday: self.rev_leaveday.lock_ref().parse::<i32>().ok(),
+            rev_sex: str_some(&self.rev_sex.lock_ref()),
             rev_birthday: date_8601(&self.rev_birthday.get_cloned()),
-            rev_bw: self.rev_bw.get_cloned().parse::<i32>().ok(),
-            rev_dchstts: str_some(self.rev_dchstts.get_cloned()),
-            rev_dchtype: str_some(self.rev_dchtype.get_cloned()),
-            rev_pid: str_some(self.rev_pid.get_cloned()),
-            rev_drg: str_some(self.rev_drg.get_cloned()),
-            rev_rw: self.rev_rw.get_cloned().parse::<f64>().ok(),
-            rev_adjrw: self.rev_adjrw.get_cloned().parse::<f64>().ok(),
+            rev_bw: self.rev_bw.lock_ref().parse::<i32>().ok(),
+            rev_dchstts: str_some(&self.rev_dchstts.lock_ref()),
+            rev_dchtype: str_some(&self.rev_dchtype.lock_ref()),
+            rev_pid: str_some(&self.rev_pid.lock_ref()),
+            rev_drg: str_some(&self.rev_drg.lock_ref()),
+            rev_rw: self.rev_rw.lock_ref().parse::<f64>().ok(),
+            rev_adjrw: self.rev_adjrw.lock_ref().parse::<f64>().ok(),
             sa: self.sa.get_cloned(),
             ca: self.ca.get_cloned(),
-            create_username: str_some(self.create_username.get_cloned()),
+            create_username: str_some(&self.create_username.lock_ref()),
             create_datetime: datetime_8601(&self.create_datetime.lock_ref()),
             update_datetime: datetime_8601(&self.update_datetime.lock_ref()),
             summary_audit_items,
@@ -1347,34 +1348,34 @@ impl IpdSummaryAuditMutable {
 
                 let input_build = if is_rev {
                     let pdx = audit.summary_audit_pdx.lock_ref().first().map(|i| i.rev_icd.lock_ref().trim().replace('.',"")).unwrap_or_default();
-                    let sdxs = audit.summary_audit_sdxs.lock_ref().iter().filter_map(|i| str_some(i.rev_icd.lock_ref().trim().replace('.',"")))
-                        .chain(audit.summary_audit_odxs.lock_ref().iter().filter_map(|i| str_some(i.rev_icd.lock_ref().trim().replace('.',""))))
+                    let sdxs = audit.summary_audit_sdxs.lock_ref().iter().filter_map(|i| str_some(&i.rev_icd.lock_ref().trim().replace('.',"")))
+                        .chain(audit.summary_audit_odxs.lock_ref().iter().filter_map(|i| str_some(&i.rev_icd.lock_ref().trim().replace('.',""))))
                         .collect::<Vec<String>>();
-                    let procs = audit.summary_audit_ops.lock_ref().iter().filter_map(|i| str_some(i.rev_icd.lock_ref().trim().replace('.',""))).collect::<Vec<String>>();
+                    let procs = audit.summary_audit_ops.lock_ref().iter().filter_map(|i| str_some(&i.rev_icd.lock_ref().trim().replace('.',""))).collect::<Vec<String>>();
 
-                    let gender = str_some(audit.rev_sex.get_cloned());
-                    let dob = str_some(audit.rev_birthday.get_cloned()).and_then(|s| date_8601(&s)).map(|d| PrimitiveDateTime::new(d, Time::MIDNIGHT));
-                    let adm_wt = audit.rev_bw.get_cloned().parse::<u16>().ok();
+                    let gender = str_some(&audit.rev_sex.lock_ref());
+                    let dob = str_some(&audit.rev_birthday.lock_ref()).and_then(|s| date_8601(&s)).map(|d| PrimitiveDateTime::new(d, Time::MIDNIGHT));
+                    let adm_wt = audit.rev_bw.lock_ref().parse::<u16>().ok();
                     let adm_date = datetime_8601(&audit.rev_adm_datetime.lock_ref());
                     let dch_date = datetime_8601(&audit.rev_dch_datetime.lock_ref());
                     let dch_type = audit.rev_dchtype.get_cloned();
-                    let leave_day = audit.rev_leaveday.get_cloned().parse::<u32>().unwrap_or_default();
+                    let leave_day = audit.rev_leaveday.lock_ref().parse::<u32>().unwrap_or_default();
 
                     GrouperInput::new(&pdx, &sdxs, &procs, &gender, dob, adm_wt, adm_date, dch_date, &dch_type, leave_day)
                 } else {
                     let pdx = audit.summary_audit_pdx.lock_ref().first().map(|i| i.com_icd.lock_ref().trim().replace('.',"")).unwrap_or_default();
-                    let sdxs = audit.summary_audit_sdxs.lock_ref().iter().filter_map(|i| str_some(i.com_icd.lock_ref().trim().replace('.',"")))
-                        .chain(audit.summary_audit_odxs.lock_ref().iter().filter_map(|i| str_some(i.com_icd.lock_ref().trim().replace('.',""))))
+                    let sdxs = audit.summary_audit_sdxs.lock_ref().iter().filter_map(|i| str_some(&i.com_icd.lock_ref().trim().replace('.',"")))
+                        .chain(audit.summary_audit_odxs.lock_ref().iter().filter_map(|i| str_some(&i.com_icd.lock_ref().trim().replace('.',""))))
                         .collect::<Vec<String>>();
-                    let procs = audit.summary_audit_ops.lock_ref().iter().filter_map(|i| str_some(i.com_icd.lock_ref().trim().replace('.',""))).collect::<Vec<String>>();
+                    let procs = audit.summary_audit_ops.lock_ref().iter().filter_map(|i| str_some(&i.com_icd.lock_ref().trim().replace('.',""))).collect::<Vec<String>>();
 
-                    let gender = str_some(audit.com_sex.get_cloned());
-                    let dob = str_some(audit.com_birthday.get_cloned()).and_then(|s| date_8601(&s)).map(|d| PrimitiveDateTime::new(d, Time::MIDNIGHT));
-                    let adm_wt = audit.com_bw.get_cloned().parse::<u16>().ok();
+                    let gender = str_some(&audit.com_sex.lock_ref());
+                    let dob = str_some(&audit.com_birthday.lock_ref()).and_then(|s| date_8601(&s)).map(|d| PrimitiveDateTime::new(d, Time::MIDNIGHT));
+                    let adm_wt = audit.com_bw.lock_ref().parse::<u16>().ok();
                     let adm_date = datetime_8601(&audit.com_adm_datetime.lock_ref());
                     let dch_date = datetime_8601(&audit.com_dch_datetime.lock_ref());
                     let dch_type = audit.com_dchtype.get_cloned();
-                    let leave_day = audit.com_leaveday.get_cloned().parse::<u32>().unwrap_or_default();
+                    let leave_day = audit.com_leaveday.lock_ref().parse::<u32>().unwrap_or_default();
 
                     GrouperInput::new(&pdx, &sdxs, &procs, &gender, dob, adm_wt, adm_date, dch_date, &dch_type, leave_day)
                 };
@@ -2101,14 +2102,14 @@ impl SummaryAuditItemMutable {
             summary_audit_id: self.summary_audit_id.get(),
             summary_id: self.summary_id.get(),
             ty: Some(self.ty.clone()),
-            sum_dx: str_some(self.sum_dx.get_cloned()),
-            sum_icd: str_some(self.sum_icd.get_cloned()),
-            com_icd: str_some(self.com_icd.get_cloned()),
-            rev_dx: str_some(self.rev_dx.get_cloned()),
-            rev_icd: str_some(self.rev_icd.get_cloned()),
+            sum_dx: str_some(&self.sum_dx.lock_ref()),
+            sum_icd: str_some(&self.sum_icd.lock_ref()),
+            com_icd: str_some(&self.com_icd.lock_ref()),
+            rev_dx: str_some(&self.rev_dx.lock_ref()),
+            rev_icd: str_some(&self.rev_icd.lock_ref()),
             sa: self.sa.get_cloned(),
             ca: self.ca.get_cloned(),
-            remark: str_some(self.remark.get_cloned()),
+            remark: str_some(&self.remark.lock_ref()),
         }
     }
 

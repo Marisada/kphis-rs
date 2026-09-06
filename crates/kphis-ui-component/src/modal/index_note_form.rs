@@ -54,8 +54,8 @@ impl IndexNoteForm {
             clone!(app, modal => async move {
                 let index_note = IndexNote {
                     nurse_index_note_id: modal.nurse_index_note_id.get(),
-                    an: str_some(modal.an.get_cloned()),
-                    nurse_index_note: str_some(modal.nurse_index_note.get_cloned()),
+                    an: str_some(&modal.an.lock_ref()),
+                    nurse_index_note: str_some(&modal.nurse_index_note.lock_ref()),
                 };
                 // POST `EndPoint::IpdIndexNote`
                 match index_note.call_api_post(app.state()).await {

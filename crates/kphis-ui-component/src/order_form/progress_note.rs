@@ -175,8 +175,8 @@ impl ProgressNoteForm {
                     Some(VisitTypeId::Ipd(an))
                     | Some(VisitTypeId::PreAdmit(an)) => {
                         let params = ProgressNoteParams {
-                            an: str_some(an),
-                            progress_note_owner_type: str_some(page.view_by.get_cloned()),
+                            an: str_some(&an),
+                            progress_note_owner_type: str_some(&page.view_by.lock_ref()),
                             ..Default::default()
                         };
                         // GET `EndPoint::IpdOrderProgressPrevious`

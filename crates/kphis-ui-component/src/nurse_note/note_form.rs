@@ -245,18 +245,18 @@ impl NurseNoteFormCpn {
     fn finalized(page: Rc<Self>) -> Option<FocusNoteSave> {
         Some(FocusNoteSave {
             fcnote_id: zero_none(page.fcnote_id.get()),
-            general_symptoms: str_some(page.general_symptoms.get_cloned()),
+            general_symptoms: str_some(&page.general_symptoms.lock_ref()),
             fclist_id: page.fclist_id.lock_ref().parse::<u32>().ok(),
-            assessment: str_some(page.assessment.get_cloned()),
+            assessment: str_some(&page.assessment.lock_ref()),
             intvt_ids: page.intvt_ids.lock_ref().to_vec(),
-            intvt_text: str_some(page.intvt_text.get_cloned()),
-            evalution: str_some(page.evalution.get_cloned()),
+            intvt_text: str_some(&page.intvt_text.lock_ref()),
+            evalution: str_some(&page.evalution.lock_ref()),
             dlc_ids: page.dlc_ids.lock_ref().to_vec(),
-            dlc_text: str_some(page.dlc_text.get_cloned()),
-            other: str_some(page.other.get_cloned()),
+            dlc_text: str_some(&page.dlc_text.lock_ref()),
+            other: str_some(&page.other.lock_ref()),
             fcnote_date: date_8601(&page.fcnote_date.lock_ref()),
             fcnote_time: time_8601(&page.fcnote_time.lock_ref()),
-            fcnote_patient_type: str_some(page.fcnote_patient_type.get_cloned()),
+            fcnote_patient_type: str_some(&page.fcnote_patient_type.lock_ref()),
             version: zero_none(page.version.get()).unwrap_or(0),
         })
     }

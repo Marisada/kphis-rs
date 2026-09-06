@@ -106,7 +106,7 @@ impl NoteListCpn {
                 true,
                 clone!(app, page => async move {
                     let fcl_params = FocusListParams {
-                        status: str_some(page.status.get_cloned()),
+                        status: str_some(&page.status.lock_ref()),
                         ..Default::default()
                     };
                     let result_opt = match visit_type {

@@ -224,8 +224,8 @@ impl OpdErOrderNew {
     // ipd-dr-pre-order-master-save.php
     fn submit(modal: Rc<Self>, view_by: Mutable<String>, display: Mutable<Option<Rc<Self>>>, changed: Mutable<bool>, app: Rc<App>) {
         let save = OpdErOrderMasterSave {
-            vn: str_some(modal.new_vn.get_cloned()),
-            note: str_some(modal.new_note.get_cloned()),
+            vn: str_some(&modal.new_vn.lock_ref()),
+            note: str_some(&modal.new_note.lock_ref()),
             bedno: zero_none(modal.new_order_bedno.lock_ref().parse::<u32>().unwrap_or_default()),
             ..Default::default()
         };

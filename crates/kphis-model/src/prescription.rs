@@ -344,13 +344,13 @@ impl LastMedicine {
             if lm.len() == 8 {
                 Some(Self {
                     id_type: lm[0].to_owned(),
-                    id: str_some(lm[1].to_owned()),
-                    name_drugitems: str_some(lm[2].to_owned()),
-                    strength: str_some(lm[3].to_owned()),
+                    id: str_some(&lm[1]),
+                    name_drugitems: str_some(&lm[2]),
+                    strength: str_some(&lm[3]),
                     qty: lm[4].parse::<i32>().ok(),
-                    icode: str_some(lm[5].to_owned()),
-                    rxdatetime: str_some(lm[6].to_owned()),
-                    shortlist: str_some(lm[7].to_owned()),
+                    icode: str_some(&lm[5]),
+                    rxdatetime: str_some(&lm[6]),
+                    shortlist: str_some(&lm[7]),
                 })
             } else {
                 None

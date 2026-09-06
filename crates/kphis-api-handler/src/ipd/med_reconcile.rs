@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -31,9 +30,8 @@ use kphis_util::{
     params(MedReconciliationParams),
 )]
 pub async fn get_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState) -> Result<Json<Vec<MedReconciliation>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if (params.an.is_some() || params.med_reconciliation_id.is_some()) && params.hn.is_some() {
         let recons = med_reconcile::get_ipd_med_reconcile(&params, &ctx.user_state.user.doctorcode, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -58,9 +56,8 @@ pub async fn get_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>
     params(MedReconciliationParams),
 )]
 pub async fn post_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemSave>>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let Some(an) = &params.an {
         // check AN is valid (pre-admit was admited or admit was revoked)
@@ -90,8 +87,7 @@ pub async fn post_ipd_med_reconcile(Query(params): Query<MedReconciliationParams
     params(MedReconciliationParams),
 )]
 pub async fn patch_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemPatch>>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(med_reconciliation_id), Some(patch)) = (params.med_reconciliation_id.and_then(zero_none), params.patch) {
         if ["doctor", "pharm", "unconfirm", "receive", "last"].contains(&patch.as_str()) {
@@ -127,9 +123,8 @@ pub async fn patch_ipd_med_reconcile(Query(params): Query<MedReconciliationParam
     params(MedReconciliationParams),
 )]
 pub async fn delete_ipd_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::DELETE, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let Some(med_reconciliation_id) = params.med_reconciliation_id {
         let result = med_reconcile::delete_ipd_med_reconcile(med_reconciliation_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -157,8 +152,7 @@ pub async fn delete_ipd_med_reconcile(Query(params): Query<MedReconciliationPara
     ),
 )]
 pub async fn get_ipd_med_reconcile_hosxp(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<MedReconciliationDetail>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let recons = med_reconcile::get_ipd_med_reconcile_hosxp(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
@@ -178,9 +172,8 @@ pub async fn get_ipd_med_reconcile_hosxp(Path(an): Path<String>, ctx: RequestSta
     ),
 )]
 pub async fn get_ipd_med_reconcile_last_dose(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Option<AdmissionNoteLastDose>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let last = med_reconcile::get_ipd_med_reconcile_last_dose(&an, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -200,8 +193,7 @@ pub async fn get_ipd_med_reconcile_last_dose(Path(an): Path<String>, ctx: Reques
     ),
 )]
 pub async fn get_ipd_med_reconcile_note(Path(med_reconciliation_id): Path<u32>, ctx: RequestState) -> Result<Json<Option<MedReconciliationNote>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let note = med_reconcile::get_ipd_med_reconcile_note(med_reconciliation_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -222,8 +214,7 @@ pub async fn get_ipd_med_reconcile_note(Path(med_reconciliation_id): Path<u32>, 
     ),
 )]
 pub async fn post_ipd_med_reconcile_note(Path(med_reconciliation_id): Path<u32>, ctx: RequestState, Json(payload): Json<String>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = med_reconcile::post_ipd_med_reconcile_note(med_reconciliation_id, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -243,8 +234,7 @@ pub async fn post_ipd_med_reconcile_note(Path(med_reconciliation_id): Path<u32>,
     ),
 )]
 pub async fn get_ipd_med_reconcile_remed_visit(Path(hn): Path<String>, ctx: RequestState) -> Result<Json<Vec<ReMedVisit>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let note = med_reconcile::get_ipd_med_reconcile_remed_visit(&hn, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
@@ -264,9 +254,8 @@ pub async fn get_ipd_med_reconcile_remed_visit(Path(hn): Path<String>, ctx: Requ
     params(MedReconciliationParams),
 )]
 pub async fn get_ipd_med_reconcile_remed_med(Query(params): Query<MedReconciliationParams>, ctx: RequestState) -> Result<Json<Vec<ReMedMedication>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if params.vn.is_some() || params.an.is_some() {
         let meds = med_reconcile::get_ipd_med_reconcile_remed_med(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;

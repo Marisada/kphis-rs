@@ -155,11 +155,11 @@ impl ReportViewerPage {
         if let (Some(template), Some(ids)) = match *page.report_type.lock_ref() {
             ReportType::Ipd | ReportType::OpdEr => (
                 page.selected_system_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
-                str_some(page.vnan.get_cloned()),
+                str_some(&page.vnan.lock_ref()),
             ),
             ReportType::Custom => (
                 page.selected_custom_template.get_cloned().map(|selected| TypstReport::Custom(selected)),
-                str_some(page.ids.lock_ref().iter().map(|param| param.to_request_id()).collect::<Vec<String>>().join("|")),
+                str_some(&page.ids.lock_ref().iter().map(|param| param.to_request_id()).collect::<Vec<String>>().join("|")),
             ),
         } {
             app.async_load(
@@ -220,7 +220,7 @@ impl ReportViewerPage {
 
     fn prepare_report_parts(&self, app: Rc<AppState>) -> Option<ReportParts> {
         match self.report_type.get_cloned() {
-            ReportType::Ipd | ReportType::OpdEr => str_some(self.vnan.get_cloned()).and_then(|ids| {
+            ReportType::Ipd | ReportType::OpdEr => str_some(&self.vnan.lock_ref()).and_then(|ids| {
                 self.selected_system_template.get_cloned().map(|selected| ReportParts {
                     file_name: selected.download_file_name(&ids),
                     title: selected.title_with_ids(&ids),
@@ -228,7 +228,7 @@ impl ReportViewerPage {
                     ids: ids,
                 })
             }),
-            ReportType::Custom => str_some(self.ids.lock_ref().iter().map(|param| param.to_request_id()).collect::<Vec<String>>().join("|")).and_then(|ids| {
+            ReportType::Custom => str_some(&self.ids.lock_ref().iter().map(|param| param.to_request_id()).collect::<Vec<String>>().join("|")).and_then(|ids| {
                 self.selected_custom_template.get_cloned().map(|selected| ReportParts {
                     file_name: selected.download_file_name(&ids),
                     title: selected.title_with_ids(&ids),
@@ -298,8 +298,8 @@ impl ReportViewerPage {
                 match *page.report_type.lock_ref() {
                     ReportType::Ipd => {
                         let params = AvatarParams {
-                            ward: str_some(app.ward_select.get_cloned()),
-                            search: str_some(page.search.get_cloned()),
+                            ward: str_some(&app.ward_select.lock_ref()),
+                            search: str_some(&page.search.lock_ref()),
                         };
                         if params.is_empty() {
                             page.search_result.lock_mut().clear();

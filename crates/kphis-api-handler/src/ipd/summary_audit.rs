@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -21,8 +21,7 @@ use kphis_util::error::AppError;
     params(SummaryAuditParams),
 )]
 pub async fn get_ipd_summary_audit(Query(params): Query<SummaryAuditParams>, ctx: RequestState) -> Result<Json<Vec<SummaryAudit>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = summary_audit::get_ipd_summary_audit(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
@@ -40,8 +39,7 @@ pub async fn get_ipd_summary_audit(Query(params): Query<SummaryAuditParams>, ctx
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_summary_audit(ctx: RequestState, Json(payload): Json<SummaryAudit>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let result = summary_audit::post_ipd_summary_audit(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -59,8 +57,7 @@ pub async fn post_ipd_summary_audit(ctx: RequestState, Json(payload): Json<Summa
     params(SummaryAuditParams),
 )]
 pub async fn delete_ipd_summary_audit(Query(params): Query<SummaryAuditParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(summary_audit_id) = params.summary_audit_id {
         let response = summary_audit::delete_summary_audit(summary_audit_id, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra())

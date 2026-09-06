@@ -121,7 +121,8 @@ impl EmrCpn {
 
     // ipd-emr-detail.php
     fn load_visit(page: Rc<Self>, app: Rc<App>) {
-        if let Some(vn) = str_some(page.vn.get_cloned()) {
+        let vn_opt = str_some(&page.vn.lock_ref());
+        if let Some(vn) = vn_opt {
             app.async_load(
                 true,
                 clone!(app => async move {
@@ -141,8 +142,9 @@ impl EmrCpn {
     }
 
     fn load_images(page: Rc<Self>, app: Rc<App>) {
-        page.images.lock_mut().clear();
-        if let Some(vn) = str_some(page.vn.get_cloned()) {
+        let vn_opt = str_some(&page.vn.lock_ref());
+        if let Some(vn) = vn_opt {
+            page.images.lock_mut().clear();
             app.async_load(
                 true,
                 clone!(app => async move {
@@ -156,7 +158,7 @@ impl EmrCpn {
                     let params = ScanImageParams {
                         key: Some(key.to_owned()),
                         vn: Some(vn),
-                        an: page.an.get_cloned().and_then(str_some),
+                        an: page.an.lock_ref().as_ref().and_then(|s| str_some(s)),
                     };
                     // GET `EndPoint::ScanHisImage`
                     match ScanImage::call_api_get(&params, app.state()).await {

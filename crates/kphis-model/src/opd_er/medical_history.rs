@@ -77,12 +77,12 @@ impl OpdErMedicalHistoryParams {
     pub fn clean(self) -> Self {
         Self {
             opd_er_order_master_id: self.opd_er_order_master_id.and_then(zero_none),
-            hn: self.hn.and_then(str_some),
-            vn: self.vn.and_then(str_some),
-            visit_datetime: self.visit_datetime.and_then(str_some),
+            hn: self.hn.as_ref().and_then(|s| str_some(s)),
+            vn: self.vn.as_ref().and_then(|s| str_some(s)),
+            visit_datetime: self.visit_datetime.as_ref().and_then(|s| str_some(s)),
             // age_y: self.age_y.and_then(zero_none),
             only_opdscreen: self.only_opdscreen.and_then(|only| only.then_some(true)),
-            view_by: self.view_by.and_then(str_some),
+            view_by: self.view_by.as_ref().and_then(|s| str_some(s)),
         }
     }
 

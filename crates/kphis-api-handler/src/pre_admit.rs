@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
     state::RequestState,
@@ -20,8 +20,7 @@ use kphis_util::error::AppError;
     params(PreAdmitParams),
 )]
 pub async fn get_ipd_pre_admit_list(Query(params): Query<PreAdmitParams>, ctx: RequestState) -> Result<Json<Vec<PreAdmitList>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = pre_admit::get_pre_admit_list(&params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -38,8 +37,7 @@ pub async fn get_ipd_pre_admit_list(Query(params): Query<PreAdmitParams>, ctx: R
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_pre_admit(ctx: RequestState, Json(payload): Json<PreAdmitSave>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = pre_admit::insert_pre_admit(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -56,8 +54,7 @@ pub async fn post_ipd_pre_admit(ctx: RequestState, Json(payload): Json<PreAdmitS
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn patch_ipd_pre_admit(ctx: RequestState, Json(payload): Json<PreAdmitPatch>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     let response = pre_admit::patch_pre_admit(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 

@@ -215,9 +215,9 @@ impl OpdErMainPage {
     pub fn save_master(page: Rc<Self>, app: Rc<App>) {
         let save = OpdErOrderMasterSave {
             opd_er_order_master_id: zero_none(page.opd_er_order_master_id.get()),
-            vn: str_some(page.vn.get_cloned()),
-            // an: str_some(page.an.get_cloned()),
-            note: str_some(page.note.get_cloned()),
+            vn: str_some(&page.vn.lock_ref()),
+            // an: str_some(&page.an.lock_ref()),
+            note: str_some(&page.note.lock_ref()),
             bedno: page.bedno.lock_ref().parse::<u32>().ok(),
             er_patient_status_id: page.er_patient_status_id.lock_ref().parse::<u32>().ok(),
             er_dch_type_id: page.er_dch_type_id.lock_ref().parse::<u32>().ok(),
@@ -297,7 +297,8 @@ impl OpdErMainPage {
     }
 
     fn loaded_lab_unreport_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(vn) = str_some(page.vn.get_cloned()) {
+        let vn_opt = str_some(&page.vn.lock_ref());
+        if let Some(vn) = vn_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -316,7 +317,8 @@ impl OpdErMainPage {
     }
 
     fn loaded_lab_unread_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(vn) = str_some(page.vn.get_cloned()) {
+        let vn_opt = str_some(&page.vn.lock_ref());
+        if let Some(vn) = vn_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -335,7 +337,8 @@ impl OpdErMainPage {
     }
 
     fn loaded_xray_unread_exists(page: Rc<Self>, app: Rc<App>) {
-        if let Some(vn) = str_some(page.vn.get_cloned()) {
+        let vn_opt = str_some(&page.vn.lock_ref());
+        if let Some(vn) = vn_opt {
             app.async_load(
                 true,
                 clone!(app, page => async move {

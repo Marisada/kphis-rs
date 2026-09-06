@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
 use kphis_api_query::avatar;
@@ -14,8 +14,7 @@ use kphis_util::error::AppError;
     responses(DocVec<AvatarOpdEr>),
 )]
 pub async fn get_avatar_opd_er(ctx: RequestState) -> Result<Json<Vec<AvatarOpdEr>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = avatar::get_avatar_opd_er(&ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -32,8 +31,7 @@ pub async fn get_avatar_opd_er(ctx: RequestState) -> Result<Json<Vec<AvatarOpdEr
     params(AvatarParams),
 )]
 pub async fn get_avatar_ipd(Query(params): Query<AvatarParams>, ctx: RequestState) -> Result<Json<Vec<AvatarWard>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = avatar::get_avatar_ipd(&params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 

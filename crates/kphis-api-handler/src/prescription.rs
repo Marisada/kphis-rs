@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{open_api::DocOne, state::RequestState};
 use kphis_api_query::prescription;
@@ -19,8 +19,7 @@ use kphis_util::error::AppError;
     params(PrescriptionScreenParams),
 )]
 pub async fn get_prescription_screen(Query(params): Query<PrescriptionScreenParams>, ctx: RequestState) -> Result<Json<PrescriptionScreen>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = prescription::get_prescription_screen(
         params,
@@ -52,8 +51,7 @@ pub async fn get_prescription_screen(Query(params): Query<PrescriptionScreenPara
     params(PrescriptionScreenParams),
 )]
 pub async fn post_prescription_screen(Query(params): Query<PrescriptionScreenParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(vn) = params.vn {
         if let Some(doctorcode) = ctx.user_state.user.doctorcode {
@@ -80,8 +78,7 @@ pub async fn post_prescription_screen(Query(params): Query<PrescriptionScreenPar
     request_body = PrescriptionScreenPatch,
 )]
 pub async fn patch_prescription_screen(Query(params): Query<PrescriptionScreenParams>, ctx: RequestState, Json(payload): Json<PrescriptionScreenPatch>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(vn), Some(action)) = (params.vn, params.action) {
         if let Some(doctorcode) = ctx.user_state.user.doctorcode {

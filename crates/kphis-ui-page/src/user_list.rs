@@ -57,7 +57,7 @@ pub struct UserListPage {
     search_result: MutableVec<Rc<UserRole>>,
 
     sorted_by: Mutable<SortBy>,
-    is_asc: Mutable<bool>,
+    is_desc: Mutable<bool>,
 
     show_user_manage_modal: Mutable<bool>,
     modal_changed: Mutable<bool>,
@@ -136,11 +136,11 @@ impl UserListPage {
         let group = page.hosxp_group.get_cloned();
         let hosxp_group = if group.as_str() == "ALL_GROUP" { None } else { Some(group) };
         let params = UserRoleParams {
-            loginname: str_some(page.loginname.get_cloned()),
-            name: str_some(page.name.get_cloned()),
-            role: str_some(page.role.get_cloned()),
+            loginname: str_some(&page.loginname.lock_ref()),
+            name: str_some(&page.name.lock_ref()),
+            role: str_some(&page.role.lock_ref()),
             hosxp_group,
-            account_disable: str_some(page.account_disable.get_cloned()),
+            account_disable: str_some(&page.account_disable.lock_ref()),
             ..Default::default()
         };
         app.async_load(
@@ -154,7 +154,7 @@ impl UserListPage {
                             list_lock.clear();
                             list_lock.extend(response.user_roles.into_iter().map(Rc::new));
                             page.sorted_by.set(SortBy::Failed);
-                            page.is_asc.set_neq(true);
+                            page.is_desc.set_neq(true);
                         }
                         {
                             let mut roles_lock = page.roles.lock_mut();
@@ -358,7 +358,7 @@ impl UserListPage {
                 doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| {
                     let sort_fn = clone!(page => move || {
                         let mut items = page.search_result.lock_ref().to_vec();
-                        if page.is_asc.get() {
+                        if page.is_desc.get() {
                             match page.sorted_by.get_cloned() {
                                 SortBy::Loginname => items.sort_by(|a, b| b.loginname.cmp(&a.loginname)),
                                 SortBy::Fullname => items.sort_by(|a, b| b.name.cmp(&a.name)),
@@ -385,16 +385,16 @@ impl UserListPage {
                                     html!("th", {.attr("scope","col").text("#")}),
                                     html!("th", {
                                         .attr("scope","col").text("Loginname")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Loginname, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Loginname, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {
                                         .attr("scope","col").text("ชื่อ - นามสกุล")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Fullname, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Fullname, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {.attr("scope","col").text("Role")}),
                                     html!("th", {
                                         .attr("scope","col").text("HOSxP Group")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Group, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Group, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {.class("text-nowrap").attr("scope","col").text("ปิดใช้งาน")}),
                                 ])
@@ -402,11 +402,11 @@ impl UserListPage {
                                     .children([
                                         html!("th", {
                                             .attr("scope","col").text("2FA")
-                                            .apply(mixins::sortable_header_mixin(SortBy::Totp, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                            .apply(mixins::sortable_header_mixin(SortBy::Totp, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                         }),
                                         html!("th", {
                                             .attr("scope","col").text("Failed")
-                                            .apply(mixins::sortable_header_mixin(SortBy::Failed, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
+                                            .apply(mixins::sortable_header_mixin(SortBy::Failed, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                         }),
                                     ])
                                 })

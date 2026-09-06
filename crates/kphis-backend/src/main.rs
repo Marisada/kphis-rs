@@ -89,6 +89,7 @@ fn main() {
                 .with_timer(timer)
                 .with_ansi(true)
                 .with_target(true)
+                .with_line_number(true)
                 .with_filter(EnvFilter::new(log_console)),
         );
 

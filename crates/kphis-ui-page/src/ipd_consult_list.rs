@@ -43,7 +43,7 @@ pub struct IpdConsultListPage {
     search_result: MutableVec<Rc<IpdConsultList>>,
 
     sorted_by: Mutable<SortBy>,
-    is_asc: Mutable<bool>,
+    is_desc: Mutable<bool>,
 
     changed: Mutable<bool>,
 }
@@ -60,12 +60,12 @@ impl IpdConsultListPage {
     // ipd-consult-list-table.php
     fn submit(page: Rc<Self>, app: Rc<App>) {
         let request = IpdConsultListParams {
-            spclty: str_some(app.spclty_select.get_cloned()),
-            search_consult_status: str_some(page.search_consult_status.get_cloned()),
-            consult_dr_search: str_some(page.consult_dr_search.get_cloned()),
-            consult_dr_reply_search: str_some(page.consult_dr_reply_search.get_cloned()),
-            search_consult_emergency: str_some(page.search_consult_emergency.get_cloned()),
-            patient: str_some(page.patient.get_cloned()),
+            spclty: str_some(&app.spclty_select.lock_ref()),
+            search_consult_status: str_some(&page.search_consult_status.lock_ref()),
+            consult_dr_search: str_some(&page.consult_dr_search.lock_ref()),
+            consult_dr_reply_search: str_some(&page.consult_dr_reply_search.lock_ref()),
+            search_consult_emergency: str_some(&page.search_consult_emergency.lock_ref()),
+            patient: str_some(&page.patient.lock_ref()),
         };
 
         app.async_load(
@@ -78,7 +78,7 @@ impl IpdConsultListPage {
                         lock.clear();
                         lock.extend(items.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::ConsultDateTime);
-                        page.is_asc.set_neq(false);
+                        page.is_desc.set_neq(false);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -368,7 +368,7 @@ impl IpdConsultListPage {
                     Some(false) => {
                         let sort_fn = clone!(page => move || {
                             let mut items = page.search_result.lock_ref().to_vec();
-                            if page.is_asc.get() {
+                            if page.is_desc.get() {
                                 match page.sorted_by.get_cloned() {
                                     SortBy::BedNo => items.sort_by(|a, b| b.bedno.cmp(&a.bedno)),
                                     SortBy::An => items.sort_by(|a, b| b.an.cmp(&a.an)),
@@ -399,25 +399,25 @@ impl IpdConsultListPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("ตึกผู้ป่วย")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("เตียง")
-                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::BedNo, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("AN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::An, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("HN")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("ชื่อ - สกุล (อายุ)")
-                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             // html!("th", {.class("th-sm").attr("scope","col").text("อายุ")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์เจ้าของไข้")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("วันที่ Consult")
-                                                .apply(mixins::sortable_header_mixin(SortBy::ConsultDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                                .apply(mixins::sortable_header_mixin(SortBy::ConsultDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                             }),
                                             html!("th", {.class("th-sm").attr("scope","col").text("ตอบ")}),
                                             html!("th", {.class("th-sm").attr("scope","col").text("ด่วน")}),
@@ -426,7 +426,7 @@ impl IpdConsultListPage {
                                             html!("th", {.class("th-sm").attr("scope","col").text("แพทย์ผู้ตอบ")}),
                                             html!("th", {
                                                 .class("th-sm").attr("scope","col").text("วันที่ตอบ")
-                                                .apply(mixins::sortable_header_mixin(SortBy::ReplyDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
+                                                .apply(mixins::sortable_header_mixin(SortBy::ReplyDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                             }),
                                         ])
                                     }))
@@ -559,7 +559,7 @@ fn render_card(row: Rc<IpdConsultList>, view_by: Mutable<String>, app: Rc<App>) 
                             .children([
                                 html!("div", {
                                     .apply(|dom| {
-                                        let image_dom = doms::patient_image(&opt_empty_none(row.hn.clone()), "90px");
+                                        let image_dom = doms::patient_image(&opt_empty_none(row.hn.as_ref()), "90px");
                                         if allow_main_route {
                                             dom.child(link!(main_route.string(), {
                                                 .child(image_dom)

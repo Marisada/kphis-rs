@@ -197,7 +197,7 @@ impl OpdErDocumentScanCpn {
                                 doc.document_id,
                                 page.is_editable,
                                 Mutable::new(None),
-                                str_some(page.vn.clone()),
+                                str_some(&page.vn),
                                 doc.document_type_id.label(),
                             );
                             html!("div", {

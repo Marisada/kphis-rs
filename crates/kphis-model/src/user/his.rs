@@ -1,7 +1,4 @@
-use argon2::{
-    Argon2,
-    password_hash::{PasswordHasher, SaltString, rand_core::OsRng},
-};
+use argon2::{Argon2, password_hash::PasswordHasher};
 use derive_demo::Demo;
 use encoding_rs::WINDOWS_874;
 use futures_signals::{signal::Mutable, signal_vec::MutableVec};
@@ -40,9 +37,7 @@ fn md5_enc(plain: &str) -> Vec<u8> {
 }
 
 fn argon2_enc(data: &[u8]) -> argon2::password_hash::Result<String> {
-    let salt = SaltString::generate(&mut OsRng);
-    let argon2 = Argon2::default();
-    argon2.hash_password(data, &salt).map(|h| h.to_string())
+    Argon2::default().hash_password(data).map(|h| h.to_string())
 }
 
 //====================//

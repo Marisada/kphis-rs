@@ -99,7 +99,7 @@ impl MedSearchable for OneDayForm {
     }
     fn an(&self) -> Option<String> {
         match self.patient.lock_ref().as_ref().map(|pt| pt.visit_type()) {
-            Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => str_some(an),
+            Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => str_some(&an),
             Some(VisitTypeId::OpdEr(_, _)) | Some(VisitTypeId::Visit(_)) | None => None,
         }
     }
@@ -301,7 +301,7 @@ impl OneDayForm {
                         | VisitTypeId::PreAdmit(an) => {
                             let params = MedReconciliationParams {
                                 hn: patient.hn(),
-                                an: str_some(an.to_owned()),
+                                an: str_some(an),
                                 used: Some(used),
                                 ..Default::default()
                             };

@@ -53,7 +53,7 @@ pub struct IpdPreOrderListPage {
     changed: Mutable<bool>,
 
     sorted_by: Mutable<SortBy>,
-    is_asc: Mutable<bool>,
+    is_desc: Mutable<bool>,
 
     pre_order_new_modal: Mutable<Option<Rc<PreOrderNew>>>,
 }
@@ -70,7 +70,7 @@ impl IpdPreOrderListPage {
             include_shared_template: Mutable::new(String::from("N")),
             order_doctor: Mutable::new(order_doctor),
             used: Mutable::new(String::from("N")),
-            is_asc: Mutable::new(true),
+            is_desc: Mutable::new(true),
             ..Default::default()
         })
     }
@@ -80,14 +80,14 @@ impl IpdPreOrderListPage {
     fn submit(page: Rc<Self>, app: Rc<App>) {
         let params = PreOrderMasterParams {
             pre_order_master_id: None,
-            hn: str_some(page.hn.get_cloned()),
+            hn: str_some(&page.hn.lock_ref()),
             start_order_date: date_8601(&page.start_order_date.lock_ref()),
             end_order_date: date_8601(&page.end_order_date.lock_ref()),
-            order_doctor: str_some(page.order_doctor.get_cloned()),
-            include_shared_template: str_some(page.include_shared_template.get_cloned()),
-            pre_order_type: str_some(page.pre_order_type.get_cloned()),
-            template_name: str_some(page.template_name.get_cloned()),
-            used: str_some(page.used.get_cloned()),
+            order_doctor: str_some(&page.order_doctor.lock_ref()),
+            include_shared_template: str_some(&page.include_shared_template.lock_ref()),
+            pre_order_type: str_some(&page.pre_order_type.lock_ref()),
+            template_name: str_some(&page.template_name.lock_ref()),
+            used: str_some(&page.used.lock_ref()),
         };
 
         app.async_load(
@@ -100,7 +100,7 @@ impl IpdPreOrderListPage {
                         lock.clear();
                         lock.extend(orders.into_iter().map(Rc::new));
                         page.sorted_by.set(SortBy::OrderDateTime);
-                        page.is_asc.set_neq(true);
+                        page.is_desc.set_neq(true);
                     }
                     Err(e) => {
                         app.alert_app_error(&e).await;
@@ -377,7 +377,7 @@ impl IpdPreOrderListPage {
                 doms::table_responsive(class::TABLE_STRIP, clone!(app, page => move |table| {
                     let sort_fn = clone!(page => move || {
                         let mut items = page.search_result.lock_ref().to_vec();
-                        if page.is_asc.get() {
+                        if page.is_desc.get() {
                             match page.sorted_by.get_cloned() {
                                 SortBy::OrderDateTime => items.sort_by(|a, b| b.order_date_time.cmp(&a.order_date_time)),
                                 SortBy::Hn => items.sort_by(|a, b| b.hn.cmp(&a.hn)),
@@ -406,21 +406,21 @@ impl IpdPreOrderListPage {
                                     // }),
                                     html!("th", {
                                         .attr("scope", "col").text("เวลาที่บันทึก")
-                                        .apply(mixins::sortable_header_mixin(SortBy::OrderDateTime, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::OrderDateTime, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {.attr("scope", "col").text("ประเภทใบ Order")}),
                                     html!("th", {.attr("scope", "col").text("ผู้บันทึก")}),
                                     html!("th", {
                                         .attr("scope", "col").text("HN")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Hn, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {
                                         .attr("scope", "col").text("ชื่อ-นามสกุล")
-                                        .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_asc.clone(), sort_fn.clone()))
+                                        .apply(mixins::sortable_header_mixin(SortBy::Name, page.sorted_by.clone(), page.is_desc.clone(), sort_fn.clone()))
                                     }),
                                     html!("th", {
                                         .attr("scope", "col").text("วันที่นัด/Admit")
-                                        .apply(mixins::sortable_header_mixin(SortBy::ForDate, page.sorted_by.clone(), page.is_asc.clone(), sort_fn))
+                                        .apply(mixins::sortable_header_mixin(SortBy::ForDate, page.sorted_by.clone(), page.is_desc.clone(), sort_fn))
                                     }),
                                     html!("th", {.attr("scope", "col").text("ใช้งาน")}),
                                     html!("th", {.attr("scope", "col").text("ชื่อ Template")}),

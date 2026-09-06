@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVecU32},
@@ -19,8 +19,7 @@ use kphis_util::error::AppError;
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_opd_er_index_monitor(ctx: RequestState, Json(payload): Json<IndexMonitor>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(doctorcode) = &ctx.user_state.user.doctorcode {
         let response = index_monitor::post_index_monitor(&payload, doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
@@ -43,8 +42,7 @@ pub async fn post_opd_er_index_monitor(ctx: RequestState, Json(payload): Json<In
     ),
 )]
 pub async fn delete_opd_er_index_monitor(Path(monitor_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = index_monitor::delete_index_monitor(monitor_id, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 

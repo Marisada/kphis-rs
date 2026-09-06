@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -25,9 +24,8 @@ use kphis_util::error::AppError;
     params(IndexNoteParams),
 )]
 pub async fn get_ipd_index_note(Query(params): Query<IndexNoteParams>, ctx: RequestState) -> Result<Json<Vec<IndexNote>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = index_note::get_index_note(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -47,9 +45,8 @@ pub async fn get_ipd_index_note(Query(params): Query<IndexNoteParams>, ctx: Requ
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_index_note(ctx: RequestState, Json(payload): Json<IndexNote>) -> Result<Json<(u32, ExecuteResponse)>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&payload.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_opt_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -72,8 +69,7 @@ pub async fn post_ipd_index_note(ctx: RequestState, Json(payload): Json<IndexNot
     ),
 )]
 pub async fn delete_ipd_index_note(Path(nurse_index_note_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = index_note::delete_index_note(nurse_index_note_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

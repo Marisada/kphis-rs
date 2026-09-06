@@ -1,4 +1,5 @@
 mod doc;
+mod middleware;
 mod route;
 
 use axum::{

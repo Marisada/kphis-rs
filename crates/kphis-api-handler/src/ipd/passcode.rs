@@ -1,4 +1,4 @@
-use axum::{Json, http::Method};
+use axum::Json;
 use rand::Rng;
 
 use kphis_api_core::{
@@ -21,8 +21,7 @@ use crate::user::his::verify_password;
     responses(DocVec<ConfigIpdWardPasscode>),
 )]
 pub async fn get_ipd_ward_passcode(ctx: RequestState) -> Result<Json<Vec<ConfigIpdWardPasscode>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = passcode::get_ward_passcode(&ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -40,8 +39,7 @@ pub async fn get_ipd_ward_passcode(ctx: RequestState) -> Result<Json<Vec<ConfigI
     responses(DocOne<PasscodeGenResponse>),
 )]
 pub async fn post_ipd_ward_passcode(ctx: RequestState, Json(payload): Json<PasscodeGenRequest>) -> Result<Json<PasscodeGenResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     // Check privilege
     if !ctx.user_state.user.can_passcode {

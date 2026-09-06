@@ -106,7 +106,7 @@ impl MedReconcileHistoryCpn {
                         let (result, is_valid) = match &visit_type {
                             VisitTypeId::Ipd(an)
                             | VisitTypeId::PreAdmit(an) => {
-                                let an = str_some(an.to_owned());
+                                let an = str_some(an);
                                 let valid = an.is_some();
                                 let params = MedReconciliationParams {
                                     hn,

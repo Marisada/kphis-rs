@@ -82,7 +82,7 @@ impl PrescriptionScreenPage {
 
     // pharmacy-prescription-screen-data-select.php
     fn submit_search(page: Rc<Self>, app: Rc<App>) {
-        let search = str_some(page.search_text.get_cloned());
+        let search = str_some(&page.search_text.lock_ref());
         if search.is_some() {
             let params = PrescriptionScreenParams { search, ..Default::default() };
 
@@ -114,7 +114,7 @@ impl PrescriptionScreenPage {
     }
 
     fn get_visit(page: Rc<Self>, app: Rc<App>) {
-        let vn_opt = page.current_date.lock_ref().as_ref().and_then(|date| date.vn.to_owned().and_then(str_some));
+        let vn_opt = page.current_date.lock_ref().as_ref().and_then(|date| date.vn.as_ref().and_then(|s| str_some(s)));
         if vn_opt.is_some() {
             let params = PrescriptionScreenParams { vn: vn_opt, ..Default::default() };
 
@@ -243,11 +243,11 @@ impl PrescriptionScreenPage {
 
     fn update_telemed(visit: Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) {
         let telemed = TelemedPatch {
-            telemed_add: str_some(page.telemed_add.get_cloned()),
-            telemed_dose_up: str_some(page.telemed_dose_up.get_cloned()),
-            telemed_dose_down: str_some(page.telemed_dose_down.get_cloned()),
-            telemed_off: str_some(page.telemed_off.get_cloned()),
-            telemed_other: str_some(page.telemed_other.get_cloned()),
+            telemed_add: str_some(&page.telemed_add.lock_ref()),
+            telemed_dose_up: str_some(&page.telemed_dose_up.lock_ref()),
+            telemed_dose_down: str_some(&page.telemed_dose_down.lock_ref()),
+            telemed_off: str_some(&page.telemed_off.lock_ref()),
+            telemed_other: str_some(&page.telemed_other.lock_ref()),
         };
         app.async_load(
             true,
@@ -279,7 +279,7 @@ impl PrescriptionScreenPage {
                 if app.confirm("ยืนยัน บันทึก Pharmacy Care").await {
                     let params = PrescriptionScreenParams { vn: visit.vn.clone(), action: Some(String::from("pharmacy-care")), ..Default::default() };
                     let mut patcher = PrescriptionScreenPatch::default();
-                    patcher.pharmacy_care = str_some(page.pharmacy_care.get_cloned());
+                    patcher.pharmacy_care = str_some(&page.pharmacy_care.lock_ref());
                     // PATCH `EndPoint::PrescrptionScreen`
                     match patcher.call_api_patch(&params, app.state()).await {
                         Ok(response) => {

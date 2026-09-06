@@ -437,12 +437,12 @@ impl OrderCpn {
         let visit_type = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type());
         match visit_type {
             Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => {
-                let an_opt = str_some(an);
+                let an_opt = str_some(&an);
                 let params = OrderParams {
                     an: an_opt.clone(),
                     order_type: Some(String::from("oneday")),
                     current_date: page.current_date.lock_ref().as_ref().map(|cd| cd.order_date),
-                    view_by: str_some(page.view_by.get_cloned()),
+                    view_by: str_some(&page.view_by.lock_ref()),
                     ..Default::default()
                 };
                 // GET `EndPoint::IpdOrderOrder`
@@ -459,7 +459,7 @@ impl OrderCpn {
                     an: an_opt.clone(),
                     order_type: Some(String::from("oneday")),
                     current_date: page.current_date.lock_ref().as_ref().map(|cd| cd.order_date),
-                    view_by: str_some(page.view_by.get_cloned()),
+                    view_by: str_some(&page.view_by.lock_ref()),
                     order_item_types: Some(String::from("discharge,home-medication")),
                     ..Default::default()
                 };
@@ -476,7 +476,7 @@ impl OrderCpn {
                     an: an_opt.clone(),
                     order_type: Some(String::from("oneday")),
                     current_date: page.current_date.lock_ref().as_ref().map(|cd| cd.order_date),
-                    view_by: str_some(page.view_by.get_cloned()),
+                    view_by: str_some(&page.view_by.lock_ref()),
                     order_item_types: Some(String::from("retain")),
                     ..Default::default()
                 };
@@ -494,7 +494,7 @@ impl OrderCpn {
                 let oneday_params = OrderParams {
                     opd_er_order_master_id: zero_none(opd_er_order_master_id),
                     order_type: Some(String::from("oneday")),
-                    view_by: str_some(page.view_by.get_cloned()),
+                    view_by: str_some(&page.view_by.lock_ref()),
                     ..Default::default()
                 };
                 // GET `EndPoint::OpdErOrderOrder`
@@ -526,10 +526,10 @@ impl OrderCpn {
         match visit_type {
             Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => {
                 let params = OrderParams {
-                    an: str_some(an),
+                    an: str_some(&an),
                     order_type: Some(String::from("continuous")),
                     current_date: page.current_date.lock_ref().as_ref().map(|cd| cd.order_date),
-                    view_by: str_some(page.view_by.get_cloned()),
+                    view_by: str_some(&page.view_by.lock_ref()),
                     ..Default::default()
                 };
                 let mut is_err = false;
@@ -566,7 +566,7 @@ impl OrderCpn {
                 let params = OrderParams {
                     opd_er_order_master_id: zero_none(opd_er_order_master_id),
                     order_type: Some(String::from("continuous")),
-                    view_by: str_some(page.view_by.get_cloned()),
+                    view_by: str_some(&page.view_by.lock_ref()),
                     ..Default::default()
                 };
                 // GET `EndPoint::OpdErOrderOrder`
@@ -593,7 +593,7 @@ impl OrderCpn {
         match visit_type {
             Some(VisitTypeId::Ipd(an)) | Some(VisitTypeId::PreAdmit(an)) => {
                 let progress_note_params = ProgressNoteParams {
-                    an: str_some(an),
+                    an: str_some(&an),
                     progress_note_date: page.current_date.lock_ref().as_ref().map(|cd| cd.order_date),
                     ..Default::default()
                 };
@@ -658,7 +658,7 @@ impl OrderCpn {
             VisitTypeId::Ipd(an) | VisitTypeId::PreAdmit(an) => {
                 let params = MedReconciliationParams {
                     hn: patient.hn(),
-                    an: str_some(an.to_owned()),
+                    an: str_some(an),
                     used: Some(String::from("Y")),
                     ..Default::default()
                 };
@@ -725,7 +725,7 @@ impl OrderCpn {
             VisitTypeId::Ipd(an) | VisitTypeId::PreAdmit(an) => {
                 let params = MedReconciliationParams {
                     hn: patient.hn(),
-                    an: str_some(an.to_owned()),
+                    an: str_some(an),
                     used: Some(String::from("H")),
                     ..Default::default()
                 };
@@ -762,7 +762,7 @@ impl OrderCpn {
             VisitTypeId::Ipd(an) | VisitTypeId::PreAdmit(an) => {
                 let params = MedReconciliationParams {
                     hn: patient.hn(),
-                    an: str_some(an.to_owned()),
+                    an: str_some(an),
                     used: Some(String::from("N")),
                     ..Default::default()
                 };
@@ -802,7 +802,7 @@ impl OrderCpn {
             clone!(app, order => async move {
                 if app.confirm("ยืนยันรายการ").await {
                     let is_order_as = matches!(action, OrderPatchAction::ConfirmAs | OrderPatchAction::EditAs);
-                    let nurse_order_as = str_some(page.nurse_order_as_result.get_cloned());
+                    let nurse_order_as = str_some(&page.nurse_order_as_result.lock_ref());
                     if is_order_as && nurse_order_as.is_none() {
                         app.alert_error_with_closed("กรุณาเลือก รคส", "").await;
                         return;
@@ -4158,8 +4158,8 @@ fn send_sse_by_patch(action: OrderPatchAction, patient: Option<Rc<PatientInfo>>,
             }),
             OrderPatchAction::DoctorConfirm => (is_med || is_pharm_notify).then(|| SsePostMessage {
                 message: [&ward_name, &bed, &hn, "แพทย์ยืนยันคำสั่งแล้ว รอเภสัชกรดำเนินการ"].concat(),
-                person: str_some(order.order_doctor.clone()), // แจ้งกลับ พยาบาลผู้ order
-                spclty_id: Some(0),                           // แจ้งเภสัช
+                person: str_some(&order.order_doctor), // แจ้งกลับ พยาบาลผู้ order
+                spclty_id: Some(0),                    // แจ้งเภสัช
                 route: Some(Route::IpdMain {
                     view_by: String::from("pharmacist"),
                     an,
@@ -4254,14 +4254,14 @@ impl OrderItemMutable {
     }
 
     pub fn save(order_item: &Rc<Self>) -> Option<OrderItemSave> {
-        let order_item_type = str_some(order_item.order_item_type.get_cloned());
+        let order_item_type = str_some(&order_item.order_item_type.lock_ref());
         let is_med = order_item_type.as_ref().map(|oit| ["med", "injection", "home-medication"].contains(&oit.as_str())).unwrap_or_default();
-        let order_item_detail = str_some(order_item.order_item_detail.get_cloned()).map(|s| if is_med { sanity_dot_space(&s) } else { s });
+        let order_item_detail = str_some(&order_item.order_item_detail.lock_ref()).map(|s| if is_med { sanity_dot_space(&s) } else { s });
         (order_item_type.is_some() && order_item_detail.is_some()).then(|| OrderItemSave {
             order_id: None,
             order_item_type,
             order_item_detail,
-            stat: str_some(order_item.stat.get_cloned()),
+            stat: str_some(&order_item.stat.lock_ref()),
             off_order_item_id: order_item.off_order_item_id.get(),
             icode: order_item.icode.get_cloned(),
             med_reconciliation_item_id: order_item.med_reconciliation_item_id.get(),
@@ -4271,12 +4271,12 @@ impl OrderItemMutable {
     }
 
     pub fn save_as_progress_note(order_item: &Rc<Self>) -> Option<ProgressNoteItemSave> {
-        let progress_note_item_type = str_some(order_item.order_item_type.get_cloned());
-        let progress_note_item_detail = str_some(order_item.order_item_detail.get_cloned());
+        let progress_note_item_type = str_some(&order_item.order_item_type.lock_ref());
+        let progress_note_item_detail = str_some(&order_item.order_item_detail.lock_ref());
         (progress_note_item_type.is_some() && progress_note_item_detail.is_some()).then(|| ProgressNoteItemSave {
             progress_note_item_type,
             progress_note_item_detail,
-            progress_note_item_detail_2: str_some(order_item.order_item_detail_2.get_cloned()),
+            progress_note_item_detail_2: str_some(&order_item.order_item_detail_2.lock_ref()),
         })
     }
 

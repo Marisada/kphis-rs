@@ -173,10 +173,10 @@ impl XrayViewer {
                                             ["invert(", mono, ") brightness(", bright, "%) contrast(", contrast, "%)"].concat()
                                         ))
                                         .attr("src", &[PATH_PREFIX_API_XRAY_IMAGE, &PacsParams {
-                                            study_uid: str_some(image.study_uid.to_owned()),
-                                            series_uid: str_some(image.series_uid.to_owned()),
-                                            object_uid: str_some(image.object_uid.to_owned()),
-                                            file_path: str_some(image.file_path.to_owned()),
+                                            study_uid: str_some(&image.study_uid),
+                                            series_uid: str_some(&image.series_uid),
+                                            object_uid: str_some(&image.object_uid),
+                                            file_path: str_some(&image.file_path),
                                             ..Default::default()
                                         }.query_string()].concat())
                                         .attr("alt", "image")

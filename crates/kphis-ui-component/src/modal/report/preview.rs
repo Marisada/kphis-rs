@@ -107,7 +107,7 @@ impl ReportPreview {
                                 app.alert_app_error(&e).await;
                             }
                         }
-                    } else if let Some(ids) = str_some(modal.ids.clone()) {
+                    } else if let Some(ids) = str_some(&modal.ids) {
                         // GET `EndPoint::ReportRawTemplateTypeId`
                         match TypstRaw::call_api_get(report.template_name(), report.report_type(), &ids, app.state()).await {
                             Ok(response) => {
@@ -216,7 +216,7 @@ impl ReportPreview {
     }
 
     fn load_signed_pdf(modal: Rc<Self>, app: Rc<App>) {
-        if let (Some(ids), Some(report)) = (str_some(modal.ids.clone()), modal.report.clone()) {
+        if let (Some(ids), Some(report)) = (str_some(&modal.ids), modal.report.clone()) {
             app.async_load(
                 true,
                 clone!(app => async move {

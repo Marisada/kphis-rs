@@ -2,7 +2,7 @@ use axum::{
     Json,
     body::Bytes,
     extract::{Path, State},
-    http::{Method, Response, header},
+    http::{Response, header},
 };
 use http_body_util::Full;
 
@@ -79,8 +79,7 @@ pub async fn patch_assets(State(mut app): State<ApiState>) -> Result<Json<bool>,
     ),
 )]
 pub async fn get_exists(Path((key, id)): Path<(String, String)>, ctx: RequestState) -> Result<Json<bool>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = if key.as_str() == "an" {
         pre_admit::any_an_exists(&id, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?

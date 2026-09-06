@@ -185,35 +185,35 @@ impl ConsultForm {
 
             an: modal.an.get_cloned(),
             consult_type: modal.consult_type.lock_ref().parse::<u32>().ok().and_then(zero_none),
-            consult_ward: str_some(modal.consult_ward.get_cloned()),
-            consult_emergency: str_some(modal.consult_emergency.get_cloned()),
-            consult_doctorcode_mention: str_some(modal.consult_doctorcode_mention.get_cloned()),
+            consult_ward: str_some(&modal.consult_ward.lock_ref()),
+            consult_emergency: str_some(&modal.consult_emergency.lock_ref()),
+            consult_doctorcode_mention: str_some(&modal.consult_doctorcode_mention.lock_ref()),
             consult_spclty: modal.consult_spclty.lock_ref().parse::<u32>().ok(),
             consult_date: date_8601(&modal.consult_date.lock_ref()),
             consult_time: time_8601(&modal.consult_time.lock_ref()),
-            consult_data: str_some(modal.consult_data.get_cloned()),
+            consult_data: str_some(&modal.consult_data.lock_ref()),
 
             consult_doctorcode_requests: modal
                 .consult_requests
                 .lock_ref()
                 .iter()
                 .map(|request| DoctorCodeSave {
-                    person1: str_some(request.doctorcode.get_cloned()),
-                    person2: str_some(request.doctorcode2.get_cloned()),
+                    person1: str_some(&request.doctorcode.lock_ref()),
+                    person2: str_some(&request.doctorcode2.lock_ref()),
                 })
                 .collect(),
 
-            consult_finding: str_some(modal.consult_finding.get_cloned()),
-            consult_diagnosis: str_some(modal.consult_diagnosis.get_cloned()),
-            consult_recommendation: str_some(modal.consult_recommendation.get_cloned()),
+            consult_finding: str_some(&modal.consult_finding.lock_ref()),
+            consult_diagnosis: str_some(&modal.consult_diagnosis.lock_ref()),
+            consult_recommendation: str_some(&modal.consult_recommendation.lock_ref()),
 
             consult_doctorcode_replies: modal
                 .consult_replies
                 .lock_ref()
                 .iter()
                 .map(|request| DoctorCodeSave {
-                    person1: str_some(request.doctorcode.get_cloned()),
-                    person2: str_some(request.doctorcode2.get_cloned()),
+                    person1: str_some(&request.doctorcode.lock_ref()),
+                    person2: str_some(&request.doctorcode2.lock_ref()),
                 })
                 .collect(),
 
@@ -559,7 +559,7 @@ impl ConsultForm {
                                                                         .child(ImageCpn::render("170px", ImageCpn::new_returning(
                                                                             modal.data_image_callback.clone(),
                                                                             modal.patient.clone(),
-                                                                            str_some(modal.an.get_cloned()),
+                                                                            str_some(&modal.an.lock_ref()),
                                                                             "CONSULT-DATA",
                                                                         ), app.clone()))
                                                                     }))
@@ -575,7 +575,7 @@ impl ConsultForm {
                                                                             modal.consult_id.get(),
                                                                             !not_requester,
                                                                             modal.patient.clone(),
-                                                                            str_some(modal.an.get_cloned()),
+                                                                            str_some(&modal.an.lock_ref()),
                                                                             "", // will use ImageUsage internally, so we add nothing here
                                                                         ), app.clone()))
                                                                     })))
@@ -733,7 +733,7 @@ impl ConsultForm {
                                                                         modal.consult_id.get(),
                                                                         is_editable,
                                                                         modal.patient.clone(),
-                                                                        str_some(modal.an.get_cloned()),
+                                                                        str_some(&modal.an.lock_ref()),
                                                                         "", // will use ImageUsage internally, so we add nothing here
                                                                     ), app.clone()))
                                                                 })))
