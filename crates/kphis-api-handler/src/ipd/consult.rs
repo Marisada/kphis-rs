@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -26,8 +25,7 @@ use kphis_util::error::AppError;
     params(IpdConsultListParams),
 )]
 pub async fn get_ipd_consult_list(Query(params): Query<IpdConsultListParams>, ctx: RequestState) -> Result<Json<Vec<IpdConsultList>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = consult::get_ipd_consult_list(params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -47,9 +45,8 @@ pub async fn get_ipd_consult_list(Query(params): Query<IpdConsultListParams>, ct
     ),
 )]
 pub async fn get_ipd_consult_by_an(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<ConsultWithName>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = consult::get_ipd_consult_by_an(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
@@ -69,8 +66,7 @@ pub async fn get_ipd_consult_by_an(Path(an): Path<String>, ctx: RequestState) ->
     ),
 )]
 pub async fn get_ipd_consult_by_id(Path(consult_id): Path<u32>, ctx: RequestState) -> Result<Json<Option<Consult>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = consult::get_ipd_consult_by_id(consult_id, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -91,9 +87,8 @@ pub async fn get_ipd_consult_by_id(Path(consult_id): Path<u32>, ctx: RequestStat
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_consult(ctx: RequestState, Json(payload): Json<ConsultSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&payload.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -115,8 +110,7 @@ pub async fn post_ipd_consult(ctx: RequestState, Json(payload): Json<ConsultSave
     params(ConsultParams),
 )]
 pub async fn delete_ipd_consult_by_id(Query(params): Query<ConsultParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(consult_id), Some(version)) = (params.consult_id, params.version) {
         let response = consult::delete_ipd_consult_by_id(consult_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;

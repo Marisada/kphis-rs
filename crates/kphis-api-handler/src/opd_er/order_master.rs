@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -28,8 +27,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_opd_er_order_master_check(Path(vn): Path<String>, ctx: RequestState) -> Result<Json<Vec<OpdErOrderMasterCheck>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order_master::get_order_master_check(&vn, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -47,8 +45,7 @@ pub async fn get_opd_er_order_master_check(Path(vn): Path<String>, ctx: RequestS
     params(OpdErOrderMasterParams),
 )]
 pub async fn get_opd_er_order_master_list(Query(params): Query<OpdErOrderMasterParams>, ctx: RequestState) -> Result<Json<Vec<OpdErOrderMasterList>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order_master::get_order_master_list(&params, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -68,8 +65,7 @@ pub async fn get_opd_er_order_master_list(Query(params): Query<OpdErOrderMasterP
     ),
 )]
 pub async fn get_opd_er_order_master(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState) -> Result<Json<Option<OpdErOrderMaster>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order_master::get_order_master(opd_er_order_master_id, &ctx.api_state.app_config.doctor_intern_roles, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -87,8 +83,7 @@ pub async fn get_opd_er_order_master(Path(opd_er_order_master_id): Path<u32>, ct
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_opd_er_order_master(ctx: RequestState, Json(payload): Json<OpdErOrderMasterSave>) -> Result<Json<(u32, ExecuteResponse)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order_master::post_order_master(&payload, &ctx.user_state.user.loginname, &ctx.user_state.user.doctorcode, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

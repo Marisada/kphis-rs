@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 use sqlx::{MySql, Pool};
 
@@ -33,9 +32,8 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_ipd_order_date(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<OrderDate>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = order::get_order_date(&an, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -54,9 +52,8 @@ pub async fn get_ipd_order_date(Path(an): Path<String>, ctx: RequestState) -> Re
     params(OrderParams),
 )]
 pub async fn get_ipd_order(Query(params): Query<OrderParams>, ctx: RequestState) -> Result<Json<Vec<Order>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let orders = get_ipd_order_bundle(
         &params,
@@ -133,9 +130,8 @@ async fn get_order_items_plans(order_items: &mut [OrderItem], view_by: &str, poo
     params(OrderParams),
 )]
 pub async fn get_ipd_order_item(Query(params): Query<OrderParams>, ctx: RequestState) -> Result<Json<Vec<OrderItem>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let items = get_ipd_order_item_bundle(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
@@ -190,9 +186,8 @@ pub async fn get_ipd_order_item_bundle(params: &OrderParams, pool: &Pool<MySql>,
     params(OrderParams),
 )]
 pub async fn get_ipd_order_previous(Query(params): Query<OrderParams>, ctx: RequestState) -> Result<Json<Vec<OrderItem>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let order_items = get_ipd_order_previous_bundle(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
     Ok(Json(order_items))
@@ -219,9 +214,8 @@ pub async fn get_ipd_order_previous_bundle(params: &OrderParams, pool: &Pool<MyS
     ),
 )]
 pub async fn get_ipd_order_one_day_previous(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<MedOrderItem>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let order_items = order::get_previous_one_day_order(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -242,10 +236,8 @@ pub async fn get_ipd_order_one_day_previous(Path(an): Path<String>, ctx: Request
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_order(ctx: RequestState, Json(payload): Json<OrderSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-
     if let Some((an, is_pre_admit)) = payload.visit_type.an_and_is_pre_admit() {
-        ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+        ctx.authorize(is_pre_admit).await?;
         // check AN is valid (pre-admit was admited or admit was revoked)
         check_an_can_execute(an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
     } else {
@@ -270,9 +262,8 @@ pub async fn post_ipd_order(ctx: RequestState, Json(payload): Json<OrderSave>) -
     ),
 )]
 pub async fn get_ipd_home_med_from_cont(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<MedOrderItem>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = order::get_home_med_from_cont(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -297,8 +288,7 @@ pub async fn get_ipd_home_med_from_cont(Path(an): Path<String>, ctx: RequestStat
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn patch_ipd_order(ctx: RequestState, Json(payload): Json<OrderPatch>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order::patch_order(
         &payload,
@@ -324,8 +314,7 @@ pub async fn patch_ipd_order(ctx: RequestState, Json(payload): Json<OrderPatch>)
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn patch_ipd_order_item(ctx: RequestState, Json(payload): Json<OrderItemPatch>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     let response = match payload.action {
         OrderItemPatchAction::NurseAssign => order::update_order_item_nurse_assign(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?,
@@ -350,8 +339,7 @@ pub async fn patch_ipd_order_item(ctx: RequestState, Json(payload): Json<OrderIt
     ),
 )]
 pub async fn delete_ipd_order(Path(order_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order::delete_order(order_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -369,8 +357,7 @@ pub async fn delete_ipd_order(Path(order_id): Path<u32>, ctx: RequestState) -> R
     params(IpdOrderPharmacyParams),
 )]
 pub async fn get_ipd_order_pharmacy(Query(params): Query<IpdOrderPharmacyParams>, ctx: RequestState) -> Result<Json<IpdOrderPharmacyMonitor>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let order_monitor = order::get_pharmacy_order(&params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 

@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
@@ -22,8 +21,7 @@ use kphis_util::error::{AppError, Source};
     ),
 )]
 pub async fn get_lab_searchbox(Path(search_text): Path<String>, ctx: RequestState) -> Result<Json<Vec<LabSearchbox>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let decoded_text = urlencoding::decode(&search_text).map_err(|e| Source::UrlEncoding.to_error(500, e, "Get LabSearchBox"))?;
     let response = searchbox::get_lab_searchbox(&decoded_text, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
@@ -44,8 +42,7 @@ pub async fn get_lab_searchbox(Path(search_text): Path<String>, ctx: RequestStat
     ),
 )]
 pub async fn get_xray_searchbox(Path(search_text): Path<String>, ctx: RequestState) -> Result<Json<Vec<XraySearchbox>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let decoded_text = urlencoding::decode(&search_text).map_err(|e| Source::UrlEncoding.to_error(500, e, "Get XraySearchBox"))?;
     let response = searchbox::get_xray_searchbox(&decoded_text, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
@@ -66,8 +63,7 @@ pub async fn get_xray_searchbox(Path(search_text): Path<String>, ctx: RequestSta
     ),
 )]
 pub async fn get_ivfluid_searchbox(Path(search_text): Path<String>, ctx: RequestState) -> Result<Json<Vec<IvfluidSearchbox>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let decoded_text = urlencoding::decode(&search_text).map_err(|e| Source::UrlEncoding.to_error(500, e, "Get IvFluidSearchBox"))?;
     let response = searchbox::get_ivfluid_searchbox(&decoded_text, &ctx.api_state.ivfluid(), &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
@@ -91,8 +87,7 @@ pub async fn get_ivfluid_searchbox(Path(search_text): Path<String>, ctx: Request
     ),
 )]
 pub async fn get_med_searchbox(Path((hn, search_text)): Path<(String, String)>, ctx: RequestState) -> Result<Json<Vec<MedSearchbox>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let decoded_text = urlencoding::decode(&search_text).map_err(|e| Source::UrlEncoding.to_error(500, e, "Get MedSearchBox"))?;
     let response = if hn.as_str() == "-" {
@@ -115,8 +110,7 @@ pub async fn get_med_searchbox(Path((hn, search_text)): Path<(String, String)>, 
     params(DrugCheckParams),
 )]
 pub async fn get_drug_duplication_check(Query(params): Query<DrugCheckParams>, ctx: RequestState) -> Result<Json<Vec<DrugDuplicateCheck>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let duplications = searchbox::get_drug_duplicate_check(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -134,8 +128,7 @@ pub async fn get_drug_duplication_check(Query(params): Query<DrugCheckParams>, c
     params(DrugCheckParams),
 )]
 pub async fn get_drug_interaction_check(Query(params): Query<DrugCheckParams>, ctx: RequestState) -> Result<Json<Vec<DrugInteractionCheck>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let interactions = searchbox::get_drug_interaction_check(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -155,8 +148,7 @@ pub async fn get_drug_interaction_check(Query(params): Query<DrugCheckParams>, c
     ),
 )]
 pub async fn get_patient_searchbox(Path(search_text): Path<String>, ctx: RequestState) -> Result<Json<Vec<PatientSearchbox>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let decoded_text = urlencoding::decode(&search_text).map_err(|e| Source::UrlEncoding.to_error(500, e, "Get PatientSearchBox"))?;
     let response = searchbox::get_patient_searchbox(&decoded_text, ctx.api_state.hosxp_hn_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
@@ -178,8 +170,7 @@ pub async fn get_patient_searchbox(Path(search_text): Path<String>, ctx: Request
     ),
 )]
 pub async fn get_opd_visit_searchbox(Path((mode, search_text)): Path<(String, String)>, ctx: RequestState) -> Result<Json<Vec<OpdVisitSearchbox>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let decoded_text = urlencoding::decode(&search_text).map_err(|e| Source::UrlEncoding.to_error(500, e, "Get OpdVisitSearchBox"))?;
     let response = searchbox::get_opd_visit_searchbox(&mode, &decoded_text, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
@@ -200,8 +191,7 @@ pub async fn get_opd_visit_searchbox(Path((mode, search_text)): Path<(String, St
     ),
 )]
 pub async fn get_hosp_searchbox(Path(search_text): Path<String>, ctx: RequestState) -> Result<Json<Vec<HospSearchBox>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let decoded_text = urlencoding::decode(&search_text).map_err(|e| Source::UrlEncoding.to_error(500, e, "Get HospSearchBox"))?;
     let response = searchbox::get_hosp_searchbox(&decoded_text, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;

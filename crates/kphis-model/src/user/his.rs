@@ -1,7 +1,4 @@
-use argon2::{
-    Argon2,
-    password_hash::PasswordHasher,
-};
+use argon2::{Argon2, password_hash::PasswordHasher};
 use derive_demo::Demo;
 use encoding_rs::WINDOWS_874;
 use futures_signals::{signal::Mutable, signal_vec::MutableVec};

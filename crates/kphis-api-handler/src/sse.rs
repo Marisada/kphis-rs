@@ -1,8 +1,7 @@
 use axum::{
-    Json,
+    Extension, Json,
     extract::{Path, Query, State},
     http::HeaderValue,
-    http::Method,
     response::{
         IntoResponse,
         sse::{Event, KeepAlive, Sse},
@@ -58,8 +57,7 @@ pub async fn get_sse(State(app): State<ApiState>) -> impl IntoResponse {
     responses(DocOne<String>),
 )]
 pub async fn logout(ctx: RequestState) -> Result<Json<String>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let mut guard = ctx.api_state.online_users.lock().await;
     match guard.remove(&ctx.user_state.state_id) {
@@ -97,7 +95,10 @@ pub async fn get_sse_by_id(Path(state_id): Path<String>, State(app): State<ApiSt
                 // Add "X-Accel-Buffering: no" to header to prevent proxy buffering
                 let mut res = Sse::new(stream_map).keep_alive(KeepAlive::default()).into_response();
                 res.headers_mut().insert("X-Accel-Buffering", HeaderValue::from_static("no"));
-                Ok(res)
+
+                let ext = Extension(Some(state_id));
+
+                Ok((ext, res))
             }
             None => Err(AppError::app_401("Get SSE")),
         }
@@ -138,8 +139,7 @@ pub async fn post_sse_group(ctx: RequestState, Json(payload): Json<SseGroup>) ->
     params(SseMessageParams),
 )]
 pub async fn get_sse_message(Query(params): Query<SseMessageParams>, ctx: RequestState) -> Result<Json<Vec<SseMessage>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = sse::get_sse_message(
         &params,
@@ -202,8 +202,7 @@ pub async fn post_sse_message(ctx: RequestState, Json(payload): Json<SsePostMess
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn patch_sse_messages(ctx: RequestState, Json(payload): Json<Vec<u32>>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     let result = sse::patch_sse_messages(&ctx.user_state.user.loginname, &payload, &ctx.api_state.db_pool, &ctx.api_state.kphis_log()).await?;
 

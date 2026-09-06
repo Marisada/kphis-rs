@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Multipart, Path},
-    http::Method,
 };
 use sqlx::mysql::MySqlQueryResult;
 
@@ -27,8 +26,7 @@ use kphis_util::error::{AppError, Source};
     responses(DocVec<ImagePath>),
 )]
 pub async fn post_image_file(ctx: RequestState, multipart: Multipart) -> Result<Json<Vec<ImagePath>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let files = from_multipart(multipart).await?;
     let image_paths = if !files.is_empty() {
@@ -81,8 +79,7 @@ async fn from_multipart(mut multipart: Multipart) -> Result<Vec<ImageSave>, AppE
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn patch_image_path(ctx: RequestState, Json(payload): Json<ImagePath>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PUT, false).await?;
+    ctx.authorize(false).await?;
 
     let result = file_path::patch_image_path(&payload.title, payload.image_id, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -99,8 +96,7 @@ pub async fn patch_image_path(ctx: RequestState, Json(payload): Json<ImagePath>)
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn delete_image_file(ctx: RequestState, Json(payload): Json<Vec<u32>>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let result = if !payload.is_empty() {
         file_path::delete_image_file(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?
@@ -124,8 +120,7 @@ pub async fn delete_image_file(ctx: RequestState, Json(payload): Json<Vec<u32>>)
     ),
 )]
 pub async fn get_image_usage_id(Path((usage_id, usage_key_id)): Path<(ImageUsage, u32)>, ctx: RequestState) -> Result<Json<Vec<ImagePath>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let result = file_path::get_image_usage_id(usage_id as u32, usage_key_id, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis_extra()).await?;
 
@@ -142,8 +137,7 @@ pub async fn get_image_usage_id(Path((usage_id, usage_key_id)): Path<(ImageUsage
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_image_usage(ctx: RequestState, Json(payloads): Json<Vec<ImagePath>>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let result = if !payloads.is_empty() {
         file_path::post_image_usage(&payloads, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?
@@ -164,8 +158,7 @@ pub async fn post_image_usage(ctx: RequestState, Json(payloads): Json<Vec<ImageP
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn delete_image_usage(ctx: RequestState, Json(payloads): Json<Vec<u32>>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let result = if !payloads.is_empty() {
         file_path::delete_image_usage(&payloads, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?

@@ -3,8 +3,6 @@ use sqlx::{AssertSqlSafe, MySql, Pool, mysql::MySqlQueryResult};
 use kphis_sql::{data_history_utils, log};
 use kphis_util::error::{AppError, Source};
 
-use super::execute3;
-
 pub async fn insert_history_log(source_table: data_history_utils::SourceTable, history_type: &str, user: &str, kvs: &[data_history_utils::KeyValue], kphis: &str, kphis_log: &str, pool: &Pool<MySql>) -> Result<MySqlQueryResult, AppError> {
     sqlx::query(AssertSqlSafe(data_history_utils::insert_history_log(&source_table, history_type, user, kvs, kphis, kphis_log)))
         .execute(pool)
@@ -12,11 +10,15 @@ pub async fn insert_history_log(source_table: data_history_utils::SourceTable, h
         .map_err(|e| Source::SQLx.to_error(500, e, &["Insert ", source_table.table_name(), " History"].concat()))
 }
 
-pub async fn insert_access_log(user: &str, address: &str, access_detail: &str, pool: &Pool<MySql>, kphis_log: &str) -> Result<MySqlQueryResult, AppError> {
-    let sql = log::insert_system_access_log(kphis_log);
-    execute3(user, address, access_detail, &sql, pool, "Insert AccessLog").await
+pub async fn insert_access_log(user: &Option<String>, address: &Option<String>, access_detail: &str, pool: &Pool<MySql>, kphis_log: &str) -> Result<MySqlQueryResult, AppError> {
+    sqlx::query(AssertSqlSafe(log::insert_system_access_log(kphis_log)))
+        .bind(user)
+        .bind(address)
+        .bind(access_detail)
+        .execute(pool)
+        .await
+        .map_err(|e| Source::SQLx.to_error(500, e, "Insert AccessLog"))
 }
-
 pub async fn delete_expired_access_log(days: i64, pool: &Pool<MySql>, kphis_log: &str) -> Result<MySqlQueryResult, AppError> {
     let access_sql = log::delete_expired_access_log(kphis_log);
     sqlx::query(AssertSqlSafe(access_sql)).bind(days).execute(pool).await.map_err(|e| Source::SQLx.to_error(500, e, "Delete AccessLog"))
@@ -46,9 +48,9 @@ mod tests {
         let tester = MySqlTester::new_kphis_log().await;
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/kphis_log/system_access_log.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let success = insert_access_log("user", "127.0.0.1:11111", "{}", &tester.db_pool, &tester.kphis_log).await.unwrap();
+        let success = insert_access_log(&Some(String::from("user")), &Some(String::from("127.0.0.1:11111")), "{}", &tester.db_pool, &tester.kphis_log).await.unwrap();
         assert_eq!(success.rows_affected(), 1);
-        let again = insert_access_log("user", "127.0.0.1:11111", "{}", &tester.db_pool, &tester.kphis_log).await.unwrap();
+        let again = insert_access_log(&Some(String::from("user")), &Some(String::from("127.0.0.1:11111")), "{}", &tester.db_pool, &tester.kphis_log).await.unwrap();
         assert_eq!(again.rows_affected(), 1);
     }
 

@@ -19,7 +19,7 @@ use crate::datetime::js_now;
 pub const CONTACT_ADMIN: &str = "เกิดข้อผิดพลาด! กรุณาติดต่อผู้ดูแลระบบ";
 
 /// Sources of error
-#[derive(Debug, PartialEq, utoipa::ToSchema)]
+#[derive(Clone, Debug, PartialEq, utoipa::ToSchema)]
 #[cfg_attr(test, derive(strum::EnumIter))]
 #[serde(deserialize_with = "parse_source")]
 #[schema(example = "App")]
@@ -168,7 +168,7 @@ where
 }
 
 /// Title of error
-#[derive(Debug, Deserialize, Serialize, PartialEq, utoipa::ToSchema)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, utoipa::ToSchema)]
 #[schema(example = "ContactAdmin")]
 pub enum ErrorTitle {
     ContactAdmin,
@@ -191,7 +191,7 @@ impl ErrorTitle {
 }
 
 /// API error message
-#[derive(Debug, Deserialize, Serialize, utoipa::ToSchema)]
+#[derive(Clone, Debug, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct AppError {
     pub status: u16,
     /// A unique error ID
@@ -292,11 +292,17 @@ impl AppError {
         // serde_json::to_string(self).unwrap_or_default()
         ["source: ", self.source.string(), ", \naction: ", &self.action, ", \nmessage: ", &self.message].concat()
     }
+
+    pub fn string_inline(&self) -> String {
+        [&self.message, " (source: ", self.source.string(), ", action: ", &self.action, ")"].concat()
+    }
 }
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
-        (StatusCode::from_u16(self.status).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR), Json(self)).into_response()
+        let mut response = (StatusCode::from_u16(self.status).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR), Json(self.clone())).into_response();
+        response.extensions_mut().insert(self);
+        response
     }
 }
 

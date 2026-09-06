@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{
     open_api::{DocVec, DocVecU32},
@@ -24,9 +24,8 @@ use kphis_util::error::AppError;
     params(DoctorInChargeParams),
 )]
 pub async fn get_ipd_doctor_in_charge(Query(params): Query<DoctorInChargeParams>, ctx: RequestState) -> Result<Json<Vec<IpdDoctorInCharge>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let Some(an) = params.an {
         let responses = doctor_in_charge::get_doctor_in_charge(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -51,9 +50,8 @@ pub async fn get_ipd_doctor_in_charge(Query(params): Query<DoctorInChargeParams>
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_doctor_in_charge(ctx: RequestState, Json(payload): Json<IpdDoctorInCharge>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&payload.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_opt_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -75,9 +73,8 @@ pub async fn post_ipd_doctor_in_charge(ctx: RequestState, Json(payload): Json<Ip
     params(DoctorInChargeParams),
 )]
 pub async fn delete_ipd_doctor_in_charge(Query(params): Query<DoctorInChargeParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::DELETE, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let (Some(doctor_in_charge_id), Some(version)) = (params.doctor_in_charge_id, params.version) {
         let result = doctor_in_charge::delete_doctor_in_charge(doctor_in_charge_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;

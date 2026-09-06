@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
 use kphis_api_query::ipd::his;
@@ -17,8 +17,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_ipd_his_opertion_admit(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<HisOperationAdmit>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let ops = his::get_operation_admit(&an, &ctx.api_state.operation_success(), &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
@@ -37,8 +36,7 @@ pub async fn get_ipd_his_opertion_admit(Path(an): Path<String>, ctx: RequestStat
     ),
 )]
 pub async fn get_med_plan_ipd_remains(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<HisMedPlanIpd>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let ops = his::get_medplan_ipd_remains(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
@@ -57,8 +55,7 @@ pub async fn get_med_plan_ipd_remains(Path(an): Path<String>, ctx: RequestState)
     ),
 )]
 pub async fn get_his_ipt_diag(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<HisIptDiag>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let results = his::get_ipt_diag(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
@@ -77,8 +74,7 @@ pub async fn get_his_ipt_diag(Path(an): Path<String>, ctx: RequestState) -> Resu
     ),
 )]
 pub async fn get_his_ipt_oprt(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<HisIptOprt>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let results = his::get_ipt_oprt(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 

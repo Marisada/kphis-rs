@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{open_api::DocOpt, state::RequestState};
 use kphis_api_query::opd_er::show_patient_main;
@@ -18,8 +18,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_opd_er_show_patient_main_id(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState) -> Result<Json<Option<PatientInfo>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = show_patient_main::get_show_patient_main_id(opd_er_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -38,8 +37,7 @@ pub async fn get_opd_er_show_patient_main_id(Path(opd_er_order_master_id): Path<
     ),
 )]
 pub async fn get_opd_er_show_patient_main_vn(Path(vn): Path<String>, ctx: RequestState) -> Result<Json<Option<PatientInfo>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = show_patient_main::get_show_patient_main_vn(&vn, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 

@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -22,8 +22,7 @@ use kphis_util::error::AppError;
     params(TmpParams),
 )]
 pub async fn get_ipd_tmp_group(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<Vec<TmpGroup>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = tmp::get_group(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -42,8 +41,7 @@ pub async fn get_ipd_tmp_group(Query(params): Query<TmpParams>, ctx: RequestStat
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_tmp_group(ctx: RequestState, Json(payload): Json<TmpGroup>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.smp_name.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post IpdTmpGroup"))
@@ -66,8 +64,7 @@ pub async fn post_ipd_tmp_group(ctx: RequestState, Json(payload): Json<TmpGroup>
     params(TmpParams),
 )]
 pub async fn delete_ipd_tmp_group(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.smp_id.is_some() {
         let response = tmp::delete_group(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -89,8 +86,7 @@ pub async fn delete_ipd_tmp_group(Query(params): Query<TmpParams>, ctx: RequestS
     params(TmpParams),
 )]
 pub async fn get_ipd_subgroup(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<Vec<TmpSubGroup>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = tmp::get_subgroup(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -109,8 +105,7 @@ pub async fn get_ipd_subgroup(Query(params): Query<TmpParams>, ctx: RequestState
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_subgroup(ctx: RequestState, Json(payload): Json<TmpSubGroup>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.smp_id == 0 || payload.subgroup_name.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post IpdTmpSubGroup"))
@@ -133,8 +128,7 @@ pub async fn post_ipd_subgroup(ctx: RequestState, Json(payload): Json<TmpSubGrou
     params(TmpParams),
 )]
 pub async fn delete_ipd_subgroup(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.smp_id.is_some() && params.subgroup.is_some() {
         let response = tmp::delete_subgroup(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -156,8 +150,7 @@ pub async fn delete_ipd_subgroup(Query(params): Query<TmpParams>, ctx: RequestSt
     params(TmpParams),
 )]
 pub async fn get_ipd_focus(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<Vec<TmpFocus>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = tmp::get_focus(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -176,8 +169,7 @@ pub async fn get_ipd_focus(Query(params): Query<TmpParams>, ctx: RequestState) -
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_focus(ctx: RequestState, Json(payload): Json<TmpFocus>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.smp_id == 0 || payload.focus_name.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post IpdTmpFocus"))
@@ -200,8 +192,7 @@ pub async fn post_ipd_focus(ctx: RequestState, Json(payload): Json<TmpFocus>) ->
     params(TmpParams),
 )]
 pub async fn delete_ipd_focus(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = tmp::delete_focus(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -223,8 +214,7 @@ pub async fn delete_ipd_focus(Query(params): Query<TmpParams>, ctx: RequestState
     params(TmpParams),
 )]
 pub async fn get_ipd_goal(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<Vec<TmpGoal>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = tmp::get_goal(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -243,8 +233,7 @@ pub async fn get_ipd_goal(Query(params): Query<TmpParams>, ctx: RequestState) ->
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_goal(ctx: RequestState, Json(payload): Json<TmpGoal>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.smp_id == 0 || payload.goal_name.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post IpdTmpGoal"))
@@ -267,8 +256,7 @@ pub async fn post_ipd_goal(ctx: RequestState, Json(payload): Json<TmpGoal>) -> R
     params(TmpParams),
 )]
 pub async fn delete_ipd_goal(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = tmp::delete_goal(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -290,8 +278,7 @@ pub async fn delete_ipd_goal(Query(params): Query<TmpParams>, ctx: RequestState)
     params(TmpParams),
 )]
 pub async fn get_ipd_intvt(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<Vec<TmpIntvt>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = tmp::get_intvt(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -310,8 +297,7 @@ pub async fn get_ipd_intvt(Query(params): Query<TmpParams>, ctx: RequestState) -
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_intvt(ctx: RequestState, Json(payload): Json<TmpIntvt>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.smp_id == 0 || payload.intvt_name.as_ref().map(|s| s.is_empty()).unwrap_or(true) {
         Err(AppError::app_400("Post IpdTmpIntvt"))
@@ -334,8 +320,7 @@ pub async fn post_ipd_intvt(ctx: RequestState, Json(payload): Json<TmpIntvt>) ->
     params(TmpParams),
 )]
 pub async fn delete_ipd_intvt(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = tmp::delete_intvt(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -356,8 +341,7 @@ pub async fn delete_ipd_intvt(Query(params): Query<TmpParams>, ctx: RequestState
     params(TmpParams),
 )]
 pub async fn get_ipd_dlc(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<Vec<TmpDlc>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = tmp::get_dlc(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -375,8 +359,7 @@ pub async fn get_ipd_dlc(Query(params): Query<TmpParams>, ctx: RequestState) -> 
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_dlc(ctx: RequestState, Json(payload): Json<TmpDlc>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.dlc_name.is_empty() {
         Err(AppError::app_400("Post IpdTmpDlc"))
@@ -398,8 +381,7 @@ pub async fn post_ipd_dlc(ctx: RequestState, Json(payload): Json<TmpDlc>) -> Res
     params(TmpParams),
 )]
 pub async fn delete_ipd_dlc(Query(params): Query<TmpParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if params.id.is_some() {
         let response = tmp::delete_dlc(&params, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;

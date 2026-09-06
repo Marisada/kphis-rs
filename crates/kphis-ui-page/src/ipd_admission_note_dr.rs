@@ -7326,27 +7326,27 @@ impl IpdAdmissionNoteDrPage {
                 m: zero_str_none(&page.m.lock_ref()),
                 braden_scale: str_some(&page.braden_scale.lock_ref()),
 
-                disease: str_some(&page.disease.lock_ref()),                                           //.or(Some(String::from("ไม่มี"))),
+                disease: str_some(&page.disease.lock_ref()),                                             //.or(Some(String::from("ไม่มี"))),
                 disease_detail: str_some(&concat_mutable_vec(&page.disease_details, concat_with_space)), // disease_name + ' ' + disease_year + ' ' + disease_hospital
-                disease_etc: page.disease_etc.get_cloned(),                                             // unused
+                disease_etc: page.disease_etc.get_cloned(),                                              // unused
                 last_dose_taken_time: datetime_8601(&page.last_dose_taken_time.lock_ref()),
                 last_dose_taken_remark: opt_empty_none(page.last_dose_taken_remark.lock_ref().as_ref()),
-                operation_history: opt_empty_none(page.operation_history.lock_ref().as_ref()),                     //.or(Some(String::from("ไม่มี"))),
-                allergy_history: str_some(&page.allergy_history.lock_ref()),                               //.or(Some(String::from("ไม่มี"))),
+                operation_history: opt_empty_none(page.operation_history.lock_ref().as_ref()),               //.or(Some(String::from("ไม่มี"))),
+                allergy_history: str_some(&page.allergy_history.lock_ref()),                                 //.or(Some(String::from("ไม่มี"))),
                 allergy_drug_history: str_some(&concat_mutable_vec(&page.allergy_drugs, concat_with_space)), // agent + ' ' + symptom + ' ' + agent + ..
                 allergy_drug_history_hosxp: str_some(&page.allergy_drug_history_hosxp.lock_ref()),
-                allergy_drug_pharmacy_check_person: page.allergy_drug_pharmacy_check_person.get_cloned(),              // unused
-                allergy_drug_pharmacy_check_datetime: page.allergy_drug_pharmacy_check_datetime.get_cloned(),          // unused
+                allergy_drug_pharmacy_check_person: page.allergy_drug_pharmacy_check_person.get_cloned(),               // unused
+                allergy_drug_pharmacy_check_datetime: page.allergy_drug_pharmacy_check_datetime.get_cloned(),           // unused
                 allergy_food_history: str_some(&concat_mutable_vec(&page.allergy_foods, concat_with_space)),            // agent + ' ' + symptom + ' ' + agent + ..
                 allergy_etc_history: str_some(&concat_mutable_vec(&page.allergy_etcs, concat_with_space)),              // agent + ' ' + symptom + ' ' + agent + ..
-                allergy_detail: page.allergy_detail.get_cloned(),                                                      // unused
-                family_medical_history: str_some(&page.family_medical_history.lock_ref()),                            //.or(Some(String::from("ไม่มี"))),
+                allergy_detail: page.allergy_detail.get_cloned(),                                                       // unused
+                family_medical_history: str_some(&page.family_medical_history.lock_ref()),                              //.or(Some(String::from("ไม่มี"))),
                 family_medical_history_detail: str_some(&concat_mutable_vec(&page.family_medicals, concat_with_space)), // disease + ' ' + relation + ' ' + disease + ..
 
                 receives_immunisation_history_kid: opt_empty_none(page.receives_immunisation_history_kid.lock_ref().as_ref()).or(Some(String::from("ครบตามวัย"))),
                 developmentally_kid: opt_empty_none(page.developmentally_kid.lock_ref().as_ref()), //.or(Some(String::from("ปกติ"))),
-                g: page.g.lock_ref().parse::<i32>().ok(),                                   //.or(Some(0)),
-                p: str_some(&page.p.lock_ref()),                                           //.or(Some(String::from("0"))),
+                g: page.g.lock_ref().parse::<i32>().ok(),                                          //.or(Some(0)),
+                p: str_some(&page.p.lock_ref()),                                                   //.or(Some(String::from("0"))),
                 anc: str_some(&page.anc.lock_ref()),
                 tt: opt_zero_none(page.tt.lock_ref().parse::<i32>().ok()),
                 gestational_age: zero_str_none(&page.gestational_age.lock_ref()),
@@ -7418,7 +7418,7 @@ impl IpdAdmissionNoteDrPage {
                 supplementary_feeding: str_some(&page.supplementary_feeding.lock_ref()), //.or(Some(String::from("ยังไม่ได้รับ"))),
                 supplementary_feeding_start_age_month: opt_zero_none(page.supplementary_feeding_start_age_month.lock_ref().parse::<i32>().ok()),
                 disease_operation_allergy: page.disease_operation_allergy.get_cloned(), // unused
-                inpatient_history: str_some(&page.inpatient_history.lock_ref()),       //.or(Some(String::from("ไม่เคย"))),
+                inpatient_history: str_some(&page.inpatient_history.lock_ref()),        //.or(Some(String::from("ไม่เคย"))),
                 inpatient_last_date: str_some(&page.inpatient_last_date.lock_ref()),
                 inpatient_location: str_some(&page.inpatient_location.lock_ref()),
                 inpatient_because: str_some(&page.inpatient_because.lock_ref()),

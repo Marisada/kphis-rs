@@ -35,6 +35,15 @@ move unused import
 +   };
 ```
 
+: 289
+```diff
+-          .unwrap_or_else(|_err| {
+-               ::tracing::error!("tracing-subscriber failed");
++           .unwrap_or_else(|err| {
++               ::tracing::error!("tracing-subscriber failed: {}", err);
+            })
+```
+
 :445
 ```diff
     #[test]

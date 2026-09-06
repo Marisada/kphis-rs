@@ -2,7 +2,7 @@ use axum::{
     Json,
     body::Bytes,
     extract::{Path, Query, State},
-    http::{Method, Response, header},
+    http::{Response, header},
 };
 use http_body_util::Full;
 
@@ -26,8 +26,7 @@ use kphis_util::error::{AppError, Source};
     ),
 )]
 pub async fn get_pacs_xn(Path(xn): Path<i32>, ctx: RequestState) -> Result<Json<PacsXnData>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(pacs_config) = &ctx.api_state.app_config.pacs_config {
         let result = get_xn_data(xn, &ctx.api_state.pacs_client, pacs_config).await?;

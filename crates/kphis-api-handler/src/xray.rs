@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -20,8 +20,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_xray_report(Path(hn): Path<String>, ctx: RequestState) -> Result<Json<Vec<XrayReport>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = xray::get_xray_report(&hn, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -40,8 +39,7 @@ pub async fn get_xray_report(Path(hn): Path<String>, ctx: RequestState) -> Resul
     ),
 )]
 pub async fn post_xray_read(Path(xn): Path<i32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let result = xray::post_xray_read(xn, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -60,8 +58,7 @@ pub async fn post_xray_read(Path(xn): Path<i32>, ctx: RequestState) -> Result<Js
     ),
 )]
 pub async fn delete_xray_read(Path(xn): Path<i32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let result = xray::delete_xray_read(xn, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

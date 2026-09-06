@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -30,8 +29,7 @@ use kphis_util::{
     params(MedReconciliationParams),
 )]
 pub async fn get_opd_er_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState) -> Result<Json<Vec<MedReconciliation>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     if (params.opd_er_order_master_id.is_some() || params.med_reconciliation_id.is_some()) && params.hn.is_some() {
         let recons = med_reconcile::get_opd_er_med_reconcile(&params, &ctx.user_state.user.doctorcode, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -54,8 +52,7 @@ pub async fn get_opd_er_med_reconcile(Query(params): Query<MedReconciliationPara
     params(MedReconciliationParams),
 )]
 pub async fn post_opd_er_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemSave>>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(opd_er_order_master_id) = params.opd_er_order_master_id.and_then(zero_none) {
         let result = med_reconcile::post_opd_er_med_reconcile(
@@ -86,8 +83,7 @@ pub async fn post_opd_er_med_reconcile(Query(params): Query<MedReconciliationPar
     params(MedReconciliationParams),
 )]
 pub async fn patch_opd_er_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState, Json(payload): Json<Vec<MedReconciliationItemPatch>>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(med_reconciliation_id), Some(patch)) = (params.med_reconciliation_id.and_then(zero_none), params.patch) {
         if ["doctor", "pharm", "unconfirm", "receive", "last"].contains(&patch.as_str()) {
@@ -122,8 +118,7 @@ pub async fn patch_opd_er_med_reconcile(Query(params): Query<MedReconciliationPa
     params(MedReconciliationParams),
 )]
 pub async fn delete_opd_er_med_reconcile(Query(params): Query<MedReconciliationParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(med_reconciliation_id) = params.med_reconciliation_id {
         let result = med_reconcile::delete_opd_er_med_reconcile(med_reconciliation_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -150,8 +145,7 @@ pub async fn delete_opd_er_med_reconcile(Query(params): Query<MedReconciliationP
     ),
 )]
 pub async fn get_opd_er_med_reconcile_note(Path(med_reconciliation_id): Path<u32>, ctx: RequestState) -> Result<Json<Option<MedReconciliationNote>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let note = med_reconcile::get_opd_er_med_reconcile_note(med_reconciliation_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -171,8 +165,7 @@ pub async fn get_opd_er_med_reconcile_note(Path(med_reconciliation_id): Path<u32
     ),
 )]
 pub async fn post_opd_er_med_reconcile_note(Path(med_reconciliation_id): Path<u32>, ctx: RequestState, Json(payload): Json<String>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = med_reconcile::post_opd_er_med_reconcile_note(med_reconciliation_id, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

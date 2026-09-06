@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOpt, DocVec},
@@ -20,8 +20,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_emr_date(Path(hn): Path<String>, ctx: RequestState) -> Result<Json<Vec<EmrDate>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = emr::get_emr_date(&hn, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -40,8 +39,7 @@ pub async fn get_emr_date(Path(hn): Path<String>, ctx: RequestState) -> Result<J
     ),
 )]
 pub async fn get_emr_visit(Path(vn): Path<String>, ctx: RequestState) -> Result<Json<Option<EmrVisit>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = emr::get_emr_visit(&vn, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 

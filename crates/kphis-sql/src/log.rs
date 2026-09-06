@@ -1,5 +1,6 @@
 // INSERT INTO kphis.system_access_log(access_datetime,access_user,access_host,access_detail)
 // VALUES (now(),'user','127.0.0.1:11111','{"program":"IPD_DOCTOR_MAIN_PROGRAM","an":"660001363"}');
+/// user, host, detail
 pub fn insert_system_access_log(kphis_log: &str) -> String {
     [
         "INSERT INTO ",kphis_log,".system_access_log(access_datetime,access_user,access_host,access_detail) \

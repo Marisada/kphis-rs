@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -27,8 +26,7 @@ use kphis_util::{error::AppError, util::zero_none};
     ),
 )]
 pub async fn get_opd_er_io_date(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState) -> Result<Json<Vec<IoDate>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let dates = io::get_io_date(opd_er_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -48,8 +46,7 @@ pub async fn get_opd_er_io_date(Path(opd_er_order_master_id): Path<u32>, ctx: Re
     params(IoParams),
 )]
 pub async fn get_opd_er_io_shift(Query(params): Query<IoParams>, ctx: RequestState) -> Result<Json<Vec<IoShift>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     // if let (Some(opd_er_order_master_id), Some(date)) = (params.opd_er_order_master_id, params.date) {
     if params.opd_er_order_master_id.is_some() {
@@ -83,8 +80,7 @@ pub async fn get_opd_er_io_shift(Query(params): Query<IoParams>, ctx: RequestSta
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_opd_er_io_shift(ctx: RequestState, Json(payload): Json<IoShift>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.opd_er_order_master_id.and_then(zero_none).is_some() {
         let response = io::post_io_shift(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;
@@ -107,8 +103,7 @@ pub async fn post_opd_er_io_shift(ctx: RequestState, Json(payload): Json<IoShift
     params(IoParams),
 )]
 pub async fn delete_opd_er_io_shift(Query(params): Query<IoParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(opd_er_io_id), Some(version)) = (params.io_id, params.version) {
         let response = io::delete_io_shift(opd_er_io_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;

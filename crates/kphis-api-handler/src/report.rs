@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -21,8 +21,7 @@ use kphis_util::error::AppError;
     params(ReportTemplateParams),
 )]
 pub async fn get_custom_report(Query(params): Query<ReportTemplateParams>, ctx: RequestState) -> Result<Json<Vec<CustomReport>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = if params.compact.unwrap_or_default() {
         report::select_report_template_compact(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?
@@ -43,8 +42,7 @@ pub async fn get_custom_report(Query(params): Query<ReportTemplateParams>, ctx: 
     responses(DocOne<String>),
 )]
 pub async fn post_query_to_json_string(ctx: RequestState, Json(payload): Json<ReportQuery>) -> Result<Json<String>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = report::select_raw_query_to_json_string(
         &payload.statement,
@@ -73,8 +71,7 @@ pub async fn post_query_to_json_string(ctx: RequestState, Json(payload): Json<Re
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_custom_report(ctx: RequestState, Json(payload): Json<CustomReport>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.template_id > 0 {
         let response = report::update_report_template(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
@@ -98,8 +95,7 @@ pub async fn post_custom_report(ctx: RequestState, Json(payload): Json<CustomRep
     params(ReportTemplateParams),
 )]
 pub async fn delete_custom_report(Query(params): Query<ReportTemplateParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(template_id) = params.template_id {
         let response = report::delete_report_template(template_id, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;

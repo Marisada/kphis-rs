@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
 use kphis_api_query::image::scan_his;
@@ -16,8 +16,7 @@ use kphis_util::error::AppError;
     params(ScanImageParams),
 )]
 pub async fn get_scan_his_image(Query(params): Query<ScanImageParams>, ctx: RequestState) -> Result<Json<Vec<ScanImage>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(key) = params.key.clone() {
         if params.vn.is_some() && ["opd", "er", "pe", "lab"].contains(&key.as_str()) {

@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -28,8 +27,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_opd_er_focus_list(Path(opd_er_order_master_id): Path<u32>, Query(params): Query<FocusListParams>, ctx: RequestState) -> Result<Json<Vec<FocusList>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = focus_list::get_focus_list(opd_er_order_master_id, &params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -50,8 +48,7 @@ pub async fn get_opd_er_focus_list(Path(opd_er_order_master_id): Path<u32>, Quer
     ),
 )]
 pub async fn post_opd_er_focus_list(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState, Json(payload): Json<FocusListSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let result = focus_list::post_focus_list(
         opd_er_order_master_id,
@@ -80,8 +77,7 @@ pub async fn post_opd_er_focus_list(Path(opd_er_order_master_id): Path<u32>, ctx
     ),
 )]
 pub async fn delete_opd_er_focus_list(Path(_opd_er_order_master_id): Path<u32>, Query(params): Query<FocusListParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     if let (Some(fclist_id), Some(version)) = (params.fclist_id, params.version) {
         let result = focus_list::delete_focus_list(

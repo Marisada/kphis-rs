@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -24,9 +24,8 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_ipd_admission_note_dr(Path(an): Path<String>, ctx: RequestState) -> Result<Json<IpdAdmissionNoteDrRaw>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // We use VN as AN in case of `before admission` input
     // so `an` argument will be `VN` or `AN`
@@ -52,9 +51,8 @@ pub async fn get_ipd_admission_note_dr(Path(an): Path<String>, ctx: RequestState
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn post_ipd_admission_note_dr(ctx: RequestState, Json(payload): Json<IpdAdmissionNoteDrSave>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&payload.admission_note.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&payload.admission_note.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -93,9 +91,8 @@ pub async fn post_ipd_admission_note_dr(ctx: RequestState, Json(payload): Json<I
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn put_ipd_admission_note_dr(ctx: RequestState, Json(payload): Json<IpdAdmissionNoteDrSave>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&payload.admission_note.an);
-    ctx.authorize_and_access_log(&Method::PUT, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&payload.admission_note.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -137,9 +134,8 @@ pub async fn put_ipd_admission_note_dr(ctx: RequestState, Json(payload): Json<Ip
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn patch_ipd_pharmacy_check(Path(an): Path<String>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::PATCH, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;

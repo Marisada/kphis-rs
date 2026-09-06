@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -26,8 +25,7 @@ use kphis_util::error::AppError;
     params(VitalSignParams),
 )]
 pub async fn get_opd_er_vital_sign(Query(params): Query<VitalSignParams>, ctx: RequestState) -> Result<Json<Vec<VitalSign>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = vital_sign::get_vital_sign(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -47,8 +45,7 @@ pub async fn get_opd_er_vital_sign(Query(params): Query<VitalSignParams>, ctx: R
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_opd_er_vital_sign(Query(params): Query<VitalSignParams>, ctx: RequestState, Json(payload): Json<VitalSignSave>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(opd_er_order_master_id) = params.opd_er_order_master_id {
         let note_result = vital_sign::post_vital_sign(opd_er_order_master_id, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -72,8 +69,7 @@ pub async fn post_opd_er_vital_sign(Query(params): Query<VitalSignParams>, ctx: 
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn put_opd_er_vital_sign(Query(params): Query<VitalSignParams>, ctx: RequestState, Json(payload): Json<VitalSignSave>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PUT, false).await?;
+    ctx.authorize(false).await?;
 
     if let Some(opd_er_order_master_id) = params.opd_er_order_master_id {
         let note_result = vital_sign::put_vital_sign(opd_er_order_master_id, &payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -97,8 +93,7 @@ pub async fn put_opd_er_vital_sign(Query(params): Query<VitalSignParams>, ctx: R
     ),
 )]
 pub async fn delete_opd_er_vital_sign(Path(vs_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = vital_sign::delete_vital_sign(vs_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

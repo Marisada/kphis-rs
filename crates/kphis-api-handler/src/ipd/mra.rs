@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -21,9 +21,8 @@ use kphis_util::error::AppError;
     params(MraParams),
 )]
 pub async fn get_ipd_mra(Query(params): Query<MraParams>, ctx: RequestState) -> Result<Json<Vec<IpdMra>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = mra::get_ipd_mra(&params, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -42,9 +41,8 @@ pub async fn get_ipd_mra(Query(params): Query<MraParams>, ctx: RequestState) -> 
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_mra(ctx: RequestState, Json(payload): Json<IpdMra>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&payload.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -66,9 +64,8 @@ pub async fn post_ipd_mra(ctx: RequestState, Json(payload): Json<IpdMra>) -> Res
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn put_ipd_mra(ctx: RequestState, Json(payload): Json<IpdMra>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&payload.an);
-    ctx.authorize_and_access_log(&Method::PUT, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -89,9 +86,8 @@ pub async fn put_ipd_mra(ctx: RequestState, Json(payload): Json<IpdMra>) -> Resu
     params(MraParams),
 )]
 pub async fn delete_ipd_mra(Query(params): Query<MraParams>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::DELETE, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let Some(mra_id) = params.mra_id {
         let response = mra::delete_ipd_mra(mra_id, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra())

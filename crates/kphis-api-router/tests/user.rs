@@ -46,7 +46,7 @@ async fn api_user() {
 
     // Try Logout without Token
     let try_logout = server.delete(&EndPoint::Sse.base()).expect_failure().await;
-    assert_eq!(try_logout.status_code(), StatusCode::BAD_REQUEST);
+    assert_eq!(try_logout.status_code(), StatusCode::UNAUTHORIZED);
     let try_logout_error = try_logout.json::<AppError>();
     assert_eq!(try_logout_error.source, Source::App);
     assert_eq!(try_logout_error.message.as_str(), "Token Not Found");

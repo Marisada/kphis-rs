@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
 use kphis_api_query::search::ipd_search_patient_dr;
@@ -16,8 +16,7 @@ use kphis_util::error::AppError;
     params(IpdSearchPatientDrRequest),
 )]
 pub async fn get_ipd_dr_search_patient(Query(params): Query<IpdSearchPatientDrRequest>, ctx: RequestState) -> Result<Json<Vec<IpdSearchPatientDrResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = ipd_search_patient_dr::get_ipd_dr_search_patient(params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 

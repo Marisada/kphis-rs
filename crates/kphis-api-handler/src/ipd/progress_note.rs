@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 use sqlx::{MySql, Pool};
 
@@ -29,9 +28,8 @@ use kphis_util::error::AppError;
     params(ProgressNoteParams),
 )]
 pub async fn get_ipd_progress_previous(Query(params): Query<ProgressNoteParams>, ctx: RequestState) -> Result<Json<Vec<ProgressNoteItem>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let (Some(an), Some(progress_note_owner_type)) = (params.an, params.progress_note_owner_type) {
         let progress_items = progress_note::get_previous_progress(&an, &progress_note_owner_type, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
@@ -53,9 +51,8 @@ pub async fn get_ipd_progress_previous(Query(params): Query<ProgressNoteParams>,
     params(ProgressNoteParams),
 )]
 pub async fn get_ipd_progress_note(Query(params): Query<ProgressNoteParams>, ctx: RequestState) -> Result<Json<Vec<ProgressNote>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let progress_notes = get_ipd_progress_note_bundle(
         &params,
@@ -100,10 +97,8 @@ pub async fn get_ipd_progress_note_bundle(params: &ProgressNoteParams, intern_ro
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_progress_note(ctx: RequestState, Json(payload): Json<ProgressNoteSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-
     if let Some((an, is_pre_admit)) = payload.visit_type.an_and_is_pre_admit() {
-        ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+        ctx.authorize(is_pre_admit).await?;
         // check AN is valid (pre-admit was admited or admit was revoked)
         check_an_can_execute(an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
     } else {
@@ -128,8 +123,7 @@ pub async fn post_ipd_progress_note(ctx: RequestState, Json(payload): Json<Progr
     ),
 )]
 pub async fn delete_ipd_progress_note(Path(progress_note_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = progress_note::delete_progress_note(progress_note_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 

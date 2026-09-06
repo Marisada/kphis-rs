@@ -4159,7 +4159,7 @@ fn send_sse_by_patch(action: OrderPatchAction, patient: Option<Rc<PatientInfo>>,
             OrderPatchAction::DoctorConfirm => (is_med || is_pharm_notify).then(|| SsePostMessage {
                 message: [&ward_name, &bed, &hn, "แพทย์ยืนยันคำสั่งแล้ว รอเภสัชกรดำเนินการ"].concat(),
                 person: str_some(&order.order_doctor), // แจ้งกลับ พยาบาลผู้ order
-                spclty_id: Some(0),                           // แจ้งเภสัช
+                spclty_id: Some(0),                    // แจ้งเภสัช
                 route: Some(Route::IpdMain {
                     view_by: String::from("pharmacist"),
                     an,

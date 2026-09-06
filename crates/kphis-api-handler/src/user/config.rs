@@ -1,4 +1,4 @@
-use axum::{Json, http::Method};
+use axum::Json;
 
 use kphis_api_core::{open_api::DocOne, state::RequestState};
 use kphis_api_query::user::config;
@@ -18,8 +18,7 @@ use kphis_util::error::AppError;
     responses(DocOne<UserConfigResponse>),
 )]
 pub async fn post_user_config(ctx: RequestState, Json(payload): Json<UserConfig>) -> Result<Json<UserConfigResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = config::insert_dup_user_config(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -36,8 +35,7 @@ pub async fn post_user_config(ctx: RequestState, Json(payload): Json<UserConfig>
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn patch_user_config(ctx: RequestState, Json(payload): Json<UserConfigCommand>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     let response = match payload {
         UserConfigCommand::Clear2fa(target_loginname) => config::remove_totp(&target_loginname, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?,

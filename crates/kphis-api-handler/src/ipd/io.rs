@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 
 use kphis_api_core::{
@@ -28,9 +27,8 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_ipd_io_date(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Vec<IoDate>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let dates = io::get_io_date(&an, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -50,9 +48,8 @@ pub async fn get_ipd_io_date(Path(an): Path<String>, ctx: RequestState) -> Resul
     params(IoParams),
 )]
 pub async fn get_ipd_io_shift(Query(params): Query<IoParams>, ctx: RequestState) -> Result<Json<Vec<IoShift>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // if let (Some(an), Some(date)) = (params.an, params.date) {
     if params.an.as_ref().map(|s| !s.is_empty()).unwrap_or_default() {
@@ -87,9 +84,8 @@ pub async fn get_ipd_io_shift(Query(params): Query<IoParams>, ctx: RequestState)
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_ipd_io_shift(ctx: RequestState, Json(payload): Json<IoShift>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&payload.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_opt_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -115,9 +111,8 @@ pub async fn post_ipd_io_shift(ctx: RequestState, Json(payload): Json<IoShift>) 
     params(IoParams),
 )]
 pub async fn delete_ipd_io_shift(Query(params): Query<IoParams>, ctx: RequestState) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit_opt(&params.an);
-    ctx.authorize_and_access_log(&Method::DELETE, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     if let (Some(io_id), Some(version)) = (params.io_id, params.version) {
         let response = io::delete_io_shift(io_id, version, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis(), &ctx.api_state.kphis_log()).await?;

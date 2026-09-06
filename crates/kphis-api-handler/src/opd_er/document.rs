@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -24,8 +24,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_opd_er_document_list(Path((vn, opd_er_order_master_id)): Path<(String, u32)>, ctx: RequestState) -> Result<Json<OpdErDocumentExists>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = document::get_opd_er_document_list(&vn, opd_er_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
@@ -44,8 +43,7 @@ pub async fn get_opd_er_document_list(Path((vn, opd_er_order_master_id)): Path<(
     ),
 )]
 pub async fn get_opd_er_document_types(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState) -> Result<Json<Vec<DocumentScan>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = document::get_opd_er_document_types(opd_er_order_master_id, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -65,8 +63,7 @@ pub async fn get_opd_er_document_types(Path(opd_er_order_master_id): Path<u32>, 
     ),
 )]
 pub async fn post_opd_er_document_type(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState, Json(payload): Json<DocumentType>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let result = document::post_opd_er_document_type(opd_er_order_master_id, payload as u8, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 
@@ -86,8 +83,7 @@ pub async fn post_opd_er_document_type(Path(opd_er_order_master_id): Path<u32>, 
     ),
 )]
 pub async fn delete_opd_er_document_type(Path(opd_er_order_master_id): Path<u32>, ctx: RequestState, Json(payload): Json<DocumentType>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let result = document::delete_opd_er_document_type(opd_er_order_master_id, payload as u8, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;
 

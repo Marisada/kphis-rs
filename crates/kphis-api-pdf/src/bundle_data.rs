@@ -286,24 +286,15 @@ async fn ipd_event_log(an: &str, app: &ApiState, user: &UserState) -> Result<Str
     };
     let order = kphis_api_handler::ipd::order::get_ipd_order_bundle(&order_params, &user.user.doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
-    let note_params = kphis_model::progress_note::ProgressNoteParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let note_params = kphis_model::progress_note::ProgressNoteParams { an: str_some(an), ..Default::default() };
     let note = kphis_api_handler::ipd::progress_note::get_ipd_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
     let consults = kphis_api_query::ipd::consult::get_ipd_consult_by_an(an, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
-    let vs_params = kphis_model::vital_sign::VitalSignParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let vs_params = kphis_model::vital_sign::VitalSignParams { an: str_some(an), ..Default::default() };
     let vs = kphis_api_query::ipd::vital_sign::get_vital_sign(&vs_params, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
 
-    let io_params = kphis_model::ipd::io::IoParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let io_params = kphis_model::ipd::io::IoParams { an: str_some(an), ..Default::default() };
     let io = kphis_api_query::ipd::io::get_io_shift(
         &io_params,
         app.app_config.shift_day_start,
@@ -439,10 +430,7 @@ async fn ipd_index_plan(an: &str, app: &ApiState) -> Result<String, AppError> {
 }
 
 async fn ipd_io(an: &str, app: &ApiState) -> Result<String, AppError> {
-    let params = kphis_model::ipd::io::IoParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let params = kphis_model::ipd::io::IoParams { an: str_some(an), ..Default::default() };
     let io = kphis_api_query::ipd::io::get_io_shift(
         &params,
         app.app_config.shift_day_start,
@@ -508,10 +496,7 @@ async fn ipd_mar(an: &str, app: &ApiState) -> Result<String, AppError> {
 }
 
 async fn ipd_mra(an: &str, app: &ApiState) -> Result<String, AppError> {
-    let mra_params = kphis_model::ipd::mra::MraParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let mra_params = kphis_model::ipd::mra::MraParams { an: str_some(an), ..Default::default() };
     let mra_item = kphis_api_query::ipd::mra::get_ipd_mra(&mra_params, &app.db_pool, &app.kphis_extra()).await?;
 
     let data = serde_json::json!({
@@ -524,10 +509,7 @@ async fn ipd_mra(an: &str, app: &ApiState) -> Result<String, AppError> {
 }
 
 async fn ipd_med_reconciliation(an: &str, app: &ApiState) -> Result<String, AppError> {
-    let params = kphis_model::med_reconcile::MedReconciliationParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let params = kphis_model::med_reconcile::MedReconciliationParams { an: str_some(an), ..Default::default() };
     let recon = kphis_api_query::ipd::med_reconcile::get_ipd_med_reconcile(&params, &None, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
 
     let data = if an.len() == app.hosxp_an_len() {
@@ -590,10 +572,7 @@ async fn ipd_order(an: &str, doctorcode: &Option<String>, app: &ApiState) -> Res
         ..Default::default()
     };
     let cont = kphis_api_handler::ipd::order::get_ipd_order_bundle(&cont_params, doctorcode, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
-    let note_params = kphis_model::progress_note::ProgressNoteParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let note_params = kphis_model::progress_note::ProgressNoteParams { an: str_some(an), ..Default::default() };
     let note = kphis_api_handler::ipd::progress_note::get_ipd_progress_note_bundle(&note_params, &app.app_config.doctor_intern_roles, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
     let doctor = kphis_api_query::ipd::doctor_in_charge::get_doctor_in_charge(an, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
 
@@ -625,10 +604,7 @@ async fn ipd_order(an: &str, doctorcode: &Option<String>, app: &ApiState) -> Res
 }
 
 async fn ipd_summary_note(an: &str, app: &ApiState) -> Result<String, AppError> {
-    let params = kphis_model::ipd::summary::SummaryParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let params = kphis_model::ipd::summary::SummaryParams { an: str_some(an), ..Default::default() };
     let summary = kphis_api_query::ipd::summary::get_summary_data(&params, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
     let (dx_data, doctor_data) = kphis_api_query::ipd::summary::get_dx_and_doctor_data(&summary.as_ref().map(|s| s.summary_id), &app.db_pool, &app.hosxp(), &app.kphis()).await?;
     // let or_data = kphis_api_query::ipd::his::get_operation_admit(an, &app.operation_success(), &app.db_pool, &app.hosxp()).await?;
@@ -664,10 +640,7 @@ async fn ipd_summary_note(an: &str, app: &ApiState) -> Result<String, AppError> 
 }
 
 async fn ipd_summary_audit(an: &str, app: &ApiState) -> Result<String, AppError> {
-    let params = kphis_model::ipd::summary_audit::SummaryAuditParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let params = kphis_model::ipd::summary_audit::SummaryAuditParams { an: str_some(an), ..Default::default() };
     let audit = kphis_api_query::ipd::summary_audit::get_ipd_summary_audit(&params, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra()).await?;
 
     let data = serde_json::json!({
@@ -681,16 +654,10 @@ async fn ipd_summary_audit(an: &str, app: &ApiState) -> Result<String, AppError>
 
 async fn ipd_tpr_chart(an: &str, app: &ApiState) -> Result<String, AppError> {
     // vital_sign
-    let vs_params = kphis_model::vital_sign::VitalSignParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let vs_params = kphis_model::vital_sign::VitalSignParams { an: str_some(an), ..Default::default() };
     let vs = kphis_api_query::ipd::vital_sign::get_vital_sign(&vs_params, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
     // io
-    let io_params = kphis_model::ipd::io::IoParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let io_params = kphis_model::ipd::io::IoParams { an: str_some(an), ..Default::default() };
     let io = kphis_api_query::ipd::io::get_io_shift(
         &io_params,
         app.app_config.shift_day_start,
@@ -768,10 +735,7 @@ async fn ipd_tpr_chart(an: &str, app: &ApiState) -> Result<String, AppError> {
 }
 
 async fn ipd_vital_sign(an: &str, app: &ApiState) -> Result<String, AppError> {
-    let params = kphis_model::vital_sign::VitalSignParams {
-        an: str_some(an),
-        ..Default::default()
-    };
+    let params = kphis_model::vital_sign::VitalSignParams { an: str_some(an), ..Default::default() };
     let vs = kphis_api_query::ipd::vital_sign::get_vital_sign(&params, &app.db_pool, &app.hosxp(), &app.kphis()).await?;
 
     let data = if an.len() == app.hosxp_an_len() {

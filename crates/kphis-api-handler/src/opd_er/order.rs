@@ -1,7 +1,6 @@
 use axum::{
     Json,
     extract::{Path, Query},
-    http::Method,
 };
 use sqlx::{MySql, Pool};
 
@@ -29,8 +28,7 @@ use kphis_util::error::AppError;
     params(OrderParams),
 )]
 pub async fn get_opd_er_order(Query(params): Query<OrderParams>, ctx: RequestState) -> Result<Json<Vec<Order>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let orders = get_opd_er_order_bundle(
         &params,
@@ -107,8 +105,7 @@ async fn get_order_items_plans(order_items: &mut [OrderItem], view_by: &str, poo
     params(OrderParams),
 )]
 pub async fn get_opd_er_order_item(Query(params): Query<OrderParams>, ctx: RequestState) -> Result<Json<Vec<OrderItem>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let items = get_opd_er_order_item_bundle(&params, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra()).await?;
 
@@ -154,8 +151,7 @@ pub async fn get_opd_er_order_item_bundle(params: &OrderParams, pool: &Pool<MySq
     responses(DocVecU32<ExecuteResponse>),
 )]
 pub async fn post_opd_er_order(ctx: RequestState, Json(payload): Json<OrderSave>) -> Result<Json<(u32, Vec<ExecuteResponse>)>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order::post_order(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -180,8 +176,7 @@ pub async fn post_opd_er_order(ctx: RequestState, Json(payload): Json<OrderSave>
     responses(DocVec<ExecuteResponse>),
 )]
 pub async fn patch_opd_er_order(ctx: RequestState, Json(payload): Json<OrderPatch>) -> Result<Json<Vec<ExecuteResponse>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     let responses = order::patch_order(&payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -198,8 +193,7 @@ pub async fn patch_opd_er_order(ctx: RequestState, Json(payload): Json<OrderPatc
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn patch_opd_er_order_item(ctx: RequestState, Json(payload): Json<OrderItemPatch>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::PATCH, false).await?;
+    ctx.authorize(false).await?;
 
     let response = match payload.action {
         OrderItemPatchAction::NurseAssign => order::update_order_item_nurse_assign(&payload, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?,
@@ -224,8 +218,7 @@ pub async fn patch_opd_er_order_item(ctx: RequestState, Json(payload): Json<Orde
     ),
 )]
 pub async fn delete_opd_er_order(Path(order_id): Path<u32>, ctx: RequestState) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::DELETE, false).await?;
+    ctx.authorize(false).await?;
 
     let response = order::delete_order(order_id, &ctx.api_state.db_pool, &ctx.api_state.kphis()).await?;
 
@@ -243,8 +236,7 @@ pub async fn delete_opd_er_order(Path(order_id): Path<u32>, ctx: RequestState) -
     params(OpdErOrderPharmacyParams),
 )]
 pub async fn get_opd_er_order_pharmacy(Query(params): Query<OpdErOrderPharmacyParams>, ctx: RequestState) -> Result<Json<OpdErOrderPharmacyMonitor>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let order_monitor = order::get_pharmacy_order(&params, ctx.api_state.hosxp_hn_len(), ctx.api_state.hosxp_vn_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 

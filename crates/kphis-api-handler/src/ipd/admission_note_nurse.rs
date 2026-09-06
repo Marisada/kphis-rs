@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOne, DocOpt},
@@ -21,9 +21,8 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_ipd_admission_note_nurse(Path(an): Path<String>, ctx: RequestState) -> Result<Json<Option<IpdNurseAdmissionNote>>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&an);
-    ctx.authorize_and_access_log(&Method::GET, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     let response = admission_note_nurse::get_ipd_admission_note_nurse(&an, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 
@@ -43,9 +42,8 @@ pub async fn get_ipd_admission_note_nurse(Path(an): Path<String>, ctx: RequestSt
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn post_ipd_admission_note_nurse(ctx: RequestState, Json(payload): Json<IpdNurseAdmissionNote>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&payload.an);
-    ctx.authorize_and_access_log(&Method::POST, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
@@ -68,9 +66,8 @@ pub async fn post_ipd_admission_note_nurse(ctx: RequestState, Json(payload): Jso
     responses(DocOne<ExecuteResponse>),
 )]
 pub async fn put_ipd_admission_note_nurse(ctx: RequestState, Json(payload): Json<IpdNurseAdmissionNote>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
     let is_pre_admit = ctx.api_state.is_pre_admit(&payload.an);
-    ctx.authorize_and_access_log(&Method::PUT, is_pre_admit).await?;
+    ctx.authorize(is_pre_admit).await?;
 
     // check AN is valid (pre-admit was admited or admit was revoked)
     check_an_can_execute(&payload.an, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;

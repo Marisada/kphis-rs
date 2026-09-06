@@ -1,4 +1,4 @@
-use axum::{Json, extract::Query, http::Method};
+use axum::{Json, extract::Query};
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
     state::RequestState,
@@ -17,8 +17,7 @@ use kphis_util::error::AppError;
     params(PostAdmitParams),
 )]
 pub async fn get_ipd_post_admit_list(Query(params): Query<PostAdmitParams>, ctx: RequestState) -> Result<Json<Vec<PostAdmitList>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = post_admit::get_post_admit_list(
         &params,
@@ -43,8 +42,7 @@ pub async fn get_ipd_post_admit_list(Query(params): Query<PostAdmitParams>, ctx:
     responses(DocOne<i64>),
 )]
 pub async fn get_ipd_post_admit_count(ctx: RequestState) -> Result<Json<i64>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = if let Some(doctorcode) = &ctx.user_state.user.doctorcode {
         post_admit::get_post_admit_count(doctorcode, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?

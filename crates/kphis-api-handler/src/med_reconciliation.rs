@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{open_api::DocVec, state::RequestState};
 use kphis_api_query::med_reconciliation;
@@ -17,8 +17,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_med_reconciliation_head(Path(hn): Path<String>, ctx: RequestState) -> Result<Json<Vec<MedReconciliationHeader>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = med_reconciliation::get_med_reconciliation_header(&hn, ctx.api_state.hosxp_an_len(), &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
 

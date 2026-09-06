@@ -15,12 +15,16 @@ readme = "README.md"
 kphis-api-core = { workspace = true }
 kphis-api-handler = { workspace = true }
 kphis-api-pdf = { workspace = true }
+kphis-api-query = { workspace = true }
 kphis-model = { workspace = true }
 kphis-util = { workspace = true }
 
 # from workspace
 axum = { workspace = true }
+axum-extra = { workspace = true }
 axum-prometheus = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 time = "0.3"
 tokio = { workspace = true }
 tower-cookies = { workspace = true }
@@ -36,7 +40,6 @@ utoipa = { workspace = true }
 axum-test = "21"
 http-body-util = { workspace = true }
 kphis-sqlx-tester = { workspace = true }
-serde = { workspace = true }
 sqlx = { workspace = true }
 strum = { workspace = true }
 web-sys = { workspace = true }

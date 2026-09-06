@@ -1,4 +1,4 @@
-use axum::{Json, extract::Path, http::Method};
+use axum::{Json, extract::Path};
 
 use kphis_api_core::{
     open_api::{DocOne, DocVec},
@@ -23,8 +23,7 @@ use kphis_util::error::AppError;
     ),
 )]
 pub async fn get_refernote(Path(vnan): Path<String>, ctx: RequestState) -> Result<Json<Vec<ReferNote>>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::GET, false).await?;
+    ctx.authorize(false).await?;
 
     let response = refer_note::select_refernote(&vnan, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis_extra()).await?;
 
@@ -44,8 +43,7 @@ pub async fn get_refernote(Path(vnan): Path<String>, ctx: RequestState) -> Resul
     ),
 )]
 pub async fn post_refernote(Path(vnan): Path<String>, ctx: RequestState, Json(payload): Json<ReferNoteSave>) -> Result<Json<ExecuteResponse>, AppError> {
-    ctx.user_state.trace_req_by();
-    ctx.authorize_and_access_log(&Method::POST, false).await?;
+    ctx.authorize(false).await?;
 
     if payload.vn == vnan {
         let result = refer_note::post_refernote(&payload, &ctx.user_state.user.doctorcode, &ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.kphis_extra()).await?;

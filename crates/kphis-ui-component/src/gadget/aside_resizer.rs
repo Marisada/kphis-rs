@@ -126,10 +126,7 @@ impl AsideResizerCpn {
 
     fn load_and_render_template(page: Rc<Self>, app: Rc<App>) {
         let vnan_opt = str_some(&page.vnan.lock_ref());
-        if let (Some(template), Some(vnan)) = (
-            page.selected_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
-            vnan_opt,
-        ) {
+        if let (Some(template), Some(vnan)) = (page.selected_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())), vnan_opt) {
             app.async_load(
                 true,
                 clone!(app, page => async move {
