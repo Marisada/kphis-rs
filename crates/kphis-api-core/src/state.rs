@@ -22,7 +22,7 @@ use std::{
 };
 use time::{OffsetDateTime, PrimitiveDateTime, Time, format_description::well_known::Iso8601, macros::offset};
 use tokio::sync::{Mutex, broadcast, mpsc};
-use tracing::{info, warn};
+use tracing::{debug, warn};
 use typst_library::diag::{EcoString, FileError};
 use typst_pdf::PdfSig;
 use ulid::Ulid;
@@ -821,7 +821,7 @@ impl ApiState {
                     if let Err(e) = add_ipt_insert_trigger(&self.db_pool, &self.hosxp(), &self.kphis_log()).await {
                         warn!("Cannot {}: {}", &e.action, &e.message);
                     } else {
-                        info!("trg_kphis_ipt_log_insert created");
+                        debug!("trg_kphis_ipt_log_insert created");
                     }
                 }
             }
@@ -835,7 +835,7 @@ impl ApiState {
                     if let Err(e) = add_ipt_delete_trigger(&self.db_pool, &self.hosxp(), &self.kphis_log()).await {
                         warn!("Cannot {}: {}", &e.action, &e.message);
                     } else {
-                        info!("trg_kphis_ipt_log_delete created");
+                        debug!("trg_kphis_ipt_log_delete created");
                     }
                 }
             }

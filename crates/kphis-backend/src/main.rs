@@ -97,10 +97,10 @@ fn main() {
     if let Ok(syslog_addr) = config.get_string("log-centralize-host") {
         let syslog_udp = UdpTransport::new(syslog_addr).expect("Can't create a UDP syslog connection");
         tracing::subscriber::set_global_default(subscriber.with(tracing_rfc_5424::layer::Layer::with_transport(syslog_udp).with_filter(EnvFilter::new(log_file)))).expect("Unable to set a global subscriber");
-        info!("Start logging with remote syslog");
+        debug!("Start logging with remote syslog");
     } else {
         tracing::subscriber::set_global_default(subscriber).expect("Unable to set a global subscriber");
-        info!("Start logging without remote syslog");
+        debug!("Start logging without remote syslog");
     }
 
     // handle for loading Typst's json data by calling GET query fn internally
@@ -147,7 +147,7 @@ async fn run(config: config::Config, json_handle: Arc<RwLock<JsonActorHandle>>) 
     let clean_job = Job::new_async(cron_cleaner.as_str(), move |_uuid, _l| {
         let state_cc = state_c1.clone();
         Box::pin(async move {
-            info!("Cleaning logs and messages schedule start..");
+            debug!("Cleaning logs and messages schedule start..");
             if let Err(e) = delete_expired_log_and_message(keep_log_day, &state_cc.db_pool, &state_cc.kphis_log()).await {
                 warn!("Cannot {}: {}", &e.action, &e.message);
             }
@@ -163,7 +163,7 @@ async fn run(config: config::Config, json_handle: Arc<RwLock<JsonActorHandle>>) 
     let trigger_job = Job::new_async(cron_trigger.as_str(), move |_uuid, _l| {
         let state_cc = state_c2.clone();
         Box::pin(async move {
-            info!("Check triggers schedule start..");
+            debug!("Check triggers schedule start..");
             state_cc.check_and_apply_triggers().await;
             debug!("Checking triggers finished");
         })
@@ -179,7 +179,7 @@ async fn run(config: config::Config, json_handle: Arc<RwLock<JsonActorHandle>>) 
             let cert_path_c = cert_path.clone();
             let key_path_c = key_path.clone();
             Box::pin(async move {
-                info!("Reload Certificate schedule start..");
+                debug!("Reload Certificate schedule start..");
                 match tls_config_c.reload_from_pem_file(cert_path_c, key_path_c).await {
                     Err(e) => {
                         warn!("Cannot reload certificate due to: {}", e);

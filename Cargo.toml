@@ -102,7 +102,9 @@ time = { version = "0.3", features = [ "macros", "parsing", "serde-human-readabl
 time-datepicker-core = { git = "https://codeberg.org/marisada/time-datepicker-core" }
 tl = "0.7"
 tokio = { version = "1", features = [ "full" ]}
-tokio-cron-scheduler = "0.15"
+# tokio-cron-scheduler = "0.15"
+tokio-cron-scheduler = { git = "https://codeberg.org/Marisada/tokio-cron-scheduler" }
+# tokio-cron-scheduler = { path = "../tokio-cron-scheduler" }
 tokio-stream = "0.1"
 tokio-util = { version = "0.7", features = [ "io-util" ]}
 totp-rs = { version = "6", features = [ "gen_secret", "qr" ]}

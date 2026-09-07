@@ -319,6 +319,33 @@ Read [Integration Tests](crates/wasm-tests/README.md) for more information or
     docker stop test_maria
     ```
 
+### Test remote syslog with Docker
+- Start syslog-server
+    ```bash
+    docker run -d --name syslog-server -p 514:514/udp rsyslog/syslog_appliance_alpine:latest
+    ```
+- Start syslog-server (already build)
+    ```bash
+    docker start syslog-server
+    ```
+- Send test log
+    ```bash
+    logger -n 172.17.0.2 --tag my-test "Hello world"
+    ```
+- Watch `messages.log` from inside docker container
+    ```bash
+    docker exec -it syslog-server sh
+
+    ls /logs/hosts
+    cd /logs/hosts/<HOSTNAME>
+    tail -f messages.log
+    ```
+- Set config's `log-centralize-host = "<YOUR-SYSLOG-IP>:514"` and run KPHIS service
+- Stop syslog-server
+    ```
+    docker stop syslog-server
+    ```
+
 ## Databases
 
 ### Create new KPHIS database

@@ -60,6 +60,62 @@ add escape to tests
 +       let expected_file = escape(CALLSITE.metadata().file().unwrap());
 ```
 
+## syslog-tracing/tracing-rfc-5424/src/tracing.rs
+add level, span name and span fields to message
+:195
+```diff
+    fn on_event(
+        &self,
+        event: &tracing::Event,
+-       _ctx: tracing_subscriber::layer::Context<'_, S>,
++       ctx: tracing_subscriber::layer::Context<'_, S>,
+    ) -> StdResult<Option<(String, Level)>, Error> {
+
++       let meta = event.metadata();
++       let level = meta.level();
++       let mut message = String::from(level.as_str());
++       message.push(' ');
+
++       if let Some(scope) = ctx.event_scope(event) {
+
++           let mut seen = false;
+
++           for span in scope.from_root() {
++               message.push_str(meta.name());
++               seen = true;
+
++               let ext = span.extensions();
++               if let Some(fields) = &ext.get::<tracing_subscriber::fmt::FormattedFields<tracing_subscriber::fmt::format::DefaultFields>>() {
++                   if !fields.is_empty() {
++                       message.push_str("{");
++                       message.push_str(&fields.fields);
++                       message.push_str("}");
++                   }
++               }
++               message.push(':');
++           }
+
++           if seen {
++               message.push(' ');
++           }
++       };
+
+        let mut visitor = MessageEventVisitor { message: None };
+        event.record(&mut visitor);
+        visitor
+            .message
+            .ok_or(Error::NoMessageField {
+                name: event.metadata().name(),
+                back: Backtrace::new(),
+            })
+-           .map(|s| Some((s, (*self.map_level)(event.metadata().level()))))
++           .map(|s| {
++               message.push_str(&s);
++               Some((message, (*self.map_level)(level)))
++           })
+    }
+```
+
 ## syslog-tracing/tracing-rfc-5424/src/transport.rs
 fix escape test
 : 621
@@ -184,11 +240,13 @@ Fix os-error 10022 in Windows
 ## syslog-tracing/ChangeLog
 add log
 ```
-2026-08-23  Marisada Pitaktham  <p.marisada@gmail.com>
+2026-09-07  Marisada Pitaktham  <p.marisada@gmail.com>
 
 	- Implement `bytes_from_os_str()` for non-unix
 	- Move unused imports of non-unix to unix imports
 	- Fix test error from escaped source file path in non-unix
 	- Fix doc on UnixSocket in non-unix
     - Fix os-error 10022 on Windows by changing UdpTransport `send()` to `send_to()`
+    - Show 'tracing-subscriber failed' with error message
+    - Add level, span name and span fields to message
 ```

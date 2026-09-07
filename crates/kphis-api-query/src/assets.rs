@@ -57,12 +57,12 @@ pub async fn load_app_asset(
     kphis: &str,
 ) -> Result<(AppAsset, Vec<u8>, bool), AppError> {
     let from_file_opt = if db_first {
-        tracing::info!("Updating app assets cache from database..");
+        tracing::debug!("Updating app assets cache from database..");
         None
     } else if Path::new(SAVE_FILE).exists() {
         load_app_asset_from_file(SAVE_FILE).await
     } else {
-        tracing::info!("Initiating app assets from database..");
+        tracing::debug!("Initiating app assets from database..");
         None
     };
     match from_file_opt {
@@ -190,7 +190,7 @@ pub async fn load_and_save_app_asset_from_db(
     if let Err(e) = tokio::fs::write(SAVE_FILE, &bytes).await {
         tracing::warn!("Error save app assets to {} failure: {}", SAVE_FILE, e);
     } else {
-        tracing::info!("App assets cached and saved to {}", SAVE_FILE);
+        tracing::debug!("App assets cached and saved to {}", SAVE_FILE);
     }
 
     Ok((asset, bytes, false))
