@@ -4,6 +4,7 @@ set -e
 
 echo "Backup local files.."
 cp -r kphis/volume/pwa/local kphis-volume-pwa-local >/dev/null
+chown -R dockeruser:dockergrp kphis-volume-pwa-local
 
 echo "Update files.."
 tar -xzf kphis.tar.gz -C .
