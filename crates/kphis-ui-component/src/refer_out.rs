@@ -32,7 +32,7 @@ use kphis_util::{
 use crate::{
     gadget::{pdf_button::PdfButtons, searchbox::hosp::HospSearchboxCpn},
     lab,
-    modal::{lab_selector::LabSelector, vs_selector::VsSelector},
+    modal::{io_selector::IoSelector, lab_selector::LabSelector, vs_selector::VsSelector},
 };
 
 #[derive(Clone, Default, PartialEq)]
@@ -51,6 +51,8 @@ enum Tab {
 /// - GET `EndPoint::IpdMedReconcile` (guarded, not call API)
 /// - GET `EndPoint::OpdErMedReconcile` (guarded, not call API)
 /// - GET `EndPoint::LabHead` (guarded, hide 'Lab' btn)
+/// - GET `EndPoint::IpdIo` (IoSelector, guarded, remove i/o btn)
+/// - GET `EndPoint::OpdErIo` (IoSelector, guarded, remove i/o btn)
 /// - GET `EndPoint::IpdVitalSign` (VsSelector, guarded, hide `VS` btn)
 /// - GET `EndPoint::OpdErVitalSign` (VsSelector, guarded, hide `VS` btn)
 #[derive(Default)]
@@ -96,6 +98,7 @@ pub struct ReferOutCpn {
     cc: Mutable<String>,
     pe: Mutable<String>,
 
+    io_selector_modal: Mutable<Option<Rc<IoSelector>>>,
     vs_selector_modal: Mutable<Option<Rc<VsSelector>>>,
     lab_selector_modal: Mutable<Option<Rc<LabSelector>>>,
 }
@@ -1106,6 +1109,9 @@ impl ReferOutCpn {
                     })))
                 }),
             ])
+            .child_signal(page.io_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| IoSelector::render_modal(modal.clone(), page.io_selector_modal.clone(), app.clone()))
+            })))
             .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
                 opt.map(|modal| VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone()))
             })))
@@ -1730,7 +1736,7 @@ impl ReferOutCpn {
     }
 
     fn render_hx_pe(page: Rc<Self>, app: Rc<App>) -> Dom {
-        let (allow_admission_note, allow_med_rec, allow_vs) = page
+        let (allow_admission_note, allow_med_rec, allow_io, allow_vs) = page
             .patient
             .get_cloned()
             .map(|pt| pt.visit_type.is_ipd_and_is_pre_admit())
@@ -1741,12 +1747,17 @@ impl ReferOutCpn {
                 } else {
                     app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErMedReconcile, false)
                 };
+                let allow_io = if is_ipd {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdIo, is_pre_admit)
+                } else {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErIo, false)
+                };
                 let allow_vs = if is_ipd {
                     app.endpoint_is_allow(&Method::GET, &EndPoint::IpdVitalSign, is_pre_admit)
                 } else {
                     app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErVitalSign, false)
                 };
-                (allow_admission_note, allow_med_rec, allow_vs)
+                (allow_admission_note, allow_med_rec, allow_io, allow_vs)
             })
             .unwrap_or_default();
 
@@ -1841,6 +1852,26 @@ impl ReferOutCpn {
                                     .child(html!("i", {.class(class::FA_HEARTBEAT)}))
                                     .event(clone!(app, page => move |_: events::Click| {
                                         page.vs_selector_modal.set(Some(VsSelector::new(
+                                            true,
+                                            page.patient.clone(),
+                                            page.hpi.clone(),
+                                            page.changed.clone(),
+                                        )));
+                                        app.show_modal_backdrop();
+                                    }))
+                                }))
+                            } else {
+                                dom.class("mb-2")
+                            }
+                        })
+                         .apply(|dom| {
+                            if allow_io {
+                                dom.child(html!("button", {
+                                    .attr("type", "button")
+                                    .class(class::BTN_SM_RT_BLUE)
+                                    .child(html!("i", {.class(class::FA_DROPLET)}))
+                                    .event(clone!(app, page => move |_: events::Click| {
+                                        page.io_selector_modal.set(Some(IoSelector::new(
                                             true,
                                             page.patient.clone(),
                                             page.hpi.clone(),

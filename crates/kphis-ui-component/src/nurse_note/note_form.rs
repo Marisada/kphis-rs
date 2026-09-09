@@ -29,7 +29,7 @@ use kphis_util::{
 
 use crate::{
     gadget::image::{ImageCpn, ImagePaths},
-    modal::{lab_selector::LabSelector, vs_selector::VsSelector},
+    modal::{io_selector::IoSelector, lab_selector::LabSelector, vs_selector::VsSelector},
 };
 
 /// - GET `EndPoint::IpdTmpIntvt`
@@ -39,6 +39,8 @@ use crate::{
 /// - DELETE `EndPoint::OpdErFocusNoteId` (guarded, remove `ลบ` btn)
 /// - POST `EndPoint::ImageUsage` (guarded, remove ImageCpn)
 /// - GET `EndPoint::LabHead` (LabSelector, guarded, remove lab btn)
+/// - GET `EndPoint::IpdIo` (IoSelector, guarded, remove i/o btn)
+/// - GET `EndPoint::OpdErIo` (IoSelector, guarded, remove i/o btn)
 /// - GET `EndPoint::IpdVitalSign` (VsSelector, guarded, remove v/s btn)
 /// - GET `EndPoint::OpdErVitalSign` (VsSelector, guarded, remove v/s btn)
 #[derive(Default)]
@@ -82,6 +84,7 @@ pub struct NurseNoteFormCpn {
     intvt_ids: MutableVec<u32>,
     dlc_ids: MutableVec<u32>,
 
+    io_selector_modal: Mutable<Option<Rc<IoSelector>>>,
     vs_selector_modal: Mutable<Option<Rc<VsSelector>>>,
     lab_selector_modal: Mutable<Option<Rc<LabSelector>>>,
 }
@@ -583,10 +586,10 @@ impl NurseNoteFormCpn {
                                                 }).then(|| {
                                                     html!("button", {
                                                         .attr("type", "button")
-                                                        .class(class::BTN_GRAY)
+                                                        .class(class::BTN_SM_GRAY)
                                                         .style("position","absolute")
                                                         .style("top","30px")
-                                                        .style("right","50px")
+                                                        .style("right","40px")
                                                         .child(html!("i", {.class(class::FA_HEARTBEAT)}))
                                                         .event(clone!(app, page => move |_: events::Click| {
                                                             page.vs_selector_modal.set(Some(VsSelector::new(
@@ -600,12 +603,37 @@ impl NurseNoteFormCpn {
                                                     })
                                                 })
                                             })))
+                                            .child_signal(page.is_ipd_and_is_pre_admit().map(clone!(app, page => move |(is_ipd, is_pre_admit)| {
+                                                (if is_ipd {
+                                                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdIo, is_pre_admit)
+                                                } else {
+                                                    app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErIo, false)
+                                                }).then(|| {
+                                                    html!("button", {
+                                                        .attr("type", "button")
+                                                        .class(class::BTN_SM_GRAY)
+                                                        .style("position","absolute")
+                                                        .style("top","30px")
+                                                        .style("right","0px")
+                                                        .child(html!("i", {.class(class::FA_DROPLET)}))
+                                                        .event(clone!(app, page => move |_: events::Click| {
+                                                            page.io_selector_modal.set(Some(IoSelector::new(
+                                                                false,
+                                                                page.patient.clone(),
+                                                                page.assessment.clone(),
+                                                                page.changed.clone(),
+                                                            )));
+                                                            app.show_modal_backdrop();
+                                                        }))
+                                                    })
+                                                })
+                                            })))
                                             .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::LabHead, false), |dom| dom
                                                 .child(html!("button", {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_GRAY)
+                                                    .class(class::BTN_SM_GRAY)
                                                     .style("position","absolute")
-                                                    .style("top","30px")
+                                                    .style("top","70px")
                                                     .style("right","0px")
                                                     .child(html!("i", {.class(class::FA_FLASK)}))
                                                     .event(clone!(app, page => move |_: events::Click| {
@@ -863,33 +891,66 @@ impl NurseNoteFormCpn {
                                         html!("div", {
                                             .class(class::COL_SM3_R_P0)
                                             .style("position","relative")
-                                            .children([
-                                                html!("label", {
-                                                    .attr("for", "evalution")
-                                                    .text("Evaluation")
-                                                }),
-                                                html!("button", {
+                                             .child(html!("label", {
+                                                .attr("for", "evalution")
+                                                .text("Evaluation")
+                                            }))
+                                            .child_signal(page.is_ipd_and_is_pre_admit().map(clone!(app, page => move |(is_ipd, is_pre_admit)| {
+                                                (if is_ipd {
+                                                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdVitalSign, is_pre_admit)
+                                                } else {
+                                                    app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErVitalSign, false)
+                                                }).then(|| {
+                                                    html!("button", {
+                                                        .attr("type", "button")
+                                                        .class(class::BTN_SM_GRAY)
+                                                        .style("position","absolute")
+                                                        .style("top","30px")
+                                                        .style("right","40px")
+                                                        .child(html!("i", {.class(class::FA_HEARTBEAT)}))
+                                                        .event(clone!(app, page => move |_: events::Click| {
+                                                            page.vs_selector_modal.set(Some(VsSelector::new(
+                                                                false,
+                                                                page.patient.clone(),
+                                                                page.evalution.clone(),
+                                                                page.changed.clone(),
+                                                            )));
+                                                            app.show_modal_backdrop();
+                                                        }))
+                                                    })
+                                                })
+                                            })))
+                                            .child_signal(page.is_ipd_and_is_pre_admit().map(clone!(app, page => move |(is_ipd, is_pre_admit)| {
+                                                (if is_ipd {
+                                                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdIo, is_pre_admit)
+                                                } else {
+                                                    app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErIo, false)
+                                                }).then(|| {
+                                                    html!("button", {
+                                                        .attr("type", "button")
+                                                        .class(class::BTN_SM_GRAY)
+                                                        .style("position","absolute")
+                                                        .style("top","30px")
+                                                        .style("right","00px")
+                                                        .child(html!("i", {.class(class::FA_DROPLET)}))
+                                                        .event(clone!(app, page => move |_: events::Click| {
+                                                            page.io_selector_modal.set(Some(IoSelector::new(
+                                                                false,
+                                                                page.patient.clone(),
+                                                                page.evalution.clone(),
+                                                                page.changed.clone(),
+                                                            )));
+                                                            app.show_modal_backdrop();
+                                                        }))
+                                                    })
+                                                })
+                                            })))
+                                            .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::LabHead, false), |dom| dom
+                                                .child(html!("button", {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_GRAY)
+                                                    .class(class::BTN_SM_GRAY)
                                                     .style("position","absolute")
-                                                    .style("top","30px")
-                                                    .style("right","50px")
-                                                    .child(html!("i", {.class(class::FA_HEARTBEAT)}))
-                                                    .event(clone!(app, page => move |_: events::Click| {
-                                                        page.vs_selector_modal.set(Some(VsSelector::new(
-                                                            false,
-                                                            page.patient.clone(),
-                                                            page.evalution.clone(),
-                                                            page.changed.clone(),
-                                                        )));
-                                                        app.show_modal_backdrop();
-                                                    }))
-                                                }),
-                                                html!("button", {
-                                                    .attr("type", "button")
-                                                    .class(class::BTN_GRAY)
-                                                    .style("position","absolute")
-                                                    .style("top","30px")
+                                                    .style("top","70px")
                                                     .style("right","0px")
                                                     .child(html!("i", {.class(class::FA_FLASK)}))
                                                     .event(clone!(app, page => move |_: events::Click| {
@@ -901,8 +962,8 @@ impl NurseNoteFormCpn {
                                                         )));
                                                         app.show_modal_backdrop();
                                                     }))
-                                                }),
-                                            ])
+                                                }))
+                                            )
                                         }),
                                         html!("div", {
                                             .class("col-sm-9")
@@ -1045,6 +1106,11 @@ impl NurseNoteFormCpn {
                 }),
                 html!("br"),
             ])
+            .child_signal(page.io_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    IoSelector::render_modal(modal.clone(), page.io_selector_modal.clone(), app.clone())
+                })
+            })))
             .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
                 opt.map(|modal| {
                     VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone())

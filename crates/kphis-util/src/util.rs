@@ -197,13 +197,13 @@ pub fn thousands(input: &str) -> String {
     let split = input.split('.').collect::<Vec<&str>>();
     if split.len() > 1 {
         let (left, right) = split.split_at(1);
-        [thousands_inner(&left[0]), right.join(".")].join(".")
+        [thousands_without_dot(&left[0]), right.join(".")].join(".")
     } else {
-        thousands_inner(input)
+        thousands_without_dot(input)
     }
 }
 
-fn thousands_inner(input: &str) -> String {
+pub fn thousands_without_dot(input: &str) -> String {
     let len = input.len();
     let is_negative = input.starts_with('-');
     if len < 4 || (len < 5 && is_negative) {

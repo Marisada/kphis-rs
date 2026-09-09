@@ -5,6 +5,7 @@ pub mod drug_interaction;
 pub mod drug_notify;
 pub mod index_note_form;
 pub mod index_plan_action_form;
+pub mod io_selector;
 pub mod ipd_passcode;
 pub mod lab_history;
 pub mod lab_selector;

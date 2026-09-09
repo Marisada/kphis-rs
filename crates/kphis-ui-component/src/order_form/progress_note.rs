@@ -26,7 +26,7 @@ use kphis_util::{
 
 use crate::{
     gadget::image::{ImageCpn, ImagePaths},
-    modal::{lab_selector::LabSelector, vs_selector::VsSelector},
+    modal::{io_selector::IoSelector, lab_selector::LabSelector, vs_selector::VsSelector},
     order::{InsertTextAreaButton, OrderItemMutable},
 };
 
@@ -34,6 +34,8 @@ use crate::{
 /// - POST `EndPoint::IpdOrderProgressNote`
 /// - POST `EndPoint::OpdErOrderProgressNote`
 /// - GET `EndPoint::LabHead` (LabSelector, guarded, remove lab btn)
+/// - GET `EndPoint::IpdIo` (IoSelector, guarded, remove i/o btn)
+/// - GET `EndPoint::OpdErIo` (IoSelector, guarded, remove i/o btn)
 /// - GET `EndPoint::IpdVitalSign` (VsSelector, guarded, remove v/s btn)
 /// - GET `EndPoint::OpdErVitalSign` (VsSelector, guarded, remove v/s btn)
 /// - GET `EndPoint::IpdOrderProgressPrevious` (guarded, remove 'Last Day' btn)
@@ -73,6 +75,7 @@ pub struct ProgressNoteForm {
     assessments: MutableVec<Rc<OrderItemMutable>>,
     plans: MutableVec<Rc<OrderItemMutable>>,
 
+    io_selector_modal: Mutable<Option<Rc<IoSelector>>>,
     vs_selector_modal: Mutable<Option<Rc<VsSelector>>>,
     lab_selector_modal: Mutable<Option<Rc<LabSelector>>>,
 }
@@ -124,6 +127,20 @@ impl ProgressNoteForm {
             opt.map(|pt| {
                 let (is_ipd, is_pre_admit) = pt.visit_type.is_ipd_and_is_pre_admit();
                 is_ipd && app.endpoint_is_allow(&Method::GET, &EndPoint::IpdOrderProgressPrevious, is_pre_admit)
+            })
+            .unwrap_or_default()
+        })
+    }
+
+    fn allow_io_selector_signal(&self, app: Rc<App>) -> impl Signal<Item = bool> + use<> {
+        self.patient.signal_cloned().map(move |opt| {
+            opt.map(|pt| {
+                let (is_ipd, is_pre_admit) = pt.visit_type.is_ipd_and_is_pre_admit();
+                if is_ipd {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::IpdIo, is_pre_admit)
+                } else {
+                    app.endpoint_is_allow(&Method::GET, &EndPoint::OpdErIo, false)
+                }
             })
             .unwrap_or_default()
         })
@@ -529,6 +546,28 @@ impl ProgressNoteForm {
                                             })
                                         })
                                     })))
+                                    .child_signal(map_ref!{
+                                        let is_allow = page.allow_io_selector_signal(app.clone()),
+                                        let not_pre_order = page.pre_order_master_id.signal_ref(|opt| opt.is_none()) =>
+                                        *is_allow && *not_pre_order
+                                    }.map(clone!(app, page => move |ready| {
+                                        ready.then(|| {
+                                            html!("button", {
+                                                .attr("type", "button")
+                                                .class(class::BTN_SM_RT_BLUE)
+                                                .child(html!("i", {.class(class::FA_DROPLET)}))
+                                                .event(clone!(app, page => move |_: events::Click| {
+                                                    page.io_selector_modal.set(Some(IoSelector::new(
+                                                        false,
+                                                        page.patient.clone(),
+                                                        page.new_objective(),
+                                                        page.changed.clone(),
+                                                    )));
+                                                    app.show_modal_backdrop();
+                                                }))
+                                            })
+                                        })
+                                    })))
                                     .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::LabHead, false), |dom| dom
                                         .child_signal(page.pre_order_master_id.signal_cloned().map(clone!(app, page => move |opt| {
                                             opt.is_none().then(|| {
@@ -799,6 +838,11 @@ impl ProgressNoteForm {
                     }),
                 ])
             }))
+            .child_signal(page.io_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    IoSelector::render_modal(modal.clone(), page.io_selector_modal.clone(), app.clone())
+                })
+            })))
             .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
                 opt.map(|modal| {
                     VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone())

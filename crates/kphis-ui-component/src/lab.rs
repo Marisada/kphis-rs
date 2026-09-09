@@ -21,7 +21,7 @@ use kphis_model::{
 use kphis_ui_app::App;
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
-    datetime::{date_th, date_th_opt, datetime_th_opt_relative, datetime_th_relative, js_now, time_hm, time_hm_opt},
+    datetime::{date_th, date_th_opt, datetime_from_opt, datetime_th, datetime_th_opt_relative, datetime_th_relative, js_now, time_hm, time_hm_opt},
     util::{opt_zero_none, str_some, zero_none},
 };
 
@@ -698,7 +698,11 @@ impl LabCpn {
                                             .attr("title","Copy to Clipboard")
                                             .event(clone!(app, detail => move |_:events::Click| {
                                                 spawn_local(clone!(app, detail => async move {
-                                                    app.set_clipboard(&full_text(&detail)).await;
+                                                    let result = match datetime_from_opt(detail.report_date.or(detail.order_date), detail.report_time.or(detail.order_time)) {
+                                                        Some(dt) => ["- [", &datetime_th(&dt), "] ", &full_text(&detail)].concat(),
+                                                        None => full_text(&detail),
+                                                    };
+                                                    app.set_clipboard(&result).await;
                                                 }));
                                             }))
                                         }),

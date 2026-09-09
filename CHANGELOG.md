@@ -1,4 +1,4 @@
-## 0.4.21 (2026-08-27)
+## 0.4.21 (2026-09-09)
 > - *(Config)* Added `log-centralize-host` for remote UDP syslog
 > - Fixed menu responsiveness
 > - Fixed to display `ประวัติการสั่งยา` in ipd-main, opd-er-main and ipd-pre-order-main
@@ -10,6 +10,7 @@
 > - *(Schema)* Modify `kphis_extra.user_config`'s `totp_done` column to UNSIGNED BIGINT, to comply with [rfc-6238](https://datatracker.ietf.org/doc/html/rfc6238#section-5.2)
 > - Moved logging process from handler to middleware layer
 > - Changed ward select box into multiple selector
+> - Added I/O selector to `progress-note`, `index-note-form` and `refer-out`
 
 ## 0.4.20 (2026-08-02)
 > - *(Config)* Added `real-ip-header` to get real client IP address behind reverse proxy
