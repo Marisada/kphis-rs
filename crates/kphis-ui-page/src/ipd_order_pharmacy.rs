@@ -131,14 +131,14 @@ impl IpdOrderPharmacyPage {
                         doms::form_inline(clone!(app, page => move |form| { form
                             .children([
                                 // .style("width","550px")
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("ward","แผนก"),
                                         doms::select_box(
                                             "ward", None, true,
                                             app.ward_multiple_select.clone(),
                                             page.changed.clone(),
-                                            |d| d.class(class::FORM_CTRL_SM),
+                                            |d| d.class("form-control"),
                                             clone!(app => move || app.to_local_storage()),
                                             ward_select_option,
                                         ),
@@ -199,13 +199,13 @@ impl IpdOrderPharmacyPage {
                                     ])
                                 })),
                                 // .style("width","250px")
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
                                         doms::select_box(
                                             "doctor_in_charge", Some("เลือก"), false,
                                             page.doctor_in_charge.clone(), page.changed.clone(),
-                                            |d| d.class(class::FORM_CTRL_SM), || {},
+                                            |d| d.class("form-control"), || {},
                                             doctor_select_option,
                                         ),
                                     ])
@@ -214,34 +214,34 @@ impl IpdOrderPharmacyPage {
                                     .class("col-12")
                                     .child(doms::is_discharged_radio(app.ipd_pharmacy_order_monitor_is_discharged.clone(), page.changed.clone(), app.state()))
                                 }),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("order_date_from","วันที่ Order ตั้งแต่"),
                                         doms::date_picker(
                                             page.order_date_from.clone(),
                                             page.changed.clone(), always(false), None,
-                                            |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0).attr("id", "order_date_from"),
+                                            |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                            |d| d.class("rounded-0"),
+                                            |d| d.class("rounded-0").attr("id", "order_date_from"),
                                             |s| s, always(None),
                                         ),
                                         doms::label_group_for("order_date_to","ถึงวันที่"),
                                         doms::date_picker(
                                             page.order_date_to.clone(),
                                             page.changed.clone(), always(false), None,
-                                            |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "order_date_to"),
+                                            |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                            |d| d.class("rounded-start-0"),
+                                            |d| d.class("rounded-start-0").attr("id", "order_date_to"),
                                             |s| s, always(None),
                                         ),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("patient","HN, AN, CID, ชื่อ-สกุล"),
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .attr("id", "patient")
                                             .attr("autocomplete","off")
                                             .prop_signal("value", page.patient.signal_cloned())
@@ -257,7 +257,7 @@ impl IpdOrderPharmacyPage {
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_GRAY)
+                                            .class(class::BTN_GRAY)
                                             .child(html!("i", {.class(class::FA_SEARCH)}))
                                             .text(" ค้นหา")
                                             .event(clone!(page => move |_: events::Click| {
@@ -268,11 +268,11 @@ impl IpdOrderPharmacyPage {
                                 })),
                                 doms::form_inline_end(clone!(app, page => move |end| { end
                                     .children([
-                                        doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                        doms::form_inline_group(clone!(app, page => move |group| { group
                                             .children([
                                                 doms::label_group_for("refresh_interval","รอบการ Update "),
                                                 html!("select" => HtmlSelectElement, {
-                                                    .class(class::FORM_SELECT_SM)
+                                                    .class("form-select")
                                                     .attr("id", "refresh_interval")
                                                     .children([
                                                         html!("option", {.attr("value", "0").text("ไม่ต้องทำ")}),
@@ -304,7 +304,7 @@ impl IpdOrderPharmacyPage {
                                                 }),
                                                 html!("button" => HtmlButtonElement, {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_SM_L_GRAY)
+                                                    .class(class::BTN_L_GRAY)
                                                     //.attr("id", "toggleSoundButton")
                                                     .child_signal(app.order_monitor_new_order_sound_on.signal_cloned().map(|sound| {
                                                         if sound == "on" {
@@ -327,7 +327,7 @@ impl IpdOrderPharmacyPage {
                                                 }),
                                                 html!("button", {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_SM_GRAY)
+                                                    .class(class::BTN_GRAY)
                                                     .child(html!("i", {.class(class::FA_PLAY)}))
                                                     .text(" Test")
                                                     .event(clone!(page => move |_: events::Click| {

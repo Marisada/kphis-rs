@@ -21,7 +21,7 @@ use crate::{
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, IntoParams)]
 pub struct PostAdmitParams {
-    pub ward: Option<String>,
+    pub wards: Option<String>,
     pub inscl: Option<String>,
     pub adm_doctor: Option<String>,
     pub dch_doctor: Option<String>,
@@ -35,7 +35,7 @@ pub struct PostAdmitParams {
 impl QueryString for PostAdmitParams {
     fn from_tuples(params: &[(String, String)]) -> Option<Self> {
         (!params.is_empty()).then(|| Self {
-            ward: find_qs(params, "ward"),
+            wards: find_qs(params, "wards"),
             inscl: find_qs(params, "inscl"),
             adm_doctor: find_qs(params, "adm_doctor"),
             dch_doctor: find_qs(params, "dch_doctor"),
@@ -49,8 +49,8 @@ impl QueryString for PostAdmitParams {
 
     fn query_string(&self) -> String {
         let mut queries = Vec::with_capacity(9);
-        if let Some(ward) = &self.ward {
-            queries.push(["ward=", ward].concat());
+        if let Some(wards) = &self.wards {
+            queries.push(["wards=", wards].concat());
         }
         if let Some(inscl) = &self.inscl {
             queries.push(["inscl=", inscl].concat());

@@ -40,12 +40,12 @@ impl From<&AvatarOpdEr> for AvatarEnum {
 #[derive(Clone, Default, Deserialize, IntoParams)]
 pub struct AvatarParams {
     pub search: Option<String>,
-    pub ward: Option<String>,
+    pub wards: Option<String>,
 }
 
 impl AvatarParams {
     pub fn is_empty(&self) -> bool {
-        self.search.is_none() && self.ward.is_none()
+        self.search.is_none() && self.wards.is_none()
     }
 }
 
@@ -53,7 +53,7 @@ impl QueryString for AvatarParams {
     fn from_tuples(params: &[(String, String)]) -> Option<Self> {
         (!params.is_empty()).then(|| Self {
             search: find_qs(params, "search"),
-            ward: find_qs(params, "ward"),
+            wards: find_qs(params, "wards"),
         })
     }
 
@@ -62,8 +62,8 @@ impl QueryString for AvatarParams {
         if let Some(search) = &self.search {
             queries.push(["search=", search].concat());
         }
-        if let Some(ward) = &self.ward {
-            queries.push(["ward=", ward].concat());
+        if let Some(wards) = &self.wards {
+            queries.push(["wards=", wards].concat());
         }
 
         (!queries.is_empty()).then(|| ["?", &queries.join("&")].concat()).unwrap_or_default()

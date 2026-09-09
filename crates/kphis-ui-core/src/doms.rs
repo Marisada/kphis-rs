@@ -54,6 +54,24 @@ where
     })
 }
 
+// doms::form_inline_group([]),
+/// child signature are
+/// - input-group-text : elm.class("input-group-text")
+/// - select, input : select.class(class::FORM_SELECT)
+/// - other : div.class("col-xx").child(other)
+pub fn form_inline_group<F>(mixins: F) -> Dom
+where
+    F: FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>,
+{
+    html!("div", {
+        .class("col-12")
+        .child(html!("div", {
+            .class(class::INPUT_GROUP)
+            .apply(mixins)
+        }))
+    })
+}
+
 // doms::form_inline_group_sm([]),
 /// child signature are
 /// - input-group-text : elm.class("input-group-text")
@@ -676,7 +694,7 @@ fn order_item_types_btn(order_item_type: &'static str, order_item_type_mutable: 
 
 pub fn is_discharged_radio(is_discharged_mutable: Mutable<String>, changed: Mutable<bool>, app: Rc<AppState>) -> Dom {
     html!("div", {
-        .class(class::INPUT_GROUP_SM)
+        .class(class::INPUT_GROUP)
         .children([
             html!("span", {.class("input-group-text").text("สถานะ")}),
             is_discharged_btn("", is_discharged_mutable.clone(), changed.clone(), app.clone()),
@@ -693,7 +711,7 @@ fn is_discharged_btn(is_discharged: &'static str, is_discharged_mutable: Mutable
     };
     html!("button", {
         .attr("type", "button")
-        .class(class::BTN_SM_BLUEO)
+        .class(class::BTN_BLUEO)
         .class_signal("active", is_discharged_mutable.signal_ref(move |t| t == is_discharged))
         .child(html!("i", {.class(icon)}))
         .text(label)
@@ -1455,6 +1473,7 @@ pub fn td_text_value_u8_opt_match(mutable: Mutable<Option<u8>>, colspan: &str, i
 
 struct SelectBox<F: Fn() + 'static> {
     is_multiple: bool,
+    null_text: &'static str,
     mutable: Mutable<String>,
     changed: Mutable<bool>,
     finish_fn: F,
@@ -1473,7 +1492,7 @@ struct SelectBox<F: Fn() + 'static> {
 
 impl<F: Fn() + 'static> SelectBox<F> {
     fn new(null_text_opt: Option<&'static str>, is_multiple: bool, mutable: Mutable<String>, changed: Mutable<bool>, finish_fn: F, options_tail: Vec<SelectOption>) -> Rc<Self> {
-        let options = if let Some(null_text) = null_text_opt {
+        let options = if !is_multiple && let Some(null_text) = null_text_opt {
             [
                 vec![SelectOption {
                     key: String::new(),
@@ -1488,6 +1507,7 @@ impl<F: Fn() + 'static> SelectBox<F> {
 
         Rc::new(Self {
             is_multiple,
+            null_text: null_text_opt.unwrap_or("เลือก"),
             mutable,
             changed,
             finish_fn,
@@ -1549,6 +1569,7 @@ impl<F: Fn() + 'static> SelectBox<F> {
     }
 }
 
+/// This element with `form-control-sm` has a height as normal select box with `form-control` class
 pub fn select_box<B, F>(input_id: &'static str, null_text_opt: Option<&'static str>, is_multiple: bool, mutable: Mutable<String>, changed: Mutable<bool>, container_mixin: B, finish_fn: F, options_tail: Vec<SelectOption>) -> Dom
 where
     B: FnOnce(DomBuilder<HtmlElement>) -> DomBuilder<HtmlElement>,
@@ -1573,8 +1594,8 @@ where
                         Some(html!("span", {
                             .class("multiple-options")
                             .style("pointer-events", "none")
-                            .style("line-height", "2")
-                            .text("เลือก")
+                            .style("line-height", "28px")
+                            .text(state.null_text)
                         }))
                     } else {
                         Some(html!("span", {
@@ -1587,6 +1608,9 @@ where
                                     .text(&v)
                                     .event(clone!(state => move |_:events::Click| {
                                         state.result_pairs.lock_mut().retain(|(tk, _)| *tk != k);
+                                        if !state.is_opened.get() {
+                                            state.set_multiple(false);
+                                        }
                                     }))
                                 })
                             })))
@@ -1597,7 +1621,7 @@ where
                 .child(html!("span", {
                     .class("current")
                     .style("pointer-events", "none")
-                    .text_signal(state.result_value.signal_cloned().map(|v| if v.is_empty() {String::from("เลือก")} else {v}))
+                    .text_signal(state.result_value.signal_cloned().map(clone!(state => move |v| if v.is_empty() {String::from(state.null_text)} else {v})))
                 }))
             }
         })

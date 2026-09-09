@@ -110,8 +110,9 @@ $gray_dark: #444 !default;
   &.has-multiple {
     white-space: inherit;
     height: auto;
-    min-height: 40px;
+    min-height: 38px;
     line-height: 22px;
+    padding: .25rem .5rem;
 
     span.current {
       border: 1px solid var(--bs-border-color);
@@ -119,7 +120,7 @@ $gray_dark: #444 !default;
       padding: 0 10px;
       border-radius: 3px;
       display: inline-block;
-      line-height: 24px;
+      line-height: 22px;
       font-size: 14px;
       margin-bottom: 3px;
       margin-right: 5px;

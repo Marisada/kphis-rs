@@ -618,11 +618,11 @@ pub const FORM_CTRL_SM: [&str; 2] = ["form-control","form-control-sm"];
 pub const FORM_CTRL_SM_B0: [&str; 4] = ["form-control","form-control-sm","border-0","rounded-0"];
 pub const FORM_CTRL_SM_GOLD: [&str; 3] = ["form-control","form-control-sm","bg-warning-subtle"];
 pub const FORM_CTRL_SM_T: [&str; 3] = ["form-control","form-control-sm","mb-1"];
-pub const FORM_CTRL_SM_WRAP: [&str; 3] = ["form-control","form-control-sm","text-wrap"];
 pub const FORM_CTRL_COL_SM2: [&str; 2] = ["form-control","col-sm-2"];
 pub const FORM_CTRL_COL_SM4: [&str; 2] = ["form-control","col-sm-4"];
 pub const FORM_CTRL_COL_SM8: [&str; 2] = ["form-control","col-sm-8"];
 pub const FORM_CTRL_COL_MD12: [&str; 2] = ["form-control","col-md-12"];
+pub const FORM_CTRL_WRAP: [&str; 2] = ["form-control","text-wrap"];
 
 // for date picker under "input-group" (already has "form-control" internally)
 pub const B0R0: [&str; 2] = ["border-0","rounded-0"];

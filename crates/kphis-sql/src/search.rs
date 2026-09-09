@@ -69,12 +69,19 @@ fn where_no_patient() -> &'static str {
     " WHERE (om.opd_er_order_master_id IS NULL OR (om.opd_er_order_master_id IS NOT NULL AND om.er_patient_status_id=7)) AND ipt.dchstts IS NULL"
 }
 
-fn where_and_filter_ward<F>(ward: &Option<String>, sql: &str, filter: F) -> (String, F)
+fn where_and_filter_ward<F>(wards_opt: &Option<String>, sql: &str, filter: F) -> (String, F)
 where
     F: FilterWard + Default,
 {
-    match ward {
-        Some(_ward) => ([sql, " AND ipt.ward=?"].concat(), filter.has_ward()), // ward
+    match wards_opt {
+        Some(wards) => {
+            let wards_sanitized = wards.split(',').map(|ward| ward.chars().filter(|c| c.is_alphanumeric()).collect()).collect::<Vec<String>>();
+            if wards_sanitized.is_empty() {
+                (sql.to_owned(), filter)
+            } else {
+                ([sql, " AND ipt.ward IN ('",&wards_sanitized.join("','"),"') "].concat(), filter.has_ward())
+            }
+        }, // ward
         None => (sql.to_owned(), filter),
     }
 }

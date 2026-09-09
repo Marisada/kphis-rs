@@ -50,7 +50,7 @@ pub fn sql_and_filter(params: IpdSearchPatientNurseRequest, hlen: usize, alen: u
         None => {
             let where_no_pt = super::where_no_patient().to_owned();
             let filter = FilterNurse::default();
-            let (where_no_pt, filter) = super::where_and_filter_ward(&not_empty.ward, &where_no_pt, filter);
+            let (where_no_pt, filter) = super::where_and_filter_ward(&not_empty.wards, &where_no_pt, filter);
             super::where_and_filter_doctor(&not_empty.doctor_in_charge, kphis, &where_no_pt, filter)
         }
     };

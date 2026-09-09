@@ -206,7 +206,7 @@ fn render_content(route: Route, is_fixed_height: &mut bool, app: Rc<App>) -> Dom
         }
         Route::IpdVitalSign => {
             *is_fixed_height = true;
-            let page = VitalSignPage::new(true, app.clone());
+            let page = VitalSignPage::new(true);
             VitalSignPage::render(page, app.clone())
         }
         Route::OpdErIndexPlan => {
@@ -228,7 +228,7 @@ fn render_content(route: Route, is_fixed_height: &mut bool, app: Rc<App>) -> Dom
         }
         Route::OpdErVitalSign => {
             *is_fixed_height = true;
-            let page = VitalSignPage::new(false, app.clone());
+            let page = VitalSignPage::new(false);
             VitalSignPage::render(page, app.clone())
         }
 

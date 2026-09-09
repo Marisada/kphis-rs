@@ -72,7 +72,7 @@ impl IpdPostAdmitListPage {
             (None, None)
         };
         let params = PostAdmitParams {
-            ward: str_some(&app.ward_select.lock_ref()),
+            wards: str_some(&app.ward_multiple_select.lock_ref()),
             inscl: str_some(&app.inscl_select.lock_ref()),
             adm_doctor: str_some(&app.adm_doctor_select.lock_ref()),
             dch_doctor: str_some(&app.dch_doctor_select.lock_ref()),
@@ -138,13 +138,13 @@ impl IpdPostAdmitListPage {
                 alert.children([
                     doms::form_inline(clone!(app, page => move |form| { form
                         .children([
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("summary_status","สถานะ"),
                                     html!("div", {
                                         .class(class::FLEX_GROW1)
                                         .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .attr("id", "summary_status")
                                             .child(html!("option", {
                                                 .attr("value","")
@@ -167,13 +167,13 @@ impl IpdPostAdmitListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("ward","สิทธิ์"),
                                     html!("div", {
                                         .class(class::FLEX_GROW1)
                                         .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-select")
                                             .attr("id", "inscl")
                                             .child(html!("option", {
                                                 .attr("value","")
@@ -194,44 +194,32 @@ impl IpdPostAdmitListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("ward","แผนก"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_CTRL_SM)
-                                            .attr("id", "ward")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(ward_select_option.iter().map(|option| {
-                                                doms::select_option(option, &app.ward_select.lock_ref())
-                                            }))
-                                            .prop_signal("value", app.ward_select.signal_cloned())
-                                            .with_node!(element => {
-                                                .event(clone!(app, page, element => move |_: events::Change| {
-                                                    app.ward_select.set_neq(element.value());
-                                                    if page.view_by.lock_ref().as_str() == "nurse" {
-                                                        app.to_local_storage();
-                                                    }
-                                                    page.changed.set_neq(true);
-                                                }))
-                                            })
-                                        }))
-                                    }),
+                                    doms::select_box(
+                                        "ward", Some("ทั้งหมด"), true,
+                                        app.ward_multiple_select.clone(),
+                                        page.changed.clone(),
+                                        |d| d.class("form-control"),
+                                        clone!(app, page => move || {
+                                            if page.view_by.lock_ref().as_str() == "nurse" {
+                                                app.to_local_storage();
+                                            }
+                                        }),
+                                        ward_select_option,
+                                    ),
                                 ])
                             })),
                         ])
                         .child_signal(page.view_by.signal_cloned().map(clone!(app, page => move |view_by| {
                             (view_by.as_str() != "pharmacist").then(|| {
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("passcode","Passcode"),
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .attr("id", "passcode")
                                             .attr("autocomplete","off")
                                             .attr("length","4")
@@ -255,7 +243,7 @@ impl IpdPostAdmitListPage {
                                     .apply_if(allow_passcode, |dom| dom
                                         .child(html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_BLUE)
+                                            .class(class::BTN_BLUE)
                                             .child(html!("i", {.class(class::FA_COG)}))
                                             .event(clone!(app, page => move |_: events::Click| {
                                                 page.show_passcode_modal.set(true);
@@ -268,14 +256,14 @@ impl IpdPostAdmitListPage {
                         })))
                         .children([
                             // .style("width","350px")
-                            doms::form_inline_group_sm(clone!(app, page, doctor_select_option => move |group| { group
+                            doms::form_inline_group(clone!(app, page, doctor_select_option => move |group| { group
                                 .children([
                                     doms::label_group_for("adm_doctor","แพทย์ผู้ Admit"),
                                     doms::select_box(
                                         "adm_doctor", Some("ทั้งหมด"), false,
                                         app.adm_doctor_select.clone(),
                                         page.changed.clone(),
-                                        |d| d.class(class::FORM_CTRL_SM),
+                                        |d| d.class("form-control"),
                                         clone!(app, page => move || {
                                             if page.view_by.lock_ref().as_str() == "doctor" {
                                                 app.to_local_storage();
@@ -285,7 +273,7 @@ impl IpdPostAdmitListPage {
                                     ),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_USER)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
@@ -301,7 +289,7 @@ impl IpdPostAdmitListPage {
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_RED)
+                                        .class(class::BTN_RED)
                                         .child(html!("i", {.class(class::FA_X)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let no_doctor = app.adm_doctor_select.lock_ref().is_empty();
@@ -317,14 +305,14 @@ impl IpdPostAdmitListPage {
                                 ])
                             })),
                             // .style("width","350px")
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("dch_doctor","แพทย์ผู้ Discharge"),
                                     doms::select_box(
                                         "dch_doctor", Some("ทั้งหมด"), false,
                                         app.dch_doctor_select.clone(),
                                         page.changed.clone(),
-                                        |d| d.class(class::FORM_CTRL_SM),
+                                        |d| d.class("form-control"),
                                         clone!(app, page => move || {
                                             if page.view_by.lock_ref().as_str() == "doctor" {
                                                 app.to_local_storage();
@@ -334,7 +322,7 @@ impl IpdPostAdmitListPage {
                                     ),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_USER)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
@@ -350,7 +338,7 @@ impl IpdPostAdmitListPage {
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_RED)
+                                        .class(class::BTN_RED)
                                         .child(html!("i", {.class(class::FA_X)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let no_doctor = app.dch_doctor_select.lock_ref().is_empty();
@@ -365,7 +353,7 @@ impl IpdPostAdmitListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     html!("div", {
                                         .class("input-group-text")
@@ -397,35 +385,35 @@ impl IpdPostAdmitListPage {
                                     doms::date_picker(
                                         app.start_dchdate.clone(),
                                         page.changed.clone(), not(app.use_date_limit.signal()), None,
-                                        |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0).attr("id", "start_dchdate"),
+                                        |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                        |d| d.class("rounded-0"),
+                                        |d| d.class("rounded-0").attr("id", "start_dchdate"),
                                         |s| s, always(None),
                                     ),
                                     doms::label_group_for("end_dchdate","ถึงวันที่"),
                                     doms::date_picker(
                                         app.end_dchdate.clone(),
                                         page.changed.clone(), not(app.use_date_limit.signal()), None,
-                                        |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "end_dchdate"),
+                                        |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                        |d| d.class("rounded-start-0"),
+                                        |d| d.class("rounded-start-0").attr("id", "end_dchdate"),
                                         |s| s, always(None),
                                     ),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("patient","HN, AN, CID, ชื่อ-สกุล"),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
-                                        .class(class::FORM_CTRL_SM)
+                                        .class("form-control")
                                         .attr("id", "patient")
                                         .attr("autocomplete","off")
                                         .apply(mixins::string_value_end(page.patient.clone(), page.changed.clone()))
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_SEARCH)}))
                                         .text(" ค้นหา")
                                         .event(clone!(page => move |_: events::Click| {
