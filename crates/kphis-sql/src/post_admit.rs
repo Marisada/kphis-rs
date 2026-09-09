@@ -31,7 +31,14 @@ pub fn select_post_admit_list(params: &PostAdmitParams, hlen: usize, alen: usize
     let (summary_status, having) = params.summary_status.as_ref().and_then(|s| {
         AuditStatus::from_str(s).map(|audit_status| audit_status.sql_where_having()).ok()
     }).unwrap_or_default();
-    let ward = if params.ward.is_some() {" AND ipt.ward=?"} else {""};
+    let wards_sanitized = params.wards.as_ref().map(|words| {
+        words.split(',').map(|ward| ward.chars().filter(|c| c.is_alphanumeric()).collect()).collect::<Vec<String>>()
+    }).unwrap_or_default();
+    let wards = if wards_sanitized.is_empty() {
+        String::new()
+    } else {
+        [" AND ipt.ward IN ('",&wards_sanitized.join("','"),"') "].concat()
+    };
     let inscl = if params.inscl.is_some() {" AND ptt.hipdata_code=?"} else {""};
     let adm_doctor = if params.adm_doctor.is_some() {" AND ipt.admdoctor=?"} else {""};
     let dch_doctor = if params.dch_doctor.is_some() {" AND ipt.dch_doctor=?"} else {""};
@@ -43,7 +50,7 @@ pub fn select_post_admit_list(params: &PostAdmitParams, hlen: usize, alen: usize
     let start_dchdate = if params.start_dchdate.is_some() {" AND ipt.dchdate>=?"} else {""};
     let end_dchdate = if params.end_dchdate.is_some() {" AND ipt.dchdate<=?"} else {""};
 
-    let not_patient = [&summary_status, ward, inscl, adm_doctor, dch_doctor, start_dchdate, end_dchdate].concat();
+    let not_patient = [summary_status, &wards, inscl, adm_doctor, dch_doctor, start_dchdate, end_dchdate].concat();
     let where_str = params.patient.as_ref().map(|pt| where_patient(pt, hlen, alen)).unwrap_or(not_patient.as_str());
 
     [

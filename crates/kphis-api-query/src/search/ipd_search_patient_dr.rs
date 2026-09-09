@@ -4,12 +4,11 @@ use kphis_model::search::ipd_search_patient_dr::{IpdSearchPatientDrRequest, IpdS
 use kphis_sql::search::ipd_search_patient_dr::sql_and_filter;
 use kphis_util::error::{AppError, Source};
 
-use crate::{query_all, query1_all, query2_all, query3_all, query4_all, query5_all};
+use crate::{query_all, query1_all, query2_all, query3_all, query4_all};
 
 // ipd-dr-search-patient-table.php
 pub async fn get_ipd_dr_search_patient(request: IpdSearchPatientDrRequest, hn_len: usize, an_len: usize, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<IpdSearchPatientDrResponse>, AppError> {
     let patient = request.patient.as_ref().and_then(|patient| urlencoding::decode(&patient).map(|s| s.into_owned()).ok()).unwrap_or_default();
-    let ward = request.ward.clone().unwrap_or_default();
     let doctor = request.doctor_in_charge.clone().unwrap_or_default();
     let consult = request.consult_dr_search.clone().unwrap_or_default();
     let passcode = request.passcode.clone().unwrap_or_default();
@@ -22,14 +21,14 @@ pub async fn get_ipd_dr_search_patient(request: IpdSearchPatientDrRequest, hn_le
         (true, false, true, _, _, _, false) => query2_all(&patient_wildcard, &patient_wildcard, &sql, pool, "Select IpdDrSearchPatient-4").await,
         (true, _, _, _, _, _, true) => query2_all(&patient_wildcard, &passcode, &sql, pool, "Select IpdDrSearchPatient-5").await,
         (true, _, _, _, _, _, false) => query1_all(&patient_wildcard, &sql, pool, "Select IpdDrSearchPatient-6").await,
-        (false, _, _, true, true, true, true) => query5_all(&ward, &doctor, &consult, &consult, &passcode, &sql, pool, "Select IpdDrSearchPatient-7").await,
-        (false, _, _, true, true, true, false) => query4_all(&ward, &doctor, &consult, &consult, &sql, pool, "Select IpdDrSearchPatient-8").await,
-        (false, _, _, true, true, false, true) => query3_all(&ward, &doctor, &passcode, &sql, pool, "Select IpdDrSearchPatient-9").await,
-        (false, _, _, true, true, false, false) => query2_all(&ward, &doctor, &sql, pool, "Select IpdDrSearchPatient-10").await,
-        (false, _, _, true, false, true, true) => query4_all(&ward, &consult, &consult, &passcode, &sql, pool, "Select IpdDrSearchPatient-11").await,
-        (false, _, _, true, false, true, false) => query3_all(&ward, &consult, &consult, &sql, pool, "Select IpdDrSearchPatient-12").await,
-        (false, _, _, true, false, false, true) => query2_all(&ward, &passcode, &sql, pool, "Select IpdDrSearchPatient-13").await,
-        (false, _, _, true, false, false, false) => query1_all(&ward, &sql, pool, "Select IpdDrSearchPatient-14").await,
+        (false, _, _, true, true, true, true) => query4_all(&doctor, &consult, &consult, &passcode, &sql, pool, "Select IpdDrSearchPatient-7").await,
+        (false, _, _, true, true, true, false) => query3_all(&doctor, &consult, &consult, &sql, pool, "Select IpdDrSearchPatient-8").await,
+        (false, _, _, true, true, false, true) => query2_all(&doctor, &passcode, &sql, pool, "Select IpdDrSearchPatient-9").await,
+        (false, _, _, true, true, false, false) => query1_all(&doctor, &sql, pool, "Select IpdDrSearchPatient-10").await,
+        (false, _, _, true, false, true, true) => query3_all(&consult, &consult, &passcode, &sql, pool, "Select IpdDrSearchPatient-11").await,
+        (false, _, _, true, false, true, false) => query2_all(&consult, &consult, &sql, pool, "Select IpdDrSearchPatient-12").await,
+        (false, _, _, true, false, false, true) => query1_all(&passcode, &sql, pool, "Select IpdDrSearchPatient-13").await,
+        (false, _, _, true, false, false, false) => query_all(&sql, pool, "Select IpdDrSearchPatient-14").await,
         (false, _, _, false, true, true, true) => query4_all(&doctor, &consult, &consult, &passcode, &sql, pool, "Select IpdDrSearchPatient-15").await,
         (false, _, _, false, true, true, false) => query3_all(&doctor, &consult, &consult, &sql, pool, "Select IpdDrSearchPatient-16").await,
         (false, _, _, false, true, false, true) => query2_all(&doctor, &passcode, &sql, pool, "Select IpdDrSearchPatient-17").await,
@@ -134,7 +133,7 @@ mod tests {
         assert_eq!(found_fullname.len(), 2);
 
         // not discharged
-        let found_ward = get_ipd_dr_search_patient(IpdSearchPatientDrRequest {ward: Some(String::from("01")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
+        let found_ward = get_ipd_dr_search_patient(IpdSearchPatientDrRequest {wards: Some(String::from("01,02")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_ward.len(), 1);
         let found_doctor = get_ipd_dr_search_patient(IpdSearchPatientDrRequest {doctor_in_charge: Some(String::from("007")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found_doctor.len(), 1);

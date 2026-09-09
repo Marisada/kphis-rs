@@ -21,7 +21,7 @@ use crate::{
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, IntoParams)]
 pub struct IpdSearchPatientPharmacistRequest {
-    pub ward: Option<String>,
+    pub wards: Option<String>,
     pub doctor_in_charge: Option<String>,
     pub drug_allergy_check: Option<String>,
     pub patient: Option<String>,
@@ -30,7 +30,7 @@ pub struct IpdSearchPatientPharmacistRequest {
 impl QueryString for IpdSearchPatientPharmacistRequest {
     fn from_tuples(params: &[(String, String)]) -> Option<Self> {
         (!params.is_empty()).then(|| Self {
-            ward: find_qs(params, "ward"),
+            wards: find_qs(params, "wards"),
             doctor_in_charge: find_qs(params, "doctor_in_charge"),
             drug_allergy_check: find_qs(params, "drug_allergy_check"),
             patient: find_qs(params, "patient"),
@@ -39,8 +39,8 @@ impl QueryString for IpdSearchPatientPharmacistRequest {
 
     fn query_string(&self) -> String {
         let mut queries = Vec::with_capacity(4);
-        if let Some(ward) = &self.ward {
-            queries.push(["ward=", ward].concat());
+        if let Some(wards) = &self.wards {
+            queries.push(["wards=", wards].concat());
         }
         if let Some(doctor_in_charge) = &self.doctor_in_charge {
             queries.push(["doctor_in_charge=", doctor_in_charge].concat());
@@ -59,7 +59,7 @@ impl QueryString for IpdSearchPatientPharmacistRequest {
 impl IpdSearchPatientPharmacistRequest {
     pub fn not_empty(self) -> Self {
         Self {
-            ward: self.ward.as_ref().and_then(|s| str_some(s)),
+            wards: self.wards.as_ref().and_then(|s| str_some(s)),
             doctor_in_charge: self.doctor_in_charge.as_ref().and_then(|s| str_some(s)),
             drug_allergy_check: self.drug_allergy_check.as_ref().and_then(|s| str_some(s)),
             patient: self.patient.as_ref().and_then(|s| str_some(s)),

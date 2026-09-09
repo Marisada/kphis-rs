@@ -17,7 +17,6 @@ pub async fn get_ipd_pharmacist_search_patient(
     kphis_extra: &str,
 ) -> Result<Vec<IpdSearchPatientPharmacistResponse>, AppError> {
     let patient = request.patient.as_ref().and_then(|patient| urlencoding::decode(patient).map(|s| s.into_owned()).ok()).unwrap_or_default();
-    let ward = request.ward.clone().unwrap_or_default();
     let doctor = request.doctor_in_charge.clone().unwrap_or_default();
     let patient_wildcard = ["%", &patient, "%"].concat();
     let (sql, filter) = sql_and_filter(request, hn_len, an_len, hosxp, kphis, kphis_extra);
@@ -25,8 +24,8 @@ pub async fn get_ipd_pharmacist_search_patient(
         (true, true, false, _, _) => query1_all(&patient, &sql, pool, "Select IpdPharmacistSearchPatient-1").await,
         (true, false, true, _, _) => query2_all(&patient_wildcard, &patient_wildcard, &sql, pool, "Select IpdPharmacistSearchPatient-2").await,
         (true, _, _, _, _) => query1_all(&patient_wildcard, &sql, pool, "Select IpdPharmacistSearchPatient-3").await,
-        (false, _, _, true, true) => query2_all(&ward, &doctor, &sql, pool, "Select IpdPharmacistSearchPatient-4").await,
-        (false, _, _, true, false) => query1_all(&ward, &sql, pool, "Select IpdPharmacistSearchPatient-5").await,
+        (false, _, _, true, true) => query1_all(&doctor, &sql, pool, "Select IpdPharmacistSearchPatient-4").await,
+        (false, _, _, true, false) => query_all(&sql, pool, "Select IpdPharmacistSearchPatient-5").await,
         (false, _, _, false, true) => query1_all(&doctor, &sql, pool, "Select IpdPharmacistSearchPatient-6").await,
         (false, _, _, false, false) => query_all(&sql, pool, "Select IpdPharmacistSearchPatient-7").await,
     }?;
@@ -110,7 +109,7 @@ mod tests {
         assert_eq!(found_fullname.len(), 2);
 
         // not discharged
-        let found_ward = get_ipd_pharmacist_search_patient(IpdSearchPatientPharmacistRequest {ward: Some(String::from("01")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
+        let found_ward = get_ipd_pharmacist_search_patient(IpdSearchPatientPharmacistRequest {wards: Some(String::from("01,02")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
         assert_eq!(found_ward.len(), 1);
         let found_doctor = get_ipd_pharmacist_search_patient(IpdSearchPatientPharmacistRequest {doctor_in_charge: Some(String::from("007")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
         assert_eq!(found_doctor.len(), 1);

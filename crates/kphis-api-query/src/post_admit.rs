@@ -21,9 +21,6 @@ pub async fn get_post_admit_list(params: &PostAdmitParams, hlen: usize, alen: us
             query = query.bind(patient_wildcard)
         }
     } else {
-        if let Some(ward) = &params.ward {
-            query = query.bind(ward);
-        }
         if let Some(inscl) = &params.inscl {
             query = query.bind(inscl);
         }
@@ -132,9 +129,9 @@ mod tests {
         let not_found_patient = get_post_admit_list(&PostAdmitParams {patient: Some(String::from("6666")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
         assert!(not_found_patient.is_empty());
 
-        let found_ward = get_post_admit_list(&PostAdmitParams {ward: Some(String::from("01")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
+        let found_ward = get_post_admit_list(&PostAdmitParams {wards: Some(String::from("01,02")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
         assert_eq!(found_ward.len(), 1);
-        let not_found_ward = get_post_admit_list(&PostAdmitParams {ward: Some(String::from("09")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
+        let not_found_ward = get_post_admit_list(&PostAdmitParams {wards: Some(String::from("09")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
         assert!(not_found_ward.is_empty());
 
         let found_inscl = get_post_admit_list(&PostAdmitParams {inscl: Some(String::from("UCS")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();

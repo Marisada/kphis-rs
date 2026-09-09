@@ -26,7 +26,7 @@ pub fn select_avatar_opd_er(hosxp: &str, kphis: &str) -> String {
 //     LEFT JOIN hos.patient ON patient.hn=ipt.hn
 //     LEFT JOIN hos.iptadm ON iptadm.an=ipt.an
 // WHERE ipt.ward=? AND ipt.dchstts IS NULL ORDER BY LEFT(iptadm.bedno,3),MID(iptadm.bedno,4,999),ipt.regdate,ipt.regtime;
-/// (ward), (search)
+/// (search)
 pub fn select_avatar_in_ward(
     params: &AvatarParams,
     hlen: usize,
@@ -34,7 +34,14 @@ pub fn select_avatar_in_ward(
     hosxp: &str,
     kphis: &str,
 ) -> String {
-    let ward = if params.ward.is_some() {" AND ipt.ward=? "} else {""};
+    let wards_sanitized = params.wards.as_ref().map(|words| {
+        words.split(',').map(|ward| ward.chars().filter(|c| c.is_alphanumeric()).collect()).collect::<Vec<String>>()
+    }).unwrap_or_default();
+    let wards = if wards_sanitized.is_empty() {
+        String::new()
+    } else {
+        [" AND ipt.ward IN ('",&wards_sanitized.join("','"),"') "].concat()
+    };
     let patient = and_ipt_patient(&params.search, hlen, alen, hosxp).unwrap_or_default();
     [
         "SELECT ipt.hn,ipt.an,iptadm.bedno,CONCAT(p.pname,p.fname,' ',p.lname) AS pname,\
@@ -46,7 +53,7 @@ pub fn select_avatar_in_ward(
             LEFT JOIN ",hosxp,".patient p ON p.hn=ipt.hn \
             LEFT JOIN ",hosxp,".iptadm ON iptadm.an=ipt.an \
             LEFT JOIN ",kphis,".ipd_ward_passcode wp ON wp.ward=ipt.ward \
-        WHERE ipt.dchstts IS NULL ", &patient, ward, " AND ipt.ward NOT IN (SELECT ward FROM ",kphis,".ipd_ward_passcode) AND wp.passcode IS NULL \
+        WHERE ipt.dchstts IS NULL ", &patient, &wards, " AND ipt.ward NOT IN (SELECT ward FROM ",kphis,".ipd_ward_passcode) AND wp.passcode IS NULL \
         ORDER BY LEFT(iptadm.bedno,3),MID(iptadm.bedno,4,999),ipt.regdate,ipt.regtime;"
     ].concat()
 }

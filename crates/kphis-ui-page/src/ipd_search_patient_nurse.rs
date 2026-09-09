@@ -90,7 +90,7 @@ impl IpdSearchPatientNursePage {
     // ipd-nurse-search-patient-table.php
     fn submit(page: Rc<Self>, app: Rc<App>) {
         let request = IpdSearchPatientNurseRequest {
-            ward: str_some(&app.ward_select.lock_ref()),
+            wards: str_some(&app.ward_multiple_select.lock_ref()),
             doctor_in_charge: str_some(&page.doctor_in_charge.lock_ref()),
             patient: str_some(&page.patient.lock_ref()),
             passcode: str_some(&page.passcode.lock_ref()),
@@ -179,25 +179,25 @@ impl IpdSearchPatientNursePage {
                         doms::form_inline(clone!(app, page => move |form| { form
                             .children([
                                 // .style("width","250px")
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("ward","แผนก"),
                                         doms::select_box(
-                                            "ward", Some("ทั้งหมด"), false,
-                                            app.ward_select.clone(),
+                                            "ward", Some("ทั้งหมด"), true,
+                                            app.ward_multiple_select.clone(),
                                             page.changed.clone(),
-                                            |d| d.class(class::FORM_CTRL_SM),
+                                            |d| d.class("form-control"),
                                             clone!(app => move || app.to_local_storage()),
                                             ward_select_option,
                                         ),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("passcode","Passcode"),
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .attr("id", "passcode")
                                             .attr("autocomplete","off")
                                             .attr("length","4")
@@ -223,7 +223,7 @@ impl IpdSearchPatientNursePage {
                                     .apply_if(allow_passcode, |dom| {
                                         dom.child(html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_BLUE)
+                                            .class(class::BTN_BLUE)
                                             .child(html!("i", {.class(class::FA_COG)}))
                                             .event(clone!(app, page => move |_: events::Click| {
                                                 page.show_passcode_modal.set(true);
@@ -233,18 +233,18 @@ impl IpdSearchPatientNursePage {
                                     })
                                 })),
                                 // .style("width","310px")
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
                                         doms::select_box(
                                             "doctor_in_charge", Some("ทั้งหมด"), false,
                                             page.doctor_in_charge.clone(), page.changed.clone(),
-                                            |d| d.class(class::FORM_CTRL_SM), || {},
+                                            |d| d.class("form-control"), || {},
                                             doctor_select_option,
                                         ),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_RED)
+                                            .class(class::BTN_RED)
                                             .child(html!("i", {.class(class::FA_X)}))
                                             .event(clone!(app, page => move |_: events::Click| {
                                                 let no_doctor = page.doctor_in_charge.lock_ref().is_empty();
@@ -257,19 +257,19 @@ impl IpdSearchPatientNursePage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("patient","HN, AN, CID, ชื่อ-สกุล"),
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .attr("id", "patient")
                                             .attr("autocomplete","off")
                                             .apply(mixins::string_value_end(page.patient.clone(), page.changed.clone()))
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_GRAY)
+                                            .class(class::BTN_GRAY)
                                             .child(html!("i", {.class(class::FA_SEARCH)}))
                                             .text(" ค้นหา")
                                             .event(clone!(page => move |_: events::Click| {
@@ -280,11 +280,11 @@ impl IpdSearchPatientNursePage {
                                 })),
                                 doms::form_inline_end(clone!(app, page => move |end| { end
                                     .children([
-                                        doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                        doms::form_inline_group(clone!(app, page => move |group| { group
                                             .children([
                                                 doms::label_group_for("refresh_interval","รอบการ Update "),
                                                 html!("select" => HtmlSelectElement, {
-                                                    .class(class::FORM_SELECT_SM)
+                                                    .class("form-select")
                                                     .attr("id", "refresh_interval")
                                                     .children([
                                                         html!("option", {.attr("value", "0").text("ไม่ต้องทำ")}),
@@ -316,7 +316,7 @@ impl IpdSearchPatientNursePage {
                                                 }),
                                                 html!("button" => HtmlButtonElement, {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_SM_L_GRAY)
+                                                    .class(class::BTN_L_GRAY)
                                                     .child_signal(app.order_monitor_new_order_sound_on.signal_cloned().map(|sound| {
                                                         if sound == "on" {
                                                             Some(html!("i", {.class(class::FA_VOL_UP)}))
@@ -337,7 +337,7 @@ impl IpdSearchPatientNursePage {
                                                 }),
                                                 html!("button", {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_SM_GRAY)
+                                                    .class(class::BTN_GRAY)
                                                     .child(html!("i", {.class(class::FA_PLAY)}))
                                                     .text(" Test")
                                                     .event(clone!(page => move |_: events::Click| {

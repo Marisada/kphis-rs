@@ -21,7 +21,7 @@ use crate::{
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, IntoParams)]
 pub struct IpdSearchPatientDrRequest {
-    pub ward: Option<String>,
+    pub wards: Option<String>,
     pub doctor_in_charge: Option<String>,
     pub consult_dr_search: Option<String>,
     pub patient: Option<String>,
@@ -31,7 +31,7 @@ pub struct IpdSearchPatientDrRequest {
 impl QueryString for IpdSearchPatientDrRequest {
     fn from_tuples(params: &[(String, String)]) -> Option<Self> {
         (!params.is_empty()).then(|| Self {
-            ward: find_qs(params, "ward"),
+            wards: find_qs(params, "wards"),
             doctor_in_charge: find_qs(params, "doctor_in_charge"),
             consult_dr_search: find_qs(params, "consult_dr_search"),
             patient: find_qs(params, "patient"),
@@ -41,8 +41,8 @@ impl QueryString for IpdSearchPatientDrRequest {
 
     fn query_string(&self) -> String {
         let mut queries = Vec::with_capacity(5);
-        if let Some(ward) = &self.ward {
-            queries.push(["ward=", ward].concat());
+        if let Some(wards) = &self.wards {
+            queries.push(["wards=", wards].concat());
         }
         if let Some(doctor_in_charge) = &self.doctor_in_charge {
             queries.push(["doctor_in_charge=", doctor_in_charge].concat());
@@ -64,7 +64,7 @@ impl QueryString for IpdSearchPatientDrRequest {
 impl IpdSearchPatientDrRequest {
     pub fn not_empty(self) -> Self {
         Self {
-            ward: self.ward.as_ref().and_then(|s| str_some(s)),
+            wards: self.wards.as_ref().and_then(|s| str_some(s)),
             doctor_in_charge: self.doctor_in_charge.as_ref().and_then(|s| str_some(s)),
             consult_dr_search: self.consult_dr_search.as_ref().and_then(|s| str_some(s)),
             patient: self.patient.as_ref().and_then(|s| str_some(s)),

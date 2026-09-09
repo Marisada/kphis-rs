@@ -74,12 +74,11 @@ pub struct ReportViewerPage {
 impl ReportViewerPage {
     pub fn new(app: Rc<App>) -> Rc<Self> {
         let selected_system_template = SystemReport::new(&app.report_select.lock_ref());
-        let search_changed = selected_system_template.is_some();
         Rc::new(Self {
             // default report_type is ReportType::Ipd
             system_templates: MutableVec::new_with_values(SystemReport::ipd_set()),
             selected_system_template: Mutable::new(selected_system_template),
-            search_changed: Mutable::new(search_changed),
+            search_changed: Mutable::new(true),
             ..Default::default()
         })
     }
@@ -298,7 +297,7 @@ impl ReportViewerPage {
                 match *page.report_type.lock_ref() {
                     ReportType::Ipd => {
                         let params = AvatarParams {
-                            ward: str_some(&app.ward_select.lock_ref()),
+                            wards: str_some(&app.ward_multiple_select.lock_ref()),
                             search: str_some(&page.search.lock_ref()),
                         };
                         if params.is_empty() {
@@ -543,7 +542,7 @@ impl ReportViewerPage {
                                 })))
                             }),
                             html!("div", {
-                                .class(class::INPUT_GROUP_SM)
+                                .class(class::INPUT_GROUP)
                                 .child(doms::span_group_text("รายงาน"))
                                 .child_signal(page.report_type.signal_cloned().map(clone!(app, page => move |report_type| {
                                     match report_type {
@@ -563,7 +562,7 @@ impl ReportViewerPage {
                                                         "system_templates", None, false,
                                                         temp_value.clone(),
                                                         page.load_and_render_svg.clone(),
-                                                        |d| d.class(class::FORM_CTRL_SM_WRAP)
+                                                        |d| d.class(class::FORM_CTRL_WRAP)
                                                             .future(page.selected_system_template.signal_cloned().for_each(clone!(temp_value => move |opt| {
                                                                 temp_value.set_neq(opt.map(|template| template.template_name().to_owned()).unwrap_or_default());
                                                                 async {}
@@ -593,7 +592,7 @@ impl ReportViewerPage {
                                                         "custom_templates", None, false,
                                                         page.selected_custom_template_compact.clone(),
                                                         page.custom_template_changed.clone(),
-                                                        |d| d.class(class::FORM_CTRL_SM_WRAP), || {},
+                                                        |d| d.class(class::FORM_CTRL_WRAP), || {},
                                                         options,
                                                     ))
                                                 })))
@@ -613,7 +612,7 @@ impl ReportViewerPage {
                                     } else {
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_GRAY)
+                                            .class(class::BTN_GRAY)
                                             .child(html!("i", {.class(class::FA_SYNC)}))
                                             .event(clone!(page => move |_:events::Click| {
                                                 page.load_and_render_svg.set(true);
@@ -628,29 +627,29 @@ impl ReportViewerPage {
                                 ReportType::Ipd => {
                                     vec![
                                         html!("div", {
-                                            .class(class::INPUT_GROUP_SM)
+                                            .class(class::INPUT_GROUP)
                                             .class("mt-2")
                                             .children([
                                                 doms::span_group_text("Ward"),
                                                 html!("div", {
                                                     .class(class::FLEX_W100)
                                                     .child(doms::select_box(
-                                                        "wards", None, false,
-                                                        app.ward_select.clone(),
+                                                        "wards", None, true,
+                                                        app.ward_multiple_select.clone(),
                                                         page.search_changed.clone(),
-                                                        |d| d.class(class::FORM_CTRL_SM_WRAP),
+                                                        |d| d.class(class::FORM_CTRL_WRAP),
                                                         clone!(app => move || app.to_local_storage()),
                                                         ward_select_option.clone(),
                                                     ))
                                                 }),
                                                 html!("button", {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_SM_RED)
+                                                    .class(class::BTN_RED)
                                                     .child(html!("i", {.class(class::FA_X)}))
                                                     .event(clone!(app, page => move |_:events::Click| {
-                                                        let no_ward = app.ward_select.lock_ref().is_empty();
+                                                        let no_ward = app.ward_multiple_select.lock_ref().is_empty();
                                                         if !no_ward {
-                                                            app.ward_select.set(String::new());
+                                                            app.ward_multiple_select.set(String::new());
                                                             page.search_changed.set_neq(true);
                                                         }
                                                     }))
@@ -658,12 +657,12 @@ impl ReportViewerPage {
                                             ])
                                         }),
                                         html!("div", {
-                                            .class(class::INPUT_GROUP_SM)
+                                            .class(class::INPUT_GROUP)
                                             .class("mt-2")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
                                                     .attr("type", "text")
-                                                    .class(class::FORM_CTRL_SM)
+                                                    .class("form-control")
                                                     .focused(true)
                                                     .attr("placeholder", "HN/AN/ชื่อ-สกุล")
                                                     .prop_signal("value", page.search.signal_cloned())
@@ -682,7 +681,7 @@ impl ReportViewerPage {
                                                 }),
                                                 html!("button", {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_SM_RED)
+                                                    .class(class::BTN_RED)
                                                     .child(html!("i", {.class(class::FA_X)}))
                                                     .event(clone!(page => move |_:events::Click| {
                                                         let no_search = page.search.lock_ref().is_empty();
@@ -715,7 +714,6 @@ impl ReportViewerPage {
                                         Self::render_custom_params(page.clone(), app.clone()),
                                     ]
                                 }
-
                             }
                         })).to_signal_vec())
                     }),
@@ -851,7 +849,7 @@ impl ReportViewerPage {
     }
 
     fn render_patient_list(is_ipd: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
-        let height = if is_ipd { "calc(100vh - 237px)" } else { "calc(100vh - 159px)" };
+        let height = if is_ipd { "calc(100vh - 272px)" } else { "calc(100vh - 180px)" };
 
         html!("div", {
             .class("mt-2")

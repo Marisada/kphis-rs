@@ -28,9 +28,6 @@ fn avatar_opd_er_row(row: &MySqlRow) -> Result<AvatarOpdEr, AppError> {
 pub async fn get_avatar_ipd(params: &AvatarParams, hlen: usize, alen: usize, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<AvatarWard>, AppError> {
     let sql = avatar::select_avatar_in_ward(params, hlen, alen, hosxp, kphis);
     let mut query = sqlx::query(AssertSqlSafe(sql));
-    if let Some(ward) = &params.ward {
-        query = query.bind(ward);
-    }
     if let Some(patient) = params.search.as_ref().and_then(|s| urlencoding::decode(s).ok()) {
         let wildcard = ["%", patient.trim(), "%"].concat();
         match patient.parse::<u64>().is_ok() {
@@ -130,7 +127,7 @@ mod tests {
         // ipt.ward = '01' AND ipt.dchstts = '02'
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp_alt/ipt_discharged.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let discharged = get_avatar_ipd(&AvatarParams {ward: Some(String::from("01")),..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
+        let discharged = get_avatar_ipd(&AvatarParams {wards: Some(String::from("01")),..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert!(discharged.is_empty());
 
         // WHERE ipt.ward=? AND ipt.dchstts IS NULL
@@ -138,7 +135,7 @@ mod tests {
         sqlx::query("DROP TABLE `hos`.`ipt`;").execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp_alt/ipt_active.sql")).execute(&tester.db_pool).await.unwrap();
-        let active_ward = get_avatar_ipd(&AvatarParams {ward: Some(String::from("01")),..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
+        let active_ward = get_avatar_ipd(&AvatarParams {wards: Some(String::from("01,02")),..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(active_ward.len(), 1);
         let active_hn = get_avatar_ipd(&AvatarParams {search: Some(String::from("1234")),..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(active_hn.len(), 1);
@@ -149,7 +146,7 @@ mod tests {
 
         // AND wp.passcode IS NULL
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_ward_passcode.sql")).execute(&tester.db_pool).await.unwrap();
-        let active_passcode = get_avatar_ipd(&AvatarParams {ward: Some(String::from("01")),..Default::default()}, 7, 9,  &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
+        let active_passcode = get_avatar_ipd(&AvatarParams {wards: Some(String::from("01")),..Default::default()}, 7, 9,  &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert!(active_passcode.is_empty());
     }
 }

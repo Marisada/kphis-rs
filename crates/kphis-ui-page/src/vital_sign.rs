@@ -32,7 +32,6 @@ use kphis_util::util::{str_some, zero_none};
 #[derive(Clone, Default)]
 pub struct VitalSignPage {
     is_ipd: bool,
-    ward: Mutable<String>,
     search: Mutable<String>,
 
     search_result: MutableVec<Rc<AvatarEnum>>,
@@ -56,12 +55,8 @@ pub struct VitalSignPage {
 }
 
 impl VitalSignPage {
-    pub fn new(is_ipd: bool, app: Rc<App>) -> Rc<Self> {
-        Rc::new(Self {
-            is_ipd,
-            ward: if is_ipd { app.ward_select.clone() } else { Mutable::new(String::new()) },
-            ..Default::default()
-        })
+    pub fn new(is_ipd: bool) -> Rc<Self> {
+        Rc::new(Self { is_ipd, ..Default::default() })
     }
 
     fn is_visit_type_valid(&self) -> bool {
@@ -75,7 +70,7 @@ impl VitalSignPage {
             clone!(app, page => async move {
                 if page.is_ipd {
                     let params = AvatarParams {
-                        ward: str_some(&page.ward.lock_ref()),
+                        wards: str_some(&app.ward_multiple_select.lock_ref()),
                         search: str_some(&page.search.lock_ref()),
                     };
                     if params.is_empty() {
@@ -204,28 +199,28 @@ impl VitalSignPage {
                         .apply_if(page.is_ipd, |dom| { dom
                             .children([
                                 html!("div", {
-                                    .class(class::INPUT_GROUP_SM)
+                                    .class(class::INPUT_GROUP)
                                     .children([
                                         doms::span_group_text("Ward"),
                                         html!("div", {
                                             .class(class::FLEX_W100)
                                             .child(doms::select_box(
-                                                "wards", None, false,
-                                                page.ward.clone(),
+                                                "wards", None, true,
+                                                app.ward_multiple_select.clone(),
                                                 page.search_changed.clone(),
-                                                |d| d.class(class::FORM_CTRL_SM),
+                                                |d| d.class("form-control"),
                                                 clone!(app => move || app.to_local_storage()),
                                                 ward_select_option,
                                             ))
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_RED)
+                                            .class(class::BTN_RED)
                                             .child(html!("i", {.class(class::FA_X)}))
                                             .event(clone!(app, page => move |_:events::Click| {
-                                                let no_ward = page.ward.lock_ref().is_empty();
+                                                let no_ward = app.ward_multiple_select.lock_ref().is_empty();
                                                 if !no_ward {
-                                                    page.ward.set(String::new());
+                                                    app.ward_multiple_select.set(String::new());
                                                     page.search_changed.set_neq(true);
                                                 }
                                             }))
@@ -233,12 +228,12 @@ impl VitalSignPage {
                                     ])
                                 }),
                                 html!("div", {
-                                    .class(class::INPUT_GROUP_SM)
+                                    .class(class::INPUT_GROUP)
                                     .class("mt-2")
                                     .children([
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .focused(true)
                                             .attr("placeholder", "HN/AN/ชื่อ-สกุล")
                                             .prop_signal("value", page.search.signal_cloned())
@@ -257,7 +252,7 @@ impl VitalSignPage {
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_RED)
+                                            .class(class::BTN_RED)
                                             .child(html!("i", {.class(class::FA_X)}))
                                             .event(clone!(page => move |_:events::Click| {
                                                 let no_search = page.search.lock_ref().is_empty();
@@ -269,7 +264,7 @@ impl VitalSignPage {
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_BLUE)
+                                            .class(class::BTN_BLUE)
                                             .text("ค้นหา")
                                             .event(clone!(page => move |_: events::Click| {
                                                 page.search_changed.set_neq(true);
@@ -281,7 +276,13 @@ impl VitalSignPage {
                         })
                         .child(html!("div", {
                             //.attr("id", "show-patient")
-                            .style("height","calc(100vh - 165px)")
+                            .apply(|dom| {
+                                if page.is_ipd {
+                                    dom.style("height","calc(100vh - 180px)")
+                                } else {
+                                    dom.style("height","calc(100vh - 85px)")
+                                }
+                            })
                             .style("width", "100%")
                             .style("box-sizing","border-box")
                             .style("overflow-y","auto")

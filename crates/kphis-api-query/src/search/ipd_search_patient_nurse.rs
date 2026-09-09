@@ -9,7 +9,6 @@ use crate::{query_all, query1_all, query2_all, query3_all};
 // ipd-nurse-search-patient-table.php
 pub async fn get_ipd_nurse_search_patient(request: IpdSearchPatientNurseRequest, hn_len: usize, an_len: usize, pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_extra: &str) -> Result<Vec<IpdSearchPatientNurseResponse>, AppError> {
     let patient = request.patient.as_ref().and_then(|patient| urlencoding::decode(&patient).map(|s| s.into_owned()).ok()).unwrap_or_default();
-    let ward = request.ward.clone().unwrap_or_default();
     let doctor = request.doctor_in_charge.clone().unwrap_or_default();
     let passcode = request.passcode.clone().unwrap_or_default();
     let patient_wildcard = ["%", &patient, "%"].concat();
@@ -21,10 +20,10 @@ pub async fn get_ipd_nurse_search_patient(request: IpdSearchPatientNurseRequest,
         (true, false, true, _, _, false) => query2_all(&patient_wildcard, &patient_wildcard, &sql, pool, "Select IpdNurseSearchPatient-4").await,
         (true, _, _, _, _, true) => query2_all(&patient_wildcard, &passcode, &sql, pool, "Select IpdNurseSearchPatient-5").await,
         (true, _, _, _, _, false) => query1_all(&patient_wildcard, &sql, pool, "Select IpdNurseSearchPatient-6").await,
-        (false, _, _, true, true, true) => query3_all(&ward, &doctor, &passcode, &sql, pool, "Select IpdNurseSearchPatient-7").await,
-        (false, _, _, true, true, false) => query2_all(&ward, &doctor, &sql, pool, "Select IpdNurseSearchPatient-8").await,
-        (false, _, _, true, false, true) => query2_all(&ward, &passcode, &sql, pool, "Select IpdNurseSearchPatient-9").await,
-        (false, _, _, true, false, false) => query1_all(&ward, &sql, pool, "Select IpdNurseSearchPatient-10").await,
+        (false, _, _, true, true, true) => query2_all(&doctor, &passcode, &sql, pool, "Select IpdNurseSearchPatient-7").await,
+        (false, _, _, true, true, false) => query1_all(&doctor, &sql, pool, "Select IpdNurseSearchPatient-8").await,
+        (false, _, _, true, false, true) => query1_all(&passcode, &sql, pool, "Select IpdNurseSearchPatient-9").await,
+        (false, _, _, true, false, false) => query_all(&sql, pool, "Select IpdNurseSearchPatient-10").await,
         (false, _, _, false, true, true) => query2_all(&doctor, &passcode, &sql, pool, "Select IpdNurseSearchPatient-11").await,
         (false, _, _, false, true, false) => query1_all(&doctor, &sql, pool, "Select IpdNurseSearchPatient-12").await,
         (false, _, _, false, false, true) => query1_all(&passcode, &sql, pool, "Select IpdNurseSearchPatient-13").await,
@@ -129,7 +128,7 @@ mod tests {
         assert_eq!(found_fullname.len(), 2);
 
         // not discharged
-        let found_ward = get_ipd_nurse_search_patient(IpdSearchPatientNurseRequest {ward: Some(String::from("01")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
+        let found_ward = get_ipd_nurse_search_patient(IpdSearchPatientNurseRequest {wards: Some(String::from("01,02")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
         assert_eq!(found_ward.len(), 1);
         let found_doctor = get_ipd_nurse_search_patient(IpdSearchPatientNurseRequest {doctor_in_charge: Some(String::from("007")), ..Default::default()}, 7, 9, &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
         assert_eq!(found_doctor.len(), 1);
