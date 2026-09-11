@@ -64,7 +64,8 @@ pub async fn renew_refresh_popup(totp_done: bool, app: Rc<AppState>) -> bool {
     let popup = PromptPasswordPopup::new(totp_done);
     // bootstrap modal will lock focus only within .modal-content
     // so we need to append to '.modal.show .modal-body' if exist
-    match app.query_selector(".modal.show .modal-body").or(app.get_id("popup")) {
+    // match app.query_selector(".modal.show .modal-body").or(app.get_id("popup")) {
+    match app.get_id("popup") {
         Some(parent) => {
             let handle = append_dom(&parent, PromptPasswordPopup::render(popup.clone(), app.clone()));
             popup.focus(app.clone());

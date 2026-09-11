@@ -37,7 +37,7 @@
   header: context[#h(1fr)#counter(page).display("1/1",both:true)],
   foreground: watermark(77pt),
 )
-#h(1fr) #text(size:20pt,weight:700,align(center,[รายงานรายละเอียดการบันทึก Progreee Note#linebreak()ของ #user#linebreak()ระหว่างวันที่ #date_th(data.start) ถึงวันที่ #date_th(data.end)]))#h(1fr)
+#h(1fr) #text(size:20pt,weight:700,align(center,[รายงานรายละเอียดการบันทึก Progress Note#linebreak()ของ #user#linebreak()ระหว่างวันที่ #date_th(data.start) ถึงวันที่ #date_th(data.end)]))#h(1fr)
 #v(-25pt)
 #table(columns:(35pt,70pt,70pt,1fr,120pt),stroke:.5pt,
   table.header(table_h[ลำดับ],table_h[วันที่-เวลา],table_h[AN],table_h[รายละเอียด],table_h[เจ้าหน้าที่]),
