@@ -59,7 +59,7 @@ pub async fn check_login(Extension(real_addr): Extension<SocketAddr>, State(app)
     match verify_password(&user.passweb, &payload.password) {
         Ok(()) => {
             // reset failed tp 0
-            if user.failed.unwrap_or_default() > 0 && user.totp_done.is_none() {
+            if user.failed.unwrap_or_default() > 0 && user.totp_done.unwrap_or_default() == 0 {
                 if config::insert_dup_failed(0, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
                     return Err(Source::App.to_error(500, "Unexpected Error", "Check Login").with_title(ErrorTitle::Security));
                 }
@@ -77,7 +77,7 @@ pub async fn check_login(Extension(real_addr): Extension<SocketAddr>, State(app)
     }
 
     // prepare TS for TOTP
-    let response_tuple_opt = if user.totp_done.is_some() {
+    let response_tuple_opt = if user.totp_done.unwrap_or_default() > 0 {
         if config::update_ts(&user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() > 0 {
             None
         } else {
@@ -284,7 +284,7 @@ pub async fn refresh_cookie(Extension(real_addr): Extension<SocketAddr>, State(a
             }
             // check TOTP
             if is_failed.is_none()
-                && user_db.totp_done.is_some()
+                && user_db.totp_done.unwrap_or_default() > 0
                 && let Some(totp_pk) = &user_db.totp
             {
                 if let Some(totp_done_step) = totp::verify_totp_encoded_key(&user_db.loginname, &payload.token_2fa, totp_pk, "KPHIS")? {

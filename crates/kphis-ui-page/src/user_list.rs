@@ -744,7 +744,7 @@ impl UserListPage {
                 .children([
                     html!("td", {
                         .class(class::TXT_C_P1)
-                        .apply_if(row.totp_done.unwrap_or_default(), |d| { d
+                        .apply_if(row.totp_done.unwrap_or_default() > 0, |d| { d
                             .child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN).style("font-size","30px")}))
                         })
                     }),
@@ -768,12 +768,12 @@ impl UserListPage {
                 }
                 let permissions = page.role_permission();
                 page.modal_user_permissions.lock_mut().replace_cloned(permissions);
-                page.modal_has_totp.set_neq(row.totp_done.unwrap_or_default());
+                page.modal_has_totp.set_neq(row.totp_done.unwrap_or_default() > 0);
                 page.modal_failed.set_neq(row.failed.unwrap_or_default());
                 page.modal_changed.set_neq(false);
 
-                app.clear_modal_backdrop();
-                page.show_user_manage_modal.set(false);
+                page.show_user_manage_modal.set(true);
+                app.show_modal_backdrop();
             })
         })
     }

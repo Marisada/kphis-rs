@@ -113,7 +113,11 @@ impl PermissionListPage {
                         page.changed.set_neq(true);
                     }
                     Err(e) => {
-                        app.alert_app_error(&e).await;
+                        if e.status == 401 {
+                            app.alert("ท่านได้รับการเปลี่ยนแปลงบทบาทไหม่", "กรุณาเข้าสู่ระบบใหม่อีกครั้ง เพื่อใช้งานบทบาทใหม่")
+                        } else {
+                            app.alert_app_error(&e).await;
+                        }
                     }
                 }
             }),
