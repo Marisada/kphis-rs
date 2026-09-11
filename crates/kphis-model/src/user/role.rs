@@ -82,8 +82,8 @@ pub struct UserRole {
     pub account_disable: Option<String>,
     #[Demo(value = "Some(99)")]
     pub failed: Option<i8>,
-    #[Demo(value = "Some(true)")]
-    pub totp_done: Option<bool>,
+    #[Demo(value = "Some(9)")]
+    pub totp_done: Option<u64>,
 }
 
 /// List of User Roles
