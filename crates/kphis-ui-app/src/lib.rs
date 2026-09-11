@@ -223,7 +223,8 @@ impl App {
         let popup = ConfirmPopup::new("Confirm", message);
         // bootstrap modal will lock focus only within .modal-content
         // so we need to append to '.modal.show .modal-body' if exist
-        match self.query_selector(".modal.show .modal-body").or(self.get_id("popup")) {
+        // match self.query_selector(".modal.show .modal-body").or(self.get_id("popup")) {
+        match self.get_id("popup") {
             Some(parent) => {
                 let handle = append_dom(&parent, ConfirmPopup::render(popup.clone()));
                 match popup.finished().wait_for(true).await {
@@ -246,7 +247,8 @@ impl App {
         let popup = DomWithClosePopup::new(title, is_error);
         // bootstrap modal will lock focus only within .modal-content
         // so we need to append to '.modal.show .modal-body' if exist
-        match self.query_selector(".modal.show .modal-body").or(self.get_id("popup")) {
+        // match self.query_selector(".modal.show .modal-body").or(self.get_id("popup")) {
+        match self.get_id("popup") {
             Some(parent) => {
                 let handle = append_dom(&parent, DomWithClosePopup::render(content, popup.clone()));
                 match popup.finished().wait_for(true).await {
@@ -266,7 +268,8 @@ impl App {
         let popup = WithClosePopup::new(title, message, is_error);
         // bootstrap modal will lock focus only within .modal-content
         // so we need to append to '.modal.show .modal-body' if exist
-        match self.query_selector(".modal.show .modal-body").or(self.get_id("popup")) {
+        // match self.query_selector(".modal.show .modal-body").or(self.get_id("popup")) {
+        match self.get_id("popup") {
             Some(parent) => {
                 let handle = append_dom(&parent, WithClosePopup::render(popup.clone()));
                 match popup.finished().wait_for(true).await {

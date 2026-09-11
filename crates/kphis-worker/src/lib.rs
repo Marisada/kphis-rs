@@ -214,7 +214,8 @@ impl<'a> WorkerCall<'a> {
                     let popup = WithClosePopup::new("Typst Error", &message, true);
                     // bootstrap modal will lock focus only within .modal-content
                     // so we need to append to '.modal.show .modal-body' if exist
-                    match document.query_selector(".modal.show .modal-body").ok().flatten().or(document.get_element_by_id("popup")) {
+                    // match document.query_selector(".modal.show .modal-body").ok().flatten().or(document.get_element_by_id("popup")) {
+                    match document.get_element_by_id("popup") {
                         Some(parent) => {
                             let handle = dominator::append_dom(&parent, WithClosePopup::render(popup.clone()));
                             match popup.finished().wait_for(true).await {
