@@ -8,12 +8,24 @@ license = { workspace = true }
 publish = false
 
 [[test]]
+name = "wasm_tool"
+path = "src/test_tool.rs"
+
+[[test]]
 name = "wasm_datetime"
 path = "src/datetime.rs"
 
 [[test]]
-name = "wasm_datetime_picker"
-path = "src/datetime_picker.rs"
+name = "wasm_render_core"
+path = "src/render_core/mod.rs"
+
+[[test]]
+name = "wasm_render_component"
+path = "src/render_component/mod.rs"
+
+[[test]]
+name = "wasm_render_page"
+path = "src/render_page/mod.rs"
 
 [[test]]
 name = "wasm_route"
@@ -26,14 +38,30 @@ path = "src/token.rs"
 [dev-dependencies]
 
 # workspace crate
+kphis-drg-worker = { workspace = true }
 kphis-model = { workspace = true }
+kphis-ui-app = { workspace = true }
 kphis-ui-core = { workspace = true }
+kphis-ui-component = { workspace = true }
+kphis-ui-page = { workspace = true }
 kphis-util = { workspace = true }
 
+dominator = { workspace = true }
 futures-signals = { workspace = true }
+js-sys = { workspace = true }
+log = { workspace = true }
+strum = { workspace = true }
 time = { workspace = true }
 time-datepicker-core = { workspace = true }
+# ulid = { workspace = true }
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
 wasm-bindgen-test = { workspace = true }
+web-sys = { workspace = true, features = [
+    "DomRect",
+]}
+
+web-time = "1"
 
 # This js feature should only be enabled for binary, test, or benchmark crates.
 # This feature has no effect on targets other than wasm32-unknown-unknown.

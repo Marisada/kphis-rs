@@ -159,49 +159,7 @@ impl ShowPatientMainCpn {
             })))
             .child_signal(page.success.signal_cloned().map(clone!(page => move |success| {
                 if success {
-                    let update_allergy = html!("span", {
-                        .child_signal(map_ref! {
-                            let adh = page.allergy_drug_history.signal_cloned(),
-                            let person = page.allergy_drug_pharmacy_check_person.signal_cloned() =>
-                            (adh.clone(), person.is_some())
-                        }.map(clone!(app, page => move |(adh, has_person)| adh.map(|allergy_drug_history| html!("span", {
-                            .class("allergyDrugHistoryFromAdmissionNote")
-                            .child(html!("label", {
-                                .child(html!("span", {
-                                    .class(class::BOLD_RED_L)
-                                    .class("me-2")
-                                    .text(&[
-                                        "แจ้งแพ้ยา (แรกรับ) : ",
-                                        &raw_concat_to_comma_equal(&allergy_drug_history),
-                                        if has_person {" (ประเมินแล้ว)"} else {" (รอเภสัชประเมิน)"}
-                                    ].concat())
-                                    .apply(|dom| {
-                                        let act_mut = Mutable::new(false);
-                                        let is_pre_admit = app.is_pre_admit(&page.an.lock_ref());
-                                        if !has_person && app.endpoint_is_allow(&Method::PATCH, &EndPoint::IpdAdmissionNoteDrPharmCheckAn, is_pre_admit) {
-                                            dom.style("cursor","pointer")
-                                            .event(clone!(act_mut => move |_: events::Click| {
-                                                act_mut.set(true);
-                                            }))
-                                            .future(map_ref!{
-                                                let busy = app.loader_is_loading(),
-                                                let act = act_mut.signal() =>
-                                                !busy && *act
-                                            }.for_each(clone!(app, page, act_mut => move |ready| {
-                                                if ready {
-                                                    act_mut.set(false);
-                                                    Self::patch_pharmacy_check(page.clone(), app.clone());
-                                                }
-                                                async {}
-                                            })))
-                                        } else {
-                                            dom
-                                        }
-                                    })
-                                }))
-                            }))
-                        })))))
-                    });
+                    let update_allergy = Self::render_allergy(page.clone(), app.clone());
 
                     page.patient.get_cloned().map(clone!(app, page => move |patient| {
                         render_patient_info(is_compact, patient, Some(update_allergy), Some(page), false, app.clone())
@@ -215,6 +173,52 @@ impl ShowPatientMainCpn {
                     }))
                 }
             })))
+        })
+    }
+
+    pub fn render_allergy(page: Rc<Self>, app: Rc<App>) -> Dom {
+        html!("span", {
+            .child_signal(map_ref! {
+                let adh = page.allergy_drug_history.signal_cloned(),
+                let person = page.allergy_drug_pharmacy_check_person.signal_cloned() =>
+                (adh.clone(), person.is_some())
+            }.map(clone!(app, page => move |(adh, has_person)| adh.map(|allergy_drug_history| html!("span", {
+                .class("allergyDrugHistoryFromAdmissionNote")
+                .child(html!("label", {
+                    .child(html!("span", {
+                        .class(class::BOLD_RED_L)
+                        .class("me-2")
+                        .text(&[
+                            "แจ้งแพ้ยา (แรกรับ) : ",
+                            &raw_concat_to_comma_equal(&allergy_drug_history),
+                            if has_person {" (ประเมินแล้ว)"} else {" (รอเภสัชประเมิน)"}
+                        ].concat())
+                        .apply(|dom| {
+                            let act_mut = Mutable::new(false);
+                            let is_pre_admit = app.is_pre_admit(&page.an.lock_ref());
+                            if !has_person && app.endpoint_is_allow(&Method::PATCH, &EndPoint::IpdAdmissionNoteDrPharmCheckAn, is_pre_admit) {
+                                dom.style("cursor","pointer")
+                                .event(clone!(act_mut => move |_: events::Click| {
+                                    act_mut.set(true);
+                                }))
+                                .future(map_ref!{
+                                    let busy = app.loader_is_loading(),
+                                    let act = act_mut.signal() =>
+                                    !busy && *act
+                                }.for_each(clone!(app, page, act_mut => move |ready| {
+                                    if ready {
+                                        act_mut.set(false);
+                                        Self::patch_pharmacy_check(page.clone(), app.clone());
+                                    }
+                                    async {}
+                                })))
+                            } else {
+                                dom
+                            }
+                        })
+                    }))
+                }))
+            })))))
         })
     }
 }

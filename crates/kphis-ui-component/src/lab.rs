@@ -462,7 +462,7 @@ impl LabCpn {
     }
 
     // ipd-nurse-lab-detail.php
-    fn render_detail(cpn_id: &'static str, detail: Rc<LabHead>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_detail(cpn_id: &'static str, detail: Rc<LabHead>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::CARD_BCYAN_T)
             .children([

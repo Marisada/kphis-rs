@@ -792,7 +792,7 @@ impl FocusListCpn {
         })
     }
 
-    fn render_form(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_form(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .visible_signal(page.form_show.signal())
             // .future(page.form_show.signal().for_each(clone!(app => move |show| {

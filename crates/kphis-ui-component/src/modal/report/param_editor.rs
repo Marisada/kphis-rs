@@ -195,7 +195,7 @@ impl ReportParamEditor {
         })
     }
 
-    fn render_param(i: ReadOnlyMutable<Option<usize>>, param_item: Rc<ReportParamMutable>, modal: Rc<Self>) -> Dom {
+    pub fn render_param(i: ReadOnlyMutable<Option<usize>>, param_item: Rc<ReportParamMutable>, modal: Rc<Self>) -> Dom {
         html!("div", {
             .class("mb-2")
             .child(html!("div", {
@@ -328,7 +328,7 @@ impl ReportParamEditor {
         })
     }
 
-    fn render_param_item(i: ReadOnlyMutable<Option<usize>>, item: Rc<KeyLabelMutable>, param_item: Rc<ReportParamMutable>, modal: Rc<Self>) -> Dom {
+    pub fn render_param_item(i: ReadOnlyMutable<Option<usize>>, item: Rc<KeyLabelMutable>, param_item: Rc<ReportParamMutable>, modal: Rc<Self>) -> Dom {
         html!("div", {
             .class(class::INPUT_GROUP_SM_T)
             .children([
@@ -425,7 +425,7 @@ fn render_basic_type_list(is_disabled: bool, ty_mutable: Mutable<BasicType>, cha
 }
 
 #[derive(Clone)]
-struct ReportParamMutable {
+pub struct ReportParamMutable {
     uid: u32,
     var_type: VarType,
     is_array: bool,
@@ -437,7 +437,7 @@ struct ReportParamMutable {
 }
 
 impl ReportParamMutable {
-    fn new(var_type: VarType, is_array: bool) -> Rc<Self> {
+    pub fn new(var_type: VarType, is_array: bool) -> Rc<Self> {
         let items = if matches!(var_type, VarType::List) {
             MutableVec::new_with_values(vec![KeyLabelMutable::new()])
         } else {
@@ -526,14 +526,14 @@ impl ReportParamMutable {
 }
 
 #[derive(Clone)]
-struct KeyLabelMutable {
+pub struct KeyLabelMutable {
     uid: u32,
     key: Mutable<String>,
     label: Mutable<String>,
 }
 
 impl KeyLabelMutable {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             uid: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             key: Mutable::new(String::new()),

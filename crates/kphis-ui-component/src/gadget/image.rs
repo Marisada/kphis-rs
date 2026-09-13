@@ -956,7 +956,7 @@ impl ImageCpn {
     }
 
     // please check `kphis-ui-component::modal::modal_show_bool_mixins` for modal mechanic
-    fn render_capture_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_capture_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::MODAL_SHOW)
             .attr("role", "dialog")

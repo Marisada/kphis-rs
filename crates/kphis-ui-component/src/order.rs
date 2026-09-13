@@ -3415,7 +3415,7 @@ impl OrderCpn {
         })
     }
 
-    fn render_previous_order(order_item: &OrderItem, order_type: OrderType, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_previous_order(order_item: &OrderItem, order_type: OrderType, page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_readonly = page.is_readonly();
         let is_pre_admit = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type.is_pre_admit()).unwrap_or_default();
         let is_today = page.is_today();
@@ -3674,7 +3674,7 @@ impl OrderCpn {
     }
 
     // now render only held and offed
-    fn render_med_rec(med_rec_item: &Rc<MedReconciliationItem>, app: Rc<App>) -> Dom {
+    pub fn render_med_rec(med_rec_item: &Rc<MedReconciliationItem>, app: Rc<App>) -> Dom {
         let is_med_rec_icode = if let (Some(item_icode), Some(app_icode)) = (&med_rec_item.icode, &app.hosxp_medrec_icode()) {
             item_icode == app_icode
         } else {

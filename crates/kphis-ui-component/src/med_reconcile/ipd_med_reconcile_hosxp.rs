@@ -164,7 +164,7 @@ impl IpdMedReconcileHosXpCpn {
         })
     }
 
-    fn render_recon(row: Rc<MedReconciliationDetail>, i: usize) -> Dom {
+    pub fn render_recon(row: Rc<MedReconciliationDetail>, i: usize) -> Dom {
         html!("tr", {
             .children([
                 html!("td", {

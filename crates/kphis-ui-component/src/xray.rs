@@ -339,7 +339,7 @@ impl XrayCpn {
         })
     }
 
-    fn render_report(cpn_id: &'static str, report: Rc<XrayReport>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_report(cpn_id: &'static str, report: Rc<XrayReport>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::CARD_BCYAN)
             .children([

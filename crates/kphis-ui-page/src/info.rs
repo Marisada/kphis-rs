@@ -97,10 +97,10 @@ impl InfoPage {
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
-struct Announcement {
-    title: String,
-    date: Date,
-    items: Vec<String>,
+pub struct Announcement {
+    pub title: String,
+    pub date: Date,
+    pub items: Vec<String>,
 }
 
 impl Announcement {
@@ -118,7 +118,7 @@ impl Announcement {
         }
     }
 
-    fn render(&self) -> Dom {
+    pub fn render(&self) -> Dom {
         let is_show = Mutable::new(false);
         html!("div", {
             .class(class::CARD)

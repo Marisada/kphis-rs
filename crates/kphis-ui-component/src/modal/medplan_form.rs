@@ -562,7 +562,7 @@ impl MedPlanForm {
         })
     }
 
-    fn render_ivfluid_searchbox(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_ivfluid_searchbox(modal: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(html!("div", {
                 .class(class::CARD_TW_T_CYANS)

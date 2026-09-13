@@ -300,7 +300,7 @@ impl MedReconcileHistoryCpn {
         })
     }
 
-    fn render_recon(recon: Rc<MedReconciliation>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_recon(recon: Rc<MedReconciliation>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_T)
             .class(class::FLEX_COL)

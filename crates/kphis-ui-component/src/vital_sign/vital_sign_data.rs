@@ -338,7 +338,7 @@ impl VitalSignDataCpn {
         })
     }
 
-    fn render_op(page: Rc<Self>) -> Dom {
+    pub fn render_op(page: Rc<Self>) -> Dom {
         html!("div", {
             .child(html!("div", {
                 .class(class::ALERT_GRAY)
@@ -381,7 +381,7 @@ impl VitalSignDataCpn {
         })
     }
 
-    fn render_table(vs_id: Mutable<u32>, form_rendered: Mutable<bool>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_table(vs_id: Mutable<u32>, form_rendered: Mutable<bool>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .children([
                 html!("div", {
@@ -601,7 +601,7 @@ impl VitalSignDataCpn {
         }
     }
 
-    fn render_range_button(page: Rc<Self>, days: u64, label: &str) -> Dom {
+    pub fn render_range_button(page: Rc<Self>, days: u64, label: &str) -> Dom {
         html!("button", {
             .attr("type", "button")
             .class(class::BTN_L)
@@ -614,7 +614,7 @@ impl VitalSignDataCpn {
         })
     }
 
-    fn vs_mode_radio(page: Rc<Self>) -> Dom {
+    pub fn vs_mode_radio(page: Rc<Self>) -> Dom {
         html!("div", {
             .class(class::INPUT_GROUP)
             .attr("role","group")

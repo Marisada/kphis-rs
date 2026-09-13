@@ -185,7 +185,7 @@ impl PreOrderType {
         )
     }
 
-    fn render(&self, modal: Rc<PreOrderSelect>, app: Rc<App>) -> Dom {
+    pub fn render(&self, modal: Rc<PreOrderSelect>, app: Rc<App>) -> Dom {
         let (hn, order_doctor) = match modal.preorder_type.get_cloned() {
             PreOrderType::PreOrder(hn) => (Some(hn), None),
             PreOrderType::Template => (None, app.user.lock_ref().as_ref().map(|client| client.user.doctorcode.get_cloned())),
