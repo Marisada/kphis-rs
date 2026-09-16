@@ -1,6 +1,6 @@
 // FOR EXPERIMENT ONLY
 
-use dominator::{html, Dom};
+use dominator::{Dom, html};
 use std::{rc::Rc, time::Duration};
 use wasm_bindgen::JsValue;
 use wasm_bindgen_futures::JsFuture;
@@ -17,11 +17,7 @@ fn new_app() -> Rc<App> {
 }
 
 pub async fn replace_body(dom: Dom) {
-    dominator::replace_dom(
-        &dominator::body(),
-        &dominator::body().first_child().unwrap(),
-        dom,
-    );
+    dominator::replace_dom(&dominator::body(), &dominator::body().first_child().unwrap(), dom);
 }
 
 pub async fn wait(millis: u64) {
@@ -38,11 +34,11 @@ pub async fn wait(millis: u64) {
 
 #[wasm_bindgen_test]
 async fn test_tools() {
-    // any log not show 
+    // any log not show
     log::error!("ErRoR");
 
     // // assert will show assertion and backtrace
-    //assert_eq!(1,2);    
+    //assert_eq!(1,2);
 
     let hello_dom = html!("div", {
         // // rust panic will show panic message and backtrace
@@ -61,7 +57,8 @@ async fn test_tools() {
             // browser result = ok: show console.error = GET http://127.0.0.1:8000/api/user 404 (Not Found)
             rendered_page,
         ])
-    })).await;
+    }))
+    .await;
 
     // loop next tick to reach 1 second (also try 60 seconds, the same result)
     // still not show error in headless mode (result = ok)

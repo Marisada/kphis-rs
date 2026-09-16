@@ -4,7 +4,6 @@
     "id": "RUSTY-KPHIS",
     "start_url": "/",
     "scope": "/",
-    "display_override": ["fullscreen", "window-controls-overlay"],
     "display": "standalone",
     "background_color": "#222",
     "theme_color": "#222",
@@ -15,14 +14,14 @@
     "screenshots": [
         {
             "src": "/statics/screenshots/patient-list-wide.png",
-            "sizes": "1339x795",
+            "sizes": "1337x795",
             "type": "image/png",
             "form_factor": "wide",
             "label": "Application"
         },
         {
             "src": "/statics/screenshots/report.png",
-            "sizes": "1018x852",
+            "sizes": "1337x795",
             "type": "image/png",
             "form_factor": "wide",
             "label": "Application"

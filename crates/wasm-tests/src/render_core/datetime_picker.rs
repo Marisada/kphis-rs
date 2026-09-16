@@ -15,11 +15,7 @@ use kphis_ui_core::datetime_pickers::picker::create_dialog_title_text;
 wasm_bindgen_test::wasm_bindgen_test_configure!(run_in_browser);
 
 pub async fn replace_body(dom: Dom) {
-    dominator::replace_dom(
-        &dominator::body(),
-        &dominator::body().first_child().unwrap(),
-        dom,
-    );
+    dominator::replace_dom(&dominator::body(), &dominator::body().first_child().unwrap(), dom);
     // move to next tick
     JsFuture::from(js_sys::Promise::resolve(&JsValue::null())).await.unwrap();
 }

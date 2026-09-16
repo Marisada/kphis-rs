@@ -30,3 +30,11 @@ async fn test_opd_er_main_page_other() {
     let dom = kphis_ui_page::opd_er_main::OpdErMainPage::render(page, app);
     replace_body(dom).await;
 }
+
+#[wasm_bindgen_test]
+async fn test_opd_er_main_page_tabs() {
+    let app = new_app();
+    let page = kphis_ui_page::opd_er_main::OpdErMainPage::new(String::from("nurse"), 0, kphis_model::tab::Tab::Order, 1);
+    let dom = kphis_ui_page::opd_er_main::OpdErMainPage::render_tabs(page, app);
+    replace_body(dom).await;
+}

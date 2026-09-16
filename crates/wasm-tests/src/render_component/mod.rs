@@ -42,11 +42,7 @@ pub fn new_app() -> Rc<App> {
 }
 
 pub async fn replace_body(dom: Dom) {
-    dominator::replace_dom(
-        &dominator::body(),
-        &dominator::body().first_child().unwrap(),
-        dom,
-    );
+    dominator::replace_dom(&dominator::body(), &dominator::body().first_child().unwrap(), dom);
     // move to next tick
     JsFuture::from(js_sys::Promise::resolve(&JsValue::null())).await.unwrap();
 }
@@ -129,25 +125,57 @@ async fn test_index_plan_cpn_other() {
 #[wasm_bindgen_test]
 async fn test_index_plan_cpn_plan_doctor() {
     let app = new_app();
-    let dom = kphis_ui_component::index_plan::render_index_plan(Rc::new(kphis_model::order::OrderItem::demo()), Mutable::new(None), Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))), Mutable::new(String::from("doctor")), Mutable::new(false), None, app);
+    let dom = kphis_ui_component::index_plan::render_index_plan(
+        Rc::new(kphis_model::order::OrderItem::demo()),
+        Mutable::new(None),
+        Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))),
+        Mutable::new(String::from("doctor")),
+        Mutable::new(false),
+        None,
+        app,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_index_plan_cpn_plan_nurse() {
     let app = new_app();
-    let dom = kphis_ui_component::index_plan::render_index_plan(Rc::new(kphis_model::order::OrderItem::demo()), Mutable::new(None), Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))), Mutable::new(String::from("nurse")), Mutable::new(false), None, app);
+    let dom = kphis_ui_component::index_plan::render_index_plan(
+        Rc::new(kphis_model::order::OrderItem::demo()),
+        Mutable::new(None),
+        Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(false),
+        None,
+        app,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_index_plan_cpn_plan_pharmacist() {
     let app = new_app();
-    let dom = kphis_ui_component::index_plan::render_index_plan(Rc::new(kphis_model::order::OrderItem::demo()), Mutable::new(None), Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))), Mutable::new(String::from("pharmacist")), Mutable::new(false), None, app);
+    let dom = kphis_ui_component::index_plan::render_index_plan(
+        Rc::new(kphis_model::order::OrderItem::demo()),
+        Mutable::new(None),
+        Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))),
+        Mutable::new(String::from("pharmacist")),
+        Mutable::new(false),
+        None,
+        app,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_index_plan_cpn_plan_other() {
     let app = new_app();
-    let dom = kphis_ui_component::index_plan::render_index_plan(Rc::new(kphis_model::order::OrderItem::demo()), Mutable::new(None), Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))), Mutable::new(String::from("other")), Mutable::new(false), None, app);
+    let dom = kphis_ui_component::index_plan::render_index_plan(
+        Rc::new(kphis_model::order::OrderItem::demo()),
+        Mutable::new(None),
+        Some(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo())))),
+        Mutable::new(String::from("other")),
+        Mutable::new(false),
+        None,
+        app,
+    );
     replace_body(dom).await;
 }
 
@@ -213,14 +241,24 @@ async fn test_ipd_pre_order_cpn_progress_cont() {
 #[wasm_bindgen_test]
 async fn test_lab_cpn() {
     let app = new_app();
-    let cpn = kphis_ui_component::lab::LabCpn::new(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("0001234")), Mutable::new(String::from("660001234")), None);
+    let cpn = kphis_ui_component::lab::LabCpn::new(
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("0001234")),
+        Mutable::new(String::from("660001234")),
+        None,
+    );
     let dom = kphis_ui_component::lab::LabCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_lab_cpn_detail() {
     let app = new_app();
-    let cpn = kphis_ui_component::lab::LabCpn::new(Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("0001234")), Mutable::new(String::from("660001234")), None);
+    let cpn = kphis_ui_component::lab::LabCpn::new(
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("0001234")),
+        Mutable::new(String::from("660001234")),
+        None,
+    );
     let dom = kphis_ui_component::lab::LabCpn::render_detail("1", Rc::new(kphis_model::lab::LabHead::demo()), cpn, app);
     replace_body(dom).await;
 }
@@ -306,84 +344,180 @@ async fn test_opd_er_medical_history_cpn() {
 #[wasm_bindgen_test]
 async fn test_order_cpn_ipd_doctor() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("doctor")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("doctor")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_ipd_nurse() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("nurse")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_ipd_pharmacist() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("pharmacist")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("pharmacist")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_ipd_other() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("other")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("other")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_opd_er_doctor() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(false, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("doctor")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        false,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("doctor")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_opd_er_nurse() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(false, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("nurse")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        false,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_opd_er_pharmacist() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(false, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("pharmacist")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        false,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("pharmacist")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_opd_er_other() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(false, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("other")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        false,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("other")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_order_oneday() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("nurse")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render_order("1", Rc::new(kphis_model::order::Order::demo()), true, cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_order_cont() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("nurse")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render_order("1", Rc::new(kphis_model::order::Order::demo()), false, cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_order_prev_oneday() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("nurse")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render_previous_order(&kphis_model::order::OrderItem::demo(), kphis_ui_component::modal::index_plan_action_form::OrderType::OneDay, cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_order_prev_cont() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("nurse")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render_previous_order(&kphis_model::order::OrderItem::demo(), kphis_ui_component::modal::index_plan_action_form::OrderType::Continuous, cpn, app);
     replace_body(dom).await;
 }
@@ -396,7 +530,15 @@ async fn test_order_cpn_order_medrec() {
 #[wasm_bindgen_test]
 async fn test_order_cpn_progress() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::OrderCpn::new(true, Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(String::from("nurse")), Mutable::new(String::from("N")), Mutable::new(String::new()), Mutable::new(1), app.clone());
+    let cpn = kphis_ui_component::order::OrderCpn::new(
+        true,
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(String::from("nurse")),
+        Mutable::new(String::from("N")),
+        Mutable::new(String::new()),
+        Mutable::new(1),
+        app.clone(),
+    );
     let dom = kphis_ui_component::order::OrderCpn::render_progress_note("1", Rc::new(kphis_model::progress_note::ProgressNote::demo()), cpn, app);
     replace_body(dom).await;
 }
@@ -408,15 +550,47 @@ async fn test_order_cpn_opdmed() {
 #[wasm_bindgen_test]
 async fn test_order_cpn_textarea() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::InsertTextAreaButton::from_button("med", kphis_model::order::Button {is_new: true, separator: String::from(", "), word: String::from("HCT"), minus_from_end: 0, id: Some(String::from("1234"))});
-    let dom = kphis_ui_component::order::InsertTextAreaButton::render(Rc::new(cpn), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]), Mutable::new(Some(1)), Mutable::new(false), app);
+    let cpn = kphis_ui_component::order::InsertTextAreaButton::from_button(
+        "med",
+        kphis_model::order::Button {
+            is_new: true,
+            separator: String::from(", "),
+            word: String::from("HCT"),
+            minus_from_end: 0,
+            id: Some(String::from("1234")),
+        },
+    );
+    let dom = kphis_ui_component::order::InsertTextAreaButton::render(
+        Rc::new(cpn),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+        Mutable::new(Some(1)),
+        Mutable::new(false),
+        app,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_order_cpn_textarea_adder() {
     let app = new_app();
-    let cpn = kphis_ui_component::order::InsertTextAreaButton::from_button("med", kphis_model::order::Button {is_new: true, separator: String::from(", "), word: String::from("HCT"), minus_from_end: 0, id: Some(String::from("1234"))});
-    let dom = kphis_ui_component::order::InsertTextAreaButton::render_maybe_adder(Rc::new(cpn), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]), Mutable::new(Some(1)), Mutable::new(false), Some(1), app);
+    let cpn = kphis_ui_component::order::InsertTextAreaButton::from_button(
+        "med",
+        kphis_model::order::Button {
+            is_new: true,
+            separator: String::from(", "),
+            word: String::from("HCT"),
+            minus_from_end: 0,
+            id: Some(String::from("1234")),
+        },
+    );
+    let dom = kphis_ui_component::order::InsertTextAreaButton::render_maybe_adder(
+        Rc::new(cpn),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+        Mutable::new(Some(1)),
+        Mutable::new(false),
+        Some(1),
+        app,
+    );
     replace_body(dom).await;
 }
 
@@ -467,14 +641,28 @@ async fn test_show_patient_main_cpn_vn_compact() {
 async fn test_show_patient_main_cpn_info() {
     let app = new_app();
     let cpn = kphis_ui_component::show_patient_main::ShowPatientMainCpn::new_with_an(String::from("660001234"));
-    let dom = kphis_ui_component::show_patient_main::render_patient_info(false, Rc::new(kphis_model::patient_info::PatientInfo::demo()), Some(kphis_ui_component::show_patient_main::ShowPatientMainCpn::render_allergy(cpn.clone(), app.clone())), Some(cpn), false, app);
+    let dom = kphis_ui_component::show_patient_main::render_patient_info(
+        false,
+        Rc::new(kphis_model::patient_info::PatientInfo::demo()),
+        Some(kphis_ui_component::show_patient_main::ShowPatientMainCpn::render_allergy(cpn.clone(), app.clone())),
+        Some(cpn),
+        false,
+        app,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_show_patient_main_cpn_info_mini() {
     let app = new_app();
     let cpn = kphis_ui_component::show_patient_main::ShowPatientMainCpn::new_with_an(String::from("660001234"));
-    let dom = kphis_ui_component::show_patient_main::render_patient_info(false, Rc::new(kphis_model::patient_info::PatientInfo::demo()), Some(kphis_ui_component::show_patient_main::ShowPatientMainCpn::render_allergy(cpn.clone(), app.clone())), Some(cpn), true, app);
+    let dom = kphis_ui_component::show_patient_main::render_patient_info(
+        false,
+        Rc::new(kphis_model::patient_info::PatientInfo::demo()),
+        Some(kphis_ui_component::show_patient_main::ShowPatientMainCpn::render_allergy(cpn.clone(), app.clone())),
+        Some(cpn),
+        true,
+        app,
+    );
     replace_body(dom).await;
 }
 
@@ -495,7 +683,12 @@ async fn test_summary_note_cpn_pre() {
 #[wasm_bindgen_test]
 async fn test_summary_note_cpn_lab() {
     let app = new_app();
-    let dom = kphis_ui_component::summary_note::render_lab_alert(MutableVec::new_with_values(vec![Rc::new(kphis_model::ipd::summary::LabAlertData::demo())]), Mutable::new(String::from("0001234")), Mutable::new(None), app);
+    let dom = kphis_ui_component::summary_note::render_lab_alert(
+        MutableVec::new_with_values(vec![Rc::new(kphis_model::ipd::summary::LabAlertData::demo())]),
+        Mutable::new(String::from("0001234")),
+        Mutable::new(None),
+        app,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]

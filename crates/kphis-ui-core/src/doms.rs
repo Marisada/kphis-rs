@@ -1632,7 +1632,7 @@ where
                     .class("nice-select-search-box")
                     .child(html!("input" => HtmlInputElement, {
                         .attr("type", "text")
-                        .attr("id", input_id)
+                        .apply_if(!input_id.is_empty(), |d| d.attr("id", input_id))
                         .class("nice-select-search")
                         .attr("placeholder", "ค้นหา...")
                         .attr("title", "search")

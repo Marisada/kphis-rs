@@ -536,7 +536,7 @@ impl IpdSearchPatientNursePage {
     }
 }
 
-fn render_card(row: Rc<IpdSearchPatientNurseResponse>, app: Rc<App>) -> Dom {
+pub fn render_card(row: Rc<IpdSearchPatientNurseResponse>, app: Rc<App>) -> Dom {
     let fcnote_patient_types_select_options = app.app_asset.lock_ref().as_ref().map(|asset| asset.fcnote_patient_type_select_options.clone()).unwrap_or_default();
 
     let age_y = row.age_y.unwrap_or_default();
@@ -869,7 +869,7 @@ fn render_card(row: Rc<IpdSearchPatientNurseResponse>, app: Rc<App>) -> Dom {
     })
 }
 
-fn render_table(i: usize, row: Rc<IpdSearchPatientNurseResponse>, app: Rc<App>) -> Dom {
+pub fn render_table(i: usize, row: Rc<IpdSearchPatientNurseResponse>, app: Rc<App>) -> Dom {
     let fcnote_patient_types_select_options = app.app_asset.lock_ref().as_ref().map(|asset| asset.fcnote_patient_type_select_options.clone()).unwrap_or_default();
 
     let age_y = row.age_y.unwrap_or_default();

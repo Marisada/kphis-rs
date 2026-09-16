@@ -69,25 +69,57 @@ async fn test_under_box() {
 
 #[wasm_bindgen_test]
 async fn test_datetime_picker() {
-    let dom = kphis_ui_core::doms::datetime_picker(Mutable::new(String::from("2023-12-31T23:59:59")), Mutable::new(false), Mutable::new(false).signal(), |d| d, |d| d, |d| d, |s| s, Mutable::new(None).signal_cloned());
+    let dom = kphis_ui_core::doms::datetime_picker(
+        Mutable::new(String::from("2023-12-31T23:59:59")),
+        Mutable::new(false),
+        Mutable::new(false).signal(),
+        |d| d,
+        |d| d,
+        |d| d,
+        |s| s,
+        Mutable::new(None).signal_cloned(),
+    );
     replace_body(dom).await;
 }
 
 #[wasm_bindgen_test]
 async fn test_date_picker() {
-    let dom = kphis_ui_core::doms::date_picker(Mutable::new(String::from("2023-12-31")), Mutable::new(false), Mutable::new(false).signal(), Some(Mutable::new(String::from("23:59:59"))), |d| d, |d| d, |d| d, |s| s, Mutable::new(None).signal_cloned());
+    let dom = kphis_ui_core::doms::date_picker(
+        Mutable::new(String::from("2023-12-31")),
+        Mutable::new(false),
+        Mutable::new(false).signal(),
+        Some(Mutable::new(String::from("23:59:59"))),
+        |d| d,
+        |d| d,
+        |d| d,
+        |s| s,
+        Mutable::new(None).signal_cloned(),
+    );
     replace_body(dom).await;
 }
 
 #[wasm_bindgen_test]
 async fn test_time_picker() {
-    let dom = kphis_ui_core::doms::time_picker(Mutable::new(String::from("23:59:59")), Mutable::new(false), Mutable::new(false).signal(), Some(Mutable::new(String::from("2023-12-31"))), |d| d, |d| d, |d| d, |s| s, Mutable::new(None).signal_cloned());
+    let dom = kphis_ui_core::doms::time_picker(
+        Mutable::new(String::from("23:59:59")),
+        Mutable::new(false),
+        Mutable::new(false).signal(),
+        Some(Mutable::new(String::from("2023-12-31"))),
+        |d| d,
+        |d| d,
+        |d| d,
+        |s| s,
+        Mutable::new(None).signal_cloned(),
+    );
     replace_body(dom).await;
 }
 
 #[wasm_bindgen_test]
 async fn test_antibiogram_dropdown() {
-    let dom = kphis_ui_core::doms::antibiogram_dropdown(&[Rc::new(kphis_model::antibiogram::Antibiograms {label: String::from("/"), url: String::from("ATB")})]);
+    let dom = kphis_ui_core::doms::antibiogram_dropdown(&[Rc::new(kphis_model::antibiogram::Antibiograms {
+        label: String::from("/"),
+        url: String::from("ATB"),
+    })]);
     replace_body(dom).await;
 }
 
@@ -299,7 +331,14 @@ async fn test_radio_toggle_texts_container() {
 
 #[wasm_bindgen_test]
 async fn test_radio_binding_toggle_texts_container() {
-    let dom = kphis_ui_core::doms::radio_binding_toggle_texts_container(Mutable::new(String::from("1")), vec![Mutable::new(String::from("text"))], vec![Mutable::new(String::from("text"))], Mutable::new(false), "id", "1");
+    let dom = kphis_ui_core::doms::radio_binding_toggle_texts_container(
+        Mutable::new(String::from("1")),
+        vec![Mutable::new(String::from("text"))],
+        vec![Mutable::new(String::from("text"))],
+        Mutable::new(false),
+        "id",
+        "1",
+    );
     replace_body(dom).await;
 }
 
@@ -347,7 +386,15 @@ async fn test_checkbox_binding_toggle_texts_container() {
 
 #[wasm_bindgen_test]
 async fn test_checkbox_binding_toggle_texts_disable_by_not_container() {
-    let dom = kphis_ui_core::doms::checkbox_binding_toggle_texts_disable_by_not_container(Mutable::new(String::from("1")), vec![Mutable::new(String::from("text"))], vec![Mutable::new(String::from("text"))], Mutable::new(String::from("2")), "2", Mutable::new(false), "id");
+    let dom = kphis_ui_core::doms::checkbox_binding_toggle_texts_disable_by_not_container(
+        Mutable::new(String::from("1")),
+        vec![Mutable::new(String::from("text"))],
+        vec![Mutable::new(String::from("text"))],
+        Mutable::new(String::from("2")),
+        "2",
+        Mutable::new(false),
+        "id",
+    );
     replace_body(dom).await;
 }
 
@@ -384,7 +431,11 @@ async fn test_textarea_disable_by_not_container() {
 #[wasm_bindgen_test]
 async fn test_render_avatar() {
     let app_state = AppState::new_from_local_storage("/");
-    let dom = kphis_ui_core::doms::render_avatar(Rc::new(kphis_model::avatar::AvatarEnum::Ipd(kphis_model::avatar::AvatarWard::demo())), Mutable::new(Some(kphis_model::app::VisitTypeId::Ipd(String::from("660001234")))), app_state);
+    let dom = kphis_ui_core::doms::render_avatar(
+        Rc::new(kphis_model::avatar::AvatarEnum::Ipd(kphis_model::avatar::AvatarWard::demo())),
+        Mutable::new(Some(kphis_model::app::VisitTypeId::Ipd(String::from("660001234")))),
+        app_state,
+    );
     replace_body(dom).await;
 }
 
@@ -402,12 +453,30 @@ async fn test_td_text_value_u8_opt_match() {
 
 #[wasm_bindgen_test]
 async fn test_seelct_box() {
-    let dom = kphis_ui_core::doms::select_box("id", Some("ทั้งหมด"), false, Mutable::new(String::from("1")), Mutable::new(false), |d| d.class("ms-1"), || {}, vec![kphis_model::select_utils::SelectOption::demo()]);
+    let dom = kphis_ui_core::doms::select_box(
+        "id",
+        Some("ทั้งหมด"),
+        false,
+        Mutable::new(String::from("1")),
+        Mutable::new(false),
+        |d| d.class("ms-1"),
+        || {},
+        vec![kphis_model::select_utils::SelectOption::demo()],
+    );
     replace_body(dom).await;
 }
 
 #[wasm_bindgen_test]
 async fn test_seelct_box_multi() {
-    let dom = kphis_ui_core::doms::select_box("id", Some("ทั้งหมด"), true, Mutable::new(String::from("1")), Mutable::new(false), |d| d.class("ms-1"), || {}, vec![kphis_model::select_utils::SelectOption::demo()]);
+    let dom = kphis_ui_core::doms::select_box(
+        "id",
+        Some("ทั้งหมด"),
+        true,
+        Mutable::new(String::from("1")),
+        Mutable::new(false),
+        |d| d.class("ms-1"),
+        || {},
+        vec![kphis_model::select_utils::SelectOption::demo()],
+    );
     replace_body(dom).await;
 }

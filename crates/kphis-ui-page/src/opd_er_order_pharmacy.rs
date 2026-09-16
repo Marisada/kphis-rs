@@ -350,7 +350,7 @@ fn submit(page: Rc<OpdErOrderPharmacyPage>, app: Rc<App>) {
     );
 }
 
-fn render_order_table(source: MutableVec<Rc<OpdErOrderPharmacy>>, label: &str, app: Rc<App>) -> Dom {
+pub fn render_order_table(source: MutableVec<Rc<OpdErOrderPharmacy>>, label: &str, app: Rc<App>) -> Dom {
     html!("div", {
         .children([
             html!("hr"),

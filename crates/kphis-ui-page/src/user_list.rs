@@ -426,7 +426,7 @@ impl UserListPage {
         })
     }
 
-    fn render_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_user_manage_modal.clone(), app))
@@ -665,7 +665,7 @@ impl UserListPage {
         }))
     }
 
-    fn render_li(role: &Rc<Role>, page: Rc<Self>) -> Vec<Dom> {
+    pub fn render_li(role: &Rc<Role>, page: Rc<Self>) -> Vec<Dom> {
         vec![
             html!("input" => HtmlInputElement, {
                 .attr("type", "checkbox")
@@ -697,7 +697,7 @@ impl UserListPage {
         ]
     }
 
-    fn render_result(i: usize, row: Rc<UserRole>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_result(i: usize, row: Rc<UserRole>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let (roles, roles_desc): (Vec<String>, Vec<String>) = row
             .role
             .as_ref()

@@ -25,3 +25,12 @@ pub struct SelectOption {
     #[Demo(value = r#"String::from("Item1")"#)]
     pub value: String,
 }
+
+impl std::convert::From<&ColorSelectOption> for SelectOption {
+    fn from(item: &ColorSelectOption) -> Self {
+        Self {
+            key: item.key.to_owned(),
+            value: item.value.to_owned(),
+        }
+    }
+}

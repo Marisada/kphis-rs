@@ -11,6 +11,7 @@
 > - Moved logging process from handler to middleware layer
 > - Changed ward select box into multiple selector
 > - Added I/O selector to `progress-note`, `index-note-form` and `refer-out`
+> - Fixed `report-designer` input with multiple select box
 
 ## 0.4.20 (2026-08-02)
 > - *(Config)* Added `real-ip-header` to get real client IP address behind reverse proxy

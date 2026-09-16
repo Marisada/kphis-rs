@@ -483,7 +483,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_info_patient(info: &Rc<PrescriptionInfo>) -> Dom {
+    pub fn render_info_patient(info: &Rc<PrescriptionInfo>) -> Dom {
         let age_y = info.age_y.unwrap_or_default();
         let age_m = info.age_m.unwrap_or_default();
         let age_d = info.age_d.unwrap_or_default();
@@ -555,7 +555,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_info_allergy(info: &Rc<PrescriptionInfo>) -> Dom {
+    pub fn render_info_allergy(info: &Rc<PrescriptionInfo>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -577,7 +577,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_info_note(info: &Rc<PrescriptionInfo>) -> Dom {
+    pub fn render_info_note(info: &Rc<PrescriptionInfo>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -598,7 +598,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_visit_hx(visit: &Rc<PrescriptionVn>, page: Rc<Self>) -> Dom {
+    pub fn render_visit_hx(visit: &Rc<PrescriptionVn>, page: Rc<Self>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -705,7 +705,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_visit_drugs(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_drugs(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -762,7 +762,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_drug_interaction(visit: &Rc<PrescriptionVn>) -> Dom {
+    pub fn render_drug_interaction(visit: &Rc<PrescriptionVn>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -804,7 +804,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_labs(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_labs(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1060,7 +1060,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_visit_message(visit: &Rc<PrescriptionVn>) -> Dom {
+    pub fn render_visit_message(visit: &Rc<PrescriptionVn>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1083,7 +1083,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_visit_action(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_action(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let total_minutes_opt = if let (Some(visit_datetime), Some(pharmacist_done_time)) = (datetime_from_opt(visit.vstdate, visit.vsttime), visit.pharmacist_done_time) {
             Some((pharmacist_done_time - visit_datetime).whole_minutes())
         } else {
@@ -1305,7 +1305,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_visit_postal(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_postal(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1387,7 +1387,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_visit_telemed(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_telemed(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1567,7 +1567,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_pharmacy_care(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_pharmacy_care(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1649,7 +1649,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    fn render_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_last_drug_modal.clone(), app))

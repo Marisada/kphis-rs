@@ -38,8 +38,8 @@ mod summary;
 
 mod user_list;
 
-mod vital_sign;
 mod unauthorized;
+mod vital_sign;
 
 use dominator::Dom;
 use futures_signals::{signal::Mutable, signal_vec::MutableVec};
@@ -76,11 +76,7 @@ pub fn new_app() -> Rc<App> {
 }
 
 pub async fn replace_body(dom: Dom) {
-    dominator::replace_dom(
-        &dominator::body(),
-        &dominator::body().first_child().unwrap(),
-        dom,
-    );
+    dominator::replace_dom(&dominator::body(), &dominator::body().first_child().unwrap(), dom);
     // move to next tick
     JsFuture::from(js_sys::Promise::resolve(&JsValue::null())).await.unwrap();
 }

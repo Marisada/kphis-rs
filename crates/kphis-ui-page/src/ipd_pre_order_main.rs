@@ -495,7 +495,7 @@ impl IpdPreOrderPage {
         })
     }
 
-    fn render_content(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_content(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class("container-fluid")
             .attr("id", "ipd-pre-order-main")

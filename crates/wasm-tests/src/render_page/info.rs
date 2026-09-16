@@ -13,7 +13,11 @@ async fn test_info_page() {
 
 #[wasm_bindgen_test]
 async fn test_info_page_announcement() {
-    let page = kphis_ui_page::info::Announcement {title: String::from("title"), date: date!(2023-12-31), items: vec![String::from("item")]};
+    let page = kphis_ui_page::info::Announcement {
+        title: String::from("title"),
+        date: date!(2023 - 12 - 31),
+        items: vec![String::from("item")],
+    };
     let dom = kphis_ui_page::info::Announcement::render(&page);
     replace_body(dom).await;
 }

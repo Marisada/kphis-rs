@@ -911,7 +911,7 @@ impl SettingTemplateNurseNotePage {
         })
     }
 
-    fn render_smp_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_smp_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_smp_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_smp_modal.clone(), app))
@@ -1176,7 +1176,7 @@ impl SettingTemplateNurseNotePage {
         })
     }
 
-    fn render_sub_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_sub_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_sub_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_sub_modal.clone(), app))
@@ -1413,7 +1413,7 @@ impl SettingTemplateNurseNotePage {
         })
     }
 
-    fn render_focus_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_focus_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_focus_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_focus_modal.clone(), app))
@@ -1650,7 +1650,7 @@ impl SettingTemplateNurseNotePage {
         })
     }
 
-    fn render_goal_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_goal_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_goal_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_goal_modal.clone(), app))
@@ -1890,7 +1890,7 @@ impl SettingTemplateNurseNotePage {
         })
     }
 
-    fn render_intvt_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_intvt_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_intvt_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_intvt_modal.clone(), app))
@@ -2104,7 +2104,7 @@ impl SettingTemplateNurseNotePage {
         })
     }
 
-    fn render_dlc_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_dlc_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_dlc_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_dlc_modal.clone(), app))

@@ -30,3 +30,11 @@ async fn test_ipd_main_page_other() {
     let dom = kphis_ui_page::ipd_main::IpdMainPage::render(page, app);
     replace_body(dom).await;
 }
+
+#[wasm_bindgen_test]
+async fn test_ipd_main_page_tabs() {
+    let app = new_app();
+    let page = kphis_ui_page::ipd_main::IpdMainPage::new(String::from("nurse"), String::from("660001234"), kphis_model::tab::Tab::Order, String::from("order"), 1);
+    let dom = kphis_ui_page::ipd_main::IpdMainPage::render_tabs(page, app);
+    replace_body(dom).await;
+}

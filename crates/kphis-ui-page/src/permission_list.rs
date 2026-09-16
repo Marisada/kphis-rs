@@ -673,7 +673,7 @@ impl PermissionListPage {
             })))
     }
 
-    fn render_li(role: Rc<RolePermissionList>, page: Rc<Self>, app: Rc<App>) -> Vec<Dom> {
+    pub fn render_li(role: Rc<RolePermissionList>, page: Rc<Self>, app: Rc<App>) -> Vec<Dom> {
         vec![
             html!("span", {
                 .style("cursor","pointer")
@@ -693,7 +693,7 @@ impl PermissionListPage {
         ]
     }
 
-    fn render_parent_view(i: usize, role: Rc<RolePermissionList>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_parent_view(i: usize, role: Rc<RolePermissionList>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("tr", {
             .style("cursor","pointer")
             .children([
@@ -707,7 +707,7 @@ impl PermissionListPage {
         })
     }
 
-    fn render_table_view(i: usize, columns_mutable: Mutable<u8>, role: Rc<RolePermissionList>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_table_view(i: usize, columns_mutable: Mutable<u8>, role: Rc<RolePermissionList>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let perms_dom = role.permissions.as_ref().map(|perms| perms.iter().map(|perm| html!("li", {.text(perm.str())})).collect::<Vec<Dom>>()).unwrap_or_default();
 
         html!("tr", {
@@ -730,7 +730,7 @@ impl PermissionListPage {
         })
     }
 
-    fn render_manage_modal(page: Rc<Self>, display: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render_manage_modal(page: Rc<Self>, display: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_manage_modal_dialog(page, display.clone(), app.clone()))
             .apply(modal_show_bool_mixins(display, app))
@@ -962,7 +962,7 @@ impl PermissionListPage {
         })
     }
 
-    fn render_delete_modal(page: Rc<Self>, display: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render_delete_modal(page: Rc<Self>, display: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_delete_modal_dialog(page, display.clone(), app.clone()))
             .apply(modal_show_bool_mixins(display, app))

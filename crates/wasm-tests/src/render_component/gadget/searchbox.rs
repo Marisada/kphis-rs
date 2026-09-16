@@ -41,7 +41,20 @@ async fn test_dx_searchbox_cpn_search_head() {
 #[wasm_bindgen_test]
 async fn test_dx_searchbox_cpn_search_result() {
     let cpn = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::new(false, true, Mutable::new(Some(Rc::new(kphis_model::search::searchbox::Icd10::demo()))), kphis_ui_app::DaggerAsteriskState::new());
-    let dom = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::render_search_result((Arc::new(kphis_drg_worker::drg::model::I10vx {code: String::from("A09"), is_valid: true, desc: String::from("desc"), is_tm: true}), 1.0, 1), cpn, None);
+    let dom = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::render_search_result(
+        (
+            Arc::new(kphis_drg_worker::drg::model::I10vx {
+                code: String::from("A09"),
+                is_valid: true,
+                desc: String::from("desc"),
+                is_tm: true,
+            }),
+            1.0,
+            1,
+        ),
+        cpn,
+        None,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
@@ -53,7 +66,22 @@ async fn test_dx_searchbox_cpn_index_header() {
 #[wasm_bindgen_test]
 async fn test_dx_searchbox_cpn_index_result() {
     let cpn = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::new(false, true, Mutable::new(Some(Rc::new(kphis_model::search::searchbox::Icd10::demo()))), kphis_ui_app::DaggerAsteriskState::new());
-    let dom = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::render_index_result(((String::from("txt"), Arc::new(kphis_drg_worker::i10::index::I10Pointer {note: Some(kphis_drg_worker::i10::index::Note::Code(String::from("A09"))), bracket_notes: vec![kphis_drg_worker::i10::index::Note::Code(String::from("A09"))], code: Some(kphis_drg_worker::i10::index::Code::Single(String::from("B52")))})), 1.0, 1), cpn, None);
+    let dom = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::render_index_result(
+        (
+            (
+                String::from("txt"),
+                Arc::new(kphis_drg_worker::i10::index::I10Pointer {
+                    note: Some(kphis_drg_worker::i10::index::Note::Code(String::from("A09"))),
+                    bracket_notes: vec![kphis_drg_worker::i10::index::Note::Code(String::from("A09"))],
+                    code: Some(kphis_drg_worker::i10::index::Code::Single(String::from("B52"))),
+                }),
+            ),
+            1.0,
+            1,
+        ),
+        cpn,
+        None,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
@@ -84,9 +112,38 @@ async fn test_dx_searchbox_cpn_pair_wo() {
 async fn test_dx_searchbox_cpn_i10() {
     let cpn = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::new(false, true, Mutable::new(Some(Rc::new(kphis_model::search::searchbox::Icd10::demo()))), kphis_ui_app::DaggerAsteriskState::new());
     let usage_kind = kphis_drg_worker::i10::claml::UsageKind::Aster;
-    let rubric = kphis_drg_worker::i10::claml::Rubric { kind: kphis_drg_worker::i10::claml::RubricKind::Preferred, text: String::from("text"), usage: Some(usage_kind.clone()), reference: vec![kphis_drg_worker::i10::claml::Reference {label: String::from("A09"), code: Some(String::from("A09")), usage: Some(kphis_drg_worker::i10::claml::UsageKind::Dagger), position: 1}]};
-    let modifier = kphis_drg_worker::i10::claml::ModifierDetail {code: String::from("A09"), subclasses: vec![(String::from(".1"), vec![rubric.clone()])], rubrics: BTreeMap::new()};
-    let detail = kphis_drg_worker::i10::claml::I10Detail {code: String::from("A09"), usage: Some(usage_kind), subclasses: vec![(String::from(".1"), vec![rubric.clone()])], superclass: Some(String::from("A")), modified_by: Some(modifier.clone()), sub_modifier: Some(modifier), r_prefered: vec![rubric], r_definitions: Vec::new(), r_texts: Vec::new(), r_inclusions: Vec::new(), r_exclusions: Vec::new(), r_coding_hints: Vec::new(), r_notes: Vec::new(), r_foot_notes: Vec::new()};
+    let rubric = kphis_drg_worker::i10::claml::Rubric {
+        kind: kphis_drg_worker::i10::claml::RubricKind::Preferred,
+        text: String::from("text"),
+        usage: Some(usage_kind.clone()),
+        reference: vec![kphis_drg_worker::i10::claml::Reference {
+            label: String::from("A09"),
+            code: Some(String::from("A09")),
+            usage: Some(kphis_drg_worker::i10::claml::UsageKind::Dagger),
+            position: 1,
+        }],
+    };
+    let modifier = kphis_drg_worker::i10::claml::ModifierDetail {
+        code: String::from("A09"),
+        subclasses: vec![(String::from(".1"), vec![rubric.clone()])],
+        rubrics: BTreeMap::new(),
+    };
+    let detail = kphis_drg_worker::i10::claml::I10Detail {
+        code: String::from("A09"),
+        usage: Some(usage_kind),
+        subclasses: vec![(String::from(".1"), vec![rubric.clone()])],
+        superclass: Some(String::from("A")),
+        modified_by: Some(modifier.clone()),
+        sub_modifier: Some(modifier),
+        r_prefered: vec![rubric],
+        r_definitions: Vec::new(),
+        r_texts: Vec::new(),
+        r_inclusions: Vec::new(),
+        r_exclusions: Vec::new(),
+        r_coding_hints: Vec::new(),
+        r_notes: Vec::new(),
+        r_foot_notes: Vec::new(),
+    };
     let dom = kphis_ui_component::gadget::searchbox::dx::DxSearchboxCpn::render_i10_detail(Arc::new(detail), cpn);
     replace_body(dom).await;
 }
@@ -130,7 +187,14 @@ async fn test_hosp_searchbox_cpn_savable_em() {
 async fn test_ivfluid_searchbox_cpn() {
     let app = new_app();
     let cpn = kphis_ui_component::gadget::searchbox::ivfluid::IvfluidSearchboxCpn::new();
-    let order_form = kphis_ui_component::order_form::oneday::OneDayForm::new(Some(Rc::new(kphis_model::order::Order::demo())), Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Some(1), String::from("user"), Mutable::new(String::from("doctor")), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]));
+    let order_form = kphis_ui_component::order_form::oneday::OneDayForm::new(
+        Some(Rc::new(kphis_model::order::Order::demo())),
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Some(1),
+        String::from("user"),
+        Mutable::new(String::from("doctor")),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+    );
     let dom = kphis_ui_component::gadget::searchbox::ivfluid::IvfluidSearchboxCpn::render(Some(1), cpn, order_form, app);
     replace_body(dom).await;
 }
@@ -139,7 +203,15 @@ async fn test_ivfluid_searchbox_cpn() {
 async fn test_lab_searchbox_cpn() {
     let app = new_app();
     let cpn = kphis_ui_component::gadget::searchbox::lab::LabSearchboxCpn::new();
-    let dom = kphis_ui_component::gadget::searchbox::lab::LabSearchboxCpn::render(Some(1), cpn, Mutable::new(true), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]), Mutable::new(Some(1)), Mutable::new(false), app);
+    let dom = kphis_ui_component::gadget::searchbox::lab::LabSearchboxCpn::render(
+        Some(1),
+        cpn,
+        Mutable::new(true),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+        Mutable::new(Some(1)),
+        Mutable::new(false),
+        app,
+    );
     replace_body(dom).await;
 }
 
@@ -147,7 +219,14 @@ async fn test_lab_searchbox_cpn() {
 async fn test_med_searchbox_cpn() {
     let app = new_app();
     let cpn = kphis_ui_component::gadget::searchbox::med::MedSearchboxCpn::new(Some(String::from("0001234")), false);
-    let order_form = kphis_ui_component::order_form::oneday::OneDayForm::new(Some(Rc::new(kphis_model::order::Order::demo())), Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Some(1), String::from("user"), Mutable::new(String::from("doctor")), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]));
+    let order_form = kphis_ui_component::order_form::oneday::OneDayForm::new(
+        Some(Rc::new(kphis_model::order::Order::demo())),
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Some(1),
+        String::from("user"),
+        Mutable::new(String::from("doctor")),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+    );
     let dom = kphis_ui_component::gadget::searchbox::med::MedSearchboxCpn::render(Some(1), cpn, order_form, app);
     replace_body(dom).await;
 }
@@ -155,7 +234,14 @@ async fn test_med_searchbox_cpn() {
 async fn test_med_searchbox_cpn_homemed() {
     let app = new_app();
     let cpn = kphis_ui_component::gadget::searchbox::med::MedSearchboxCpn::new(Some(String::from("0001234")), true);
-    let order_form = kphis_ui_component::order_form::oneday::OneDayForm::new(Some(Rc::new(kphis_model::order::Order::demo())), Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Some(1), String::from("user"), Mutable::new(String::from("doctor")), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]));
+    let order_form = kphis_ui_component::order_form::oneday::OneDayForm::new(
+        Some(Rc::new(kphis_model::order::Order::demo())),
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Some(1),
+        String::from("user"),
+        Mutable::new(String::from("doctor")),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+    );
     let dom = kphis_ui_component::gadget::searchbox::med::MedSearchboxCpn::render(Some(1), cpn, order_form, app);
     replace_body(dom).await;
 }
@@ -164,7 +250,15 @@ async fn test_med_searchbox_cpn_homemed() {
 async fn test_opd_visit_searchbox_cpn() {
     let app = new_app();
     let cpn = kphis_ui_component::gadget::searchbox::opd_visit::OpdVisitSearchboxCpn::new();
-    let dom = kphis_ui_component::gadget::searchbox::opd_visit::OpdVisitSearchboxCpn::render(cpn, Mutable::new(true), Mutable::new(String::from("20221231235959")), Mutable::new(String::from("detail")), web_sys::DomRect::new().unwrap(), Mutable::new(false), app);
+    let dom = kphis_ui_component::gadget::searchbox::opd_visit::OpdVisitSearchboxCpn::render(
+        cpn,
+        Mutable::new(true),
+        Mutable::new(String::from("20221231235959")),
+        Mutable::new(String::from("detail")),
+        web_sys::DomRect::new().unwrap(),
+        Mutable::new(false),
+        app,
+    );
     replace_body(dom).await;
 }
 
@@ -172,14 +266,26 @@ async fn test_opd_visit_searchbox_cpn() {
 async fn test_patient_searchbox_cpn() {
     let app = new_app();
     let cpn = kphis_ui_component::gadget::searchbox::patient::PatientSearchboxCpn::new();
-    let dom = kphis_ui_component::gadget::searchbox::patient::PatientSearchboxCpn::render(cpn, Mutable::new(true), Mutable::new(String::from("0001234")), Mutable::new(String::from("user")), web_sys::DomRect::new().unwrap(), Mutable::new(false), app);
+    let dom = kphis_ui_component::gadget::searchbox::patient::PatientSearchboxCpn::render(
+        cpn,
+        Mutable::new(true),
+        Mutable::new(String::from("0001234")),
+        Mutable::new(String::from("user")),
+        web_sys::DomRect::new().unwrap(),
+        Mutable::new(false),
+        app,
+    );
     replace_body(dom).await;
 }
 
 #[wasm_bindgen_test]
 async fn test_proc_searchbox_cpn() {
     let app = new_app();
-    let cpn = kphis_ui_component::gadget::searchbox::proc::ProcSearchboxCpn::new(Mutable::new(Some(Arc::new(kphis_drg_worker::drg::model::I9vx {code: String::from("1234"), is_valid: true, desc: String::from("proc")}))));
+    let cpn = kphis_ui_component::gadget::searchbox::proc::ProcSearchboxCpn::new(Mutable::new(Some(Arc::new(kphis_drg_worker::drg::model::I9vx {
+        code: String::from("1234"),
+        is_valid: true,
+        desc: String::from("proc"),
+    }))));
     let dom = kphis_ui_component::gadget::searchbox::proc::ProcSearchboxCpn::render(cpn, app, Mutable::new(false));
     replace_body(dom).await;
 }
@@ -188,6 +294,14 @@ async fn test_proc_searchbox_cpn() {
 async fn test_xray_searchbox_cpn() {
     let app = new_app();
     let cpn = kphis_ui_component::gadget::searchbox::xray::XraySearchboxCpn::new();
-    let dom = kphis_ui_component::gadget::searchbox::xray::XraySearchboxCpn::render(Some(1), cpn, Mutable::new(false), MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]), Mutable::new(Some(1)), Mutable::new(false), app);
+    let dom = kphis_ui_component::gadget::searchbox::xray::XraySearchboxCpn::render(
+        Some(1),
+        cpn,
+        Mutable::new(false),
+        MutableVec::new_with_values(vec![Rc::new(kphis_ui_component::order::OrderItemMutable::default())]),
+        Mutable::new(Some(1)),
+        Mutable::new(false),
+        app,
+    );
     replace_body(dom).await;
 }

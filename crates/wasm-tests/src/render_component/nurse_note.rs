@@ -45,20 +45,41 @@ async fn test_focus_note_cpn() {
 #[wasm_bindgen_test]
 async fn test_focus_note_row_cpn() {
     let app = new_app();
-    let dom = kphis_ui_component::nurse_note::focus_note_row::render(1, Rc::new((kphis_model::app::VisitTypeId::Ipd(String::from("660001234")), Rc::new(kphis_model::focus_note::FocusNote::demo()))), None, MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]), false, app);
+    let dom = kphis_ui_component::nurse_note::focus_note_row::render(
+        1,
+        Rc::new((kphis_model::app::VisitTypeId::Ipd(String::from("660001234")), Rc::new(kphis_model::focus_note::FocusNote::demo()))),
+        None,
+        MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]),
+        false,
+        app,
+    );
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_focus_note_row_cpn_editable() {
     let app = new_app();
-    let dom = kphis_ui_component::nurse_note::focus_note_row::render(1, Rc::new((kphis_model::app::VisitTypeId::Ipd(String::from("660001234")), Rc::new(kphis_model::focus_note::FocusNote::demo()))), None, MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]), true, app);
+    let dom = kphis_ui_component::nurse_note::focus_note_row::render(
+        1,
+        Rc::new((kphis_model::app::VisitTypeId::Ipd(String::from("660001234")), Rc::new(kphis_model::focus_note::FocusNote::demo()))),
+        None,
+        MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]),
+        true,
+        app,
+    );
     replace_body(dom).await;
 }
 
 #[wasm_bindgen_test]
 async fn test_note_form_cpn() {
     let app = new_app();
-    let cpn = kphis_ui_component::nurse_note::note_form::NurseNoteFormCpn::new(MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]), Mutable::new(vec![kphis_model::ipd::tmp::TmpDlc::demo()]), Mutable::new(false), Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(None), Mutable::new(false));
+    let cpn = kphis_ui_component::nurse_note::note_form::NurseNoteFormCpn::new(
+        MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]),
+        Mutable::new(vec![kphis_model::ipd::tmp::TmpDlc::demo()]),
+        Mutable::new(false),
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(None),
+        Mutable::new(false),
+    );
     let dom = kphis_ui_component::nurse_note::note_form::NurseNoteFormCpn::render(cpn, app);
     replace_body(dom).await;
 }
@@ -66,7 +87,12 @@ async fn test_note_form_cpn() {
 #[wasm_bindgen_test]
 async fn test_note_list_cpn() {
     let app = new_app();
-    let cpn = kphis_ui_component::nurse_note::note_list::NoteListCpn::new(MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]), Mutable::new(false), Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))), Mutable::new(false));
+    let cpn = kphis_ui_component::nurse_note::note_list::NoteListCpn::new(
+        MutableVec::new_with_values(vec![Rc::new(kphis_model::focus_list::FocusList::demo())]),
+        Mutable::new(false),
+        Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
+        Mutable::new(false),
+    );
     let dom = kphis_ui_component::nurse_note::note_list::NoteListCpn::render(cpn, app, None);
     replace_body(dom).await;
 }

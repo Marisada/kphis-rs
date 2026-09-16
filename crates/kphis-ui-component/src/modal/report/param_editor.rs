@@ -11,7 +11,10 @@ use std::{
 use strum::IntoEnumIterator;
 use web_sys::{HtmlInputElement, HtmlSelectElement, HtmlTextAreaElement};
 
-use kphis_model::report::{BasicType, KeyLabel, ReportParam, SystemListType, VarType};
+use kphis_model::{
+    report::{BasicType, ReportParam, SystemListType, VarType},
+    select_utils::SelectOption,
+};
 use kphis_ui_app::App;
 use kphis_ui_core::{class, mixins};
 
@@ -457,7 +460,7 @@ impl ReportParamMutable {
 
     fn from_report_param(item: &ReportParam, app: Rc<App>) -> Rc<Self> {
         let items = if let Some(assets) = &app.state().app_asset.lock_ref().as_ref() {
-            item.ty.get_items(assets).into_iter().map(KeyLabelMutable::from_key_label).collect()
+            item.ty.get_items(assets).into_iter().map(KeyLabelMutable::from_select_option).collect()
         } else {
             Vec::new()
         };
@@ -541,11 +544,11 @@ impl KeyLabelMutable {
         })
     }
 
-    fn from_key_label(item: KeyLabel) -> Rc<Self> {
+    fn from_select_option(item: SelectOption) -> Rc<Self> {
         Rc::new(Self {
             uid: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             key: Mutable::new(item.key),
-            label: Mutable::new(item.label),
+            label: Mutable::new(item.value),
         })
     }
 }

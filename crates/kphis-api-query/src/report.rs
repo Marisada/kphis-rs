@@ -168,7 +168,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Bool(v)).collect()
                         };
@@ -176,7 +176,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Bool(*v)
                         };
@@ -190,7 +190,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -198,7 +198,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -212,7 +212,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -220,7 +220,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -234,7 +234,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -242,7 +242,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -256,7 +256,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -264,7 +264,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -278,7 +278,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -286,7 +286,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -300,7 +300,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -308,7 +308,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -322,7 +322,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -330,7 +330,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -344,7 +344,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::Number((v).into())).collect()
                         };
@@ -352,7 +352,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::Number((*v).into())
                         };
@@ -366,7 +366,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values
                                 .into_iter()
@@ -378,7 +378,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             let json_values = Number::from_f64(*v as f64).ok_or(Source::App.to_error(400, "Infenite or NAN float", "Select RawQuery"))?;
                             Value::Number(json_values)
@@ -393,7 +393,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values
                                 .into_iter()
@@ -405,7 +405,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             let json_values = Number::from_f64(*v as f64).ok_or(Source::App.to_error(400, "Infenite or NAN float", "Select RawQuery"))?;
                             Value::Number(json_values)
@@ -424,7 +424,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values
                                 .into_iter()
@@ -436,7 +436,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             let json_values = Number::from_f64(v.as_f64()).ok_or(Source::App.to_error(400, "Infenite or NAN Decimal", "Select RawQuery"))?;
                             Value::Number(json_values)
@@ -455,7 +455,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::String(v.to_string())).collect()
                         };
@@ -463,7 +463,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::String(v.to_string())
                         };
@@ -481,7 +481,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::String(v.js_string())).collect()
                         };
@@ -489,7 +489,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.js_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::String(v.js_string())
                         };
@@ -507,7 +507,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             values.into_iter().map(|v| Value::String(v.js_string())).collect()
                         };
@@ -515,7 +515,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = values.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.js_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::String(v.js_string())
                         };
@@ -528,7 +528,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                             query = query.bind(v);
                         }
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             id_vec.into_iter().map(|v| Value::String(v.to_string())).collect()
                         };
@@ -536,7 +536,7 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                     } else if let Some(v) = id_vec.first() {
                         query = query.bind(v);
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::String(v.to_string())
                         };
@@ -546,14 +546,14 @@ pub async fn select_raw_query_to_json_string(statement: &str, params: &str, ids:
                 BasicType::Value => {
                     if param.is_array() {
                         let json_values = if is_list {
-                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.label.to_owned()))).collect::<Vec<Value>>()
+                            key_labels.iter().filter_map(|kl| id_vec.contains(&kl.key.as_str()).then(|| Value::String(kl.value.to_owned()))).collect::<Vec<Value>>()
                         } else {
                             id_vec.into_iter().map(|v| Value::String(v.to_string())).collect()
                         };
                         obj.insert(key.to_owned(), Value::Array(json_values));
                     } else if let Some(v) = id_vec.first() {
                         let json_value = if is_list && let Some(key_label) = key_labels.iter().find(|kl| kl.key == v.to_string()) {
-                            Value::String(key_label.label.to_owned())
+                            Value::String(key_label.value.to_owned())
                         } else {
                             Value::String(v.to_string())
                         };

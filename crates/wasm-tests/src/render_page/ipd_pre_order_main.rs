@@ -30,3 +30,11 @@ async fn test_ipd_pre_order_main_page_other() {
     let dom = kphis_ui_page::ipd_pre_order_main::IpdPreOrderPage::render(page, app);
     replace_body(dom).await;
 }
+
+#[wasm_bindgen_test]
+async fn test_ipd_pre_order_main_page_content() {
+    let app = new_app();
+    let page = kphis_ui_page::ipd_pre_order_main::IpdPreOrderPage::new("doctor", 1);
+    let dom = kphis_ui_page::ipd_pre_order_main::IpdPreOrderPage::render_content(page, app);
+    replace_body(dom).await;
+}
