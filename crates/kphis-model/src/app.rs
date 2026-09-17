@@ -77,6 +77,8 @@ pub struct AppState {
     ///   2. `App::logout(app.clone(), true)`, (now only called when `clear cache`)<br>
     /// will `false` manually or after get `AppAsset`
     pub no_cache_mode: Mutable<bool>,
+    /// (ts, (is_success, need_renew_refresh))
+    pub renew_access_token_cache: Mutable<(u64, (bool, bool))>,
     pub use_date_limit: Mutable<bool>,
     pub edit_order: Mutable<Option<Rc<Order>>>,
     pub report_select: Mutable<String>,
@@ -133,6 +135,7 @@ impl AppState {
             user: Mutable::new(None),
 
             no_cache_mode: Mutable::new(true),
+            renew_access_token_cache: Mutable::new((0, (false, false))),
             use_date_limit: Mutable::new(true),
             edit_order: Mutable::new(None),
             report_select: Mutable::new(String::new()),
@@ -202,6 +205,7 @@ impl AppState {
             user: Mutable::new(None),
 
             no_cache_mode: Mutable::new(false),
+            renew_access_token_cache: Mutable::new((0, (false, false))),
             use_date_limit: Mutable::new(true),
             edit_order: Mutable::new(None),
             report_select: Mutable::new(String::new()),
@@ -1152,87 +1156,87 @@ pub struct AppStatus {
 #[derive(Clone, Debug, Demo, Decode, Encode, PartialEq, Serialize, ToSchema)]
 #[schema(example = json!(AppAsset::demo()))]
 pub struct AppAsset {
-    #[Demo(value = r#"vec![ColorSelectOption::demo(String::from("1"), String::from("1"))]"#)]
+    #[Demo(value = r#"vec![ColorSelectOption {key: String::from("1"), value: String::from("1"), color: String::from("red")}]"#)]
     pub fcnote_patient_type_select_options: Vec<ColorSelectOption>,
-    #[Demo(value = r#"vec![ColorSelectOption::demo(String::from("1"), String::from("แดง 1"))]"#)]
+    #[Demo(value = r#"vec![ColorSelectOption {key: String::from("1"), value: String::from("แดง 1"), color: String::from("red")}]"#)]
     pub er_bed_select_options: Vec<ColorSelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("รอตรวจ"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("รอตรวจ")}]"#)]
     pub er_patient_status_select_options: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("กลับบ้าน"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("กลับบ้าน")}]"#)]
     pub er_dch_type_select_options: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("01"), String::from("ตึกชาย"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("01"), value: String::from("ตึกชาย")}]"#)]
     pub ward_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("001"), String::from("Dr.Doctor"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("001"), value: String::from("Dr.Doctor")}]"#)]
     pub doctor_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("001"), String::from("Dr.Doctor"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("001"), value: String::from("Dr.Doctor")}]"#)]
     pub all_doctor_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("01"), String::from("อายุรกรรม"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("01"), value: String::from("อายุรกรรม")}]"#)]
     pub spclty_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("อายุรกรรมชาย"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("อายุรกรรมชาย")}]"#)]
     pub spclty_kphis_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("UCS"), String::from("สิทธิ UC"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("UCS"), value: String::from("สิทธิ UC")}]"#)]
     pub inscl_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("ด่วน"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("ด่วน")}]"#)]
     pub emergency_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Resuscitate"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Resuscitate")}]"#)]
     pub emergency_level_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("ใบ Consult ทั่วไป"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("ใบ Consult ทั่วไป")}]"#)]
     pub consult_type_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("รู้สึกตัวดี"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("รู้สึกตัวดี")}]"#)]
     pub conscious_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("501-1000"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("501-1000")}]"#)]
     pub urine_amount_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("ปัสสาวะ/วัน"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("ปัสสาวะ/วัน")}]"#)]
     pub urine_duration_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("C-Line"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("C-Line")}]"#)]
     pub line_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("React to light"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("React to light")}]"#)]
     pub cha_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("A"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("A")}]"#)]
     pub va_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("1"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("1")}]"#)]
     pub mass_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("I"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("I")}]"#)]
     pub motor_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Canular"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Canular")}]"#)]
     pub o2_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Et-tube"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Et-tube")}]"#)]
     pub tube_select_option: Vec<SelectOption>,
-    // #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Parenteral"))]"#)]
+    // #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Parenteral")}]"#)]
     // pub intake_select_option: Vec<SelectOption>,
-    // #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Drain"))]"#)]
+    // #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Drain")}]"#)]
     // pub output_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("-2"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("-2")}]"#)]
     pub lr_sta_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("R"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("R")}]"#)]
     pub lr_mem_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("0"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("0")}]"#)]
     pub lr_moulding_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("-ve"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("-ve")}]"#)]
     pub dipstick_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("No distress"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("No distress")}]"#)]
     pub breathing_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Alert"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Alert")}]"#)]
     pub avpu_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Well"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Well")}]"#)]
     pub gut_feeling_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("NA"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("NA")}]"#)]
     pub pops_other_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("Pre-contemplation"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("Pre-contemplation")}]"#)]
     pub stage_of_change_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("รับส่งภายในจังหวัด"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("รับส่งภายในจังหวัด")}]"#)]
     pub refer_type_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("รับไว้รักษาต่อ"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("รับไว้รักษาต่อ")}]"#)]
     pub refer_cause_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("ER"), String::from("ER"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("ER"), value: String::from("ER")}]"#)]
     pub refer_point_select_option: Vec<SelectOption>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("ระบุวันหมดอายุของใบส่งตัว"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("ระบุวันหมดอายุของใบส่งตัว")}]"#)]
     pub moph_refer_expire_type_select_option: Vec<SelectOption>,
     // #[Demo(value = "vec![Icd10Keywords::demo()]")]
     // pub icd10_keywords: Vec<Icd10Keywords>,
     // #[Demo(value = "vec![Icd10Keywords::demo()]")]
     // pub icd10_keywords_ext: Vec<Icd10Keywords>,
-    #[Demo(value = r#"vec![SelectOption::demo(String::from("1"), String::from("ใบยินยอม"))]"#)]
+    #[Demo(value = r#"vec![SelectOption {key: String::from("1"), value: String::from("ใบยินยอม")}]"#)]
     pub document_type_select_option: Vec<SelectOption>,
     #[Demo(value = "vec![DrugUsage::demo()]")]
     pub drugusages: Vec<DrugUsage>,

@@ -940,7 +940,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_plan_content(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_plan_content(modal: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .children([
@@ -979,7 +979,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_monitor_content(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_monitor_content(modal: Rc<Self>, app: Rc<App>) -> Dom {
         let actions = modal.plan_actions(None, modal.order_item.get_cloned(), true).unwrap_or_default();
         html!("div", {
             .class(class::BOX_ROUND_T)
@@ -1160,7 +1160,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_action_content(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_action_content(modal: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             // Plan Detail
@@ -1310,7 +1310,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_plan_sch_stat(stat_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_plan_sch_stat(stat_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
         let plan_times = stat_plans.iter().filter_map(|plan| plan.plan_time).collect::<Vec<Time>>();
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
         html!("nav", {
@@ -1346,7 +1346,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_plan_sch_date(date_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_plan_sch_date(date_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
         let plan_times = date_plans.iter().filter_map(|plan| plan.plan_time).collect::<Vec<Time>>();
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
         html!("nav", {
@@ -1387,7 +1387,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_plan_sch_time(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_plan_sch_time(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
         let accordion = Mutable::new(PlanTimeShow::Hours);
         html!("div", {
             .class("accordion")
@@ -1468,7 +1468,7 @@ impl IndexPlanActionForm {
             ])
         })
     }
-    fn render_plan_sch_time_multiple(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_plan_sch_time_multiple(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
         let order_hr = modal.order_item.lock_ref().as_ref().and_then(|oi| oi.order_time.map(|ot| ot.hour())).unwrap_or(js_now().time().hour());
         // set start hour with min plan datetime / order time /now
         let start_hr = time_plans.iter().filter_map(|plan| datetime_from_opt(plan.plan_date, plan.plan_time)).min().map(|dt| dt.hour()).unwrap_or(order_hr);
@@ -1642,7 +1642,7 @@ impl IndexPlanActionForm {
     //     })).to_signal_vec()
     // }
 
-    fn render_plan_sch_time_single(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_plan_sch_time_single(time_plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>, app: Rc<App>) -> Dom {
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
 
         html!("nav", {
@@ -1701,7 +1701,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_action_sch_stat(plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>) -> Dom {
+    pub fn render_action_sch_stat(plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>) -> Dom {
         html!("nav", {
             .child(html!("div", {
                 .class(class::NAV_PILLS_T)
@@ -1713,7 +1713,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_action_sch_date(plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>) -> Dom {
+    pub fn render_action_sch_date(plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>) -> Dom {
         html!("nav", {
             .child(html!("div", {
                 .class(class::NAV_PILLS_T)
@@ -1730,7 +1730,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_action_sch_time(plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>) -> Dom {
+    pub fn render_action_sch_time(plans: Vec<Rc<IndexPlan>>, modal: Rc<Self>) -> Dom {
         html!("nav", {
             .apply(|dom| {
                 if modal.is_continuous() {
@@ -1776,7 +1776,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_actions_list(allow_all: bool, plan_id_opt: Option<u32>, order_item_opt: Option<Rc<OrderItem>>, modal: Rc<Self>) -> Option<Dom> {
+    pub fn render_actions_list(allow_all: bool, plan_id_opt: Option<u32>, order_item_opt: Option<Rc<OrderItem>>, modal: Rc<Self>) -> Option<Dom> {
         let (gut_id, title) = if plan_id_opt.is_some() { ("modal-actions-list", "") } else { ("modal-all-actions-list", "ทั้งหมด") };
         let accordion_opened = Mutable::new(false);
         modal.plan_actions(plan_id_opt, order_item_opt.clone(), allow_all).and_then(|actions| {
@@ -1874,7 +1874,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_plan_inputs(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_plan_inputs(modal: Rc<Self>, app: Rc<App>) -> Dom {
         let plan_tab = modal.active_tab.get_cloned();
         let (date_label, time_label) = match (&plan_tab, modal.is_continuous()) {
             // time-continuous
@@ -2120,7 +2120,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_action_inputs(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_action_inputs(modal: Rc<Self>, app: Rc<App>) -> Dom {
         let all_doctor_select_option = app.app_asset.lock_ref().as_ref().map(|assets| assets.all_doctor_select_option.clone()).unwrap_or_default();
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
 
@@ -2582,7 +2582,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn render_monitor_inputs(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_monitor_inputs(modal: Rc<Self>, app: Rc<App>) -> Dom {
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
 
         html!("div", {
@@ -2785,7 +2785,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn plan_dom(plan: Rc<IndexPlan>, modal: Rc<Self>, custom_label: Option<String>) -> Dom {
+    pub fn plan_dom(plan: Rc<IndexPlan>, modal: Rc<Self>, custom_label: Option<String>) -> Dom {
         let plan_id = plan.plan_id;
         let label = custom_label.unwrap_or([date_th_opt(&plan.plan_date), time_hm_opt(&plan.plan_time)].join(" "));
         let actions_len = modal.plan_actions(Some(plan.plan_id), modal.order_item.get_cloned(), false).map(|actions| actions.len()).unwrap_or_default();
@@ -2818,7 +2818,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn plan_dom_new(modal: Rc<Self>, date: Option<Date>) -> Dom {
+    pub fn plan_dom_new(modal: Rc<Self>, date: Option<Date>) -> Dom {
         html!("a", {
             .class(class::NAV_ITEM_LINK_R)
             .class(class::TXT_BG_BLUE_RT)
@@ -2833,7 +2833,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn plan_dom_new_now(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn plan_dom_new_now(modal: Rc<Self>, app: Rc<App>) -> Dom {
         html!("button" => HtmlButtonElement, {
             .attr("type", "button")
             .class(class::BTN_FR_LT_REDO)
@@ -2845,7 +2845,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    fn plan_dom_new_and_action_now(modal: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn plan_dom_new_and_action_now(modal: Rc<Self>, app: Rc<App>) -> Dom {
         let (is_ipd, is_pre_admit) = modal.is_ipd_and_is_pre_admit();
         let allow = if is_ipd {
             app.endpoint_is_allow(&Method::POST, &EndPoint::IpdIndexAction, is_pre_admit) && app.has_permission(Permission::IpdNurseIndexAdd) || (is_pre_admit && app.has_permission(Permission::OpdErNurseIndexAdd))
@@ -3243,7 +3243,7 @@ impl IndexPlanActionForm {
     }
 }
 
-fn render_order_item(order_item: Rc<OrderItem>, app: Rc<App>) -> Dom {
+pub fn render_order_item(order_item: Rc<OrderItem>, app: Rc<App>) -> Dom {
     let is_oneday = order_item.order_type.clone().unwrap_or_default().as_str() == "oneday";
     let will_blue = if is_oneday { vec!["med", "home-medication", "injection", "ivfluid"] } else { vec!["med", "injection", "ivfluid"] };
     let (owner_text, owner_bg) = match order_item.order_owner_type.clone().unwrap_or_default().as_str() {

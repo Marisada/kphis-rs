@@ -848,7 +848,7 @@ impl ReportViewerPage {
         })
     }
 
-    fn render_patient_list(is_ipd: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_patient_list(is_ipd: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
         let height = if is_ipd { "calc(100vh - 272px)" } else { "calc(100vh - 180px)" };
 
         html!("div", {
@@ -881,7 +881,7 @@ impl ReportViewerPage {
         })
     }
 
-    fn render_custom_params(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_custom_params(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class("mt-2")
             .child_signal(page.selected_custom_template.signal_cloned().map(clone!(app, page => move |opt| {

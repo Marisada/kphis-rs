@@ -3081,6 +3081,7 @@ impl OrderCpn {
                             .child_signal(page.patient.signal_cloned().map(clone!(app, order_item => move |opt| {
                                 opt.map(|patient| {
                                     static_pdf_btn_with_modal(
+                                        class::BTN_SM_BLUE,
                                         "ย.ส.2",
                                         "ใบสั่งจ่ายยาเสพติดให้โทษในประเภท 2",
                                         include_str!("../../../volume/pwa/templates/statics/addict-habit-forming-order.typ"),
@@ -3108,6 +3109,7 @@ impl OrderCpn {
                             .child_signal(page.patient.signal_cloned().map(clone!(app, order_item => move |opt| {
                                 opt.map(|patient| {
                                     static_pdf_btn_with_modal(
+                                        class::BTN_SM_CYAN,
                                         "ว.จ.2",
                                         "ใบสั่งจ่ายวัตถุออกฤทธิ์ในประเภท 2",
                                         include_str!("../../../volume/pwa/templates/statics/addict-habit-forming-order.typ"),
@@ -3415,7 +3417,7 @@ impl OrderCpn {
         })
     }
 
-    fn render_previous_order(order_item: &OrderItem, order_type: OrderType, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_previous_order(order_item: &OrderItem, order_type: OrderType, page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_readonly = page.is_readonly();
         let is_pre_admit = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type.is_pre_admit()).unwrap_or_default();
         let is_today = page.is_today();
@@ -3522,6 +3524,7 @@ impl OrderCpn {
                     .child_signal(page.patient.signal_cloned().map(clone!(app, order_item => move |opt| {
                         opt.map(|patient| {
                             static_pdf_btn_with_modal(
+                                class::BTN_SM_BLUE,
                                 "ย.ส.2",
                                 "ใบสั่งจ่ายยาเสพติดให้โทษในประเภท 2",
                                 include_str!("../../../volume/pwa/templates/statics/addict-habit-forming-order.typ"),
@@ -3547,6 +3550,7 @@ impl OrderCpn {
                     .child_signal(page.patient.signal_cloned().map(clone!(app, order_item => move |opt| {
                         opt.map(|patient| {
                             static_pdf_btn_with_modal(
+                                class::BTN_SM_CYAN,
                                 "ว.จ.2",
                                 "ใบสั่งจ่ายวัตถุออกฤทธิ์ในประเภท 2",
                                 include_str!("../../../volume/pwa/templates/statics/addict-habit-forming-order.typ"),
@@ -3674,7 +3678,7 @@ impl OrderCpn {
     }
 
     // now render only held and offed
-    fn render_med_rec(med_rec_item: &Rc<MedReconciliationItem>, app: Rc<App>) -> Dom {
+    pub fn render_med_rec(med_rec_item: &Rc<MedReconciliationItem>, app: Rc<App>) -> Dom {
         let is_med_rec_icode = if let (Some(item_icode), Some(app_icode)) = (&med_rec_item.icode, &app.hosxp_medrec_icode()) {
             item_icode == app_icode
         } else {
@@ -3758,19 +3762,14 @@ impl OrderCpn {
             return html!("div");
         }
 
-        let (display_datetime, display_date) = if is_by_auditor {
-            (datetime_th_opt(&progress_note.progress_note_enter_datetime), progress_note.progress_note_enter_datetime.map(|dt| dt.date()))
+        let display_datetime = if is_by_auditor {
+            datetime_th_opt(&progress_note.progress_note_enter_datetime)
         } else {
-            ([date_th(&progress_note.progress_note_date), time_hm(&progress_note.progress_note_time)].join(" "), Some(progress_note.progress_note_date))
+            [date_th(&progress_note.progress_note_date), time_hm(&progress_note.progress_note_time)].join(" ")
         };
 
-        let is_discharged = match (page.patient.lock_ref().as_ref().and_then(|pt| pt.lastdate()), display_date) {
-            (Some(dch), Some(display)) => display > dch,
-            _ => true,
-        };
         let is_ipd = page.is_ipd;
         let is_pre_admit = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type.is_pre_admit()).unwrap_or_default();
-        let is_today = progress_note.progress_note_date == js_now().date();
         let is_readonly = page.is_readonly();
         let (owner_type, owner_class) = match progress_note.progress_note_owner_type.as_str() {
             "doctor" => ("Doctor", "bg-primary"),
@@ -3858,9 +3857,7 @@ impl OrderCpn {
                 .child(html!("div", {
                     .attr("id", &["progress_note_id_", &progress_note.progress_note_id.to_string(), "_action_row_div", cpn_id].concat())
                     .class(class::BOLD_R)
-                    .apply_if(if is_ipd {is_today || is_discharged} else {true}
-                        && allow_progress_form && allow_progress_edit,
-                    |d| d
+                    .apply_if(allow_progress_form && allow_progress_edit, |d| d
                         .child(html!("button", {
                             .attr("type", "button")
                             .class(class::BTN_SM_RB_GOLD)

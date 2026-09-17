@@ -621,7 +621,7 @@ impl SettingTemplateDcPlanPage {
         })
     }
 
-    fn render_dx_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_dx_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_dx_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_dx_modal.clone(), app))
@@ -858,7 +858,7 @@ impl SettingTemplateDcPlanPage {
         })
     }
 
-    fn render_med_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_med_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_med_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_med_modal.clone(), app))
@@ -1052,7 +1052,7 @@ impl SettingTemplateDcPlanPage {
         })
     }
 
-    fn render_env_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_env_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_env_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_env_modal.clone(), app))
@@ -1246,7 +1246,7 @@ impl SettingTemplateDcPlanPage {
         })
     }
 
-    fn render_tx_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_tx_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_tx_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_tx_modal.clone(), app))
@@ -1440,7 +1440,7 @@ impl SettingTemplateDcPlanPage {
         })
     }
 
-    fn render_diet_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_diet_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_diet_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_diet_modal.clone(), app))

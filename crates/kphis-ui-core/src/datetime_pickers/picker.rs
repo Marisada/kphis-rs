@@ -285,7 +285,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_header(picker: Rc<Self>) -> Dom {
+    pub fn render_header(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(HEADER)
             .children([
@@ -348,7 +348,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_date_footer(picker: Rc<Self>) -> Dom {
+    pub fn render_date_footer(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(FOOTER)
             .child(html!("button", {
@@ -479,7 +479,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_time_footer(picker: Rc<Self>) -> Dom {
+    pub fn render_time_footer(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(FOOTER)
             .apply(|dom| {
@@ -548,7 +548,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_dialog_years(picker: Rc<Self>) -> Dom {
+    pub fn render_dialog_years(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(BODY)
             .style("grid-template-columns", "1fr ".repeat(4))
@@ -587,7 +587,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_dialog_months(picker: Rc<Self>) -> Dom {
+    pub fn render_dialog_months(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(BODY)
             .style("grid-template-columns", "1fr ".repeat(3))
@@ -628,7 +628,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_dialog_days(picker: Rc<Self>) -> Dom {
+    pub fn render_dialog_days(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(BODY)
             .style("grid-template-columns", "1fr ".repeat(7))
@@ -675,7 +675,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_dialog_hours(picker: Rc<Self>) -> Dom {
+    pub fn render_dialog_hours(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(HOUR_CONTAINER)
             .apply_if(picker.with_date, |dom| { dom
@@ -737,7 +737,7 @@ impl<F: Fn(String) -> String + 'static> DatePicker<F> {
         })
     }
 
-    fn render_dialog_minutes(picker: Rc<Self>) -> Dom {
+    pub fn render_dialog_minutes(picker: Rc<Self>) -> Dom {
         html!("div", {
             .class(MINUTE_CONTAINER)
             .style("border-left", "1px solid var(--bs-border-color)")

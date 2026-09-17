@@ -954,7 +954,7 @@ impl VitalSignFormCpn {
         })
     }
 
-    fn render_tab_vs(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_tab_vs(page: Rc<Self>, app: Rc<App>) -> Dom {
         let (breathing_select_option, avpu_select_option, gut_feeling_select_option, pops_other_select_option, o2_select_option, conscious_select_option, urine_amount_select_option, urine_duration_select_option) = app
             .app_asset
             .lock_ref()
@@ -1415,7 +1415,7 @@ impl VitalSignFormCpn {
         })
     }
 
-    fn render_tab_neuro(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_tab_neuro(page: Rc<Self>, app: Rc<App>) -> Dom {
         let (cha_select_option, motor_select_option, conscious_select_option) = app
             .app_asset
             .lock_ref()
@@ -1536,7 +1536,7 @@ impl VitalSignFormCpn {
         })
     }
 
-    fn render_tab_score(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_tab_score(page: Rc<Self>, app: Rc<App>) -> Dom {
         let (va_select_option, mass_select_option, stage_of_change_select_option) = app
             .app_asset
             .lock_ref()
@@ -2080,7 +2080,7 @@ impl VitalSignFormCpn {
         })
     }
 
-    fn render_tab_had(page: Rc<Self>) -> Dom {
+    pub fn render_tab_had(page: Rc<Self>) -> Dom {
         html!("div", {
             // .class(class::TAB_FADE)
             //.attr("id", "nav-had")
@@ -2121,7 +2121,7 @@ impl VitalSignFormCpn {
         })
     }
 
-    fn render_tab_o2(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_tab_o2(page: Rc<Self>, app: Rc<App>) -> Dom {
         let (o2_select_option, tube_select_option) = app.app_asset.lock_ref().as_ref().map(|a| (a.o2_select_option.clone(), a.tube_select_option.clone())).unwrap_or_default();
 
         html!("div", {
@@ -2283,7 +2283,7 @@ impl VitalSignFormCpn {
         })
     }
 
-    fn render_tab_lr(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_tab_lr(page: Rc<Self>, app: Rc<App>) -> Dom {
         let (lr_sta_select_option, lr_mem_select_option, lr_moulding_select_option, dipstick_select_option) = app
             .app_asset
             .lock_ref()
@@ -2451,7 +2451,7 @@ impl VitalSignFormCpn {
         })
     }
 
-    fn render_tab_other(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_tab_other(page: Rc<Self>, app: Rc<App>) -> Dom {
         let line_select_option = app.app_asset.lock_ref().as_ref().map(|a| a.line_select_option.clone()).unwrap_or_default();
 
         html!("div", {

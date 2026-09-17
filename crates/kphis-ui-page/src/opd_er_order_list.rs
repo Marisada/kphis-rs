@@ -492,7 +492,7 @@ impl OpdErOrderListPage {
     }
 }
 
-fn render_card(row: Rc<OpdErOrderMasterList>, view_by: Mutable<String>, app: Rc<App>) -> Dom {
+pub fn render_card(row: Rc<OpdErOrderMasterList>, view_by: Mutable<String>, app: Rc<App>) -> Dom {
     let age_y = row.age_y.unwrap_or_default();
     let age_m = row.age_m.unwrap_or_default();
     let age_d = row.age_d.unwrap_or_default();
@@ -693,7 +693,7 @@ fn render_card(row: Rc<OpdErOrderMasterList>, view_by: Mutable<String>, app: Rc<
 }
 
 // opd-er-order-list.php/getOpdErOrderMasterDataForTable()
-fn render_table(i: usize, row: Rc<OpdErOrderMasterList>, view_by: Mutable<String>, app: Rc<App>) -> Dom {
+pub fn render_table(i: usize, row: Rc<OpdErOrderMasterList>, view_by: Mutable<String>, app: Rc<App>) -> Dom {
     let (vs_datetime_opt, ews_dom, qsofa_dom, sirs_dom) = doms::badge_scores_and_vs_datetime(&Scores::from_concat(&row.ews_concat, row.birthday, app.state()));
     let row_class = if row.count_stat_order_nurse_not_accept > 0 {
         "table-danger"

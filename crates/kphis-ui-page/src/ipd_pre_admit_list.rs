@@ -538,7 +538,7 @@ impl IpdPreAdmitListPage {
         })
     }
 
-    fn render_card(row: Rc<PreAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_card(row: Rc<PreAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_admited = page.status.lock_ref().as_str() == "admited";
 
         let age_y = row.age_y.unwrap_or_default();
@@ -764,7 +764,7 @@ impl IpdPreAdmitListPage {
         })
     }
 
-    fn render_table(i: usize, row: Rc<PreAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_table(i: usize, row: Rc<PreAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let is_admited = page.status.lock_ref().as_str() == "admited";
         let allow_patch = app.endpoint_is_allow(&Method::PATCH, &EndPoint::IpdPreAdmit, true);
         let age_y = row.age_y.unwrap_or_default();

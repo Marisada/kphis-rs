@@ -375,7 +375,7 @@ impl IpdPostAdmitListPage {
                                             }),
                                             html!("label", {
                                                 .class(class::FORM_CHK_LBL_R)
-                                                .attr("for", "show-all-order-date-checkbox")
+                                                .attr("for", "show-all-date-checkbox")
                                                 .style("user-select","none")
                                                 .text("ทุกวัน")
                                             })
@@ -425,6 +425,7 @@ impl IpdPostAdmitListPage {
                         ])
                         .child_signal(page.search_result.signal_vec_cloned().to_signal_cloned().map(clone!(app => move |rows| {
                             Some(static_pdf_btn_with_modal(
+                                class::BTN_BLUE,
                                 "Print",
                                 "รายงานจำหน่ายผู้ป่วยใน",
                                 include_str!("../../../volume/pwa/templates/statics/ipd-post-admit-from-screen.typ"),
@@ -597,7 +598,7 @@ impl IpdPostAdmitListPage {
         })
     }
 
-    fn render_card(row: Rc<PostAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_card(row: Rc<PostAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let age_y = row.age_y.unwrap_or_default();
         let age_m = row.age_m.unwrap_or_default();
         let age_d = row.age_d.unwrap_or_default();
@@ -858,7 +859,7 @@ impl IpdPostAdmitListPage {
         })
     }
 
-    fn render_table(i: usize, row: Rc<PostAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_table(i: usize, row: Rc<PostAdmitList>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let age_y = row.age_y.unwrap_or_default();
         let age_m = row.age_m.unwrap_or_default();
         let age_d = row.age_d.unwrap_or_default();

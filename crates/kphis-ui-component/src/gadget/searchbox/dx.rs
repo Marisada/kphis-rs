@@ -786,7 +786,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_search_header(page: Rc<Self>, enabled: bool) -> Dom {
+    pub fn render_search_header(page: Rc<Self>, enabled: bool) -> Dom {
         html!("thead", {
             .child(html!("tr", {
                 .children([
@@ -860,7 +860,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_search_result(search_result: (Arc<I10vx>, f32, u8), page: Rc<Self>, parent: Option<(Rc<Group<Rc<Icd10>>>, u32, Mutable<bool>)>) -> Dom {
+    pub fn render_search_result(search_result: (Arc<I10vx>, f32, u8), page: Rc<Self>, parent: Option<(Rc<Group<Rc<Icd10>>>, u32, Mutable<bool>)>) -> Dom {
         let txt = page.search_text.lock_ref();
         let result = search_result.0.clone();
         let col = search_result.2;
@@ -926,7 +926,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_index_header(page: Rc<Self>, enabled: bool) -> Dom {
+    pub fn render_index_header(page: Rc<Self>, enabled: bool) -> Dom {
         html!("thead", {
             .child(html!("tr", {
                 .style("position","sticky")
@@ -998,7 +998,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_index_result(index_result: ((String, Arc<I10Pointer>), f32, u8), page: Rc<Self>, parent: Option<(Rc<Group<Rc<Icd10>>>, u32, Mutable<bool>)>) -> Dom {
+    pub fn render_index_result(index_result: ((String, Arc<I10Pointer>), f32, u8), page: Rc<Self>, parent: Option<(Rc<Group<Rc<Icd10>>>, u32, Mutable<bool>)>) -> Dom {
         let search_texts = page
             .index_text
             .lock_ref()
@@ -1255,7 +1255,7 @@ impl DxSearchboxCpn {
     }
 
     /// code with dot
-    fn render_code_badge(code: String, child_opt: Option<Dom>, page: Rc<Self>, with_ms_1: bool) -> Dom {
+    pub fn render_code_badge(code: String, child_opt: Option<Dom>, page: Rc<Self>, with_ms_1: bool) -> Dom {
         html!("span", {
             .class(class::BADGE_GOLD)
             .style("cursor","pointer")
@@ -1280,7 +1280,7 @@ impl DxSearchboxCpn {
     }
 
     /// code with dot
-    fn render_code_book(code: String, page: Rc<Self>) -> Dom {
+    pub fn render_code_book(code: String, page: Rc<Self>) -> Dom {
         html!("span", {
             .class("me-1")
             .style("cursor","pointer")
@@ -1293,7 +1293,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_code_pair_detail(is_dagger: bool, code: String, page: Rc<Self>) -> Dom {
+    pub fn render_code_pair_detail(is_dagger: bool, code: String, page: Rc<Self>) -> Dom {
         html!("span", {
             .class(class::BADGE_GOLD)
             .style("cursor","pointer")
@@ -1307,7 +1307,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_pair_detail_without_code(is_dagger: bool, is_input_group: bool, code: String, page: Rc<Self>) -> Dom {
+    pub fn render_pair_detail_without_code(is_dagger: bool, is_input_group: bool, code: String, page: Rc<Self>) -> Dom {
         html!("span", {
             .apply_if(is_input_group, |dom| dom.class(class::INPUT_GROUP_TEXT_PX1))
             .child(html!("i", {.class(if is_dagger {class::FA_CROSS_RED} else {class::FA_ASTERISK_RED})}))
@@ -1319,7 +1319,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_i10_detail(i10_detail: Arc<I10Detail>, page: Rc<Self>) -> Dom {
+    pub fn render_i10_detail(i10_detail: Arc<I10Detail>, page: Rc<Self>) -> Dom {
         let class_usage_opt = render_usage(&i10_detail.usage);
         html!("div", {
             .class("p-2")
@@ -1570,7 +1570,7 @@ impl DxSearchboxCpn {
         })
     }
 
-    fn render_note(s: String, page: Rc<Self>) -> Dom {
+    pub fn render_note(s: String, page: Rc<Self>) -> Dom {
         let has_code = s.split(' ').any(|w| is_icd10_resemble(w));
         html!("span", {
             .class(class::BADGE_GRAY_L)

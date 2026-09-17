@@ -219,7 +219,7 @@ impl IpdMraPage {
 }
 
 #[derive(Clone, Default)]
-struct IpdMraMutable {
+pub struct IpdMraMutable {
     new_mra: Mutable<Option<Rc<IpdMra>>>,
     parent_auditor: Mutable<Option<String>>,
 
@@ -459,7 +459,7 @@ struct IpdMraMutable {
 }
 
 impl IpdMraMutable {
-    fn new(hn: &Option<String>, adm_date: Option<Date>, dch_date: Option<Date>, auditor: &Option<String>, parent_page: Rc<IpdMraPage>) -> Rc<Self> {
+    pub fn new(hn: &Option<String>, adm_date: Option<Date>, dch_date: Option<Date>, auditor: &Option<String>, parent_page: Rc<IpdMraPage>) -> Rc<Self> {
         Rc::new(Self {
             new_mra: Mutable::new(Some(Rc::new(IpdMra::new(hn, &parent_page.an.lock_ref(), adm_date, dch_date, auditor)))),
             parent_auditor: Mutable::new(auditor.to_owned()),
@@ -1583,7 +1583,7 @@ impl IpdMraMutable {
         self.nn_recal.set(true);
     }
 
-    fn render(mra: Rc<Self>, list_loaded: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render(mra: Rc<Self>, list_loaded: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(mra.ipd_mra_selected.signal_cloned().for_each(clone!(mra => move |opt| {
                 if let Some(mra_selected) = opt {

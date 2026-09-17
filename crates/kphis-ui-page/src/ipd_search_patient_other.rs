@@ -312,7 +312,7 @@ impl IpdSearchPatientOtherPage {
     }
 }
 
-fn render_card(row: Rc<IpdSearchPatientOtherResponse>, app: Rc<App>) -> Dom {
+pub fn render_card(row: Rc<IpdSearchPatientOtherResponse>, app: Rc<App>) -> Dom {
     let age_y = row.age_y.unwrap_or_default();
     let age_m = row.age_m.unwrap_or_default();
     let age_d = row.age_d.unwrap_or_default();
@@ -466,7 +466,7 @@ fn render_card(row: Rc<IpdSearchPatientOtherResponse>, app: Rc<App>) -> Dom {
     })
 }
 
-fn render_table(i: usize, row: Rc<IpdSearchPatientOtherResponse>, app: Rc<App>) -> Dom {
+pub fn render_table(i: usize, row: Rc<IpdSearchPatientOtherResponse>, app: Rc<App>) -> Dom {
     let age_y = row.age_y.unwrap_or_default();
     let age_m = row.age_m.unwrap_or_default();
     let age_d = row.age_d.unwrap_or_default();

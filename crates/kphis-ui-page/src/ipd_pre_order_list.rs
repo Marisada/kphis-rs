@@ -443,7 +443,7 @@ impl IpdPreOrderListPage {
         })
     }
 
-    fn render_result(page: Rc<Self>, i: usize, row: Rc<PreOrderMaster>, app: Rc<App>) -> Dom {
+    pub fn render_result(page: Rc<Self>, i: usize, row: Rc<PreOrderMaster>, app: Rc<App>) -> Dom {
         html!("tr", {
             .style("cursor","pointer")
             .children([

@@ -1,4 +1,4 @@
-use dominator::{Dom, clone, events, html, with_node};
+use dominator::{Dom, clone, events, html, traits::MultiStr, with_node};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt, not},
@@ -172,14 +172,14 @@ impl ReportId for VisitTypeId {
     }
 }
 
-pub fn static_pdf_btn_with_modal(btn_label: &str, pdf_title: &'static str, template: &'static str, data_json: String, app: Rc<App>) -> Dom {
+pub fn static_pdf_btn_with_modal<C: MultiStr>(btn_class: C, btn_label: &str, pdf_title: &'static str, template: &'static str, data_json: String, app: Rc<App>) -> Dom {
     app.clear_modal_backdrop();
     let report_modal = Mutable::new(None);
     html!("div", {
         .apply_if(!app.endpoint_is_allow(&Method::GET, &EndPoint::ReportRawTemplateTypeId, false), |dom| dom.visible(false))
         .child(html!("button" => HtmlButtonElement, {
             .attr("type", "button")
-            .class(class::BTN_SM_BLUE)
+            .class(btn_class)
             .child(html!("i", {.class(class::FA_FILE_PDF_L)}))
             .text(btn_label)
             .event(clone!(app, report_modal => move |_: events::Click| {

@@ -1468,7 +1468,7 @@ LIMIT 50;"#;
         })
     }
 
-    fn render_param_input_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_param_input_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .style("position","fixed")
             .style("right","25px")

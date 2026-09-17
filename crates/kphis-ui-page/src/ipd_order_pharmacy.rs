@@ -479,7 +479,7 @@ fn submit(page: Rc<IpdOrderPharmacyPage>, app: Rc<App>) {
     );
 }
 
-fn render_pharmacy_order(i: usize, row: Rc<IpdOrderPharmacy>, app: Rc<App>) -> Dom {
+pub fn render_pharmacy_order(i: usize, row: Rc<IpdOrderPharmacy>, app: Rc<App>) -> Dom {
     let age_y = row.age_y.unwrap_or_default();
     let age_m = row.age_m.unwrap_or_default();
     let age_d = row.age_d.unwrap_or_default();
@@ -622,7 +622,7 @@ fn render_pharmacy_order(i: usize, row: Rc<IpdOrderPharmacy>, app: Rc<App>) -> D
     })
 }
 
-fn render_order_table(source: MutableVec<Rc<IpdOrderPharmacy>>, label: &str, app: Rc<App>) -> Dom {
+pub fn render_order_table(source: MutableVec<Rc<IpdOrderPharmacy>>, label: &str, app: Rc<App>) -> Dom {
     html!("div", {
         .children([
             html!("hr"),
@@ -662,7 +662,7 @@ fn render_order_table(source: MutableVec<Rc<IpdOrderPharmacy>>, label: &str, app
     })
 }
 
-fn render_ipt_table(source: MutableVec<Rc<PharmacyIpt>>, label: &str) -> Dom {
+pub fn render_ipt_table(source: MutableVec<Rc<PharmacyIpt>>, label: &str) -> Dom {
     html!("div", {
         .children([
             html!("hr"),
@@ -701,7 +701,7 @@ fn render_ipt_table(source: MutableVec<Rc<PharmacyIpt>>, label: &str) -> Dom {
     })
 }
 
-fn render_pharmacy_ipt(i: usize, row: Rc<PharmacyIpt>) -> Dom {
+pub fn render_pharmacy_ipt(i: usize, row: Rc<PharmacyIpt>) -> Dom {
     let age_y = row.age_y.unwrap_or_default();
     let age_m = row.age_m.unwrap_or_default();
     let age_d = row.age_d.unwrap_or_default();

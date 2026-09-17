@@ -265,7 +265,7 @@ impl IpdConsultCpn {
                         html!("tbody", {
                             //.attr("id", "consult-table-row")
                             .children_signal_vec(page.consults.signal_vec_cloned().map(clone!(app, page => move |consult| {
-                                render_consult(consult, page.clone(), app.clone())
+                                Self::render_consult(consult, page.clone(), app.clone())
                             })))
                         }),
                     ])
@@ -279,198 +279,198 @@ impl IpdConsultCpn {
             })))
         })
     }
-}
 
-fn render_consult(row: Rc<ConsultWithName>, page: Rc<IpdConsultCpn>, app: Rc<App>) -> Dom {
-    let is_pre_admit = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type.is_pre_admit()).unwrap_or_default();
-    let is_request_user = row
-        .string_consult_request_name
-        .clone()
-        .map(|reqs| {
-            reqs.split(',')
-                .flat_map(|row| row.split('/').map(|s| s.trim()).collect::<Vec<&str>>())
-                .any(|name| name == app.doctor_name().unwrap_or_default().trim())
-        })
-        .unwrap_or_default();
+    pub fn render_consult(row: Rc<ConsultWithName>, page: Rc<Self>, app: Rc<App>) -> Dom {
+        let is_pre_admit = page.patient.lock_ref().as_ref().map(|pt| pt.visit_type.is_pre_admit()).unwrap_or_default();
+        let is_request_user = row
+            .string_consult_request_name
+            .clone()
+            .map(|reqs| {
+                reqs.split(',')
+                    .flat_map(|row| row.split('/').map(|s| s.trim()).collect::<Vec<&str>>())
+                    .any(|name| name == app.doctor_name().unwrap_or_default().trim())
+            })
+            .unwrap_or_default();
 
-    let html_consult_request_name = row
-        .string_consult_request_name
-        .clone()
-        .map(|reqs| {
-            reqs.split(',')
-                .map(|req| {
-                    html!("div", {
-                        .class(class::TRUNC_SM)
-                        .style("max-width","240px")
-                        .text(req)
+        let html_consult_request_name = row
+            .string_consult_request_name
+            .clone()
+            .map(|reqs| {
+                reqs.split(',')
+                    .map(|req| {
+                        html!("div", {
+                            .class(class::TRUNC_SM)
+                            .style("max-width","240px")
+                            .text(req)
+                        })
                     })
-                })
-                .collect::<Vec<Dom>>()
-        })
-        .unwrap_or_default();
+                    .collect::<Vec<Dom>>()
+            })
+            .unwrap_or_default();
 
-    let html_consult_reply_name = row
-        .string_consult_reply_name
-        .clone()
-        .map(|reps| {
-            // reps.split('|').map(|rep| {
-            //     let concat = rep.split('^').collect::<Vec<&str>>();
-            //     // names, crete_datetime, update_datetime
-            //     if concat.len() == 3 {
-            //         html!("div", {
-            //             .class(class::TRUNC_SM)
-            //             .style("max-width","240px")
-            //             .text(concat[0])
-            //         })
-            //     } else {
-            //         html!("div")
-            //     }
-            // })
-            // .collect::<Vec<Dom>>()
-            reps.split(',')
-                .map(|rep| {
-                    html!("div", {
-                        .class(class::TRUNC_SM)
-                        .style("max-width","240px")
-                        .text(rep)
+        let html_consult_reply_name = row
+            .string_consult_reply_name
+            .clone()
+            .map(|reps| {
+                // reps.split('|').map(|rep| {
+                //     let concat = rep.split('^').collect::<Vec<&str>>();
+                //     // names, crete_datetime, update_datetime
+                //     if concat.len() == 3 {
+                //         html!("div", {
+                //             .class(class::TRUNC_SM)
+                //             .style("max-width","240px")
+                //             .text(concat[0])
+                //         })
+                //     } else {
+                //         html!("div")
+                //     }
+                // })
+                // .collect::<Vec<Dom>>()
+                reps.split(',')
+                    .map(|rep| {
+                        html!("div", {
+                            .class(class::TRUNC_SM)
+                            .style("max-width","240px")
+                            .text(rep)
+                        })
                     })
-                })
-                .collect::<Vec<Dom>>()
-        })
-        .unwrap_or_default();
+                    .collect::<Vec<Dom>>()
+            })
+            .unwrap_or_default();
 
-    let reply_over_24hr = row.consult_datetime_create_reply.map(|create_reply| (js_now() - create_reply) >= Duration::DAY).unwrap_or_default();
+        let reply_over_24hr = row.consult_datetime_create_reply.map(|create_reply| (js_now() - create_reply) >= Duration::DAY).unwrap_or_default();
 
-    let consult_status = match &row.consult_status {
-        Some(v) => {
-            if v == "Y" {
-                html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)})
-            } else {
-                html!("i", {.class(class::FA_HOURGLASS_GOLD)})
+        let consult_status = match &row.consult_status {
+            Some(v) => {
+                if v == "Y" {
+                    html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)})
+                } else {
+                    html!("i", {.class(class::FA_HOURGLASS_GOLD)})
+                }
             }
-        }
-        None => html!("i", {.class(class::FA_HOURGLASS_GOLD)}),
-    };
+            None => html!("i", {.class(class::FA_HOURGLASS_GOLD)}),
+        };
 
-    html!("tr", {
-        .attr("id", &["consult_id_", &row.consult_id.to_string(), "_div"].concat())
-        .apply_if(page.focused_id.get() == row.consult_id, |dom| dom.class(class::BORDER3_RED))
-        .children([
-            html!("td", {
-                .style("cursor","pointer")
-                .text(&[row.consult_type_name.clone().unwrap_or_default(), row.spcltyname.as_ref().map(|spcltyname| [" (ส่งแผนก ", spcltyname, ")"].concat()).unwrap_or_default()].concat())
-                .event(clone!(app, row, page => move |_: events::Click| {
-                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
-                    app.show_modal_backdrop();
-                }))
-            }),
-            html!("td", {
-                .style("cursor","pointer")
-                .class("text-center")
-                .text(&row.consult_emergency_name.clone().unwrap_or_default())
-                .event(clone!(app, row, page => move |_: events::Click| {
-                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
-                    app.show_modal_backdrop();
-                }))
-            }),
-            html!("td", {
-                .style("cursor","pointer")
-                .attr("title", &row.string_consult_request_name.clone().unwrap_or_default())
-                .children(html_consult_request_name)
-                .event(clone!(app, row, page => move |_: events::Click| {
-                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
-                    app.show_modal_backdrop();
-                }))
-            }),
-            html!("td", {
-                .style("cursor","pointer")
-                .class("text-center")
-                .children([
-                    text(&date_th_opt(&row.consult_date)),
-                    html!("br"),
-                    text(&time_hm_opt(&row.consult_time)),
-                ])
-                .event(clone!(app, row, page => move |_: events::Click| {
-                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
-                    app.show_modal_backdrop();
-                }))
-            }),
-            html!("td", {
-                .class("text-center")
-                .apply_if(app.has_permission(Permission::IpdDoctorConsultEdit) || is_pre_admit, |dom| { // && is_request_user,
-                    dom.child(html!("button", {
-                        .attr("type", "button")
-                        .class(class::BTN_SM_GRAY)
-                        .apply(|dom| {
-                            if !html_consult_reply_name.is_empty() {
-                                dom.attr("disabled", "")
-                            } else {
-                                dom.event(clone!(app, row, page => move |_: events::Click| {
-                                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::Edit)));
-                                    app.show_modal_backdrop();
-                                }))
-                            }
-                        })
-                        .child(html!("i", {.class(class::FA_EDIT)}))
+        html!("tr", {
+            .attr("id", &["consult_id_", &row.consult_id.to_string(), "_div"].concat())
+            .apply_if(page.focused_id.get() == row.consult_id, |dom| dom.class(class::BORDER3_RED))
+            .children([
+                html!("td", {
+                    .style("cursor","pointer")
+                    .text(&[row.consult_type_name.clone().unwrap_or_default(), row.spcltyname.as_ref().map(|spcltyname| [" (ส่งแผนก ", spcltyname, ")"].concat()).unwrap_or_default()].concat())
+                    .event(clone!(app, row, page => move |_: events::Click| {
+                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                        app.show_modal_backdrop();
                     }))
-                })
-            }),
-            html!("td", {
-                .class("bg-info-subtle")
-                .style("cursor","pointer")
-                .attr("title", &row.string_consult_reply_name.clone().unwrap_or_default())
-                .children(html_consult_reply_name)
-                .event(clone!(app, row, page => move |_: events::Click| {
-                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
-                    app.show_modal_backdrop();
-                }))
-            }),
-            html!("td", {
-                .class("bg-info-subtle")
-                .style("cursor","pointer")
-                .class("text-center")
-                .text(&datetime_th_opt(&row.consult_datetime_create_reply))
-                .event(clone!(app, row, page => move |_: events::Click| {
-                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
-                    app.show_modal_backdrop();
-                }))
-            }),
-            html!("td", {
-                .class("bg-info-subtle")
-                .style("cursor","pointer")
-                .class("text-center")
-                .text(&datetime_th_opt(&row.consult_datetime_update_reply))
-                .event(clone!(app, row, page => move |_: events::Click| {
-                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
-                    app.show_modal_backdrop();
-                }))
-            }),
-            html!("td", {
-                .class("text-center")
-                .child(consult_status)
-            }),
-            html!("td", {
-                .class("text-center")
-                .apply_if(app.has_permission(Permission::IpdDoctorConsultEdit) || is_pre_admit, |dom| {
-                    dom.child(html!("button", {
-                        .attr("type", "button")
-                        .class(class::BTN_SM_GRAY)
-                        .apply(|dom| {
-                            if reply_over_24hr {
-                                dom.attr("disabled", "")
-                            } else if is_request_user {
-                                dom.attr("title", "ผู้ขอปรึกษา ไม่สามารถตอบข้อมูลได้").attr("disabled", "")
-                            } else {
-                                dom.event(clone!(app, row, page => move |_: events::Click| {
-                                    page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::Reply)));
-                                    app.show_modal_backdrop();
-                                }))
-                            }
-                        })
-                        .child(html!("i", {.class(class::FA_SHARE)}))
+                }),
+                html!("td", {
+                    .style("cursor","pointer")
+                    .class("text-center")
+                    .text(&row.consult_emergency_name.clone().unwrap_or_default())
+                    .event(clone!(app, row, page => move |_: events::Click| {
+                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                        app.show_modal_backdrop();
                     }))
-                })
-            }),
-        ])
-    })
+                }),
+                html!("td", {
+                    .style("cursor","pointer")
+                    .attr("title", &row.string_consult_request_name.clone().unwrap_or_default())
+                    .children(html_consult_request_name)
+                    .event(clone!(app, row, page => move |_: events::Click| {
+                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                        app.show_modal_backdrop();
+                    }))
+                }),
+                html!("td", {
+                    .style("cursor","pointer")
+                    .class("text-center")
+                    .children([
+                        text(&date_th_opt(&row.consult_date)),
+                        html!("br"),
+                        text(&time_hm_opt(&row.consult_time)),
+                    ])
+                    .event(clone!(app, row, page => move |_: events::Click| {
+                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                        app.show_modal_backdrop();
+                    }))
+                }),
+                html!("td", {
+                    .class("text-center")
+                    .apply_if(app.has_permission(Permission::IpdDoctorConsultEdit) || is_pre_admit, |dom| { // && is_request_user,
+                        dom.child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_SM_GRAY)
+                            .apply(|dom| {
+                                if !html_consult_reply_name.is_empty() {
+                                    dom.attr("disabled", "")
+                                } else {
+                                    dom.event(clone!(app, row, page => move |_: events::Click| {
+                                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::Edit)));
+                                        app.show_modal_backdrop();
+                                    }))
+                                }
+                            })
+                            .child(html!("i", {.class(class::FA_EDIT)}))
+                        }))
+                    })
+                }),
+                html!("td", {
+                    .class("bg-info-subtle")
+                    .style("cursor","pointer")
+                    .attr("title", &row.string_consult_reply_name.clone().unwrap_or_default())
+                    .children(html_consult_reply_name)
+                    .event(clone!(app, row, page => move |_: events::Click| {
+                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                        app.show_modal_backdrop();
+                    }))
+                }),
+                html!("td", {
+                    .class("bg-info-subtle")
+                    .style("cursor","pointer")
+                    .class("text-center")
+                    .text(&datetime_th_opt(&row.consult_datetime_create_reply))
+                    .event(clone!(app, row, page => move |_: events::Click| {
+                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                        app.show_modal_backdrop();
+                    }))
+                }),
+                html!("td", {
+                    .class("bg-info-subtle")
+                    .style("cursor","pointer")
+                    .class("text-center")
+                    .text(&datetime_th_opt(&row.consult_datetime_update_reply))
+                    .event(clone!(app, row, page => move |_: events::Click| {
+                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::View)));
+                        app.show_modal_backdrop();
+                    }))
+                }),
+                html!("td", {
+                    .class("text-center")
+                    .child(consult_status)
+                }),
+                html!("td", {
+                    .class("text-center")
+                    .apply_if(app.has_permission(Permission::IpdDoctorConsultEdit) || is_pre_admit, |dom| {
+                        dom.child(html!("button", {
+                            .attr("type", "button")
+                            .class(class::BTN_SM_GRAY)
+                            .apply(|dom| {
+                                if reply_over_24hr {
+                                    dom.attr("disabled", "")
+                                } else if is_request_user {
+                                    dom.attr("title", "ผู้ขอปรึกษา ไม่สามารถตอบข้อมูลได้").attr("disabled", "")
+                                } else {
+                                    dom.event(clone!(app, row, page => move |_: events::Click| {
+                                        page.consult_form_modal.set(Some(ConsultForm::new(page.patient.clone(), zero_none(row.consult_id), ConsultFormMode::Reply)));
+                                        app.show_modal_backdrop();
+                                    }))
+                                }
+                            })
+                            .child(html!("i", {.class(class::FA_SHARE)}))
+                        }))
+                    })
+                }),
+            ])
+        })
+    }
 }

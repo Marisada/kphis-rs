@@ -1121,7 +1121,7 @@ impl ReferOutCpn {
         })
     }
 
-    fn render_refer_note(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_refer_note(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .children([
                 html!("div", {
@@ -1231,7 +1231,7 @@ impl ReferOutCpn {
         })
     }
 
-    fn render_refer_out(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_refer_out(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .children([
                 html!("div", {

@@ -223,7 +223,7 @@ impl DrugUseDurationPage {
         })
     }
 
-    fn render_result(i: usize, row: Rc<DrugUseDuration>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_result(i: usize, row: Rc<DrugUseDuration>, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("tr", {
             .style("cursor","pointer")
             .children([

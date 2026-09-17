@@ -1280,7 +1280,7 @@ impl MedReconForm {
         }
     }
 
-    fn render_note_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_note_modal(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .child(Self::render_note_modal_dialog(page.clone(), app.clone()))
             .apply(modal_show_bool_mixins(page.show_modal_note.clone(), app))

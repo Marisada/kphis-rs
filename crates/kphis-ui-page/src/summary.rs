@@ -1267,7 +1267,7 @@ impl SummaryPage {
         })
     }
 
-    fn render_coder(is_pre_admit: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_coder(is_pre_admit: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class("col")
             .style("break-inside","avoid")
@@ -2202,7 +2202,7 @@ impl SummaryPage {
         })
     }
 
-    fn render_review_status(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_review_status(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::CARD)
             .style("break-inside","avoid")

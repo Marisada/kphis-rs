@@ -5,7 +5,7 @@ use futures_signals::{
     signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
-use web_sys::{HtmlInputElement, HtmlSelectElement};
+use web_sys::HtmlInputElement;
 
 use kphis_model::report::{BasicType, ParamType, ReportParam};
 use kphis_ui_app::App;
@@ -21,7 +21,11 @@ pub struct ReportParamInput {
 
 impl ReportParamInput {
     pub fn new(param: &ReportParam) -> Rc<Self> {
-        let ids = if param.ty.is_array() { MutableVec::new_with_values(vec![Mutable::new(String::new())]) } else { MutableVec::new() };
+        let ids = if matches!(param.ty, ParamType::Array(_)) {
+            MutableVec::new_with_values(vec![Mutable::new(String::new())])
+        } else {
+            MutableVec::new()
+        };
         Rc::new(Self {
             title: param.title.to_owned(),
             ty: param.ty.to_owned(),
@@ -33,12 +37,10 @@ impl ReportParamInput {
     // value in array type separated by ','
     pub fn new_with_value(param: &ReportParam, value: &str) -> Rc<Self> {
         let values = value.split(',').map(|s| Mutable::new(s.trim().to_owned())).collect::<Vec<Mutable<String>>>();
-        let (ids, id) = if param.ty.is_array() {
+        let (ids, id) = if matches!(param.ty, ParamType::Array(_)) {
             (MutableVec::new_with_values(values), Mutable::new(String::new()))
-        } else if let Some(first) = values.first() {
-            (MutableVec::new(), first.clone())
         } else {
-            (MutableVec::new(), Mutable::new(String::new()))
+            (MutableVec::new(), Mutable::new(value.to_owned()))
         };
         Rc::new(Self {
             title: param.title.to_owned(),
@@ -68,7 +70,7 @@ impl ReportParamInput {
         match param.ty.clone() {
             ParamType::Basic(basic_type) => {
                 html!("div", {
-                    .class(class::INPUT_GROUP_SM_T)
+                    .class(class::INPUT_GROUP_T)
                     .children([
                         doms::span_group_text(&param.title),
                         render_basic_type(&basic_type, param.id.clone(), changed),
@@ -80,48 +82,27 @@ impl ReportParamInput {
                     .class(class::INPUT_GROUP_SM_T)
                     .children([
                         doms::span_group_text(&param.title),
-                        html!("div", {
-                            .class(class::FLEX_GROW1)
-                            .child(html!("select" => HtmlSelectElement, {
-                                .class(class::FORM_SELECT_SM)
-                                .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                .children(items.iter().map(|option| {
-                                    html!("option", {
-                                        .attr("value", &option.key)
-                                        .text(&option.label)
-                                    })
-                                }))
-                                .apply(mixins::string_value_select(param.id.clone(), changed))
-                            }))
-                        }),
+                        doms::select_box(
+                            "", Some("เลือก"), false,
+                            param.id.clone(), changed,
+                            |d| d.class("form-control"), || {},
+                            items,
+                        ),
                     ])
                 })
             }
             ParamType::ListSystem(system_list_type) => {
+                let items = app.app_asset.lock_ref().as_ref().map(|assets| system_list_type.get_items(assets)).unwrap_or_default();
                 html!("div", {
-                    .class(class::INPUT_GROUP_SM_T)
+                    .class(class::INPUT_GROUP_T)
                     .children([
                         doms::span_group_text(&param.title),
-                        html!("div", {
-                            .class(class::FLEX_GROW1)
-                            .child(html!("select" => HtmlSelectElement, {
-                                .class(class::FORM_SELECT_SM)
-                                .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                .apply(|dom| {
-                                    if let Some(assets) = app.app_asset.lock_ref().as_ref() {
-                                        dom.children(system_list_type.get_items(assets).iter().map(|option| {
-                                            html!("option", {
-                                                .attr("value", &option.key)
-                                                .text(&option.label)
-                                            })
-                                        }))
-                                    } else {
-                                        dom
-                                    }
-                                })
-                                .apply(mixins::string_value_select(param.id.clone(), changed))
-                            }))
-                        }),
+                        doms::select_box(
+                            "", Some("เลือก"), false,
+                            param.id.clone(), changed,
+                            |d| d.class("form-control"), || {},
+                            items,
+                        ),
                     ])
                 })
             }
@@ -137,8 +118,9 @@ impl ReportParamInput {
                                     .attr("type","button")
                                     .class(class::BTN_SM_FR_GRAY)
                                     .child(html!("i", {.class(class::FA_PLUS)}))
-                                    .event(clone!(param => move |_: events::Click| {
+                                    .event(clone!(param, changed => move |_: events::Click| {
                                         param.ids.lock_mut().push_cloned(Mutable::new(String::new()));
+                                        changed.set(true);
                                     }))
                                 }),
                             ])
@@ -155,11 +137,12 @@ impl ReportParamInput {
                                         render_basic_type(&basic_type, id_mutable, changed.clone()),
                                         html!("botton", {
                                             .attr("type","button")
-                                            .class(class::BTN_SM_RED)
+                                            .class(class::BTN_RED)
                                             .child(html!("i", {.class(class::FA_X)}))
-                                            .event(clone!(param => move |_: events::Click| {
+                                            .event(clone!(param, changed => move |_: events::Click| {
                                                 if let Some(pos) = i.get() {
                                                     param.ids.lock_mut().remove(pos);
+                                                    changed.set(true);
                                                 }
                                             }))
                                         }),
@@ -172,122 +155,53 @@ impl ReportParamInput {
             }
             ParamType::ArrayList(_, items) => {
                 html!("div", {
-                    .class(class::BORDER_ROUND)
+                    .class(class::INPUT_GROUP_T)
                     .children([
-                        html!("div", {
-                            .class("mb-2")
-                            .children([
-                                html!("span", {.text(&param.title)}),
-                                html!("buton", {
-                                    .attr("type","button")
-                                    .class(class::BTN_SM_FR_GRAY)
-                                    .child(html!("i", {.class(class::FA_PLUS)}))
-                                    .event(clone!(param => move |_: events::Click| {
-                                        param.ids.lock_mut().push_cloned(Mutable::new(String::new()));
-                                    }))
-                                }),
-                            ])
-                        }),
-                        html!("div", {
-                            .children_signal_vec(param.ids.signal_vec_cloned().enumerate().map(clone!(param, changed => move |(i, id_mutable)| {
-                                html!("div", {
-                                    .class(class::INPUT_GROUP_SM_T)
-                                    .children([
-                                        html!("span", {
-                                            .class("input-group-text")
-                                            .text_signal(i.signal().map(|opt| opt.map(|u| (u + 1).to_string()).unwrap_or_default()))
-                                        }),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_SELECT_SM)
-                                                .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                .children(items.iter().map(|option| {
-                                                    html!("option", {
-                                                        .attr("value", &option.key)
-                                                        .text(&option.label)
-                                                    })
-                                                }))
-                                                .apply(mixins::string_value_select(id_mutable, changed.clone()))
-                                            }))
-                                        }),
-                                        html!("botton", {
-                                            .attr("type","button")
-                                            .class(class::BTN_SM_RED)
-                                            .child(html!("i", {.class(class::FA_X)}))
-                                            .event(clone!(param => move |_: events::Click| {
-                                                if let Some(pos) = i.get() {
-                                                    param.ids.lock_mut().remove(pos);
-                                                }
-                                            }))
-                                        }),
-                                    ])
-                                })
-                            })))
+                        doms::span_group_text(&param.title),
+                        doms::select_box(
+                            "", None, true,
+                            param.id.clone(), changed.clone(),
+                            |d| d.class("form-control"), || {},
+                            items,
+                        ),
+                        html!("botton", {
+                            .attr("type","button")
+                            .class(class::BTN_RED)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .event(clone!(param => move |_: events::Click| {
+                                let is_empty = param.id.lock_ref().is_empty();
+                                if !is_empty {
+                                    param.id.set_neq(String::new());
+                                    changed.set(true);
+                                }
+                            }))
                         }),
                     ])
                 })
             }
             ParamType::ArrayListSystem(system_list_type) => {
+                let items = app.app_asset.lock_ref().as_ref().map(|assets| system_list_type.get_items(assets)).unwrap_or_default();
                 html!("div", {
-                    .class(class::BORDER_ROUND)
+                    .class(class::INPUT_GROUP_T)
                     .children([
-                        html!("div", {
-                            .class("mb-2")
-                            .children([
-                                html!("span", {.text(&param.title)}),
-                                html!("buton", {
-                                    .attr("type","button")
-                                    .class(class::BTN_SM_FR_GRAY)
-                                    .child(html!("i", {.class(class::FA_PLUS)}))
-                                    .event(clone!(param => move |_: events::Click| {
-                                        param.ids.lock_mut().push_cloned(Mutable::new(String::new()));
-                                    }))
-                                }),
-                            ])
-                        }),
-                        html!("div", {
-                            .children_signal_vec(param.ids.signal_vec_cloned().enumerate().map(clone!(param, changed => move |(i, id_mutable)| {
-                                html!("div", {
-                                    .class(class::INPUT_GROUP_SM_T)
-                                    .children([
-                                        html!("span", {
-                                            .class("input-group-text")
-                                            .text_signal(i.signal().map(|opt| opt.map(|u| (u + 1).to_string()).unwrap_or_default()))
-                                        }),
-                                        html!("div", {
-                                            .class(class::FLEX_GROW1)
-                                            .child(html!("select" => HtmlSelectElement, {
-                                                .class(class::FORM_SELECT_SM)
-                                                .child(html!("option", {.attr("value", "").text("เลือก")}))
-                                                .apply(|dom| {
-                                                    if let Some(assets) = app.app_asset.lock_ref().as_ref() {
-                                                        dom.children(system_list_type.get_items(assets).iter().map(|option| {
-                                                            html!("option", {
-                                                                .attr("value", &option.key)
-                                                                .text(&option.label)
-                                                            })
-                                                        }))
-                                                    } else {
-                                                        dom
-                                                    }
-                                                })
-                                                .apply(mixins::string_value_select(id_mutable.clone(), changed.clone()))
-                                            }))
-                                        }),
-                                        html!("botton", {
-                                            .attr("type","button")
-                                            .class(class::BTN_SM_RED)
-                                            .child(html!("i", {.class(class::FA_X)}))
-                                            .event(clone!(param => move |_: events::Click| {
-                                                if let Some(pos) = i.get() {
-                                                    param.ids.lock_mut().remove(pos);
-                                                }
-                                            }))
-                                        }),
-                                    ])
-                                })
-                            })))
+                        doms::span_group_text(&param.title),
+                        doms::select_box(
+                            "", None, true,
+                            param.id.clone(), changed.clone(),
+                            |d| d.class("form-control"), || {},
+                            items,
+                        ),
+                        html!("botton", {
+                            .attr("type","button")
+                            .class(class::BTN_RED)
+                            .child(html!("i", {.class(class::FA_X)}))
+                            .event(clone!(param => move |_: events::Click| {
+                                let is_empty = param.id.lock_ref().is_empty();
+                                if !is_empty {
+                                    param.id.set_neq(String::new());
+                                    changed.set(true);
+                                }
+                            }))
                         }),
                     ])
                 })
@@ -303,9 +217,9 @@ fn render_basic_type(basic_type: &BasicType, mutable: Mutable<String>, changed: 
             changed,
             always(false),
             None,
-            |d| d.class(class::FLEX_GROW1).style("min-width", "120px"),
-            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_R),
-            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_R),
+            |d| d.class(class::FLEX_GROW1).style("min-width", "135px"),
+            |d| d.class("rounded-end-0"),
+            |d| d.class("rounded-end-0"),
             |s| s,
             always(None),
         ),
@@ -314,9 +228,9 @@ fn render_basic_type(basic_type: &BasicType, mutable: Mutable<String>, changed: 
             changed,
             always(false),
             None,
-            |d| d.class(class::FLEX_GROW1).style("min-width", "95px"),
-            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_R),
-            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_R),
+            |d| d.class(class::FLEX_GROW1).style("min-width", "110px"),
+            |d| d.class("rounded-end-0"),
+            |d| d.class("rounded-end-0"),
             |s| s,
             always(None),
         ),
@@ -324,16 +238,16 @@ fn render_basic_type(basic_type: &BasicType, mutable: Mutable<String>, changed: 
             mutable,
             changed,
             always(false),
-            |d| d.class(class::FLEX_GROW1).style("min-width", "175px"),
-            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_R),
-            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_R),
+            |d| d.class(class::FLEX_GROW1).style("min-width", "190px"),
+            |d| d.class("rounded-end-0"),
+            |d| d.class("rounded-end-0"),
             |s| s,
             always(None),
         ),
         _ => {
             html!("input" => HtmlInputElement, {
                 .attr("type", "text")
-                .class(class::FORM_CTRL_SM)
+                .class("form-control")
                 .apply(mixins::string_value(mutable, changed))
             })
         }

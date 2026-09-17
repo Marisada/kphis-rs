@@ -17,9 +17,7 @@ use kphis_model::{
     user::his::{LoginResponse, UserClient},
 };
 use kphis_util::{
-    datetime::get_timestamp_wasm,
-    error::{AppError, ErrorTitle, Source},
-    util::add_u64_with_i64,
+    datetime::get_timestamp_wasm, error::{AppError, ErrorTitle, Source}, util::add_u64_with_i64,
 };
 
 use crate::popups::{PopupAuth, prompt_password::PromptPasswordPopup};
@@ -176,21 +174,31 @@ pub fn set_user(token_response: Option<LoginResponse>, app: Rc<AppState>) -> Res
 /// GET `EndPoint::User`<br>
 /// return (is_success, need_renew_refresh)
 pub async fn renew_access_token(app: Rc<AppState>) -> (bool, bool) {
-    match LoginResponse::call_api_get_access_renew(app.clone()).await {
-        Ok(token_response) => {
-            if let Err(_e) = set_user(Some(token_response.clone()), app.clone()) {
-                // log::error!("Token error: {}", e.message);
-                (false, false)
-            } else {
-                (true, false)
+    // use cache when calling again within 3 seconds
+    let now = get_timestamp_wasm();
+    let (ts, cache_tuples) = app.renew_access_token_cache.get();
+    // log::debug!("{} - {} = {}", now, ts, now.saturating_sub(ts));
+    if now.saturating_sub(ts) > 3 {
+        let new_tuples = match LoginResponse::call_api_get_access_renew(app.clone()).await {
+            Ok(token_response) => {
+                if let Err(_e) = set_user(Some(token_response.clone()), app.clone()) {
+                    // log::error!("Token error: {}", e.message);
+                    (false, false)
+                } else {
+                    (true, false)
+                }
             }
-        }
-        Err(e) => {
-            // log::warn!("Server return: {}", e.message);
-            // mask any cookie/token/claims/user related 5xx error with 401 error
-            // return 409 for client to call PUT /user (get a new refresh token) later
-            (false, e.status == 409)
-        }
+            Err(e) => {
+                // log::warn!("Server return: {}", e.message);
+                // mask any cookie/token/claims/user related 5xx error with 401 error
+                // return 409 for client to call PUT /user (get a new refresh token) later
+                (false, e.status == 409)
+            }
+        };
+        app.renew_access_token_cache.set((now, new_tuples));
+        new_tuples
+    } else {
+        cache_tuples
     }
 }
 

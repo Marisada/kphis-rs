@@ -870,7 +870,7 @@ impl IpdAdmissionNoteDrPage {
         })
     }
 
-    fn render_form(page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_form(page: Rc<Self>, app: Rc<App>) -> Dom {
         let fabric_option = FabricOption { is_drawing_mode: true }.to_value();
 
         html!("div", {
@@ -3066,7 +3066,7 @@ impl IpdAdmissionNoteDrPage {
         })
     }
 
-    fn render_ph_mother(page: Rc<Self>) -> Vec<Dom> {
+    pub fn render_ph_mother(page: Rc<Self>) -> Vec<Dom> {
         vec![
             html!("div", {
                 .class(class::ROW)
@@ -7558,7 +7558,7 @@ impl TakeMedicationBy {
 }
 
 #[derive(Clone, Default)]
-struct DiseaseDetail {
+pub struct DiseaseDetail {
     id: u32,
     name: Mutable<String>,
     year: Mutable<String>,
@@ -7584,14 +7584,14 @@ impl Concat for DiseaseDetail {
 }
 
 impl DiseaseDetail {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(dd: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>, app: Rc<App>) -> Dom {
+    pub fn render(dd: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::ROW)
             .children([
@@ -7659,7 +7659,7 @@ impl DiseaseDetail {
 }
 
 #[derive(Clone, Default)]
-struct DrugAllergy {
+pub struct DrugAllergy {
     id: u32,
     agent: Mutable<String>,   // er_allergy_history_agent
     symptom: Mutable<String>, // er_allergy_history_symptom
@@ -7694,14 +7694,14 @@ impl From<&OpdErAllergyHistory> for DrugAllergy {
 }
 
 impl DrugAllergy {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(da: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
+    pub fn render(da: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
         html!("div", {
             .class(class::ROW)
             .children([
@@ -7747,7 +7747,7 @@ impl DrugAllergy {
 }
 
 #[derive(Clone, Default)]
-struct FoodAllergy {
+pub struct FoodAllergy {
     id: u32,
     agent: Mutable<String>,
     symptom: Mutable<String>,
@@ -7772,14 +7772,14 @@ impl PartialEq<FoodAllergy> for FoodAllergy {
 }
 
 impl FoodAllergy {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(fa: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
+    pub fn render(fa: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
         html!("div", {
             .class(class::ROW)
             .children([
@@ -7825,7 +7825,7 @@ impl FoodAllergy {
 }
 
 #[derive(Clone, Default)]
-struct EtcAllergy {
+pub struct EtcAllergy {
     id: u32,
     agent: Mutable<String>,
     symptom: Mutable<String>,
@@ -7850,14 +7850,14 @@ impl PartialEq<EtcAllergy> for EtcAllergy {
 }
 
 impl EtcAllergy {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(ea: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
+    pub fn render(ea: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
         html!("div", {
             .class(class::ROW)
             .children([
@@ -7903,7 +7903,7 @@ impl EtcAllergy {
 }
 
 #[derive(Clone, Default)]
-struct FamilyMedical {
+pub struct FamilyMedical {
     id: u32,
     disease: Mutable<String>,
     relation: Mutable<String>,
@@ -7928,14 +7928,14 @@ impl PartialEq<FamilyMedical> for FamilyMedical {
 }
 
 impl FamilyMedical {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(fm: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
+    pub fn render(fm: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>) -> Dom {
         html!("div", {
             .class(class::ROW)
             .children([
@@ -7979,7 +7979,7 @@ impl FamilyMedical {
 }
 
 #[derive(Clone, Default)]
-struct AddictAssist {
+pub struct AddictAssist {
     id: u32,
     agent: Mutable<String>,
     score: Mutable<String>,
@@ -8004,14 +8004,14 @@ impl PartialEq for AddictAssist {
 }
 
 impl AddictAssist {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(fa: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>, app: Rc<App>) -> Dom {
+    pub fn render(fa: Rc<Self>, page: Rc<IpdAdmissionNoteDrPage>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::ROW)
             .children([
@@ -8121,7 +8121,7 @@ fn render_ros_item(label: &str, ros: Mutable<String>, changed: Mutable<bool>) ->
     })
 }
 
-fn render_doctor(doctor: Rc<AdmissionNoteDoctor>) -> Dom {
+pub fn render_doctor(doctor: Rc<AdmissionNoteDoctor>) -> Dom {
     html!("div", {
         .class("dr_admission_input_div")
         .child(html!("div", {

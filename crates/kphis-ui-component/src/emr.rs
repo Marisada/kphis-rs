@@ -261,7 +261,7 @@ impl EmrCpn {
         })
     }
 
-    fn render_visit(cpn_id: &'static str, visit: &Rc<EmrVisit>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit(cpn_id: &'static str, visit: &Rc<EmrVisit>, page: Rc<Self>, app: Rc<App>) -> Dom {
         let allow_load_image = app.endpoint_is_allow(&Method::GET, &EndPoint::ScanHisImage, false);
 
         html!("div", {

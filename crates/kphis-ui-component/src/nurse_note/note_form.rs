@@ -633,7 +633,7 @@ impl NurseNoteFormCpn {
                                                     .attr("type", "button")
                                                     .class(class::BTN_SM_GRAY)
                                                     .style("position","absolute")
-                                                    .style("top","70px")
+                                                    .style("top","65px")
                                                     .style("right","0px")
                                                     .child(html!("i", {.class(class::FA_FLASK)}))
                                                     .event(clone!(app, page => move |_: events::Click| {
@@ -950,7 +950,7 @@ impl NurseNoteFormCpn {
                                                     .attr("type", "button")
                                                     .class(class::BTN_SM_GRAY)
                                                     .style("position","absolute")
-                                                    .style("top","70px")
+                                                    .style("top","65px")
                                                     .style("right","0px")
                                                     .child(html!("i", {.class(class::FA_FLASK)}))
                                                     .event(clone!(app, page => move |_: events::Click| {

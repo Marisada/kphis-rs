@@ -19,7 +19,7 @@ use crate::{
     endpoint::{EndPoint, QueryString, find_qs},
     fetch::{ExecuteResponse, execute_fetch, execute_fetch_text, fetch_json_api},
     ipd::document::IpdDocumentExists,
-    select_utils::{ColorSelectOption, SelectOption},
+    select_utils::SelectOption,
 };
 
 #[derive(bitcode::Encode, bitcode::Decode)]
@@ -1082,11 +1082,11 @@ impl ReportParam {
                         let items = v_iter
                             .collect::<Vec<&str>>()
                             .chunks_exact(2)
-                            .map(|two| KeyLabel {
+                            .map(|two| SelectOption {
                                 key: two[0].to_owned(),
-                                label: two[1].to_owned(),
+                                value: two[1].to_owned(),
                             })
-                            .collect::<Vec<KeyLabel>>();
+                            .collect::<Vec<SelectOption>>();
                         if items.is_empty() {
                             ParamType::ListSystem(SystemListType::from(first))
                         } else {
@@ -1102,11 +1102,11 @@ impl ReportParam {
                         let items = v_iter
                             .collect::<Vec<&str>>()
                             .chunks_exact(2)
-                            .map(|two| KeyLabel {
+                            .map(|two| SelectOption {
                                 key: two[0].to_owned(),
-                                label: two[1].to_owned(),
+                                value: two[1].to_owned(),
                             })
-                            .collect::<Vec<KeyLabel>>();
+                            .collect::<Vec<SelectOption>>();
                         if items.is_empty() {
                             ParamType::ArrayListSystem(SystemListType::from(first))
                         } else {
@@ -1146,10 +1146,10 @@ pub enum VarType {
 #[derive(Clone)]
 pub enum ParamType {
     Basic(BasicType),
-    List(BasicType, Vec<KeyLabel>),
+    List(BasicType, Vec<SelectOption>),
     ListSystem(SystemListType),
     Array(BasicType),
-    ArrayList(BasicType, Vec<KeyLabel>),
+    ArrayList(BasicType, Vec<SelectOption>),
     ArrayListSystem(SystemListType),
 }
 
@@ -1158,13 +1158,13 @@ impl ParamType {
         match self {
             Self::Basic(inner) => inner.to_str().to_owned(),
             Self::List(ty, items) => {
-                let values = items.iter().flat_map(|item| [item.key.as_str(), item.label.as_str()]).collect::<Vec<&str>>().join(",");
+                let values = items.iter().flat_map(|item| [item.key.as_str(), item.value.as_str()]).collect::<Vec<&str>>().join(",");
                 ["(", ty.to_str(), ",", &values, ")"].concat()
             }
             Self::ListSystem(sty) => ["(", sty.to_str(), ")"].concat(),
             Self::Array(ty) => ["[", ty.to_str(), "]"].concat(),
             Self::ArrayList(ty, items) => {
-                let values = items.iter().flat_map(|item| [item.key.as_str(), item.label.as_str()]).collect::<Vec<&str>>().join(",");
+                let values = items.iter().flat_map(|item| [item.key.as_str(), item.value.as_str()]).collect::<Vec<&str>>().join(",");
                 ["[(", ty.to_str(), ",", &values, ")]"].concat()
             }
             Self::ArrayListSystem(sty) => ["[(", sty.to_str(), ")]"].concat(),
@@ -1201,7 +1201,7 @@ impl ParamType {
         }
     }
 
-    pub fn get_items(&self, assets: &AppAsset) -> Vec<KeyLabel> {
+    pub fn get_items(&self, assets: &AppAsset) -> Vec<SelectOption> {
         match self {
             Self::Basic(_) | Self::Array(_) => Vec::new(),
             Self::List(_, v) | Self::ArrayList(_, v) => v.to_owned(),
@@ -1635,72 +1635,48 @@ impl SystemListType {
         }
     }
 
-    pub fn get_items(&self, assets: &AppAsset) -> Vec<KeyLabel> {
+    pub fn get_items(&self, assets: &AppAsset) -> Vec<SelectOption> {
         match self {
-            Self::PatientType => assets.fcnote_patient_type_select_options.iter().map(KeyLabel::from).collect(),
-            Self::ErBed => assets.er_bed_select_options.iter().map(KeyLabel::from).collect(),
-            Self::ErPatientStatus => assets.er_patient_status_select_options.iter().map(KeyLabel::from).collect(),
-            Self::ErDchType => assets.er_dch_type_select_options.iter().map(KeyLabel::from).collect(),
-            Self::Ward => assets.ward_select_option.iter().map(KeyLabel::from).collect(),
-            Self::Doctor => assets.doctor_select_option.iter().map(KeyLabel::from).collect(),
-            Self::DoctorAll => assets.all_doctor_select_option.iter().map(KeyLabel::from).collect(),
-            Self::Spclty => assets.spclty_select_option.iter().map(KeyLabel::from).collect(),
-            Self::SpcltyKphis => assets.spclty_kphis_select_option.iter().map(KeyLabel::from).collect(),
-            Self::Inscl => assets.inscl_select_option.iter().map(KeyLabel::from).collect(),
-            Self::Emergency => assets.emergency_select_option.iter().map(KeyLabel::from).collect(),
-            Self::EmergencyLevel => assets.emergency_level_select_option.iter().map(KeyLabel::from).collect(),
-            Self::ConsultType => assets.consult_type_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsConscious => assets.conscious_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsUrineAmount => assets.urine_amount_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsUrineDuration => assets.urine_duration_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsLine => assets.line_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsCha => assets.cha_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsVA => assets.va_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsMaas => assets.mass_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsMotor => assets.motor_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsO2 => assets.o2_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsTube => assets.tube_select_option.iter().map(KeyLabel::from).collect(),
-            // Self::VsIntake => assets.intake_select_option.iter().map(KeyLabel::from).collect(),
-            // Self::VsOutput => assets.output_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsLrStation => assets.lr_sta_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsLrMembrane => assets.lr_mem_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsLrMoulding => assets.lr_moulding_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsDipstick => assets.dipstick_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsBreathing => assets.breathing_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsAvpu => assets.avpu_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsGutFeeling => assets.gut_feeling_select_option.iter().map(KeyLabel::from).collect(),
-            Self::VsPopsOther => assets.pops_other_select_option.iter().map(KeyLabel::from).collect(),
-            Self::StageOfChange => assets.stage_of_change_select_option.iter().map(KeyLabel::from).collect(),
-            Self::ReferType => assets.refer_type_select_option.iter().map(KeyLabel::from).collect(),
-            Self::ReferCause => assets.refer_cause_select_option.iter().map(KeyLabel::from).collect(),
-            Self::ReferPoint => assets.refer_point_select_option.iter().map(KeyLabel::from).collect(),
-            Self::MophReferExpType => assets.moph_refer_expire_type_select_option.iter().map(KeyLabel::from).collect(),
-            Self::DocumentType => assets.document_type_select_option.iter().map(KeyLabel::from).collect(),
+            Self::PatientType => assets.fcnote_patient_type_select_options.iter().map(SelectOption::from).collect(),
+            Self::ErBed => assets.er_bed_select_options.iter().map(SelectOption::from).collect(),
+            Self::ErPatientStatus => assets.er_patient_status_select_options.clone(),
+            Self::ErDchType => assets.er_dch_type_select_options.clone(),
+            Self::Ward => assets.ward_select_option.clone(),
+            Self::Doctor => assets.doctor_select_option.clone(),
+            Self::DoctorAll => assets.all_doctor_select_option.clone(),
+            Self::Spclty => assets.spclty_select_option.clone(),
+            Self::SpcltyKphis => assets.spclty_kphis_select_option.clone(),
+            Self::Inscl => assets.inscl_select_option.clone(),
+            Self::Emergency => assets.emergency_select_option.clone(),
+            Self::EmergencyLevel => assets.emergency_level_select_option.clone(),
+            Self::ConsultType => assets.consult_type_select_option.clone(),
+            Self::VsConscious => assets.conscious_select_option.clone(),
+            Self::VsUrineAmount => assets.urine_amount_select_option.clone(),
+            Self::VsUrineDuration => assets.urine_duration_select_option.clone(),
+            Self::VsLine => assets.line_select_option.clone(),
+            Self::VsCha => assets.cha_select_option.clone(),
+            Self::VsVA => assets.va_select_option.clone(),
+            Self::VsMaas => assets.mass_select_option.clone(),
+            Self::VsMotor => assets.motor_select_option.clone(),
+            Self::VsO2 => assets.o2_select_option.clone(),
+            Self::VsTube => assets.tube_select_option.clone(),
+            // Self::VsIntake => assets.intake_select_option.clone(),
+            // Self::VsOutput => assets.output_select_option.clone(),
+            Self::VsLrStation => assets.lr_sta_select_option.clone(),
+            Self::VsLrMembrane => assets.lr_mem_select_option.clone(),
+            Self::VsLrMoulding => assets.lr_moulding_select_option.clone(),
+            Self::VsDipstick => assets.dipstick_select_option.clone(),
+            Self::VsBreathing => assets.breathing_select_option.clone(),
+            Self::VsAvpu => assets.avpu_select_option.clone(),
+            Self::VsGutFeeling => assets.gut_feeling_select_option.clone(),
+            Self::VsPopsOther => assets.pops_other_select_option.clone(),
+            Self::StageOfChange => assets.stage_of_change_select_option.clone(),
+            Self::ReferType => assets.refer_type_select_option.clone(),
+            Self::ReferCause => assets.refer_cause_select_option.clone(),
+            Self::ReferPoint => assets.refer_point_select_option.clone(),
+            Self::MophReferExpType => assets.moph_refer_expire_type_select_option.clone(),
+            Self::DocumentType => assets.document_type_select_option.clone(),
             Self::Unknown => Vec::new(),
-        }
-    }
-}
-
-#[derive(Clone)]
-pub struct KeyLabel {
-    pub key: String,
-    pub label: String,
-}
-
-impl std::convert::From<&ColorSelectOption> for KeyLabel {
-    fn from(item: &ColorSelectOption) -> Self {
-        Self {
-            key: item.key.to_owned(),
-            label: item.value.to_owned(),
-        }
-    }
-}
-
-impl std::convert::From<&SelectOption> for KeyLabel {
-    fn from(item: &SelectOption) -> Self {
-        Self {
-            key: item.key.to_owned(),
-            label: item.value.to_owned(),
         }
     }
 }

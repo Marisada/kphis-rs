@@ -2627,7 +2627,7 @@ impl OpdErEmergencyCpn {
 }
 
 #[derive(Clone, Default)]
-struct DrugAllergy {
+pub struct DrugAllergy {
     id: u32,
     agent: Mutable<String>,
     symptom: Mutable<String>,
@@ -2650,14 +2650,14 @@ impl From<&AllergyHistory> for DrugAllergy {
 }
 
 impl DrugAllergy {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(da: Rc<Self>, page: Rc<OpdErEmergencyCpn>) -> Dom {
+    pub fn render(da: Rc<Self>, page: Rc<OpdErEmergencyCpn>) -> Dom {
         html!("div", {
             .class("er_allergy_history_input_div")
             .child(html!("div", {
@@ -2709,7 +2709,7 @@ impl DrugAllergy {
 }
 
 #[derive(Clone, Default)]
-struct ConsultItem {
+pub struct ConsultItem {
     id: u32,
     er_consult_ward: Mutable<String>,
     er_consult_date: Mutable<String>, // Date
@@ -2740,14 +2740,14 @@ impl From<&ConsultHistory> for ConsultItem {
 }
 
 impl ConsultItem {
-    fn new() -> Rc<Self> {
+    pub fn new() -> Rc<Self> {
         Rc::new(Self {
             id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             ..Default::default()
         })
     }
 
-    fn render(ci: Rc<Self>, page: Rc<OpdErEmergencyCpn>, app: Rc<App>) -> Dom {
+    pub fn render(ci: Rc<Self>, page: Rc<OpdErEmergencyCpn>, app: Rc<App>) -> Dom {
         let (doctor_select_option, spclty_kphis_select_option) = app
             .app_asset
             .lock_ref()

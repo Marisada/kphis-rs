@@ -151,7 +151,7 @@ impl IpdPasscodeForm {
         );
     }
 
-    fn render_using_passcode(item: Rc<ConfigIpdWardPasscode>, i: usize, app: Rc<App>, page: Rc<Self>) -> Dom {
+    pub fn render_using_passcode(item: Rc<ConfigIpdWardPasscode>, i: usize, app: Rc<App>, page: Rc<Self>) -> Dom {
         html!("li", {
             .class("list-group-item")
             .children([

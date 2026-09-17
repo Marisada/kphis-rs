@@ -1048,7 +1048,7 @@ impl IpdSummaryAuditPage {
 }
 
 #[derive(Clone, Default)]
-struct IpdSummaryAuditMutable {
+pub struct IpdSummaryAuditMutable {
     new_audit: Mutable<Option<Rc<SummaryAudit>>>,
     ipd_summary_audit_selected: Mutable<Option<Rc<SummaryAudit>>>,
 
@@ -1120,7 +1120,7 @@ struct IpdSummaryAuditMutable {
 }
 
 impl IpdSummaryAuditMutable {
-    fn new(parent_page: Rc<IpdSummaryAuditPage>) -> Rc<Self> {
+    pub fn new(parent_page: Rc<IpdSummaryAuditPage>) -> Rc<Self> {
         Rc::new(Self {
             ipd_summary_audit_selected: parent_page.ipd_summary_audit_selected.clone(),
             ..Default::default()
@@ -1440,7 +1440,7 @@ impl IpdSummaryAuditMutable {
         )
     }
 
-    fn render(audit: Rc<Self>, list_loaded: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render(audit: Rc<Self>, list_loaded: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref!(
                 let busy = app.loader_is_loading(),
@@ -2047,7 +2047,7 @@ impl IpdSummaryAuditMutable {
 }
 
 #[derive(Clone, Default)]
-struct SummaryAuditItemMutable {
+pub struct SummaryAuditItemMutable {
     auto_id: u32,
     summary_audit_item_id: Mutable<u32>,
     summary_audit_id: Mutable<u32>,
@@ -2067,7 +2067,7 @@ struct SummaryAuditItemMutable {
 }
 
 impl SummaryAuditItemMutable {
-    fn new(ty: &str, summary_audit_id: u32, summary_id: u32) -> Rc<Self> {
+    pub fn new(ty: &str, summary_audit_id: u32, summary_id: u32) -> Rc<Self> {
         Rc::new(Self {
             auto_id: ID_COUNTER.fetch_add(1, Ordering::SeqCst),
             summary_audit_id: Mutable::new(summary_audit_id),
@@ -2136,7 +2136,7 @@ impl SummaryAuditItemMutable {
         )
     }
 
-    fn render(i_opt: Option<ReadOnlyMutable<Option<usize>>>, item: Rc<Self>, audit: MutableVec<Rc<SummaryAuditItemMutable>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
+    pub fn render(i_opt: Option<ReadOnlyMutable<Option<usize>>>, item: Rc<Self>, audit: MutableVec<Rc<Self>>, changed: Mutable<bool>, app: Rc<App>) -> Dom {
         html!("div", {
             .future(map_ref! {
                 let busy = app.loader_is_loading(),
