@@ -77,6 +77,8 @@ pub struct AppState {
     ///   2. `App::logout(app.clone(), true)`, (now only called when `clear cache`)<br>
     /// will `false` manually or after get `AppAsset`
     pub no_cache_mode: Mutable<bool>,
+    /// (ts, (is_success, need_renew_refresh))
+    pub renew_access_token_cache: Mutable<(u64, (bool, bool))>,
     pub use_date_limit: Mutable<bool>,
     pub edit_order: Mutable<Option<Rc<Order>>>,
     pub report_select: Mutable<String>,
@@ -133,6 +135,7 @@ impl AppState {
             user: Mutable::new(None),
 
             no_cache_mode: Mutable::new(true),
+            renew_access_token_cache: Mutable::new((0, (false, false))),
             use_date_limit: Mutable::new(true),
             edit_order: Mutable::new(None),
             report_select: Mutable::new(String::new()),
@@ -202,6 +205,7 @@ impl AppState {
             user: Mutable::new(None),
 
             no_cache_mode: Mutable::new(false),
+            renew_access_token_cache: Mutable::new((0, (false, false))),
             use_date_limit: Mutable::new(true),
             edit_order: Mutable::new(None),
             report_select: Mutable::new(String::new()),
