@@ -78,8 +78,8 @@ pub struct App {
     /// ready_state mutable for store `sse_new` interval checking result
     /// - 0 = connection
     /// - 1 = open
-    /// - 2 = hidden, no restart
-    /// - 3 = error, restart
+    /// - 2 = hidden, reconnect
+    /// - 3 = error, go index page and reconnect loop
     pub sse_ready_state: Mutable<u8>,
     /// messages wait for sending
     pub messages: MutableVec<SsePostMessage>,
@@ -394,6 +394,7 @@ impl App {
     // SSE //
     //=====//
     pub fn start_sse_by_renew_token(app: Rc<Self>) {
+        // log::debug!("start sse by renew token");
         app.async_load(
             false,
             clone!(app => async move {
@@ -615,6 +616,10 @@ impl App {
         self.messages.lock_mut().push_cloned(message);
     }
 
+    /// - 0: wait for connect command
+    /// - 1: connected, do nothing
+    /// - 2: check token and connect
+    /// - 3: go index page and try connect in loop
     pub fn sse_end(&self, with_state: u8) {
         // log::debug!("Try clearing any EventSource");
         // close eventstream
@@ -779,7 +784,7 @@ impl App {
                 }
                 app.user.set(None);
                 app.app_asset.set(None);
-                app.sse_end(2);
+                app.sse_end(0);
                 if is_clean {
                     if let Err(e) = AppAsset::patch_asset(app.state()).await {
                         log::error!("Error:{}",e.message);

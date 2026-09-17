@@ -177,7 +177,7 @@ pub async fn renew_access_token(app: Rc<AppState>) -> (bool, bool) {
     // use cache when calling again within 3 seconds
     let now = get_timestamp_wasm();
     let (ts, cache_tuples) = app.renew_access_token_cache.get();
-    log::debug!("{} - {} = {}", now, ts, now.saturating_sub(ts));
+    // log::debug!("{} - {} = {}", now, ts, now.saturating_sub(ts));
     if now.saturating_sub(ts) > 3 {
         let new_tuples = match LoginResponse::call_api_get_access_renew(app.clone()).await {
             Ok(token_response) => {
