@@ -35,7 +35,13 @@ COPY crates/wasm-tests ./crates/wasm-tests
 # needed by kphis-api-*
 COPY crates/kphis-sqlx-tester ./crates/kphis-sqlx-tester
 # needed by wasm-tests
+COPY crates/kphis-ui-app ./crates/kphis-ui-app
 COPY crates/kphis-ui-core ./crates/kphis-ui-core
+COPY crates/kphis-ui-component ./crates/kphis-ui-component
+COPY crates/kphis-ui-page ./crates/kphis-ui-page
+COPY crates/kphis-worker ./crates/kphis-worker
+COPY crates/kphis-drg-worker ./crates/kphis-drg-worker
+COPY crates/kphis-typst-worker ./crates/kphis-typst-worker
 # add only Cargo.toml
 COPY crates/$BINARY_NAME/Cargo.toml ./crates/$BINARY_NAME/
 COPY ENTITY ./ENTITY
