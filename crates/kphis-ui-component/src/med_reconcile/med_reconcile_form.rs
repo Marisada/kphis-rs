@@ -1001,11 +1001,11 @@ impl MedReconForm {
                                     .child(html!("div", {
                                         .class(class::INPUT_GROUP_T)
                                         .children([
-                                            doms::label_group_for("pharmacist_name","ผู้บันทึกรายการ"),
+                                            doms::label_group_for(&["pharmacist_name_", &page.med_reconciliation_id.get().to_string()].concat(),"ผู้บันทึกรายการ"),
                                             html!("input", {
                                                 .attr("type", "text")
                                                 .class("form-control")
-                                                .attr("id", "pharmacist_name")
+                                                .attr("id", &["pharmacist_name_", &page.med_reconciliation_id.get().to_string()].concat())
                                                 .attr("readonly", "readonly")
                                                 .prop_signal("value", page.pharmacist_name.signal_cloned())
                                             }),
@@ -1017,11 +1017,11 @@ impl MedReconForm {
                                     .child(html!("div", {
                                         .class(class::INPUT_GROUP_T)
                                         .children([
-                                            doms::label_group_for("doctor_name","แพทย์ผู้พิจารณา"),
+                                            doms::label_group_for(&["doctor_name_", &page.med_reconciliation_id.get().to_string()].concat(),"แพทย์ผู้พิจารณา"),
                                             html!("input", {
                                                 .attr("type", "text")
                                                 .class("form-control")
-                                                .attr("id", "doctor_name")
+                                                .attr("id", &["doctor_name_", &page.med_reconciliation_id.get().to_string()].concat())
                                                 .attr("readonly", "readonly")
                                                 .prop_signal("value", page.doctor_name.signal_cloned())
                                             }),

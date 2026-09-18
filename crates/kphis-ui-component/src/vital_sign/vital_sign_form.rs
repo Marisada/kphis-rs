@@ -1085,7 +1085,7 @@ impl VitalSignFormCpn {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        label_for("sat_ra", "O\u{2082} sat Room Air", true),
+                        label_for("sat_room_air", "O\u{2082} sat Room Air", true),
                         input_number("sat_room_air", page.sat_room_air.clone(), page.changed.clone(), 0, Some("0"), Some("100"), Some("%"), Some((Mutable::new(None),""))),
                     ])
                 }),
@@ -1380,34 +1380,10 @@ impl VitalSignFormCpn {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        label_for("aggression_oas_vs", "OAS", false),
+                        label_not_for("OAS", false),
                         html!("div", {
                             .class(class::COL_SM6_P0S2)
-                            .child(html!("div", {
-                                .class(class::INPUT_GROUP_SM)
-                                .children([
-                                    html!("input" => HtmlInputElement, {
-                                        .attr("type", "number")
-                                        .class(class::FORM_CTRL_SM)
-                                        .attr("id", "aggression_oas_vs")
-                                        .attr("min","0")
-                                        .attr("max","3")
-                                        .apply(mixins::string_value(page.aggression_oas.clone(), page.changed.clone()))
-                                    }),
-                                    html!("button", {
-                                        .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
-                                        .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(app, page => move |_:events::Click| {
-                                            page.aggression_oas_modal.set(Some(AggressionOAS::new(
-                                                page.aggression_oas.clone(),
-                                                page.changed.clone(),
-                                            )));
-                                            app.show_modal_backdrop();
-                                        }))
-                                    }),
-                                ])
-                            }))
+                            .child(input_group_oas(page.aggression_oas.clone(), page.changed.clone(), page.aggression_oas_modal.clone(), app.clone()))
                         }),
                     ])
                 }),
@@ -1919,43 +1895,7 @@ impl VitalSignFormCpn {
                         label_not_for("OAS", false),
                         html!("div", {
                             .class(class::COL_SM6_P0S2)
-                            .child(html!("div", {
-                                .class(class::INPUT_GROUP_SM)
-                                .children([
-                                    html!("button", {
-                                        .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
-                                        .child(html!("i", {.class(class::FA_EDIT)}))
-                                        .event(clone!(app, page => move |_:events::Click| {
-                                            page.aggression_oas_modal.set(Some(AggressionOAS::new(
-                                                page.aggression_oas.clone(),
-                                                page.changed.clone(),
-                                            )));
-                                            app.show_modal_backdrop();
-                                        }))
-                                    }),
-                                    html!("div", {
-                                        .class("input-group-text")
-                                        .style_signal("background-color", page.aggression_oas.signal_ref(|concat| concat.split(',').nth(0).and_then(|s| s.parse::<u8>().ok()).map(|score| {
-                                            match score {
-                                                0 => "inherit",
-                                                1 => "gold",
-                                                2 => "pink",
-                                                3.. => "salmon",
-                                            }
-                                        })))
-                                        .text_signal(page.aggression_oas.signal_ref(|concat| concat.split(',').nth(0).and_then(|s| s.parse::<u8>().ok()).map(|score| {
-                                            let value = match score {
-                                                0 => "ปกติ",
-                                                1 => "กึ่งเร่งด่วน",
-                                                2 => "เร่งด่วน",
-                                                3.. => "ฉุกเฉิน",
-                                            };
-                                            [&score.to_string(), " : ", value].concat()
-                                        }).unwrap_or(String::from("รอการประเมิน"))))
-                                    }),
-                                ])
-                            }))
+                            .child(input_group_oas(page.aggression_oas.clone(), page.changed.clone(), page.aggression_oas_modal.clone(), app.clone()))
                         }),
                     ])
                 }),
@@ -2608,7 +2548,7 @@ fn label_for(id: &str, text: &str, with_scores: bool) -> Dom {
 
 fn label_not_for(text: &str, with_scores: bool) -> Dom {
     let col = if with_scores { "col-sm-4" } else { "col-sm-5" };
-    html!("label", {
+    html!("span", {
         .class([col, "p-0", "pt-1", "text-end", "col-form-label"])
         .text(text)
     })
@@ -2837,5 +2777,45 @@ fn ews_total(label: &str, score: Option<u32>, title: &str, color: &str, bg_color
                 }
             })
         }))
+    })
+}
+
+fn input_group_oas(aggression_oas: Mutable<String>, changed: Mutable<bool>, modal: Mutable<Option<Rc<AggressionOAS>>>, app: Rc<App>) -> Dom {
+    html!("div", {
+        .class(class::INPUT_GROUP_SM)
+        .children([
+            html!("button", {
+                .attr("type", "button")
+                .class(class::BTN_SM_GRAY)
+                .child(html!("i", {.class(class::FA_EDIT)}))
+                .event(clone!(app, modal, aggression_oas, changed => move |_:events::Click| {
+                    modal.set(Some(AggressionOAS::new(
+                        aggression_oas.clone(),
+                        changed.clone(),
+                    )));
+                    app.show_modal_backdrop();
+                }))
+            }),
+            html!("div", {
+                .class("input-group-text")
+                .style_signal("background-color", aggression_oas.signal_ref(|concat| concat.split(',').nth(0).and_then(|s| s.parse::<u8>().ok()).map(|score| {
+                    match score {
+                        0 => "inherit",
+                        1 => "gold",
+                        2 => "pink",
+                        3.. => "salmon",
+                    }
+                })))
+                .text_signal(aggression_oas.signal_ref(|concat| concat.split(',').nth(0).and_then(|s| s.parse::<u8>().ok()).map(|score| {
+                    let value = match score {
+                        0 => "ปกติ",
+                        1 => "กึ่งเร่งด่วน",
+                        2 => "เร่งด่วน",
+                        3.. => "ฉุกเฉิน",
+                    };
+                    [&score.to_string(), " : ", value].concat()
+                }).unwrap_or(String::from("รอการประเมิน"))))
+            }),
+        ])
     })
 }

@@ -1775,7 +1775,6 @@ where
                     }))
                 }),
             ])
-
         }))
         // click outside dropdown list or escape keypress event
         .with_node!(wrapper => {
