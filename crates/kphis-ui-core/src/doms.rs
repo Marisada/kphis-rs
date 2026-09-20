@@ -1648,7 +1648,7 @@ where
                         })
                         // autofill may trigger KeyDown event, so we use KeyUp here
                         .event_with_options(&EventOptions::preventable(), clone!(state => move |e: events::KeyUp| {
-                            match e.key().as_str() {
+                            match e.code().as_str() {
                                 "Enter" => {
                                     if state.is_opened.get() {
                                         let (rk, rv) = state.focused_pair.get_cloned();
@@ -1780,7 +1780,7 @@ where
         // click outside dropdown list or escape keypress event
         .with_node!(wrapper => {
             .global_event(clone!(state => move |e: events::KeyDown| {
-                if state.is_opened.get() && e.key() == "Escape" {
+                if state.is_opened.get() && e.code() == "Escape" {
                     if state.is_multiple {
                         state.set_multiple(false);
                     }

@@ -41,7 +41,7 @@ pub fn modal_show_bool_mixins(show_mutable: Mutable<bool>, app: Rc<App>) -> impl
             .attr("tabindex", "-1")
             // Add global escape key listener
             .global_event(clone!(app, show_mutable => move |e: events::KeyDown| {
-                if show_mutable.get() && e.key() == "Escape" {
+                if show_mutable.get() && e.code() == "Escape" {
                     app.clear_modal_backdrop();
                     show_mutable.set(false);
                 }
@@ -74,7 +74,7 @@ pub fn modal_show_option_mixins<T: 'static>(show_mutable: Mutable<Option<T>>, ap
             // Add global escape key listener
             .global_event(clone!(app, show_mutable => move |e: events::KeyDown| {
                 let is_show = show_mutable.lock_ref().is_some();
-                if is_show && e.key() == "Escape" {
+                if is_show && e.code() == "Escape" {
                     app.clear_modal_backdrop();
                     show_mutable.set(None);
                 }

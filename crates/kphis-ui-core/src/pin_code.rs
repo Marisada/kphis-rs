@@ -180,7 +180,7 @@ impl PinCode {
                     input_mutable.set(None);
                 }))
                 .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
-                    if event.key() == "Backspace" && id > 0 {
+                    if event.code() == "Backspace" && id > 0 {
                         event.prevent_default();
                         let prev_input = page.get_input(id - 1);
                         prev_input.set(None);

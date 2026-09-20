@@ -262,7 +262,7 @@ impl DrugDetailModal {
             .child(Self::render_dialog(modal.clone(), display.clone(), parent_reload.clone(), app.clone()))
             // Add global escape key listener
             .global_event(clone!(app, modal, display, parent_reload => move |e: events::KeyDown| {
-                if e.key() == "Escape" {
+                if e.code() == "Escape" {
                     if let Some(reload) = &parent_reload {
                         reload.set_neq(modal.parent_need_reload.get());
                     }
