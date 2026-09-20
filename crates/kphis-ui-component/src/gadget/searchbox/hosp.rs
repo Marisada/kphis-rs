@@ -135,7 +135,7 @@ impl HospSearchboxCpn {
                                         //     if let Some(handle) = timer_handle.get() {
                                         //         Timeout::manual_drop(handle);
                                         //     }
-                                        //     if event.key() == "Enter" {
+                                        //     if event.code() == "Enter" {
                                         //         event.prevent_default();
                                         //     }
                                         // }))

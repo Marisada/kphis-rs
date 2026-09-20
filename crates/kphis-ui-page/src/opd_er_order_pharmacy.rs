@@ -165,7 +165,7 @@ impl OpdErOrderPharmacyPage {
                                             .with_node!(element => {
                                                 // autofill may trigger KeyDown event, so we use KeyUp here
                                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
-                                                    if event.key() == "Enter" {
+                                                    if event.code() == "Enter" {
                                                         event.prevent_default();
                                                         page.patient.set_neq(element.value());
                                                         page.changed.set_neq(true);

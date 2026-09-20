@@ -650,7 +650,7 @@ impl ImageCpn {
                                     .prop_signal("value", page.edited.signal_ref(|opt| opt.as_ref().and_then(|image| image.title.clone()).unwrap_or_default()))
                                     .with_node!(element => {
                                         .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::KeyUp| {
-                                            if e.key() == "Enter" {
+                                            if e.code() == "Enter" {
                                                 e.prevent_default();
                                                 if page.edited_title.lock_ref().as_str() != page.old_title.lock_ref().as_str() {
                                                     page.is_edit_title.set(true);
@@ -965,7 +965,7 @@ impl ImageCpn {
             .child(Self::render_capture_modal_dialog(page.clone(), app.clone()))
             // Add global escape key listener
             .global_event(clone!(app, page => move |e: events::KeyDown| {
-                if e.key() == "Escape" {
+                if e.code() == "Escape" {
                     let capture_video_id = ["capture-video-", &page.id.to_string()].concat();
                     if let Some(video_elm) = app.get_id(&capture_video_id).and_then(|elm| elm.dyn_into::<HtmlVideoElement>().ok()) {
                         if let Err(e) = stop_video(video_elm) {

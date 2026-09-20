@@ -252,7 +252,7 @@ where
             .prop_signal("value", mutable.signal_cloned())
             .event(clone!(element, mutable, changed => move |_: events::Input| with_string(&element.value(), mutable.clone(), changed.clone())))
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
-                if element.is_textarea() && event.key() == "Tab" {
+                if element.is_textarea() && event.code() == "Tab" {
                     event.prevent_default();
                     tab_action(&element);
                     with_string(&element.value(), mutable.clone(), changed.clone())
@@ -273,7 +273,7 @@ where
             .prop_signal("value", mutable.signal_cloned().map(|v| v.unwrap_or_default()))
             .event(clone!(element, mutable, changed => move |_: events::Input| with_string_opt(&element.value(), mutable.clone(), changed.clone())))
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
-                if element.is_textarea() && event.key() == "Tab" {
+                if element.is_textarea() && event.code() == "Tab" {
                     event.prevent_default();
                     tab_action(&element);
                     with_string_opt(&element.value(), mutable.clone(), changed.clone());
@@ -295,7 +295,7 @@ where
             .prop_signal("value", mutable.signal_cloned())
             .event(clone!(element, mutable, changed => move |_: events::Input| with_string_not_empty(&element.value(), mutable.clone(), changed.clone())))
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
-                if element.is_textarea() && event.key() == "Tab" {
+                if element.is_textarea() && event.code() == "Tab" {
                     event.prevent_default();
                     tab_action(&element);
                     with_string_not_empty(&element.value(), mutable.clone(), changed.clone());
@@ -326,7 +326,7 @@ where
             }))
             .event(clone!(element, mutable, changed => move |_: events::Input| with_string_opt(&element.value(), mutable.clone(), changed.clone())))
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
-                if element.is_textarea() && event.key() == "Tab" {
+                if element.is_textarea() && event.code() == "Tab" {
                     event.prevent_default();
                     tab_action(&element);
                     with_string_opt(&element.value(), mutable.clone(), changed.clone())
@@ -345,7 +345,7 @@ pub fn string_value_end(mutable: Mutable<String>, changed: Mutable<bool>) -> imp
             .prop_signal("value", mutable.signal_cloned())
             .event(clone!(element, mutable, changed => move |_: events::Change| with_string(&element.value(), mutable.clone(), changed.clone())))
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyUp| {
-                if event.key() == "Enter" {
+                if event.code() == "Enter" {
                     event.prevent_default();
                     with_string(&element.value(), mutable.clone(), changed.clone());
                 }
@@ -375,7 +375,7 @@ pub fn opt_string_value_end(mutable: Mutable<Option<String>>, changed: Mutable<b
             .event(clone!(element, mutable, changed => move |_: events::Change| with_string_opt(&element.value(), mutable.clone(), changed.clone())))
             // autofill may trigger KeyDown event, so we use KeyUp here
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyUp| {
-                if !element.is_textarea() && event.key() == "Enter" {
+                if !element.is_textarea() && event.code() == "Enter" {
                     event.prevent_default();
                     with_string_opt(&element.value(), mutable.clone(), changed.clone());
                 }
@@ -400,7 +400,7 @@ pub fn textarea_value_auto_expand(mutable: Mutable<String>, changed: Mutable<boo
             })))
             .event(clone!(element, mutable, changed => move |_: events::Input| with_string(&element.value(), mutable.clone(), changed.clone())))
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
-                if event.key() == "Tab" {
+                if event.code() == "Tab" {
                     event.prevent_default();
                     tab_action(&element);
                     with_string(&element.value(), mutable.clone(), changed.clone())
@@ -426,7 +426,7 @@ pub fn textarea_opt_value_auto_expand(mutable: Mutable<Option<String>>, changed:
             })))
             .event(clone!(element, mutable, changed => move |_: events::Input| with_string_opt(&element.value(), mutable.clone(), changed.clone())))
             .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
-                if event.key() == "Tab" {
+                if event.code() == "Tab" {
                     event.prevent_default();
                     tab_action(&element);
                     with_string_opt(&element.value(), mutable.clone(), changed.clone())
@@ -917,7 +917,7 @@ where
     move |dom| {
         with_node!(dom, wrapper => {
             .global_event(clone!(close_state => move |e: events::KeyDown| {
-                if close_state.get_cloned() != T::default() && e.key() == "Escape" {
+                if close_state.get_cloned() != T::default() && e.code() == "Escape" {
                     close_state.set(T::default());
                 }
             }))

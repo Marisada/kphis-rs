@@ -4,6 +4,7 @@
     - use document.documentElement.clientHeight instead of window.innerHeight
 - add window_offset()
 - fix test
+- add KeyboardEvent::code()
 
 add `.cargo/config.toml`
 ```toml
@@ -22,8 +23,8 @@ wasm-bindgen-test = "0.3"
 ```
 
 ```diff
--   futures-signals = "0.3"
-+   futures-signals = { git = "https://codeberg.org/marisada/rust-signals" }
+-   gloo-events = "0.2"
++   gloo-events = "0.3"
 ```
 
 ## src/dom.rs::234
@@ -110,6 +111,19 @@ pub fn window_offset() -> impl Signal<Item = WindowOffset> {
     WindowOffsetSignal { signal }
 }
 
+```
+
+## /src/events.rs
+:191
+```diff
+            // TODO return enum or something
+            #[inline] pub fn key(&self) -> String { self.event.key() }
+
++           #[inline] pub fn code(&self) -> String { self.event.code() }
+
+            #[inline] pub fn ctrl_key(&self) -> bool { self.event.ctrl_key() || self.event.meta_key() }
+            #[inline] pub fn shift_key(&self) -> bool { self.event.shift_key() }
+            #[inline] pub fn alt_key(&self) -> bool { self.event.alt_key() }
 ```
 
 - edit

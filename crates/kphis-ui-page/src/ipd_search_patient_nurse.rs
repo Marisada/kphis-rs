@@ -207,7 +207,7 @@ impl IpdSearchPatientNursePage {
                                             .with_node!(element => {
                                                 // autofill may trigger KeyDown event, so we use KeyUp here
                                                 .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyUp| {
-                                                    if event.key() == "Enter" {
+                                                    if event.code() == "Enter" {
                                                         event.prevent_default();
                                                         page.passcode.set_neq(element.value());
                                                         page.changed.set_neq(true);

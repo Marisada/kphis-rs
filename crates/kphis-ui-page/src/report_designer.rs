@@ -1703,12 +1703,12 @@ fn editor<F: Fn(&str) -> HighLighted + 'static>(
                 async {}
             })))
             .event_with_options(&EventOptions::preventable(), clone!(app, element => move |event:events::KeyUp| {
-                // if event.ctrl_key() && !event.shift_key() && &event.key() == "v" { // key a up after press ctrl + v
+                // if event.ctrl_key() && !event.shift_key() && &event.code() == "KeyV" { // key a up after press ctrl + v
                 //     app.alert_error("คำแนะนำ", "กรุณาใช้ (Ctrl + Shift + v) แทน (Ctrl + v) ในการ Paste ข้อมูลปริมาณมาก");
                 // } else
-                if event.ctrl_key() && &event.key() == "a" { // key a up after press ctrl + a
+                if event.ctrl_key() && &event.code() == "KeyA" { // key a up after press ctrl + a
                     return
-                } else if event.key() == "Control" { // when key ctrl up alone
+                } else if ["ControlLeft", "ControlRight"].contains(&event.code().as_str()) { // when key ctrl up alone
                     return
                 }
                 // get position
@@ -1738,7 +1738,7 @@ fn editor<F: Fn(&str) -> HighLighted + 'static>(
                 html.set(highlighted.html());
                 text.set(inner_text);
                 changed.set_neq(true);
-                if event.key() == "Enter" {
+                if event.code() == "Enter" {
                     // event.prevent_default();
                     cursor_position.set_neq(pos.map(|p| highlighted.pos_changed(p) + 1));
                 } else {
@@ -1746,7 +1746,7 @@ fn editor<F: Fn(&str) -> HighLighted + 'static>(
                 }
             }))
             .event_with_options(&EventOptions::preventable(), clone!(app => move |event:events::KeyDown| {
-                match event.key().as_str() {
+                match event.code().as_str() {
                     "Tab" => {
                         event.prevent_default();
                         add_text("    ", &app);
