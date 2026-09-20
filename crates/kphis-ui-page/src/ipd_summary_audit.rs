@@ -2261,7 +2261,8 @@ impl SummaryAuditItemMutable {
                                         changed.set_neq(true);
                                     }
                                 }))
-                                .event_with_options(&EventOptions::preventable(), clone!(app, item, changed => move |event: events::KeyDown| {
+                                // autofill may trigger KeyDown event, so we use KeyUp here
+                                .event_with_options(&EventOptions::preventable(), clone!(app, item, changed => move |event: events::KeyUp| {
                                     if event.key() == "Enter" {
                                         event.prevent_default();
                                         let value = element.value().to_ascii_uppercase();

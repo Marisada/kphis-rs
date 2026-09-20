@@ -371,7 +371,8 @@ impl PrescriptionScreenPage {
                                         //.apply(|dom| mixins::string_value(dom, page.search_text.clone(), page.changed.clone()))
                                         .prop_signal("value", page.search_text.signal_cloned())
                                         .with_node!(element => {
-                                            .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyDown| {
+                                            // autofill may trigger KeyDown event, so we use KeyUp here
+                                            .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyUp| {
                                                 if event.key() == "Enter" {
                                                     event.prevent_default();
                                                     page.search_text.set_neq(element.value());
