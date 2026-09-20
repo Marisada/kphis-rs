@@ -539,11 +539,11 @@ impl IoCpn {
                                     .child(html!("i",{.class(class::FA_L_CARET)}))
                                     .event(clone!(page => move |_: events::Click| {
                                         if let Some(current_date) = page.current_date.get_cloned() {
-                                            let lock = page.io_dates.lock_ref();
-                                            let len = lock.len();
-                                            if let Some(pos) = lock.iter().position(|date| **date == current_date) {
+                                            let io_dates_lock = page.io_dates.lock_ref();
+                                            let len = io_dates_lock.len();
+                                            if let Some(pos) = io_dates_lock.iter().position(|date| **date == current_date) {
                                                 if pos < len - 1 {
-                                                    let io_date = Some((*lock[pos + 1]).clone());
+                                                    let io_date = Some((*io_dates_lock[pos + 1]).clone());
                                                     let io_date_string = io_date.as_ref().map(|d| d.io_date.to_string()).unwrap_or_default();
                                                     page.current_date.set_neq(io_date);
                                                     page.io_date_start.set_neq(io_date_string.clone());
@@ -560,10 +560,10 @@ impl IoCpn {
                                     .child(html!("i",{.class(class::FA_R_CARET)}))
                                     .event(clone!(page => move |_: events::Click| {
                                         if let Some(current_date) = page.current_date.get_cloned() {
-                                            let lock = page.io_dates.lock_ref();
-                                            if let Some(pos) = lock.iter().position(|date| **date == current_date) {
+                                            let io_dates_lock = page.io_dates.lock_ref();
+                                            if let Some(pos) = io_dates_lock.iter().position(|date| **date == current_date) {
                                                 if pos > 0 {
-                                                    let io_date = Some((*lock[pos - 1]).clone());
+                                                    let io_date = Some((*io_dates_lock[pos - 1]).clone());
                                                     let io_date_string = io_date.as_ref().map(|d| d.io_date.to_string()).unwrap_or_default();
                                                     page.current_date.set_neq(io_date);
                                                     page.io_date_start.set_neq(io_date_string.clone());

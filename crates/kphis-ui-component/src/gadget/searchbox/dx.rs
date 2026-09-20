@@ -613,14 +613,14 @@ impl DxSearchboxCpn {
                                     page.i10_detail.set(None);
                                     page.input_mode.set(InputMode::IndexSearch);
                                     page.show_index_content.set(true);
-                                    let recent_dx = page.diagnosis_raw.lock_ref();
-                                    let recent_search = page.search_text.lock_ref();
-                                    let old = if !recent_dx.is_empty() {
-                                        recent_dx
+                                    let diagnosis_raw_lock = page.diagnosis_raw.lock_ref();
+                                    let search_text_lock = page.search_text.lock_ref();
+                                    let old_lock = if !diagnosis_raw_lock.is_empty() {
+                                        diagnosis_raw_lock
                                     } else {
-                                        recent_search
+                                        search_text_lock
                                     };
-                                    page.set_index_text(&old, false);
+                                    page.set_index_text(&old_lock, false);
                                 }))
                             }))
                         }
@@ -861,7 +861,7 @@ impl DxSearchboxCpn {
     }
 
     pub fn render_search_result(search_result: (Arc<I10vx>, f32, u8), page: Rc<Self>, parent: Option<(Rc<Group<Rc<Icd10>>>, u32, Mutable<bool>)>) -> Dom {
-        let txt = page.search_text.lock_ref();
+        let search_text_lock = page.search_text.lock_ref();
         let result = search_result.0.clone();
         let col = search_result.2;
         // col: 1=icd10, 2=ename
@@ -876,7 +876,7 @@ impl DxSearchboxCpn {
                                     let icd10 = icd_dash(&icd10_dot(&result.code), result.is_valid);
                                     if col == 1 {
                                         // dom.children(red_chars_in_words(&txt, &icd10))
-                                        dom.children(red_keywords_in_icd_dot(false, &txt, &icd10))
+                                        dom.children(red_keywords_in_icd_dot(false, &search_text_lock, &icd10))
                                     } else {
                                         dom.text(&icd10)
                                     }
@@ -887,7 +887,7 @@ impl DxSearchboxCpn {
                                 .apply(|dom| {
                                     if col == 2 {
                                         // dom.children(red_chars_in_words(&txt, &result.desc))
-                                        dom.children(red_keywords_in_sentense(&txt, &result.desc))
+                                        dom.children(red_keywords_in_sentense(&search_text_lock, &result.desc))
                                     } else {
                                         dom.text(&result.desc)
                                     }

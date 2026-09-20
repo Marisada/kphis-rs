@@ -478,10 +478,10 @@ impl ReportParamMutable {
 
     /// remove all key that cannot parse to specified type
     fn to_str(&self) -> Option<String> {
-        let id = self.id.lock_ref();
-        let title = self.title.lock_ref();
-        let key_type = self.ty.lock_ref();
-        let key_type_str = key_type.to_str();
+        let id_lock = self.id.lock_ref();
+        let title_lock = self.title.lock_ref();
+        let ty_lock = self.ty.lock_ref();
+        let key_type_str = ty_lock.to_str();
         let ty = match &self.var_type {
             VarType::Basic => {
                 if self.is_array {
@@ -497,7 +497,7 @@ impl ReportParamMutable {
                     .iter()
                     .filter_map(|item| {
                         let key = item.key.get_cloned();
-                        let is_key_parsable = key_type.is_value_parsable(&key);
+                        let is_key_parsable = ty_lock.is_value_parsable(&key);
                         let label = item.label.get_cloned();
                         (!key.is_empty() && !label.is_empty() && is_key_parsable).then(move || [key, label])
                     })
@@ -524,7 +524,7 @@ impl ReportParamMutable {
                 }
             }
         };
-        (!id.is_empty() && !title.is_empty() && !ty.is_empty()).then(|| [&id, &title, ty.as_str()].join("^"))
+        (!id_lock.is_empty() && !title_lock.is_empty() && !ty.is_empty()).then(|| [&id_lock, &title_lock, ty.as_str()].join("^"))
     }
 }
 

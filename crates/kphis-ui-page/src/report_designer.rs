@@ -548,10 +548,10 @@ LIMIT 50;"#;
         let data = page.json_text.get_cloned();
         let author = app.app_status.lock_ref().as_ref().map(|status| status.hospital_name.clone()).unwrap_or_default();
         let user = app.user.lock_ref().as_ref().map(|user| user.user.name.get_cloned()).unwrap_or_default();
-        let ids = page.ids.lock_ref();
+        let ids_lock = page.ids.lock_ref();
         let (file_name, title) = match page.designer_mode.get_cloned() {
-            DesignerMode::Custom => page.selected_custom_template.lock_ref().as_ref().map(|selected| (selected.download_file_name(&ids), selected.title_with_ids(&ids))),
-            DesignerMode::System => page.selected_system_template.lock_ref().as_ref().map(|selected| (selected.download_file_name(&ids), selected.title_with_ids(&ids))),
+            DesignerMode::Custom => page.selected_custom_template.lock_ref().as_ref().map(|selected| (selected.download_file_name(&ids_lock), selected.title_with_ids(&ids_lock))),
+            DesignerMode::System => page.selected_system_template.lock_ref().as_ref().map(|selected| (selected.download_file_name(&ids_lock), selected.title_with_ids(&ids_lock))),
             DesignerMode::Demo => None,
         }
         .unwrap_or((String::from("CUSTOM-REPORT"), String::from("Custom Report")));
@@ -1150,8 +1150,8 @@ LIMIT 50;"#;
                                             .text("QUERY")
                                             .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(page => move || {
                                                 if page.sql_text.lock_ref().trim_start().is_empty() {
-                                                    let ids = page.ids.lock_ref();
-                                                    let json_text = params_and_ids_to_json(&page.custom_params.lock_ref(), &ids);
+                                                    let ids_lock = page.ids.lock_ref();
+                                                    let json_text = params_and_ids_to_json(&page.custom_params.lock_ref(), &ids_lock);
                                                     let json_pretty = json_pretty(&json_text);
                                                     let json_html = json_highlight(&json_pretty).html();
                                                     page.json_text.set(json_pretty);

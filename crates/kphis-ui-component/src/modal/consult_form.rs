@@ -356,12 +356,12 @@ impl ConsultForm {
                                                 .class("mb-3")
                                                 .children([
                                                     html!("label", {
-                                                        .attr("for", "consult_type")
+                                                        .attr("for", "modal_consult_type")
                                                         .text("ชนิดใบ Consult")
                                                     }),
                                                     html!("select" => HtmlSelectElement, {
                                                         .class("form-select")
-                                                        .attr("id", "consult_type")
+                                                        .attr("id", "modal_consult_type")
                                                         .child(html!("option", {
                                                             .attr("value", "")
                                                             .text("เลือก")
@@ -381,11 +381,11 @@ impl ConsultForm {
                                                 .class("mb-3")
                                                 .children([
                                                     html!("label", {
-                                                        .attr("for", "consult_ward")
+                                                        .attr("for", "modal_consult_ward")
                                                         .text("Ward")
                                                     }),
                                                     doms::select_box(
-                                                        "consult_ward", Some("เลือก"), false,
+                                                        "modal_consult_ward", Some("เลือก"), false,
                                                         modal.consult_ward.clone(),
                                                         modal.changed.clone(),
                                                         |d| d.class("form-control").apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |c| c.class("disabled")),
@@ -406,7 +406,7 @@ impl ConsultForm {
                                                 .class("mb-3")
                                                 .children([
                                                     html!("label", {
-                                                        .attr("for", "consult_date")
+                                                        .attr("for", "modal_consult_date")
                                                         .text("วันที่ เวลา")
                                                     }),
                                                     html!("div", {
@@ -417,7 +417,7 @@ impl ConsultForm {
                                                                 modal.changed.clone(), always(!matches!(modal.consult_mode, ConsultFormMode::Edit)), None,
                                                                 |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
                                                                 |d| d.class("rounded-end-0"),
-                                                                |d| d.class("rounded-end-0").attr("id","consult_date"),
+                                                                |d| d.class("rounded-end-0").attr("id","modal_consult_date"),
                                                                 |s| s, always(None),
                                                             ),
                                                             doms::time_picker(
@@ -454,12 +454,12 @@ impl ConsultForm {
                                                 .class("mb-3")
                                                 .children([
                                                     html!("label", {
-                                                        .attr("for", "consult_emergency")
+                                                        .attr("for", "modal_consult_emergency")
                                                         .text("Emergency")
                                                     }),
                                                     html!("select" => HtmlSelectElement, {
                                                         .class("form-select")
-                                                        .attr("id", "consult_emergency")
+                                                        .attr("id", "modal_consult_emergency")
                                                         .child(html!("option", {
                                                             .attr("value", "")
                                                             .text("เลือก")
@@ -494,11 +494,11 @@ impl ConsultForm {
                                                             .child(html!("div", {
                                                                 .children([
                                                                     html!("label", {
-                                                                        .attr("for", "consult_spclty")
+                                                                        .attr("for", "modal_consult_spclty")
                                                                         .text("แผนกที่ Consult")
                                                                     }),
                                                                     doms::select_box(
-                                                                        "consult_spclty", Some("เลือก"), false,
+                                                                        "modal_consult_spclty", Some("เลือก"), false,
                                                                         modal.consult_spclty.clone(),
                                                                         modal.changed.clone(),
                                                                         |d| d.class(class::FORM_CTRL_T).apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |c| c.class("disabled")),
@@ -513,11 +513,11 @@ impl ConsultForm {
                                                             .child(html!("div", {
                                                                 .children([
                                                                     html!("label", {
-                                                                        .attr("for", "consult_doctorcode_mention")
+                                                                        .attr("for", "modal_consult_doctorcode_mention")
                                                                         .text("แพทย์ Staff (Optional)")
                                                                     }),
                                                                     doms::select_box(
-                                                                        "consult_doctorcode_mention", Some("เลือก"), false,
+                                                                        "modal_consult_doctorcode_mention", Some("เลือก"), false,
                                                                         modal.consult_doctorcode_mention.clone(),
                                                                         modal.changed.clone(),
                                                                         |d| d.class(class::FORM_CTRL_T).apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |c| c.class("disabled")),
@@ -535,7 +535,7 @@ impl ConsultForm {
                                                         .class("col-sm-12")
                                                         .children([
                                                             html!("label", {
-                                                                .attr("for", "consult_data")
+                                                                .attr("for", "modal_consult_data")
                                                                 .children([
                                                                     // text("PURPOSE OF CONSULTATION"),html!("br"),
                                                                     text("HISTORY, PHYSICAL EXAMINATION AND LAB FINDING"),
@@ -544,7 +544,7 @@ impl ConsultForm {
                                                             }),
                                                             html!("textarea" => HtmlTextAreaElement, {
                                                                 .class("form-control")
-                                                                .attr("id", "consult_data")
+                                                                .attr("id", "modal_consult_data")
                                                                 .attr("rows", "6")
                                                                 .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit), |dom| dom.attr("disabled",""))
                                                                 .apply(mixins::textarea_value_auto_expand(modal.consult_data.clone(), modal.changed.clone()))
@@ -590,8 +590,7 @@ impl ConsultForm {
                                                         .class("col-md-12")
                                                         .child(html!("div", {
                                                             // .class("mb-3")
-                                                            .child(html!("label", {
-                                                                //.attr("for", "action-person-dr-consult")
+                                                            .child(html!("span", {
                                                                 .text("แพทย์ผู้ Consult")
                                                             }))
                                                             .children_signal_vec(modal.consult_requests.signal_vec_cloned().map(clone!(app, modal, all_doctor_select_option => move |doctor| {
@@ -667,7 +666,7 @@ impl ConsultForm {
                                                     .children([
                                                         html!("label", {
                                                             .class(class::FORM_COL_LBL_AUTO)
-                                                            .attr("for", "consult_datetime_create_reply")
+                                                            .attr("for", "modal_consult_datetime_create_reply")
                                                             .text("วันที่ตอบ")
                                                         }),
                                                         html!("div", {
@@ -675,7 +674,7 @@ impl ConsultForm {
                                                             .child(html!("input" => HtmlInputElement, {
                                                                 .attr("type", "text")
                                                                 .class("form-control")
-                                                                .attr("id", "consult_datetime_create_reply")
+                                                                .attr("id", "modal_consult_datetime_create_reply")
                                                                 //.attr("readonly", "")
                                                                 .attr("disabled", "")
                                                                 .prop_signal("value", modal.consult_datetime_create_reply.signal_cloned().map(|dt| datetime_str_th(&dt)))
@@ -685,7 +684,7 @@ impl ConsultForm {
                                                         }),
                                                         html!("label", {
                                                             .class(class::FORM_COL_LBL_AUTO)
-                                                            .attr("for", "consult_datetime_update_reply")
+                                                            .attr("for", "modal_consult_datetime_update_reply")
                                                             .text("วันที่ตอบล่าสุด")
                                                         }),
                                                         html!("div", {
@@ -693,7 +692,7 @@ impl ConsultForm {
                                                             .child(html!("input" => HtmlInputElement, {
                                                                 .attr("type", "text")
                                                                 .class("form-control")
-                                                                .attr("id", "consult_datetime_update_reply")
+                                                                .attr("id", "modal_consult_datetime_update_reply")
                                                                 //.attr("readonly", "")
                                                                 .attr("disabled", "")
                                                                 .prop_signal("value", modal.consult_datetime_update_reply.signal_cloned().map(|dt| datetime_str_th(&dt)))
@@ -713,12 +712,12 @@ impl ConsultForm {
                                                             .class("mb-3")
                                                             .children([
                                                                 html!("label", {
-                                                                    .attr("for", "consult_finding")
+                                                                    .attr("for", "modal_consult_finding")
                                                                     .text("FINDING")
                                                                 }),
                                                                 html!("textarea" => HtmlTextAreaElement, {
                                                                     .class("form-control")
-                                                                    .attr("id", "consult_finding")
+                                                                    .attr("id", "modal_consult_finding")
                                                                     .attr("rows", "3")
                                                                     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Reply), |dom| dom.attr("disabled",""))
                                                                     .apply(mixins::textarea_value_auto_expand(modal.consult_finding.clone(), modal.changed.clone()))
@@ -749,12 +748,12 @@ impl ConsultForm {
                                                             .class("mb-3")
                                                             .children([
                                                                 html!("label", {
-                                                                    .attr("for", "consult_diagnosis")
+                                                                    .attr("for", "modal_consult_diagnosis")
                                                                     .text("DIAGNOSIS")
                                                                 }),
                                                                 html!("textarea" => HtmlTextAreaElement, {
                                                                     .class("form-control")
-                                                                    .attr("id", "consult_diagnosis")
+                                                                    .attr("id", "modal_consult_diagnosis")
                                                                     .attr("rows", "3")
                                                                     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Reply), |dom| dom.attr("disabled",""))
                                                                     .apply(mixins::textarea_value_auto_expand(modal.consult_diagnosis.clone(), modal.changed.clone()))
@@ -771,12 +770,12 @@ impl ConsultForm {
                                                             .class("mb-3")
                                                             .children([
                                                                 html!("label", {
-                                                                    .attr("for", "consult_recommendation")
+                                                                    .attr("for", "modal_consult_recommendation")
                                                                     .text("RECOMMENDATION")
                                                                 }),
                                                                 html!("textarea" => HtmlTextAreaElement, {
                                                                     .class("form-control")
-                                                                    .attr("id", "consult_recommendation")
+                                                                    .attr("id", "modal_consult_recommendation")
                                                                     .attr("rows", "3")
                                                                     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Reply), |dom| dom.attr("disabled",""))
                                                                     .apply(mixins::textarea_value_auto_expand(modal.consult_recommendation.clone(), modal.changed.clone()))
@@ -791,8 +790,7 @@ impl ConsultForm {
                                                         .class("col-md-12")
                                                         .child(html!("div", {
                                                             // .class("mb-3")
-                                                            .child(html!("label", {
-                                                                //.attr("for", "action-person-dr-consult")
+                                                            .child(html!("span", {
                                                                 .text("ลงชื่อแพทย์")
                                                             }))
                                                             .children_signal_vec(modal.consult_replies.signal_vec_cloned().map(clone!(app, modal, all_doctor_select_option => move |doctor| {
@@ -814,6 +812,7 @@ impl ConsultForm {
                                                                             html!("div", {
                                                                                 .class("col-md-6")
                                                                                 .child(html!("select" => HtmlSelectElement, {
+                                                                                    // .attr("id", "modal-reply-person-dr-consult")
                                                                                     .class("form-select")
                                                                                     .child(html!("option", {
                                                                                         .attr("value", "")

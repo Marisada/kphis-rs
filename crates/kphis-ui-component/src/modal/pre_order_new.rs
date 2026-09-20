@@ -100,12 +100,12 @@ impl PreOrderNew {
                                             html!("input" => HtmlInputElement, {
                                                 .class("form-check-input")
                                                 .attr("type", "radio")
-                                                .attr("id", "pre_order_type1")
+                                                .attr("id", "modal_pre_order_type1")
                                                 .attr("value", "appointment")
                                                 .apply(mixins::radio_match(modal.pre_order_type.clone(), modal.changed.clone(), "appointment"))
                                                 // .attr("onclick", "onclickPreOrderType(event)")
                                             }),
-                                            doms::label_check_for("pre_order_type1","Admit ล่วงหน้า"),
+                                            doms::label_check_for("modal_pre_order_type1","Admit ล่วงหน้า"),
                                         ])
                                     }),
                                     html!("div", {
@@ -114,12 +114,12 @@ impl PreOrderNew {
                                             html!("input" => HtmlInputElement, {
                                                 .class("form-check-input")
                                                 .attr("type", "radio")
-                                                .attr("id", "pre_order_type2")
+                                                .attr("id", "modal_pre_order_type2")
                                                 .attr("value", "opd")
                                                 .apply(mixins::radio_match(modal.pre_order_type.clone(), modal.changed.clone(), "opd"))
                                                 // .attr("onclick", "onclickPreOrderType(event)")
                                             }),
-                                            doms::label_check_for("pre_order_type2","Admit ในวัน"),
+                                            doms::label_check_for("modal_pre_order_type2","Admit ในวัน"),
                                         ])
                                     }),
                                     html!("div", {
@@ -128,12 +128,12 @@ impl PreOrderNew {
                                             html!("input" => HtmlInputElement, {
                                                 .class("form-check-input")
                                                 .attr("type", "radio")
-                                                .attr("id", "pre_order_type3")
+                                                .attr("id", "modal_pre_order_type3")
                                                 .attr("value", "template")
                                                 .apply(mixins::radio_match(modal.pre_order_type.clone(), modal.changed.clone(), "template"))
                                                 // .attr("onclick", "onclickPreOrderType(event)")
                                             }),
-                                            doms::label_check_for("pre_order_type3","Template"),
+                                            doms::label_check_for("modal_pre_order_type3","Template"),
                                         ])
                                     }),
                                     html!("hr"),
@@ -143,13 +143,13 @@ impl PreOrderNew {
                                         html!("div", {
                                             .class(class::INPUT_GROUP_SM)
                                             .class(class::M_LT)
-                                            .attr("id", "new_hn_input_group")
+                                            .attr("id", "modal_new_hn_input_group")
                                             .children([
-                                                doms::label_group_for("new_ptname","HN"),
+                                                doms::label_group_for("modal_new_ptname","HN"),
                                                 html!("input", {
                                                     .attr("type", "text")
                                                     .class(class::FORM_CTRL_SM)
-                                                    .attr("id", "new_ptname")
+                                                    .attr("id", "modal_new_ptname")
                                                     .attr("size", "40")
                                                     .attr("readonly", "readonly")
                                                     .style("cursor", "pointer")
@@ -183,7 +183,7 @@ impl PreOrderNew {
                                 })))
                                 .child_signal(modal.display_patient_searchbox.signal_cloned().map(clone!(app, modal => move |show| {
                                     if show {
-                                        app.get_id("new_hn_input_group").map(|elm| {
+                                        app.get_id("modal_new_hn_input_group").map(|elm| {
                                             PatientSearchboxCpn::render(
                                                 PatientSearchboxCpn::new(),
                                                 modal.display_patient_searchbox.clone(),
@@ -205,14 +205,14 @@ impl PreOrderNew {
                                             .class(class::M_LT)
                                             //.attr("id", "order_for_date_form_group")
                                             .children([
-                                                doms::label_group_for("order_for_date","วันที่นัด/Admit"),
+                                                doms::label_group_for("modal_order_for_date","วันที่นัด/Admit"),
                                                 doms::date_picker(
                                                     modal.order_for_date.clone(),
                                                     modal.changed.clone(),
                                                     modal.pre_order_type.signal_cloned().map(|ty| ty != "appointment"), None,
                                                     |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
                                                     |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
-                                                    |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "order_for_date"),
+                                                    |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "modal_order_for_date"),
                                                     |s| s, always(None),
                                                 ),
                                             ])
@@ -235,11 +235,11 @@ impl PreOrderNew {
                                             .class(class::M_LT)
                                             //.attr("id", "new_template_name_form_group")
                                             .children([
-                                                doms::label_group_for("new_template_name","ชื่อ Template"),
+                                                doms::label_group_for("modal_new_template_name","ชื่อ Template"),
                                                 html!("input" => HtmlInputElement, {
                                                     .attr("type", "text")
                                                     .class(class::FORM_CTRL_SM)
-                                                    .attr("id", "new_template_name")
+                                                    .attr("id", "modal_new_template_name")
                                                     .apply(mixins::string_value(modal.template_name.clone(), modal.changed.clone()))
                                                 }),
                                             ])

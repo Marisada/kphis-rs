@@ -724,11 +724,11 @@ impl IpdAdmissionNoteDrPage {
                             page.doc_pos.set_neq(note.doc_pos.to_owned());
                         // not has note
                         } else {
-                            let patient = page.patient.lock_ref();
-                            if let Some(regdate) = patient.patient.lock_ref().as_ref().and_then(|pt| pt.regdate()) {
+                            let patient_lock = page.patient.lock_ref();
+                            if let Some(regdate) = patient_lock.patient.lock_ref().as_ref().and_then(|pt| pt.regdate()) {
                                 page.receiver_medication_date.set_neq(regdate.to_string());
                             }
-                            if let Some(regtime) = patient.patient.lock_ref().as_ref().and_then(|pt| pt.regtime()) {
+                            if let Some(regtime) = patient_lock.patient.lock_ref().as_ref().and_then(|pt| pt.regtime()) {
                                 page.receiver_medication_time.set_neq(regtime.js_string());
                             }
                             if let Some(pe) = response.opdscreen_pe.as_ref() {
@@ -749,7 +749,7 @@ impl IpdAdmissionNoteDrPage {
                                 page.pr.set_neq(pe.pulse.map(|f| f.to_string()).unwrap_or_default());
                                 page.rr.set_neq(pe.rr.map(|f| f.to_string()).unwrap_or_default());
                             } else {
-                                page.hn.set_neq(str_some(&patient.hn.lock_ref()));
+                                page.hn.set_neq(str_some(&patient_lock.hn.lock_ref()));
                             }
                             // first kphis.ipd_vs_vital_sign of this AN
                             if let Some(vs) = response.vs.as_ref() {
@@ -849,7 +849,7 @@ impl IpdAdmissionNoteDrPage {
 
         html!("div", {
             .child(patient_main)
-            .child_signal(window_size().map(|ws| ws.width < SCREEN_WIDTH_EXTRA).dedupe().map(move |is_not_wide| {
+            .child_signal(window_size().map(|ws| ws.width < SCREEN_WIDTH_EXTRA).dedupe().map(clone!(page => move |is_not_wide| {
                 Some(if is_not_wide {
                     Self::render_form(page.clone(), app.clone())
                 } else {
@@ -866,7 +866,12 @@ impl IpdAdmissionNoteDrPage {
                         app.clone(),
                     )
                 })
-            }))
+            })))
+            .after_removed(move |_| {
+                if let Some(canvas) = page.canvas.lock_ref().as_ref() {
+                    canvas.destroy();
+                }
+            })
         })
     }
 
@@ -905,6 +910,9 @@ impl IpdAdmissionNoteDrPage {
                 !*loaded && *ready
             }.for_each(clone!(app, page, fabric_option => move |value| {
                 if value {
+                    if let Some(canvas) = page.canvas.lock_ref().as_ref() {
+                        canvas.destroy();
+                    }
                     let canvas = Canvas::new("body_full", &fabric_option);
                     let closure = clone!(page => Closure::new(move || {
                         if !page.redoing.get() {
@@ -7258,8 +7266,8 @@ impl IpdAdmissionNoteDrPage {
                                     }
                                     page.admission_note_id.set_neq(Some(admission_note_id));
                                 }
-                                let raw = page.raw.lock_ref();
-                                if let Ok(mut guard) = raw.lock() {
+                                let raw_lock = page.raw.lock_ref();
+                                if let Ok(mut guard) = raw_lock.lock() {
                                     guard.admission_note = Some(note);
                                 }
                                 page.changed.set_neq(false);
@@ -7573,12 +7581,12 @@ impl PartialEq<DiseaseDetail> for DiseaseDetail {
 
 impl Concat for DiseaseDetail {
     fn concat(&self, concat_with_space: bool) -> String {
-        let name = self.name.lock_ref();
-        if name.is_empty() {
+        let name_lock = self.name.lock_ref();
+        if name_lock.is_empty() {
             String::new()
         } else {
             let delimiter = if concat_with_space { " " } else { "^" };
-            [name.as_str(), delimiter, self.year.lock_ref().as_str(), delimiter, self.hospital.lock_ref().as_str()].concat()
+            [name_lock.as_str(), delimiter, self.year.lock_ref().as_str(), delimiter, self.hospital.lock_ref().as_str()].concat()
         }
     }
 }
@@ -7667,12 +7675,12 @@ pub struct DrugAllergy {
 
 impl Concat for DrugAllergy {
     fn concat(&self, concat_with_space: bool) -> String {
-        let agent = self.agent.lock_ref();
-        if agent.is_empty() {
+        let agent_lock = self.agent.lock_ref();
+        if agent_lock.is_empty() {
             String::new()
         } else {
             let delimiter = if concat_with_space { " " } else { "^" };
-            [agent.as_str(), delimiter, self.symptom.lock_ref().as_str()].concat()
+            [agent_lock.as_str(), delimiter, self.symptom.lock_ref().as_str()].concat()
         }
     }
 }
@@ -7755,12 +7763,12 @@ pub struct FoodAllergy {
 
 impl Concat for FoodAllergy {
     fn concat(&self, concat_with_space: bool) -> String {
-        let agent = self.agent.lock_ref();
-        if agent.is_empty() {
+        let agent_lock = self.agent.lock_ref();
+        if agent_lock.is_empty() {
             String::new()
         } else {
             let delimiter = if concat_with_space { " " } else { "^" };
-            [agent.as_str(), delimiter, self.symptom.lock_ref().as_str()].concat()
+            [agent_lock.as_str(), delimiter, self.symptom.lock_ref().as_str()].concat()
         }
     }
 }
@@ -7833,12 +7841,12 @@ pub struct EtcAllergy {
 
 impl Concat for EtcAllergy {
     fn concat(&self, concat_with_space: bool) -> String {
-        let agent = self.agent.lock_ref();
-        if agent.is_empty() {
+        let agent_lock = self.agent.lock_ref();
+        if agent_lock.is_empty() {
             String::new()
         } else {
             let delimiter = if concat_with_space { " " } else { "^" };
-            [agent.as_str(), delimiter, self.symptom.lock_ref().as_str()].concat()
+            [agent_lock.as_str(), delimiter, self.symptom.lock_ref().as_str()].concat()
         }
     }
 }
@@ -7911,12 +7919,12 @@ pub struct FamilyMedical {
 
 impl Concat for FamilyMedical {
     fn concat(&self, concat_with_space: bool) -> String {
-        let disease = self.disease.lock_ref();
-        if disease.is_empty() {
+        let disease_lock = self.disease.lock_ref();
+        if disease_lock.is_empty() {
             String::new()
         } else {
             let delimiter = if concat_with_space { " " } else { "^" };
-            [disease.as_str(), delimiter, self.relation.lock_ref().as_str()].concat()
+            [disease_lock.as_str(), delimiter, self.relation.lock_ref().as_str()].concat()
         }
     }
 }
@@ -7987,12 +7995,12 @@ pub struct AddictAssist {
 
 impl Concat for AddictAssist {
     fn concat(&self, concat_with_space: bool) -> String {
-        let agent = self.agent.lock_ref();
-        if agent.is_empty() {
+        let agent_lock = self.agent.lock_ref();
+        if agent_lock.is_empty() {
             String::new()
         } else {
             let delimiter = if concat_with_space { " " } else { "^" };
-            [agent.as_str(), delimiter, self.score.lock_ref().as_str()].concat()
+            [agent_lock.as_str(), delimiter, self.score.lock_ref().as_str()].concat()
         }
     }
 }

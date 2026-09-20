@@ -22,7 +22,6 @@ volume/thumbs/*/*/*
 !volume/thumbs/009/99/91NWC10PTESHVK95PNAAC.webp
 volume/config/debug.toml
 volume/pwa/book/
-volume/pwa/snippets/
 volume/pwa/client.js
 volume/pwa/client_bg.wasm
 volume/pwa/sw.js

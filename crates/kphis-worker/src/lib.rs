@@ -268,10 +268,10 @@ impl SpawnedWorker {
     }
 
     // worker's listener for compute calling message
-    pub fn listen<A, F>(&self, mut f: F) -> impl Future<Output = ()> + use<A, F>
+    pub fn listen<A, F>(&self, f: F) -> impl Future<Output = ()> + use<A, F>
     where
         A: Future<Output = ()>,
-        F: FnMut(Message) -> A,
+        F: Fn(Message) -> A,
     {
         // This must be outside of the async block so that way
         // it adds the event listener immediately instead of on the next tick

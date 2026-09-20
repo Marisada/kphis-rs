@@ -175,8 +175,8 @@ impl ImageCpn {
                 }
             },
             ImageCpnMechanic::LocalStorage => {
-                let lock = app.uploaded_images.lock_ref();
-                self.set_image_usages(&lock);
+                let uploaded_images_lock = app.uploaded_images.lock_ref();
+                self.set_image_usages(&uploaded_images_lock);
             }
             ImageCpnMechanic::ReturnImages(_) | ImageCpnMechanic::Nothing => {}
         }
@@ -1146,7 +1146,7 @@ impl ImageCpn {
                                         .text("Video stream not available.")
                                         .with_node!(element => {
                                             .after_inserted(clone!(element => move |_| {
-                                                let canplay_cs = Closure::<dyn FnMut(_)>::new(clone!(element => move |_: Event| {
+                                                let canplay_cs = Closure::<dyn Fn(_)>::new(clone!(element => move |_: Event| {
                                                     let width = element.parent_element().map(|parent| parent.client_width() as u32).unwrap_or(700);
                                                     let video_height = element.video_height();
                                                     let video_width = element.video_width();
@@ -1242,7 +1242,7 @@ impl ImageCpn {
                                                         // }
 
                                                         // elm.toBlob() method
-                                                        let upload_cs = Closure::<dyn FnMut(_)>::new(clone!(app, page => move |blob: Blob| {
+                                                        let upload_cs = Closure::<dyn Fn(_)>::new(clone!(app, page => move |blob: Blob| {
                                                             // log::debug!("Blob size: {}", blob.size());
                                                             let options = FilePropertyBag::new();
                                                             options.set_type("image/png");
@@ -1374,11 +1374,11 @@ enum ImageCpnMechanic {
 }
 
 fn find_new_inserting_image(recent: &MutableVec<Rc<ImagePath>>, insert: &MutableVec<Rc<ImagePath>>) -> Vec<Rc<ImagePath>> {
-    let recent_images = recent.lock_ref();
-    let insert_images = insert.lock_ref();
-    let mut results = Vec::with_capacity(insert_images.len());
-    for image in insert_images.iter() {
-        if !recent_images.contains(image) {
+    let recent_lock = recent.lock_ref();
+    let insert_lock = insert.lock_ref();
+    let mut results = Vec::with_capacity(insert_lock.len());
+    for image in insert_lock.iter() {
+        if !recent_lock.contains(image) {
             results.push(image.clone());
         }
     }

@@ -224,11 +224,14 @@ impl EmrCpn {
                             .child(html!("ul", {
                                 .class("list-group")
                                 .children_signal_vec(page.emr_dates.signal_vec_cloned().enumerate().map(clone!(page => move |(i,date)| {
-                                    if i.get().unwrap_or_default() == 0 && page.vn.lock_ref().as_str() != date.vn.as_str() {
-                                        page.vn.set(date.vn.clone());
-                                        page.an.set(date.an.clone());
-                                        page.opd_er_order_master_id.set(date.opd_er_order_master_id);
-                                        page.loaded_visit.set(false);
+                                    if i.get().unwrap_or_default() == 0 {
+                                        let is_neq = page.vn.lock_ref().as_str() != date.vn.as_str();
+                                        if is_neq {
+                                            page.vn.set(date.vn.clone());
+                                            page.an.set(date.an.clone());
+                                            page.opd_er_order_master_id.set(date.opd_er_order_master_id);
+                                            page.loaded_visit.set(false);
+                                        }
                                     }
                                     html!("li", {
                                         .class(class::LIST_GROUP_ITEM_BOLD_C)

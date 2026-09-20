@@ -221,9 +221,9 @@ impl PreOrderType {
                             .children([
                                 doms::form_inline_group_sm(clone!(modal => move |group| { group
                                     .children([
-                                        doms::label_group_for("order_doctor","ผู้บันทึก"),
+                                        doms::label_group_for("modal_order_doctor","ผู้บันทึก"),
                                         doms::select_box(
-                                            "order_doctor", Some("ทั้งหมด"), false,
+                                            "modal_order_doctor", Some("ทั้งหมด"), false,
                                             modal.order_doctor.clone(),
                                             modal.changed.clone(),
                                             |d| d.class(class::FORM_CTRL_SM),
@@ -234,11 +234,11 @@ impl PreOrderType {
                                 })),
                                 doms::form_inline_group_sm(clone!(app, modal => move |group| { group
                                     .children([
-                                        doms::label_group_for("hn","HN"),
+                                        doms::label_group_for("modal_hn","HN"),
                                         html!("input", {
                                             .attr("type", "text")
                                             .class(class::FORM_CTRL_SM)
-                                            .attr("id", "hn")
+                                            .attr("id", "modal_hn")
                                             .attr("readonly", "readonly")
                                             .prop_signal("size", app.hosxp_hn_len_signal().map(|n| n.to_owned()))
                                             .prop_signal("value", modal.hn.signal_cloned())
@@ -247,25 +247,25 @@ impl PreOrderType {
                                 })),
                                 doms::form_inline_group_sm(clone!(modal => move |group| { group
                                     .children([
-                                        doms::label_group_for("start_order_date","วันที่บันทึก"),
+                                        doms::label_group_for("modal_start_order_date","วันที่บันทึก"),
                                         doms::date_picker(
                                             modal.start_order_date.clone(),
                                             modal.changed.clone(), always(false), None,
                                             |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
                                             |d| d.class(class::FORM_CTRL_ONLY_SM_R0),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0).attr("id", "start_order_date"),
+                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0).attr("id", "modal_start_order_date"),
                                             clone!(modal => move |s| {
                                                 modal.loaded_list.set(false);
                                                 s
                                             }), always(None),
                                         ),
-                                        doms::label_group_for("end_order_date","ถึง"),
+                                        doms::label_group_for("modal_end_order_date","ถึง"),
                                         doms::date_picker(
                                             modal.end_order_date.clone(),
                                             modal.changed.clone(), always(false), None,
                                             |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
                                             |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "end_order_date"),
+                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "modal_end_order_date"),
                                             clone!(modal => move |s| {
                                                 modal.loaded_list.set(false);
                                                 s
@@ -278,11 +278,11 @@ impl PreOrderType {
                                 .children([
                                     doms::form_inline_group_sm(clone!(modal => move |group| { group
                                         .children([
-                                            doms::label_group_for("template_name","ชื่อ Template"),
+                                            doms::label_group_for("modal_template_name","ชื่อ Template"),
                                             html!("input" => HtmlInputElement, {
                                                 .attr("type", "text")
                                                 .class(class::FORM_CTRL_SM)
-                                                .attr("id", "template_name")
+                                                .attr("id", "modal_template_name")
                                                 .apply(mixins::string_value(modal.template_name.clone(), modal.changed.clone()))
                                                 .event(clone!(modal => move |_: events::Change| {
                                                     modal.loaded_list.set(false);
@@ -296,14 +296,14 @@ impl PreOrderType {
                                                 .attr("type", "checkbox")
                                                 .class("form-check-input")
                                                 .attr("role","switch")
-                                                .attr("id", "include_shared_template")
+                                                .attr("id", "modal_include_shared_template")
                                                 .apply(mixins::checkbox_toggle(modal.include_shared_template.clone(), modal.changed.clone(), "Y", "N"))
                                                 .event(clone!(modal => move |_: events::Change| {
                                                     modal.loaded_list.set(false);
                                                 }))
                                             }),
                                             html!("label", {
-                                                .attr("for", "include_shared_template")
+                                                .attr("for", "modal_include_shared_template")
                                                 .class("form-check-lebel")
                                                 .text("แสดง Shared Template")
                                             }),
@@ -314,10 +314,10 @@ impl PreOrderType {
                             .apply_if(matches!(modal.preorder_type.get_cloned(), PreOrderType::PreOrder(_)), |is_pre_order| { is_pre_order
                                 .child(doms::form_inline_group_sm(clone!(modal => move |group| { group
                                     .children([
-                                        doms::label_group_for("used","ใช้งาน"),
+                                        doms::label_group_for("modal_used","ใช้งาน"),
                                         html!("select" => HtmlSelectElement, {
                                             .class(class::FORM_CTRL_SM)
-                                            .attr("id", "used")
+                                            .attr("id", "modal_used")
                                             .children([
                                                 html!("option", {
                                                     .attr("value", "")

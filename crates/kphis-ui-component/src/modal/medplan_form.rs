@@ -85,12 +85,12 @@ impl MedPlanForm {
                     Ok(responses) => {
                         let mut off_medplans = modal.parent.off_medplans.lock_mut();
                         let mut retain_medplans = modal.parent.retain_medplans.lock_mut();
-                        let off_icodes = modal.parent.off_icodes.lock_ref();
+                        let off_icodes_lock = modal.parent.off_icodes.lock_ref();
                         off_medplans.clear();
                         retain_medplans.clear();
                         for res in responses {
                             if let Some(off_item) = OffOrderItem::from_medplan_ipd(&res) {
-                                let is_off = off_icodes.contains(&off_item);
+                                let is_off = off_icodes_lock.contains(&off_item);
                                 if is_off {
                                     off_medplans.push_cloned(OffMedPlanMutable::new_with_off(res, true));
                                 } else {
@@ -321,14 +321,14 @@ impl MedPlanForm {
                                 .child(doms::form_inline(clone!(app, modal => move |form| { form
                                     .class("flex-nowrap")
                                     .child(doms::form_inline_group_sm(clone!(app, modal => move |group| { group
-                                        .attr("id", "ivfluid_input_group")
+                                        .attr("id", "modal_ivfluid_input_group")
                                         .children([
-                                            doms::label_group_for("raw_ivfluid_name","สารน้ำผสมยา"),
+                                            doms::label_group_for("modal_raw_ivfluid_name","สารน้ำผสมยา"),
                                             html!("input" => HtmlInputElement, {
                                                 .attr("type", "text")
                                                 .class("form-control")
                                                 .attr("disabled", "")
-                                                .attr("id", "raw_ivfluid_name")
+                                                .attr("id", "modal_raw_ivfluid_name")
                                                 .style("width","338px")
                                                 .prop_signal("value", modal.ivfluid_name.signal_cloned())
                                             }),
@@ -350,7 +350,7 @@ impl MedPlanForm {
                                     })))
                                     .child_signal(modal.display_ivfluid_searchbox.signal_cloned().map(clone!(app, modal => move |show| {
                                         if show {
-                                            app.get_id("ivfluid_input_group").map(|elm| {
+                                            app.get_id("modal_ivfluid_input_group").map(|elm| {
                                                 doms::under_box(
                                                     elm.get_bounding_client_rect(),
                                                     600.0, 300.0, app.window_scroll_y(),
@@ -364,14 +364,14 @@ impl MedPlanForm {
                                         }
                                     })))
                                     .child(doms::form_inline_group_sm(clone!(modal => move |group| { group
-                                        .attr("id", "order_item_detail_input_group")
+                                        .attr("id", "modal_order_item_detail_input_group")
                                         .children([
-                                            doms::label_group_for("order_item_detail","วิธีใช้"),
+                                            doms::label_group_for("modal_order_item_detail","วิธีใช้"),
                                             html!("input" => HtmlInputElement, {
                                                 .attr("type", "text")
                                                 .class("form-control")
                                                 .style("width","410px")
-                                                .attr("id", "order_item_detail")
+                                                .attr("id", "modal_order_item_detail")
                                                 .attr("placeholder", "เช่น *iv หรือ ระบุวิธีใช้ยา")
                                                 .attr("required", "")
                                                 .apply(mixins::string_value(modal.order_item_detail.clone(), modal.ivfluid_changed.clone()))
@@ -391,7 +391,7 @@ impl MedPlanForm {
                                         if order_item_detail.is_empty() || order_item_detail.chars().any(|c| !c.is_ascii()) {
                                             None
                                         } else {
-                                            app.get_id("order_item_detail_input_group").map(|elm| {
+                                            app.get_id("modal_order_item_detail_input_group").map(|elm| {
                                                 doms::under_box(
                                                     elm.get_bounding_client_rect(),
                                                     600.0, 300.0, app.window_scroll_y(),

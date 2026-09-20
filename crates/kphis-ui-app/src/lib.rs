@@ -441,7 +441,7 @@ impl App {
             let event_source = EventSource::new("/sse/any").unwrap();
             {
                 // on Open
-                let open_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |_: Event| {
+                let open_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |_: Event| {
                     app.sse_ready_state.set(1);
                 }));
                 event_source.set_onopen(Some(open_cs.as_ref().unchecked_ref()));
@@ -450,7 +450,7 @@ impl App {
             }
             {
                 // on Message (failed-safe when connected before on-open fired)
-                let message_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |_: Event| {
+                let message_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |_: Event| {
                     app.sse_ready_state.set_neq(1);
                 }));
                 event_source.set_onmessage(Some(message_cs.as_ref().unchecked_ref()));
@@ -459,7 +459,7 @@ impl App {
             }
             {
                 // on Error
-                let error_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |_: Event| {
+                let error_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |_: Event| {
                     app.sse_ready_state.set(3);
                 }));
                 event_source.set_onerror(Some(error_cs.as_ref().unchecked_ref()));
@@ -468,7 +468,7 @@ impl App {
             }
             {
                 // logout message
-                let logout_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                let logout_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |event: MessageEvent| {
                     app.clear_modal_and_popup();
                     let sse_data = event.data().as_string().unwrap();
                     if let Some(elm) = app.get_id("alert") {
@@ -482,7 +482,7 @@ impl App {
                         let show = Timeout::new(7000, clone!(app => move || {
                             elm.class_list().remove_2("show", "danger").unwrap();
                             app.route.set(Route::Index);
-                            app.sse_end(2);
+                            app.sse_end(0);
                             app.user.set(None);
                             Route::Index.hard_redirect();
                         }));
@@ -495,7 +495,7 @@ impl App {
             app.sse.set(Some(Rc::new(event_source.clone())));
 
             app.window.with(|w| {
-                let cs = Closure::<dyn FnMut(_)>::new(move |_: Event| {
+                let cs = Closure::<dyn Fn(_)>::new(move |_: Event| {
                     event_source.close();
                     app.sse_ready_state.set(2);
                 });
@@ -511,7 +511,7 @@ impl App {
             let event_source = EventSource::new(&["/sse/id/", &app.token_sub().unwrap_or_default()].concat()).unwrap();
             {
                 // on Open
-                let open_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |_: Event| {
+                let open_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |_: Event| {
                     app.sse_ready_state.set(1);
                 }));
                 event_source.set_onopen(Some(open_cs.as_ref().unchecked_ref()));
@@ -520,7 +520,7 @@ impl App {
             }
             {
                 // on Message (fail safe when connected before on-open fired)
-                let message_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |_: Event| {
+                let message_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |_: Event| {
                     app.sse_ready_state.set_neq(1);
                 }));
                 event_source.set_onmessage(Some(message_cs.as_ref().unchecked_ref()));
@@ -529,7 +529,7 @@ impl App {
             }
             {
                 // on Error
-                let error_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |_: Event| {
+                let error_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |_: Event| {
                     app.sse_ready_state.set(3);
                 }));
                 event_source.set_onerror(Some(error_cs.as_ref().unchecked_ref()));
@@ -538,7 +538,7 @@ impl App {
             }
             {
                 // global message
-                let message_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                let message_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |event: MessageEvent| {
                     let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::GlobalMsg(sse_data));
@@ -549,7 +549,7 @@ impl App {
             }
             {
                 // ward message
-                let ward_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                let ward_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |event: MessageEvent| {
                     let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::WardMsg(sse_data));
@@ -559,7 +559,7 @@ impl App {
             }
             {
                 // spclty message
-                let spclty_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                let spclty_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |event: MessageEvent| {
                     let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::SpcltyMsg(sse_data));
@@ -569,7 +569,7 @@ impl App {
             }
             {
                 // direct message
-                let direct_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                let direct_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |event: MessageEvent| {
                     let sse_text = event.data().as_string().unwrap();
                     let sse_data = serde_json::from_str::<SseData>(&sse_text).unwrap();
                     app.set_sse_msg(SseMessage::DirectMsg(sse_data));
@@ -579,7 +579,7 @@ impl App {
             }
             {
                 // logout message
-                let logout_cs = Closure::<dyn FnMut(_)>::new(clone!(app => move |event: MessageEvent| {
+                let logout_cs = Closure::<dyn Fn(_)>::new(clone!(app => move |event: MessageEvent| {
                     app.clear_modal_and_popup();
                     let sse_data = event.data().as_string().unwrap();
                     if let Some(elm) = app.get_id("alert") {
@@ -602,7 +602,7 @@ impl App {
             }
             app.sse.set(Some(Rc::new(event_source.clone())));
             app.window.with(|w| {
-                let cs = Closure::<dyn FnMut(_)>::new(move |_: Event| {
+                let cs = Closure::<dyn Fn(_)>::new(move |_: Event| {
                     event_source.close();
                     app.sse_ready_state.set(2);
                 });
@@ -890,12 +890,12 @@ impl DaggerAsteriskState {
                 if code.starts_with(['V', 'W', 'X', 'Y']) {
                     DaggerAsteriskStatus::Single(vx.clone())
                 } else {
-                    let pairs = self.pairs.lock_ref();
-                    let daggers = pairs
+                    let pairs_lock = self.pairs.lock_ref();
+                    let daggers = pairs_lock
                         .iter()
                         .filter_map(|(opt, aster)| (aster == code && opt.as_ref().map(|dagger| dagger != code).unwrap_or(true)).then(|| opt))
                         .collect::<Vec<&Option<String>>>();
-                    let asters = pairs
+                    let asters = pairs_lock
                         .iter()
                         .filter_map(|(opt, aster)| (aster != code && opt.as_ref().map(|dagger| dagger == code).unwrap_or_default()).then(|| aster))
                         .collect::<Vec<&String>>();
@@ -921,7 +921,7 @@ impl DaggerAsteriskState {
                         (_, 0) => DaggerAsteriskStatus::AsteriskWithMultiple(vx.clone(), daggers.into_iter().map(|opt| opt.as_ref().and_then(|dag| codes_vx.get(dag))).flatten().cloned().collect()),
                         (0, _) => DaggerAsteriskStatus::DaggerWithMultiple(vx.clone(), asters.into_iter().filter_map(|ast| codes_vx.get(ast)).cloned().collect()),
                         (_, _) => DaggerAsteriskStatus::Multiple(
-                            pairs
+                            pairs_lock
                                 .iter()
                                 .filter_map(|(opt, aster)| {
                                     let dagger = opt.clone().unwrap_or_default();
@@ -948,11 +948,11 @@ impl DaggerAsteriskState {
     }
 
     pub fn get_all_pairs(&self) -> Vec<(Option<Arc<I10vx>>, Arc<I10vx>)> {
-        let i10vx = self.codes_vx.lock_ref();
+        let codes_vx_lock = self.codes_vx.lock_ref();
         self.pairs
             .lock_ref()
             .iter()
-            .filter_map(|(opt, aster)| i10vx.get(aster).map(|asterisk| (opt.as_ref().and_then(|dagger| i10vx.get(dagger)).cloned(), asterisk.clone())))
+            .filter_map(|(opt, aster)| codes_vx_lock.get(aster).map(|asterisk| (opt.as_ref().and_then(|dagger| codes_vx_lock.get(dagger)).cloned(), asterisk.clone())))
             .collect()
     }
 }

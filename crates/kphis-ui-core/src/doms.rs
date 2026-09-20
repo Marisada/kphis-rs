@@ -1528,8 +1528,8 @@ impl<F: Fn() + 'static> SelectBox<F> {
     }
 
     fn set_multiple(&self, with_set_focus: bool) {
-        let pairs = self.result_pairs.lock_ref();
-        let mut unsorted = pairs.iter().map(|(k, _)| k.as_str()).collect::<Vec<&str>>();
+        let result_pairs_lock = self.result_pairs.lock_ref();
+        let mut unsorted = result_pairs_lock.iter().map(|(k, _)| k.as_str()).collect::<Vec<&str>>();
         unsorted.sort();
         let new = unsorted.join(",");
         let is_neq = self.mutable.lock_ref().as_str() != &new;
@@ -1679,20 +1679,20 @@ where
                                 }
                                 "ArrowUp" => {
                                     if state.is_opened.get() {
-                                        let lock = state.search_result.lock_ref();
-                                        let new_pos = match lock.iter().position(|option| {
+                                        let search_result_lock = state.search_result.lock_ref();
+                                        let new_pos = match search_result_lock.iter().position(|option| {
                                             state.focused_pair.lock_ref().0.as_str() == &option.key
                                         }) {
                                             Some(pos) => {
                                                 if pos == 0  {
-                                                    lock.len().saturating_sub(1)
+                                                    search_result_lock.len().saturating_sub(1)
                                                 } else {
                                                     pos.saturating_sub(1)
                                                 }
                                             }
                                             None => 0,
                                         };
-                                        if let Some(new_option) = lock.get(new_pos) {
+                                        if let Some(new_option) = search_result_lock.get(new_pos) {
                                             e.prevent_default();
                                             state.focused_pair.set((new_option.key.to_owned(), new_option.value.to_owned()));
                                         }
@@ -1700,12 +1700,12 @@ where
                                 }
                                 "ArrowDown" => {
                                     if state.is_opened.get() {
-                                        let lock = state.search_result.lock_ref();
-                                        let new_pos = match lock.iter().position(|option| {
+                                        let search_result_lock = state.search_result.lock_ref();
+                                        let new_pos = match search_result_lock.iter().position(|option| {
                                             state.focused_pair.lock_ref().0.as_str() == &option.key
                                         }) {
                                             Some(pos) => {
-                                                if pos < lock.len().saturating_sub(1) {
+                                                if pos < search_result_lock.len().saturating_sub(1) {
                                                     pos.saturating_add(1)
                                                 } else {
                                                     0
@@ -1713,7 +1713,7 @@ where
                                             }
                                             None => 0,
                                         };
-                                        if let Some(new_option) = lock.get(new_pos) {
+                                        if let Some(new_option) = search_result_lock.get(new_pos) {
                                             e.prevent_default();
                                             state.focused_pair.set((new_option.key.to_owned(), new_option.value.to_owned()));
                                         }

@@ -68,8 +68,8 @@ impl IpdPasscodeForm {
             app.async_load(
                 true,
                 clone!(app, page => async move {
-                    let password = page.password.lock_ref();
-                    match hash(&password) {
+                    let password_lock = page.password.lock_ref();
+                    match hash(&password_lock) {
                         Ok(pwd) => {
                             let request = PasscodeGenRequest {
                                 ward: page.ward.get_cloned(),
@@ -113,8 +113,8 @@ impl IpdPasscodeForm {
             clone!(app, page => async move {
                 if app.confirm("ยืนยันยกเลิกการใช้ Passcode").await {
                     if app.can_change_ward_passcode() {
-                        let password = page.password.lock_ref();
-                        match hash(&password) {
+                        let password_lock = page.password.lock_ref();
+                        match hash(&password_lock) {
                             Ok(pwd) => {
                                 let request = PasscodeGenRequest {
                                     ward,
@@ -247,11 +247,11 @@ impl IpdPasscodeForm {
                                                     .class(class::INPUT_GROUP_T)
                                                     .visible_signal(not(modal.not_using_is_empty()))
                                                     .children([
-                                                        doms::label_group_for("passcode_ward_select","สำหรับ ward"),
+                                                        doms::label_group_for("modal_passcode_ward_select","สำหรับ ward"),
                                                         html!("select" => web_sys::HtmlSelectElement, {
                                                             .class("form-select")
                                                             .style("width","250px")
-                                                            .attr("id", "passcode_ward_select")
+                                                            .attr("id", "modal_passcode_ward_select")
                                                             .child(html!("option", {.attr("value","").text("เลือก")}))
                                                             .children_signal_vec(modal.not_using_passcode.signal_vec_cloned().map(|item| {
                                                                 render_not_using_passcode(item)
@@ -269,7 +269,7 @@ impl IpdPasscodeForm {
                                                     .class(class::INPUT_GROUP_T)
                                                     .children([
                                                         html!("label", {
-                                                            .attr("for", "passcode_password")
+                                                            .attr("for", "modal_passcode_password")
                                                             .class("input-group-text")
                                                             .class_signal("text-danger", modal.password.signal_cloned().map(|pwd| pwd.is_empty()))
                                                             .text("Password HOSxP")
@@ -277,7 +277,7 @@ impl IpdPasscodeForm {
                                                         html!("input" => web_sys::HtmlInputElement, {
                                                             .attr("type", "password")
                                                             .class("form-control")
-                                                            .attr("id", "passcode_password")
+                                                            .attr("id", "modal_passcode_password")
                                                             .attr("placeholder","Password HOSxP")
                                                             .attr("autocomplete","off")
                                                             // .apply(mixins::string_value(page.password.clone(), page.changed.clone()))

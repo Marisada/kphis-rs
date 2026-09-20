@@ -26,6 +26,21 @@ use kphis_util::{
     error::{AppError, ErrorTitle},
 };
 
+/// /sse/any
+///
+/// Get server message stream (anonymous)
+#[utoipa::path(
+    get,
+    path = "/any",
+    responses(
+        (
+            status = 200,
+            description = "Stream of Message from server",
+            content_type = "text/event-stream",
+            item_schema = SseMessage,
+        )
+    )
+)]
 pub async fn get_sse(State(app): State<ApiState>) -> impl IntoResponse {
     let (tx, rx) = mpsc::unbounded_channel();
     let rx = UnboundedReceiverStream::new(rx);
@@ -66,6 +81,21 @@ pub async fn logout(ctx: RequestState) -> Result<Json<String>, AppError> {
     }
 }
 
+/// /sse/id/{state_id}
+///
+/// Get server message stream of specific stage_id
+#[utoipa::path(
+    get,
+    path = "/id/{state_id}",
+    responses(
+        (
+            status = 200,
+            description = "Stream of Message from server",
+            content_type = "text/event-stream",
+            item_schema = SseMessage,
+        )
+    )
+)]
 pub async fn get_sse_by_id(Path(state_id): Path<String>, State(app): State<ApiState>) -> impl IntoResponse {
     let (tx, rx) = mpsc::unbounded_channel();
     let rx = UnboundedReceiverStream::new(rx);

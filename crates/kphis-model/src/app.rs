@@ -913,9 +913,9 @@ impl AppState {
 
     pub fn onscroll<F>(&self, f: F)
     where
-        F: FnMut() + 'static,
+        F: Fn() + 'static,
     {
-        let f = Closure::wrap(Box::new(f) as Box<dyn FnMut()>);
+        let f = Closure::wrap(Box::new(f) as Box<dyn Fn()>);
 
         self.window.with(|w| w.set_onscroll(Some(f.as_ref().unchecked_ref())));
 
@@ -941,9 +941,9 @@ impl AppState {
 
     pub fn set_interval<F>(&self, f: F, ms: i32) -> i32
     where
-        F: FnMut() + 'static,
+        F: Fn() + 'static,
     {
-        let f = Closure::wrap(Box::new(f) as Box<dyn FnMut()>);
+        let f = Closure::wrap(Box::new(f) as Box<dyn Fn()>);
 
         let handle = self.window.with(|w| w.set_interval_with_callback_and_timeout_and_arguments_0(f.as_ref().unchecked_ref(), ms).unwrap());
 

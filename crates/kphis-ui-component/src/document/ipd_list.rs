@@ -83,7 +83,8 @@ impl IpdDocumentListCpn {
 
     /// GET `EndPoint::ReportTemplateTypeId`
     fn load_full_pdf(full_type: &'static str, page: Rc<Self>, app: Rc<App>) {
-        if let (Some(an), Some(vn)) = (page.an.as_ref(), page.vn.lock_ref().as_ref()) {
+        let vn_opt = page.vn.lock_ref().as_ref().and_then(|s| str_some(s));
+        if let (Some(an), Some(vn)) = (page.an.as_ref(), vn_opt.as_ref()) {
             let ids = [vn, "|", an].concat();
             let file_name = [an, "-", full_type].concat();
             app.async_load(

@@ -282,8 +282,9 @@ impl IpdAdmissionNoteNursePage {
         app.async_load(
             true,
             clone!(app, page => async move {
+                let an_lock = page.an.lock_ref();
                 // GET `EndPoint::IpdAdmissionNoteNurseAn`
-                match IpdNurseAdmissionNote::call_api_get(&page.an.lock_ref(), app.state()).await {
+                match IpdNurseAdmissionNote::call_api_get(&an_lock, app.state()).await {
                     Ok(response) => {
                         let mut nurse_admission_note_id = None;
                         if let Some(note) = response {

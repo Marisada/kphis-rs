@@ -255,11 +255,11 @@ impl IndexPlanCpn {
             })))
             .future(page.is_redraw.signal().for_each(clone!(app, page => move |redraw| {
                 if redraw {
-                    let patient = page.patient.lock_ref();
+                    let patient_lock = page.patient.lock_ref();
                     let (last_date, last_time) = if page.is_ipd() {
-                        (patient.as_ref().and_then(|pt| pt.dchdate), patient.as_ref().and_then(|pt| pt.dchtime))
+                        (patient_lock.as_ref().and_then(|pt| pt.dchdate), patient_lock.as_ref().and_then(|pt| pt.dchtime))
                     } else {
-                        let last_datetime = patient.as_ref().and_then(|pt| pt.latest_vs_datetime);
+                        let last_datetime = patient_lock.as_ref().and_then(|pt| pt.latest_vs_datetime);
                         (last_datetime.map(|dt| dt.date()), last_datetime.map(|dt| dt.time()))
                     };
                     redraw_index_plan(

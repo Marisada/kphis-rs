@@ -94,12 +94,6 @@ if [ -e "sw.js.gz" ]; then
     rm sw.js.gz
 fi
 
-if [ "$1" == "client" ]; then
-    if [ -e "snippets" ]; then
-        rm -rf snippets
-    fi
-fi
-
 cd ${PROJECT_PATH}
 
 # if ($( wasm-pack build --target web --out-name $NAME --out-dir wasm-pack/ --$MODE )) ; then
@@ -116,9 +110,6 @@ if ($( cargo build --package ${CRATE_NAME} --target wasm32-unknown-unknown ${MOD
         fi
         mv -f wasm-pack/${NAME}_bg.wasm ${PROJECT_PATH}/${PWA_PATH}/
         mv -f wasm-pack/${NAME}.js ${PROJECT_PATH}/${PWA_PATH}/
-        if [ "$1" == "client" ]; then
-            mv -f wasm-pack/snippets ${PROJECT_PATH}/${PWA_PATH}/
-        fi
     else
         exit 1
     fi
@@ -133,11 +124,6 @@ if [ -e "${NAME}_bg.wasm" ]; then
 fi
 if [ -e "${NAME}.js" ]; then
     echo "build ${PROJECT_PATH}/${PWA_PATH}/${NAME}.js successfully"
-fi
-if [ "$1" == "client" ]; then
-    if [ -e "snippets" ]; then
-        echo "build snippets successfully"
-    fi
 fi
 
 VERSION=$(date '+%Y%m%d-%H%M%S')

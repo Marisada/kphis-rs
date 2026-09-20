@@ -1,17 +1,18 @@
-## 0.4.21 (2026-09-09)
+## 0.4.21 (2026-09-19)
 > - *(Config)* Added `log-centralize-host` for remote UDP syslog
 > - Fixed menu responsiveness
 > - Fixed to display `ประวัติการสั่งยา` in ipd-main, opd-er-main and ipd-pre-order-main
-> - Fixed `lab` tab in `prescription-screen` show corresponded to last/old visit
-> - Fixed SCSS of `date-picker`, `nice-select2` and `bootstrap`
+> - Fixed `lab` tab in `prescription-screen` to show a corresponded lab of last/old visit
+> - Fixed SASS of `date-picker`, `nice-select2` and `bootstrap`
 > - Removed Bootstrap's javascript
 > - Removed NiceSelect2's javascript
 > - Added watermark to reports
-> - *(Schema)* Modify `kphis_extra.user_config`'s `totp_done` column to UNSIGNED BIGINT, to comply with [rfc-6238](https://datatracker.ietf.org/doc/html/rfc6238#section-5.2)
+> - *(Schema)* Modified `kphis_extra.user_config`'s `totp_done` column to UNSIGNED BIGINT, to comply with [rfc-6238](https://datatracker.ietf.org/doc/html/rfc6238#section-5.2)
 > - Moved logging process from handler to middleware layer
 > - Changed ward select box into multiple selector
 > - Added I/O selector to `progress-note`, `index-note-form` and `refer-out`
-> - Fixed `report-designer` input with multiple select box
+> - Changed `report-designer` input to multiple selector
+> - Fixed the javascript binding event listener leak
 
 ## 0.4.20 (2026-08-02)
 > - *(Config)* Added `real-ip-header` to get real client IP address behind reverse proxy
@@ -37,8 +38,8 @@
 
 ## 0.4.17 (2026-06-14)
 > - *(Schema)* change column type from TINYINT to TEXT in
->   - `ipd_dr_admission_note` (`braden_scale`, `amphetamine_awq`, `aggression_oas`, `alcohol_audit`, `alcohol_aws`, `alcohol_ciwa`, `depress_2q`, `depress_9q`, `depress_cdi`, `depress_cesd`, `depress_phqa`, `nicotin_ftnd`, `ptsd_screen`, `ptsd_pisces`, `ptsd_cries`, `suicide_8q`, `stress_st5`)
->   - `ipd_vs_vital_sign` and `opd_er_vs_vital_sign` (`braden`, `barthel_index`, `aggression_oas`, `alcohol_ciwa`, `alcohol_aws`, `amphetamine_awq`)
+> - `ipd_dr_admission_note` (`braden_scale`, `amphetamine_awq`, `aggression_oas`, `alcohol_audit`, `alcohol_aws`, `alcohol_ciwa`, `depress_2q`, `depress_9q`, `depress_cdi`, `depress_cesd`, `depress_phqa`, `nicotin_ftnd`, `ptsd_screen`, `ptsd_pisces`, `ptsd_cries`, `suicide_8q`, `stress_st5`)
+> - `ipd_vs_vital_sign` and `opd_er_vs_vital_sign` (`braden`, `barthel_index`, `aggression_oas`, `alcohol_ciwa`, `alcohol_aws`, `amphetamine_awq`)
 > - *(Schema)* remove `amphetamine_awq_h`, `amphetamine_awq_a`, `amphetamine_awq_r` from `ipd_dr_admission_note`, `ipd_vs_vital_sign` and `opd_er_vs_vital_sign` table **NOT ADD TO `kphis-db-util`, PLEASE REMOVE IT YOURSELF** 
 > - Fixed scores to record internal items
 > - Added `AWQ-v2`, `CIWA-Ar`, `AWS` table to `ipd-vital-sign-psychia` report

@@ -21,7 +21,7 @@ pub fn html(openapi: OpenApi) -> String {
       }}
       document.getElementById('api-reference').dataset.configuration = JSON.stringify(configuration)
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.57.5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.69.2"></script>
   </body>
 </html>"#,
         spec = serde_json::to_string(&openapi).expect("Invalid OpenAPI spec, expected OpenApi, String, &str or serde_json::Value",)

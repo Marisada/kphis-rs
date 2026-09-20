@@ -799,7 +799,7 @@ impl IndexPlanActionForm {
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "radio")
                                             .class("btn-check")
-                                            .attr("id", "main-plan-btn")
+                                            .attr("id", "modal-main-plan-btn")
                                             .attr("autocomplete","off")
                                             .with_node!(element => {
                                                 .future(modal.form_type.signal_cloned().for_each(move |v| {
@@ -819,7 +819,7 @@ impl IndexPlanActionForm {
                                         }),
                                         html!("label", {
                                             .class(class::BTN_BLUEO)
-                                            .attr("for", "main-plan-btn")
+                                            .attr("for", "modal-main-plan-btn")
                                             .text("PLAN")
                                             .child_signal(modal.order_item.signal_cloned().map(move |opt| {
                                                 opt.and_then(|order_item| {
@@ -836,7 +836,7 @@ impl IndexPlanActionForm {
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "radio")
                                             .class("btn-check")
-                                            .attr("id", "main-action-btn")
+                                            .attr("id", "modal-main-action-btn")
                                             .attr("autocomplete","off")
                                             .with_node!(element => {
                                                 .future(modal.form_type.signal_cloned().for_each(move |v| {
@@ -856,7 +856,7 @@ impl IndexPlanActionForm {
                                         }),
                                         html!("label", {
                                             .class(class::BTN_BLUEO)
-                                            .attr("for", "main-action-btn")
+                                            .attr("for", "modal-main-action-btn")
                                             .text("ACTION")
                                             .child_signal(modal.order_item.signal_cloned().map(move |opt| {
                                                 opt.and_then(|order_item| {
@@ -873,7 +873,7 @@ impl IndexPlanActionForm {
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "radio")
                                             .class("btn-check")
-                                            .attr("id", "main-monitor-btn")
+                                            .attr("id", "modal-main-monitor-btn")
                                             .attr("autocomplete","off")
                                             .with_node!(element => {
                                                 .future(modal.form_type.signal_cloned().for_each(move |v| {
@@ -894,7 +894,7 @@ impl IndexPlanActionForm {
                                         }),
                                         html!("label", {
                                             .class(class::BTN_BLUEO)
-                                            .attr("for", "main-monitor-btn")
+                                            .attr("for", "modal-main-monitor-btn")
                                             .text("MONITOR")
                                             .child_signal(modal.order_item.signal_cloned().map(move |opt| {
                                                 opt.and_then(|order_item| {
@@ -1391,7 +1391,7 @@ impl IndexPlanActionForm {
         let accordion = Mutable::new(PlanTimeShow::Hours);
         html!("div", {
             .class("accordion")
-            .attr("id", "plan-sch-time-container")
+            .attr("id", "modal-plan-sch-time-container")
             .children([
                 html!("div", {
                     .class("accordion-item")
@@ -1403,7 +1403,7 @@ impl IndexPlanActionForm {
                                 .class(class::ACCORDION_BTN_CYANS_P2)
                                 .class_signal("collapsed", accordion.signal_ref(|acc| !matches!(acc, PlanTimeShow::Hours)))
                                 .prop_signal("aria-expanded", accordion.signal_ref(|acc| if matches!(acc, PlanTimeShow::Hours) {"true"} else {"false"}))
-                                .attr("aria-controls","plan-sch-time-hours")
+                                .attr("aria-controls","modal-plan-sch-time-hours")
                                 .text("กำหนดเวลา")
                                 .event(clone!(accordion => move |_:events::Click| {
                                     let eq = matches!(accordion.get_cloned(), PlanTimeShow::Hours);
@@ -1418,7 +1418,7 @@ impl IndexPlanActionForm {
                         html!("div", {
                             .class(class::ACCORDION_COLLAPSE)
                             .class_signal("show", accordion.signal_ref(|acc| matches!(acc, PlanTimeShow::Hours)))
-                            .attr("id", "plan-sch-time-hours")
+                            .attr("id", "modal-plan-sch-time-hours")
                             .child(html!("div", {
                                 .class("accordion-body")
                                 .child(Self::render_plan_sch_time_multiple(time_plans.clone(), modal.clone(), app.clone()))
@@ -1436,7 +1436,7 @@ impl IndexPlanActionForm {
                                 .class(class::ACCORDION_BTN_CYANS_P2)
                                 .class_signal("collapsed", accordion.signal_ref(|acc| matches!(acc, PlanTimeShow::Hours)))
                                 .prop_signal("aria-expanded", accordion.signal_ref(|acc| if matches!(acc, PlanTimeShow::Single) {"true"} else {"false"}))
-                                .attr("aria-controls","plan-sch-time-single")
+                                .attr("aria-controls","modal-plan-sch-time-single")
                                 .text("รายละเอียด")
                                 .event(clone!(accordion => move |_:events::Click| {
                                     let eq = matches!(accordion.get_cloned(), PlanTimeShow::Single);
@@ -1451,7 +1451,7 @@ impl IndexPlanActionForm {
                         html!("div", {
                             .class(class::ACCORDION_COLLAPSE)
                             .class_signal("show", accordion.signal_ref(|acc| matches!(acc, PlanTimeShow::Single)))
-                            .attr("id", "plan-sch-time-single")
+                            .attr("id", "modal-plan-sch-time-single")
                             .child(html!("div", {
                                 .class("accordion-body")
                                 .child(Self::render_plan_sch_time_single(time_plans, modal.clone(), app.clone()))
@@ -1940,13 +1940,13 @@ impl IndexPlanActionForm {
                                     .child(html!("div", {
                                         .class(class::INPUT_GROUP)
                                         .children([
-                                            doms::label_group_for("index-plan-date",date_label),
+                                            doms::label_group_for("modal-index-plan-date",date_label),
                                             doms::date_picker(
                                                 modal.plan_date.clone(),
                                                 modal.changed.clone(), always(false), Some(modal.plan_time.clone()),
                                                 |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
                                                 |d| d.class("rounded-start-0"),
-                                                |d| d.class("rounded-start-0").attr("id","index-plan-date"),
+                                                |d| d.class("rounded-start-0").attr("id","modal-index-plan-date"),
                                                 |s| s,
                                                 map_ref!{
                                                     let allow_plan_before_order = modal.allow_plan_before_order_signal(),
@@ -1971,13 +1971,13 @@ impl IndexPlanActionForm {
                                     .child(html!("div", {
                                         .class(class::INPUT_GROUP)
                                         .children([
-                                            doms::label_group_for("index-plan-time",time_label),
+                                            doms::label_group_for("modal-index-plan-time",time_label),
                                             doms::time_picker(
                                                 modal.plan_time.clone(),
                                                 modal.changed.clone(), always(false), Some(modal.plan_date.clone()),
                                                 |d| d.class(class::FLEX_GROW1).style("min-width","110px"),
                                                 |d| d.class("rounded-start-0"),
-                                                |d| d.class("rounded-start-0").attr("id","index-plan-time"),
+                                                |d| d.class("rounded-start-0").attr("id","modal-index-plan-time"),
                                                 |s| s,
                                                 map_ref!{
                                                     let allow_plan_before_order = modal.allow_plan_before_order_signal(),
@@ -2008,12 +2008,12 @@ impl IndexPlanActionForm {
                                 .children([
                                     html!("textarea" => HtmlTextAreaElement, {
                                         .class("form-control")
-                                        .attr("id", "index-plan-detail")
+                                        .attr("id", "modal-index-plan-detail")
                                         .attr("placeholder","Plan Details")
                                         .apply(mixins::textarea_value_auto_expand(modal.plan_detail.clone(), modal.changed.clone()))
                                     }),
                                     html!("label", {
-                                        .attr("for", "index-plan-detail")
+                                        .attr("for", "modal-index-plan-detail")
                                         .text("รายละเอียด")
                                     }),
                                 ])
@@ -2031,13 +2031,13 @@ impl IndexPlanActionForm {
                             .children([
                                 html!("input" => HtmlInputElement, {
                                     .attr("type", "checkbox")
-                                    .attr("id", "allow-plan-before-order-toggle")
+                                    .attr("id", "modal-allow-plan-before-order-toggle")
                                     .attr("role","switch")
                                     .class("form-check-input")
                                     .attr("value", "Y")
                                     .apply(mixins::checkbox_toggle(modal.allow_plan_before_order.clone(), Mutable::new(false), "Y", ""))
                                 }),
-                                doms::label_check_for("allow-plan-before-order-toggle","เลือกเวลาแผน ก่อนเวลาสั่งได้"),
+                                doms::label_check_for("modal-allow-plan-before-order-toggle","เลือกเวลาแผน ก่อนเวลาสั่งได้"),
                             ])
                         }))
                     }))
@@ -2139,13 +2139,13 @@ impl IndexPlanActionForm {
                                     .child(html!("div", {
                                         .class(class::INPUT_GROUP)
                                         .children([
-                                            doms::label_group_for("index-check-datetime","จัดยา"),
+                                            doms::label_group_for("modal-index-check-datetime","จัดยา"),
                                             doms::datetime_picker(
                                                 modal.check_datetime.clone(),
                                                 modal.changed.clone(), always(false),
                                                 |d| d.class(class::FLEX_GROW1).style("width","190px"),
                                                 |d| d.class("rounded-start-0"),
-                                                |d| d.class("rounded-start-0").attr("id", "index-check-datetime"),
+                                                |d| d.class("rounded-start-0").attr("id", "modal-index-check-datetime"),
                                                 |s| s, always(None),
                                             ),
                                         ])
@@ -2178,7 +2178,7 @@ impl IndexPlanActionForm {
                                             html!("div", {
                                                 .class(class::FLEX_GROW1)
                                                 .child(doms::select_box(
-                                                    "index-check-person", Some("เลือก"), false,
+                                                    "modal-index-check-person", Some("เลือก"), false,
                                                     modal.check_person.clone(),
                                                     modal.changed.clone(),
                                                     |d| d.class("form-control"), || {},
@@ -2239,13 +2239,13 @@ impl IndexPlanActionForm {
                                                 .child(html!("div", {
                                                     .class(class::INPUT_GROUP)
                                                     .children([
-                                                        doms::label_group_for("index-action-date","Action"),
+                                                        doms::label_group_for("modal-index-action-date","Action"),
                                                         doms::date_picker(
                                                             modal.action_date.clone(),
                                                             modal.changed.clone(), always(false), None,
                                                             |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
                                                             |d| d.class("rounded-start-0"),
-                                                            |d| d.class("rounded-start-0").attr("id", "index-action-date"),
+                                                            |d| d.class("rounded-start-0").attr("id", "modal-index-action-date"),
                                                             |s| s, always(None),
                                                         ),
                                                     ])
@@ -2256,13 +2256,13 @@ impl IndexPlanActionForm {
                                                 .child(html!("div", {
                                                     .class(class::INPUT_GROUP)
                                                     .children([
-                                                        doms::label_group_for("index-action-time","เวลา"),
+                                                        doms::label_group_for("modal-index-action-time","เวลา"),
                                                         doms::time_picker(
                                                             modal.action_time.clone(),
                                                             modal.changed.clone(), always(false), None,
                                                             |d| d.class(class::FLEX_GROW1).style("min-width","110px"),
                                                             |d| d.class("rounded-start-0"),
-                                                            |d| d.class("rounded-start-0").attr("id", "index-action-time"),
+                                                            |d| d.class("rounded-start-0").attr("id", "modal-index-action-time"),
                                                             |s| s, always(None),
                                                         ),
                                                     ])
@@ -2307,12 +2307,12 @@ impl IndexPlanActionForm {
                                                         .children([
                                                             html!("textarea" => HtmlTextAreaElement, {
                                                                 .class("form-control")
-                                                                .attr("id", "index-action-result")
+                                                                .attr("id", "modal-index-action-result")
                                                                 .attr("placeholder","Action Result")
                                                                 .apply(mixins::textarea_value_auto_expand(modal.action_result.clone(), modal.changed.clone()))
                                                             }),
                                                             html!("label", {
-                                                                .attr("for", "index-action-result")
+                                                                .attr("for", "modal-index-action-result")
                                                                 .text("ผลลัพธ์")
                                                             }),
                                                         ])
@@ -2420,12 +2420,12 @@ impl IndexPlanActionForm {
                                                     .children([
                                                         html!("textarea" => HtmlTextAreaElement, {
                                                             .class("form-control")
-                                                            .attr("id", "index-action-remark")
+                                                            .attr("id", "modal-index-action-remark")
                                                             .attr("placeholder","Action Remark")
                                                             .apply(mixins::textarea_value_auto_expand(modal.action_remark.clone(), modal.changed.clone()))
                                                         }),
                                                         html!("label", {
-                                                            .attr("for", "index-action-remark")
+                                                            .attr("for", "modal-index-action-remark")
                                                             .text("หมายเหตุ")
                                                         }),
                                                     ])
@@ -2445,11 +2445,11 @@ impl IndexPlanActionForm {
                                                         .attr("type", "checkbox")
                                                         .attr("role","switch")
                                                         .class("form-check-input")
-                                                        .attr("id", "index-action-blood-had")
+                                                        .attr("id", "modal-index-action-blood-had")
                                                         .attr("value", "Y")
                                                         .apply(mixins::checkbox_toggle(modal.action_blood_had.clone(), modal.changed.clone(), "Y", "N"))
                                                     }),
-                                                    doms::label_check_for("index-action-blood-had","Blood/HAD (ลงชื่อด้วย จนท. 2 ท่าน)"),
+                                                    doms::label_check_for("modal-index-action-blood-had","Blood/HAD (ลงชื่อด้วย จนท. 2 ท่าน)"),
                                                 ])
                                             }))
                                         }))
@@ -2474,7 +2474,7 @@ impl IndexPlanActionForm {
                                                         html!("div", {
                                                             .class(class::FLEX_GROW1)
                                                             .child(doms::select_box(
-                                                                "index-action-person-1", Some("เลือก"), false,
+                                                                "modal-index-action-person-1", Some("เลือก"), false,
                                                                 modal.action_person_1.clone(),
                                                                 modal.changed.clone(),
                                                                 |d| d.class("form-control"), || {},
@@ -2491,11 +2491,11 @@ impl IndexPlanActionForm {
                                                 .child(html!("div", {
                                                     .class(class::INPUT_GROUP)
                                                     .children([
-                                                        doms::label_group_for("index-action-person-2","ลงชื่อ 2"),
+                                                        doms::label_group_for("modal-index-action-person-2","ลงชื่อ 2"),
                                                         html!("div", {
                                                             .class(class::FLEX_GROW1)
                                                             .child(doms::select_box(
-                                                                "index-action-person-2", Some("เลือก"), false,
+                                                                "modal-index-action-person-2", Some("เลือก"), false,
                                                                 modal.action_person_2.clone(),
                                                                 modal.changed.clone(),
                                                                 |d| d.class("form-control"), || {},
@@ -2598,13 +2598,13 @@ impl IndexPlanActionForm {
                             .child(html!("div", {
                                 .class(class::INPUT_GROUP)
                                 .children([
-                                    doms::label_group_for("monitor-datetime","Monitor"),
+                                    doms::label_group_for("modal-monitor-datetime","Monitor"),
                                     doms::datetime_picker(
                                         modal.monitor_datetime.clone(),
                                         modal.changed.clone(), always(false),
                                         |d| d.class(class::FLEX_GROW1).style("min-width","190px"),
                                         |d| d.class("rounded-start-0"),
-                                        |d| d.class("rounded-start-0").attr("id", "monitor-datetime"),
+                                        |d| d.class("rounded-start-0").attr("id", "modal-monitor-datetime"),
                                         |s| s, always(None),
                                     ),
                                 ])
@@ -2633,39 +2633,39 @@ impl IndexPlanActionForm {
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "radio")
                                         .class("btn-check")
-                                        .attr("id", "monitor-wait")
+                                        .attr("id", "modal-monitor-wait")
                                         .attr("autocomplete","off")
                                         .apply(mixins::radio_opt_match_or_none(modal.monitor_abnormal.clone(), modal.changed.clone(), ""))
                                     }),
                                     html!("label", {
                                         .class(class::BTN_BLUEO)
-                                        .attr("for", "monitor-wait")
+                                        .attr("for", "modal-monitor-wait")
                                         .child(html!("i", {.class(class::FA_HOURGLASS_GOLD)}))
                                         .text(" รอประเมิน")
                                     }),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "radio")
                                         .class("btn-check")
-                                        .attr("id", "monitor-normal")
+                                        .attr("id", "modal-monitor-normal")
                                         .attr("autocomplete","off")
                                         .apply(mixins::radio_opt_match(modal.monitor_abnormal.clone(), modal.changed.clone(), "N"))
                                     }),
                                     html!("label", {
                                         .class(class::BTN_BLUEO)
-                                        .attr("for", "monitor-normal")
+                                        .attr("for", "modal-monitor-normal")
                                         .child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)}))
                                         .text(" ปกติ")
                                     }),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "radio")
                                         .class("btn-check")
-                                        .attr("id", "monitor-abnormal")
+                                        .attr("id", "modal-monitor-abnormal")
                                         .attr("autocomplete","off")
                                         .apply(mixins::radio_opt_match(modal.monitor_abnormal.clone(), modal.changed.clone(), "Y"))
                                     }),
                                     html!("label", {
                                         .class(class::BTN_BLUEO)
-                                        .attr("for", "monitor-abnormal")
+                                        .attr("for", "modal-monitor-abnormal")
                                         .child(html!("i", {.class(class::FA_ALERT_RED)}))
                                         .text(" ผิดปกติ")
                                     }),
@@ -2686,12 +2686,12 @@ impl IndexPlanActionForm {
                                     .children([
                                         html!("textarea" => HtmlTextAreaElement, {
                                             .class("form-control")
-                                            .attr("id", "monitor-result")
+                                            .attr("id", "modal-monitor-result")
                                             .attr("placeholder","Monitor Result")
                                             .apply(mixins::textarea_value_auto_expand(modal.monitor_result.clone(), modal.changed.clone()))
                                         }),
                                         html!("label", {
-                                            .attr("for", "monitor-result")
+                                            .attr("for", "modal-monitor-result")
                                             .text("รายละเอียด")
                                         }),
                                     ])
@@ -2705,12 +2705,12 @@ impl IndexPlanActionForm {
                                 .children([
                                     html!("textarea" => HtmlTextAreaElement, {
                                         .class("form-control")
-                                        .attr("id", "monitor-remark")
+                                        .attr("id", "modal-monitor-remark")
                                         .attr("placeholder","Monitor Remark")
                                         .apply(mixins::textarea_value_auto_expand(modal.monitor_remark.clone(), modal.changed.clone()))
                                     }),
                                     html!("label", {
-                                        .attr("for", "monitor-remark")
+                                        .attr("for", "modal-monitor-remark")
                                         .text("หมายเหตุ")
                                     }),
                                 ])
@@ -3300,13 +3300,13 @@ pub fn render_order_item(order_item: Rc<OrderItem>, app: Rc<App>) -> Dom {
                                             .attr("type", "checkbox")
                                             .attr("role", "switch")
                                             .visible(false)
-                                            .attr("id", "order-item-is-injection")
+                                            .attr("id", "modal-order-item-is-injection")
                                             .attr("value", "Y")
                                             .apply(mixins::checkbox_some_bool(is_injection.clone(), is_injection_changed.clone()))
                                         }),
                                         html!("label", {
                                             .class("form-check-label")
-                                            .attr("for", "order-item-is-injection")
+                                            .attr("for", "modal-order-item-is-injection")
                                             .style("font-size", "28px")
                                             .style("line-height", "100%")
                                             .style("user-select", "none")

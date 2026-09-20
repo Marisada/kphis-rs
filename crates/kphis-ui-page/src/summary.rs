@@ -509,7 +509,7 @@ impl SummaryPage {
             .first()
             .and_then(|d| d.state.lock_ref().as_ref().map(|dx| (str_some(&dx.icd10), dx.ename.clone())))
             .unwrap_or_default();
-        let hospital_refer = page.hospital_refer.lock_ref();
+        let hospital_refer_lock = page.hospital_refer.lock_ref();
         SummaryData {
             summary_id: page.summary_id.get(),
             an: page.an.get_cloned(),
@@ -535,9 +535,9 @@ impl SummaryPage {
             special_other_text: str_some(&page.special_other_text.lock_ref()),
             discharge_status: str_some(&page.discharge_status.lock_ref()),
             discharge_type: str_some(&page.discharge_type.lock_ref()),
-            hospital_refer: hospital_refer.as_ref().map(|hosp| hosp.id.clone()),
-            hosptype: hospital_refer.as_ref().and_then(|h| h.hosptype.clone()),
-            hospname: hospital_refer.as_ref().and_then(|h| h.hospname.clone()),
+            hospital_refer: hospital_refer_lock.as_ref().map(|hosp| hosp.id.clone()),
+            hosptype: hospital_refer_lock.as_ref().and_then(|h| h.hosptype.clone()),
+            hospname: hospital_refer_lock.as_ref().and_then(|h| h.hospname.clone()),
             coder_name: page.coder_name.get_cloned(),
             principal_diagnosis_code: page.principal_diagnosis_code.get_cloned(),
             pre_admission_comorbidity_codes: page.pre_admission_comorbidity_codes.get_cloned(),
@@ -1517,9 +1517,9 @@ impl SummaryPage {
                                             .text("คัดลอกจาก HOSxP")
                                             .event(clone!(page => move |_:events::Click| {
                                                 let new = {
-                                                    let old = page.operating_room.lock_ref();
-                                                    let prefix = if old.is_empty() {""} else {"\n"};
-                                                    [old.as_str(), prefix,  &hosxp_op].concat()
+                                                    let operating_room_lock = page.operating_room.lock_ref();
+                                                    let prefix = if operating_room_lock.is_empty() {""} else {"\n"};
+                                                    [operating_room_lock.as_str(), prefix,  &hosxp_op].concat()
                                                 };
                                                 page.operating_room.set(new);
                                             }))

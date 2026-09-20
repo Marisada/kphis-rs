@@ -694,16 +694,16 @@ impl OrderCpn {
         // clear
         self.missed_med_rec.lock_mut().clear();
         // prepared variables
-        let used_mrd_rec = self.used_med_rec.lock_ref();
-        let continuous = self.continuous.lock_ref();
-        let confirmed_cont = continuous
+        let used_mrd_rec_lock = self.used_med_rec.lock_ref();
+        let continuous_lock = self.continuous.lock_ref();
+        let confirmed_cont = continuous_lock
             .iter()
             .filter(|order| order.is_confirm())
             .flat_map(|order| order.order_item_types.iter().flat_map(|oit| oit.order_items.iter().filter(|oi| oi.icode.is_some()).cloned().map(Rc::new)));
         let prev_med = self.previous_continuous_med.lock_ref().to_vec();
         let prev_inj = self.previous_continuous_injection.lock_ref().to_vec();
         // partition in-hos / out-hos
-        let (out_hos_used, in_hos_used): (Vec<_>, Vec<_>) = used_mrd_rec.iter().partition(clone!(med_rec_icode => move |item| {
+        let (out_hos_used, in_hos_used): (Vec<_>, Vec<_>) = used_mrd_rec_lock.iter().partition(clone!(med_rec_icode => move |item| {
             med_rec_icode.as_ref().zip(item.icode.as_ref()).map(|(a, b)| a == b).unwrap_or_default()
         }));
         let (out_hos_oi, in_hos_oi): (Vec<_>, Vec<_>) = confirmed_cont
@@ -1221,10 +1221,10 @@ impl OrderCpn {
                                                             .event(clone!(page => move |_: events::Click| {
                                                                 if element.checked() {
                                                                     let now = js_now().date();
-                                                                    let patient = page.patient.lock_ref();
-                                                                    let reg = patient.as_ref().and_then(|pt| pt.regdate()).unwrap_or(now);
+                                                                    let patient_lock = page.patient.lock_ref();
+                                                                    let reg = patient_lock.as_ref().and_then(|pt| pt.regdate()).unwrap_or(now);
                                                                     // IPD only ?
-                                                                    let dch = patient.as_ref().and_then(|pt| pt.lastdate()).unwrap_or(now);
+                                                                    let dch = patient_lock.as_ref().and_then(|pt| pt.lastdate()).unwrap_or(now);
 
                                                                     let mut all = Vec::new();
                                                                     let mut i = Some(dch);
@@ -1276,11 +1276,11 @@ impl OrderCpn {
                                                 .child(html!("i",{.class(class::FA_L_CARET)}))
                                                 .event(clone!(page => move |_: events::Click| {
                                                     if let Some(current_date) = page.current_date.get_cloned() {
-                                                        let lock = page.order_dates.lock_ref();
-                                                        let len = lock.len();
-                                                        if let Some(pos) = lock.iter().position(|d| *d == current_date) {
+                                                        let order_dates_lock = page.order_dates.lock_ref();
+                                                        let len = order_dates_lock.len();
+                                                        if let Some(pos) = order_dates_lock.iter().position(|d| *d == current_date) {
                                                             if pos < len - 1 {
-                                                                page.current_date.set_neq(Some((lock[pos + 1]).clone()));
+                                                                page.current_date.set_neq(Some((order_dates_lock[pos + 1]).clone()));
                                                                 page.loaded_all.set_neq(false);
                                                             }
                                                         }
@@ -1312,10 +1312,10 @@ impl OrderCpn {
                                                 .child(html!("i",{.class(class::FA_R_CARET)}))
                                                 .event(clone!(page => move |_: events::Click| {
                                                     if let Some(current_date) = page.current_date.get_cloned() {
-                                                        let lock = page.order_dates.lock_ref();
-                                                        if let Some(pos) = lock.iter().position(|d| *d == current_date) {
+                                                        let order_dates_lock = page.order_dates.lock_ref();
+                                                        if let Some(pos) = order_dates_lock.iter().position(|d| *d == current_date) {
                                                             if pos > 0 {
-                                                                page.current_date.set_neq(Some((lock[pos - 1]).clone()));
+                                                                page.current_date.set_neq(Some((order_dates_lock[pos - 1]).clone()));
                                                                 page.loaded_all.set_neq(false);
                                                             }
                                                         }

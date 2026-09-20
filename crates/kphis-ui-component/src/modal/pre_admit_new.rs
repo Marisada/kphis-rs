@@ -71,13 +71,13 @@ impl PreAdmitNew {
                             .child(html!("div", {
                                 .class(class::INPUT_GROUP_SM)
                                 .class(class::M_LT)
-                                .attr("id", "new_vn_input_group")
+                                .attr("id", "modal_new_vn_input_group")
                                 .children([
-                                    doms::label_group_for("new_opd_visit_detail","Visit"),
+                                    doms::label_group_for("modal_new_opd_visit_detail","Visit"),
                                     html!("input", {
                                         .attr("type", "text")
                                         .class(class::FORM_CTRL_SM)
-                                        .attr("id", "new_opd_visit_detail")
+                                        .attr("id", "modal_new_opd_visit_detail")
                                         .attr("size", "50")
                                         .attr("readonly", "readonly")
                                         .style("cursor","pointer")
@@ -110,7 +110,7 @@ impl PreAdmitNew {
                             }))
                             .child_signal(modal.display_patient_searchbox.signal_cloned().map(clone!(app, modal => move |show| {
                                 if show {
-                                    app.get_id("new_vn_input_group").map(|elm| {
+                                    app.get_id("modal_new_vn_input_group").map(|elm| {
                                         OpdVisitSearchboxCpn::render(
                                             OpdVisitSearchboxCpn::new(),
                                             modal.display_patient_searchbox.clone(),

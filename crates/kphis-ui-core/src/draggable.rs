@@ -141,9 +141,9 @@ impl<T: Clone + Default + 'static> Dragable<T> {
         if let Some(DragState::Dragging { ref mut group, ref mut draggable_index, .. }) = *dragging {
             new_draggable.overing.set(true);
 
-            let draggables = new_group.draggables.lock_ref();
-            let len = draggables.len();
-            let new_index = Self::get_draggable_index(&draggables, new_draggable.id).unwrap_or(len);
+            let draggables_lock = new_group.draggables.lock_ref();
+            let len = draggables_lock.len();
+            let new_index = Self::get_draggable_index(&draggables_lock, new_draggable.id).unwrap_or(len);
             let new_draggable_index = if new_group.id == group.id {
                 // over draggable in the same group
                 let old_index = draggable_index.unwrap_or(len);
@@ -447,10 +447,10 @@ impl<T: Clone + Default + 'static> Group<T> {
 
         let selected = match &*last_selected_draggable {
             Some(last_selected_draggable) => {
-                let draggables = self.draggables.lock_ref();
+                let draggables_lock = self.draggables.lock_ref();
                 let mut seen = false;
 
-                for x in draggables.iter() {
+                for x in draggables_lock.iter() {
                     if x.id == *last_selected_draggable || x.id == draggable.id {
                         x.selected.set_neq(true);
 
@@ -476,8 +476,8 @@ impl<T: Clone + Default + 'static> Group<T> {
 
     pub fn unselect_all_draggables(&self) {
         {
-            let draggables = self.draggables.lock_ref();
-            for draggable in draggables.iter() {
+            let draggables_lock = self.draggables.lock_ref();
+            for draggable in draggables_lock.iter() {
                 draggable.selected.set_neq(false);
             }
         }
@@ -486,16 +486,16 @@ impl<T: Clone + Default + 'static> Group<T> {
 
     pub fn unovering_all_draggables(&self) {
         self.overing.set_neq(false);
-        let draggables = self.draggables.lock_ref();
-        for draggable in draggables.iter() {
+        let draggables_lock = self.draggables.lock_ref();
+        for draggable in draggables_lock.iter() {
             draggable.overing.set_neq(false);
         }
     }
 
     pub fn selected_draggables(&self) -> Vec<Rc<Dragable<T>>> {
-        let draggables = self.draggables.lock_ref();
+        let draggables_lock = self.draggables.lock_ref();
 
-        draggables.iter().filter(|draggable| draggable.selected.get()).cloned().collect()
+        draggables_lock.iter().filter(|draggable| draggable.selected.get()).cloned().collect()
     }
 
     pub fn remove_draggables(&self, draggable_ids: &[u32]) {

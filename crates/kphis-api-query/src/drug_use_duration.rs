@@ -19,6 +19,9 @@ pub async fn get_drug_use_duration(params: &DrugUseDurationParams, pool: &Pool<M
     if let Some(monitor_status) = &params.monitor_status {
         query = query.bind(monitor_status);
     }
+    if let Some(info_status) = &params.info_status {
+        query = query.bind(info_status);
+    }
     if let Some(med_name) = &params.med_name {
         query = query.bind(["%", med_name, "%"].concat());
     }
@@ -92,6 +95,10 @@ mod tests {
         assert_eq!(monitor_status_y_found.len(),1);
         let monitor_status_n_found = get_drug_use_duration(&DrugUseDurationParams{monitor_status: Some(String::from("N")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(monitor_status_n_found.len(),1);
+        let info_status_y_found = get_drug_use_duration(&DrugUseDurationParams{info_status: Some(String::from("Y")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        assert_eq!(info_status_y_found.len(),1);
+        let info_status_n_found = get_drug_use_duration(&DrugUseDurationParams{info_status: Some(String::from("N")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        assert_eq!(info_status_n_found.len(),1);
         let not_found = get_drug_use_duration(&DrugUseDurationParams{icode: Some(String::from("6666666")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(not_found.is_empty());
     }

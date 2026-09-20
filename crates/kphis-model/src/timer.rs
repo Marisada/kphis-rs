@@ -10,6 +10,7 @@ use crate::app::WINDOW;
 
 #[derive(Debug)]
 pub struct Timeout {
+    // result of Closure::once() is FnMut, panic when call more than once
     closure: Option<Closure<dyn FnMut()>>,
     id: i32,
 }
@@ -51,14 +52,14 @@ impl Drop for Timeout {
 
 #[derive(Debug)]
 pub struct Interval {
-    closure: Option<Closure<dyn FnMut()>>,
+    closure: Option<Closure<dyn Fn()>>,
     id: i32,
 }
 
 impl Interval {
     pub fn new<F>(ms: i32, f: F) -> Self
     where
-        F: FnMut() + 'static,
+        F: Fn() + 'static,
     {
         let closure = Closure::new(f);
 

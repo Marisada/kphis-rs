@@ -17,7 +17,9 @@ use kphis_model::{
     user::his::{LoginResponse, UserClient},
 };
 use kphis_util::{
-    datetime::get_timestamp_wasm, error::{AppError, ErrorTitle, Source}, util::add_u64_with_i64,
+    datetime::get_timestamp_wasm,
+    error::{AppError, ErrorTitle, Source},
+    util::add_u64_with_i64,
 };
 
 use crate::popups::{PopupAuth, prompt_password::PromptPasswordPopup};

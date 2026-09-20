@@ -114,12 +114,12 @@ impl ShowPatientMainCpn {
             true,
             clone!(app, page => async move {
                 if app.confirm("ยืนยันตรวจสอบการแพ้ยา").await {
-                    let an = page.an.lock_ref();
-                    if !an.is_empty() {
+                    let an_lock = page.an.lock_ref();
+                    if !an_lock.is_empty() {
                         if let Some(doctorcode) = app.doctor_code() {
                             if page.is_ipd {
                                 // PATCH `EndPoint::IpdAdmissionNoteDrPharmCheckAn`
-                                match PatientInfo::call_api_patch(&an, app.state()).await {
+                                match PatientInfo::call_api_patch(&an_lock, app.state()).await {
                                     Ok(response) => if response.rows_affected > 0 {
                                         page.allergy_drug_pharmacy_check_person.set_neq(Some(doctorcode))
                                     }
