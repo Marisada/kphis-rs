@@ -244,11 +244,11 @@ impl PreOrderPreview {
                         }),
                         doms::form_inline_group_sm(clone!(page => move |group| { group
                             .children([
-                                doms::label_group_for("order_doctor_name","ผู้บันทึก"),
+                                doms::label_group_for("modal_order_doctor_name","ผู้บันทึก"),
                                 html!("input", {
                                     .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
-                                    .attr("id", "order_doctor_name")
+                                    .attr("id", "modal_order_doctor_name")
                                     .attr("readonly", "readonly")
                                     .prop_signal("value",page.order_doctor_name.signal_cloned())
                                 }),
@@ -259,11 +259,11 @@ impl PreOrderPreview {
                         (!is_template).then(|| {
                             doms::form_inline_group_sm(clone!(page => move |group| { group
                                 .children([
-                                    doms::label_group_for("ptname","HN"),
+                                    doms::label_group_for("modal_ptname","HN"),
                                     html!("input", {
                                         .attr("type", "text")
                                         .class(class::FORM_CTRL_SM)
-                                        .attr("id", "ptname")
+                                        .attr("id", "modal_ptname")
                                         .attr("readonly", "readonly")
                                         .attr("size", "40")
                                         .prop_signal("value",page.ptname.signal_cloned())
@@ -276,11 +276,11 @@ impl PreOrderPreview {
                         is_template.then(|| {
                             doms::form_inline_group_sm(clone!(page => move |group| { group
                                 .children([
-                                    doms::label_group_for("template_name","ชื่อ Template"),
+                                    doms::label_group_for("modal_template_name","ชื่อ Template"),
                                     html!("input", {
                                         .attr("type", "text")
                                         .class(class::FORM_CTRL_SM)
-                                        .attr("id", "template_name")
+                                        .attr("id", "modal_template_name")
                                         .attr("readonly", "readonly")
                                         .prop_signal("value", page.template_name.signal_cloned())
                                     }),
@@ -292,11 +292,11 @@ impl PreOrderPreview {
                         (!is_template).then(|| {
                             doms::form_inline_group_sm(clone!(page => move |group| { group
                                 .children([
-                                    doms::label_group_for("order_for_date","วันที่นัด/Admit"),
+                                    doms::label_group_for("modal_order_for_date","วันที่นัด/Admit"),
                                     html!("input", {
                                         .attr("type", "text")
                                         .class(class::FORM_CTRL_SM)
-                                        .attr("id", "order_for_date")
+                                        .attr("id", "modal_order_for_date")
                                         .attr("readonly", "readonly")
                                         .prop_signal("value", page.order_for_date.signal_cloned().map(|d| date_str_th(&d)))
                                     }),

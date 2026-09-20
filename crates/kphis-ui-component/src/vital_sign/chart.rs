@@ -2,7 +2,7 @@ use chart_js_rs::{
     Annotation, Annotations, ChartExt, ChartInteraction, ChartOptions, ChartPlugins, ChartScale, Dataset, DatasetDataExt, DatasetIterExt, DisplayFormats, FnWithArgs, Grid, LabelAnnotation, LegendLabel, LineAnnotation, LineAnnotationType,
     PluginLegend, PluginZoom, ScaleAdapters, ScaleAdaptersDate, ScaleTicks, ScaleTime, Title, TooltipCallbacks, TooltipPlugin, XYDataset, ZoomPan, ZoomPinchOptions, ZoomWheelOptions, ZoomZoom, scatter::Scatter,
 };
-use dominator::{Dom, html};
+use dominator::{Dom, clone, html};
 use std::{collections::HashMap, rc::Rc};
 use time::{PrimitiveDateTime, Time};
 
@@ -403,8 +403,11 @@ pub fn render(data: &[Rc<VitalSign>], start_vs_date: &str, end_vs_date: &str, vs
     html!("canvas", {
         .attr("id", "canvas")
         .class(class::ROUND_WHITE)
-        .after_inserted(move |_| {
+        .after_inserted(clone!(chart => move |_| {
             chart.into_chart().render()
+        }))
+        .after_removed(move |_| {
+            chart.into_chart().destroy()
         })
     })
 }

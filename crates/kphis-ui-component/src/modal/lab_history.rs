@@ -406,8 +406,11 @@ fn render_chart(data: &[Rc<LabItem>], lab_items_name_ref: &str, lab_items_unit: 
         // id needed by chart-js
         .attr("id", "canvas")
         .class(class::ROUND_WHITE)
-        .after_inserted(move |_| {
+        .after_inserted(clone!(chart => move |_| {
             chart.into_chart().render()
+        }))
+        .after_removed(move |_| {
+            chart.into_chart().destroy()
         })
     })
 }

@@ -148,12 +148,12 @@ impl IndexNoteForm {
                                     .class("mb-3")
                                     .children([
                                         html!("label", {
-                                            .attr("for", "index-note-nurse-index-note")
+                                            .attr("for", "modal-index-note-nurse")
                                             .text("Note")
                                         }),
                                         html!("textarea" => HtmlTextAreaElement, {
                                             .class("form-control")
-                                            .attr("id", "index-note-nurse-index-note")
+                                            .attr("id", "modal-index-note-nurse")
                                             .apply(mixins::textarea_value_auto_expand(modal.nurse_index_note.clone(), modal.changed.clone()))
                                         }),
                                     ])

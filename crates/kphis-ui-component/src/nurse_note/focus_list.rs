@@ -399,51 +399,51 @@ impl FocusListCpn {
 
     fn submit_form(page: Rc<Self>, app: Rc<App>) {
         let is_ended = page.fclist_status.lock_ref().as_str() == "2";
-        let smp_id = page.smp_id.lock_ref();
-        let focus_id = page.focus_id.lock_ref();
-        let goal_text = page.goal_text.lock_ref();
-        let fclist_stdate = page.fclist_stdate.lock_ref();
-        let fclist_sttime = page.fclist_sttime.lock_ref();
-        let fclist_enddate = page.fclist_enddate.lock_ref();
-        let fclist_endtime = page.fclist_endtime.lock_ref();
+        let smp_id_lock = page.smp_id.lock_ref();
+        let focus_id_lock = page.focus_id.lock_ref();
+        let goal_text_lock = page.goal_text.lock_ref();
+        let fclist_stdate_lock = page.fclist_stdate.lock_ref();
+        let fclist_sttime_lock = page.fclist_sttime.lock_ref();
+        let fclist_enddate_lock = page.fclist_enddate.lock_ref();
+        let fclist_endtime_lock = page.fclist_endtime.lock_ref();
 
-        if smp_id.is_empty() {
+        if smp_id_lock.is_empty() {
             if let Some(elm) = app.get_id("search_temp_smp").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);
                 }
             }
-        } else if focus_id.is_empty() {
+        } else if focus_id_lock.is_empty() {
             if let Some(elm) = app.get_id("tmp_focus").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);
                 }
             }
-        } else if page.goal_ids.lock_ref().is_empty() && goal_text.is_empty() {
+        } else if page.goal_ids.lock_ref().is_empty() && goal_text_lock.is_empty() {
             if let Some(elm) = app.get_id("goal_text").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);
                 }
             }
-        } else if fclist_stdate.is_empty() {
+        } else if fclist_stdate_lock.is_empty() {
             if let Some(elm) = app.get_id("fclist_stdate").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);
                 }
             }
-        } else if fclist_sttime.is_empty() {
+        } else if fclist_sttime_lock.is_empty() {
             if let Some(elm) = app.get_id("fclist_sttime").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);
                 }
             }
-        } else if is_ended && fclist_enddate.is_empty() {
+        } else if is_ended && fclist_enddate_lock.is_empty() {
             if let Some(elm) = app.get_id("fclist_enddate").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);
                 }
             }
-        } else if is_ended && fclist_endtime.is_empty() {
+        } else if is_ended && fclist_endtime_lock.is_empty() {
             if let Some(elm) = app.get_id("fclist_endtime").and_then(|elm| elm.dyn_into::<HtmlSelectElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);

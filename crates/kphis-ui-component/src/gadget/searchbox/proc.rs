@@ -184,7 +184,7 @@ impl ProcSearchboxCpn {
                                 })
                             }))
                             .children_signal_vec(page.results.signal_vec_cloned().map(clone!(page, changed => move |tuple| {
-                                let txt = page.text.lock_ref();
+                                let text_lock = page.text.lock_ref();
                                 let result = &tuple.0;
                                 let col = tuple.2;
                                 // col: 1=icd9, 2=desc
@@ -199,7 +199,7 @@ impl ProcSearchboxCpn {
                                                         let icd9 = icd_dash(&icd9_dot(&result.code), result.is_valid);
                                                         if col == 1 {
                                                             // dom.children(red_chars_in_words(&txt, &icd9))
-                                                            dom.children(red_keywords_in_icd_dot(true, &txt, &icd9))
+                                                            dom.children(red_keywords_in_icd_dot(true, &text_lock, &icd9))
                                                         } else {
                                                             dom.text(&icd9)
                                                         }
@@ -210,7 +210,7 @@ impl ProcSearchboxCpn {
                                                     .apply(|dom| {
                                                         if col == 2 {
                                                             // dom.children(red_chars_in_words(&txt, &result.desc))
-                                                            dom.children(red_keywords_in_sentense(&txt, &result.desc))
+                                                            dom.children(red_keywords_in_sentense(&text_lock, &result.desc))
                                                         } else {
                                                             dom.text(&result.desc)
                                                         }

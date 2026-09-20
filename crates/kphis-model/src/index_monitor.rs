@@ -42,22 +42,35 @@ pub struct IndexMonitor {
 
 impl Ord for IndexMonitor {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.monitor_datetime
-            .zip(other.monitor_datetime)
-            .map(|(a, b)| a.cmp(&b))
-            .unwrap_or_else(|| self.monitor_id.zip(other.monitor_id).map(|(a, b)| a.cmp(&b)).unwrap_or(self.visit_type.cmp(&other.visit_type)))
+        if let (Some(a_dt), Some(b_dt)) = (self.monitor_datetime, other.monitor_datetime) {
+            a_dt.cmp(&b_dt)
+        } else if let (Some(a_id), Some(b_id)) = (self.monitor_id, other.monitor_id) {
+            a_id.cmp(&b_id)
+        } else {
+            self.visit_type.cmp(&other.visit_type)
+        }
     }
 }
 
 impl PartialOrd for IndexMonitor {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.monitor_datetime.zip(other.monitor_datetime).map(|(a, b)| a.cmp(&b))
+        if let (Some(a_dt), Some(b_dt)) = (self.monitor_datetime, other.monitor_datetime) {
+            Some(a_dt.cmp(&b_dt))
+        } else if let (Some(a_id), Some(b_id)) = (self.monitor_id, other.monitor_id) {
+            Some(a_id.cmp(&b_id))
+        } else {
+            Some(self.visit_type.cmp(&other.visit_type))
+        }
     }
 }
 
 impl PartialEq for IndexMonitor {
     fn eq(&self, other: &Self) -> bool {
-        self.monitor_id.zip(other.monitor_id).map(|(a, b)| a.eq(&b)).unwrap_or(self.visit_type.eq(&other.visit_type))
+        if let (Some(a_id), Some(b_id)) = (self.monitor_id, other.monitor_id) {
+            a_id.eq(&b_id)
+        } else {
+            self.visit_type.eq(&other.visit_type)
+        }
     }
 }
 

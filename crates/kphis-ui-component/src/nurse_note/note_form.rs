@@ -265,16 +265,16 @@ impl NurseNoteFormCpn {
     }
 
     fn submit(page: Rc<Self>, app: Rc<App>) {
-        let fcnote_date = page.fcnote_date.lock_ref();
-        let fcnote_time = page.fcnote_time.lock_ref();
+        let fcnote_date_lock = page.fcnote_date.lock_ref();
+        let fcnote_time_lock = page.fcnote_time.lock_ref();
 
-        if fcnote_date.is_empty() {
+        if fcnote_date_lock.is_empty() {
             if let Some(elm) = app.get_id("fcnote_date").and_then(|elm| elm.dyn_into::<HtmlInputElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);
                 }
             }
-        } else if fcnote_time.is_empty() {
+        } else if fcnote_time_lock.is_empty() {
             if let Some(elm) = app.get_id("fcnote_time").and_then(|elm| elm.dyn_into::<HtmlInputElement>().ok()) {
                 if let Err(e) = elm.focus() {
                     app.show_jsvalue_message(e);

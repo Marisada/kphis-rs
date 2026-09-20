@@ -4,7 +4,7 @@ use typst_library::diag::{EcoString, FileError};
 use crate::state::{ApiState, UserState};
 
 // root path is crate root (where Cargo.lock located)
-// 1. api: we search for left-most 'files' path excepts 'snippets' [jsons, statics, templates, typsts], the rest are apis
+// 1. api: we search for left-most 'files' path excepts [jsons, statics, templates, typsts], the rest are apis
 // 2. files: root path is "/volume/pwa/"
 // 3. thumbnail image: root path is "/volume/thumbs/"
 // 4. full image: root path is "/volume/images/"

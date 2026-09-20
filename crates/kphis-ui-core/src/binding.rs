@@ -29,6 +29,10 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn clear(this: &Canvas);
 
+    // destroy canvas class [canvas.destroy()]
+    #[wasm_bindgen(method)]
+    pub fn destroy(this: &Canvas);
+
     // render canvas [canvas.renderAll()]
     #[wasm_bindgen(method, js_name = renderAll)]
     pub fn render_all(this: &Canvas);
@@ -56,7 +60,7 @@ extern "C" {
     // add event-listener to canvas
     // [canvas.on('object:added', function(){ })]
     #[wasm_bindgen(method)]
-    pub fn on(this: &Canvas, _: &str, _: &Closure<dyn FnMut()>);
+    pub fn on(this: &Canvas, _: &str, _: &Closure<dyn Fn()>);
 
     // get canvas object from svg elements
     // [loadedObjects = fabric.util.groupSVGElements(objects)]

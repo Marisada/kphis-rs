@@ -252,9 +252,9 @@ impl OpdErMainPage {
     }
 
     fn reload_patient(page: Rc<Self>) {
-        let patient = page.patient.lock_ref();
-        if page.vn.get_cloned() != patient.vn.get_cloned().unwrap_or_default() {
-            patient.loaded.set(false);
+        let patient_lock = page.patient.lock_ref();
+        if page.vn.get_cloned() != patient_lock.vn.get_cloned().unwrap_or_default() {
+            patient_lock.loaded.set(false);
         }
     }
 
@@ -1108,8 +1108,8 @@ impl OpdErMainPage {
                     .class("tab-content")
                     //.attr("id", "pills-tabContent")
                     .child_signal(page.active_tab.signal_cloned().map(clone!(app, page => move |tab| {
-                        let patient_cpn = page.patient.lock_ref();
-                        let patient = patient_cpn.patient.clone();
+                        let patient_lock = page.patient.lock_ref();
+                        let patient = patient_lock.patient.clone();
                         Some(match tab {
                             Tab::MedHx => {
                                 let hx_cpn = OpdErEmergencyCpn::new(
@@ -1148,7 +1148,7 @@ impl OpdErMainPage {
                             Tab::Lab => {
                                 let lab = LabCpn::new(
                                     patient.clone(),
-                                    patient_cpn.hn.clone(),
+                                    patient_lock.hn.clone(),
                                     page.vn.clone(),
                                     Some(page.loaded_lab_unread_exists_spinner.clone()),
                                 );
@@ -1156,7 +1156,7 @@ impl OpdErMainPage {
                             }
                             Tab::XRay => {
                                 let xray = XrayCpn::new_opd_er(
-                                    patient_cpn.hn.clone(),
+                                    patient_lock.hn.clone(),
                                     page.vn.clone(),
                                     Some(page.loaded_xray_unread_exists_spinner.clone()),
                                 );
@@ -1169,7 +1169,7 @@ impl OpdErMainPage {
                             Tab::VitalSign => {
                                 let vs = VitalSignCpn::new(
                                     patient.clone(),
-                                    patient_cpn.loaded.clone(),
+                                    patient_lock.loaded.clone(),
                                     page.view_by.clone(),
                                 );
                                 VitalSignCpn::render(vs, app.clone())
@@ -1179,12 +1179,12 @@ impl OpdErMainPage {
                                 IoCpn::render(io, app.clone())
                             }
                             Tab::Emr => {
-                                let emr = EmrCpn::new(patient_cpn.hn.clone());
+                                let emr = EmrCpn::new(patient_lock.hn.clone());
                                 EmrCpn::render("opd-er-main", emr, app.clone())
                             }
                             Tab::Document => {
                                 let document = DocumentCpn::new(
-                                    patient_cpn.vn.clone(),
+                                    patient_lock.vn.clone(),
                                     patient.clone(),
                                 );
                                 DocumentCpn::render(document, app.clone())

@@ -16,6 +16,7 @@ use kphis_util::error;
 // NOTE: check_an_can_execute() and check_an_opt_can_execute() already has Unittest, return 400 when NO AN
 #[derive(OpenApi)]
 #[openapi(
+    version = "3.2.0",
     paths(
         app::get_exists,                                                            // Unittest in query
         avatar::get_avatar_ipd,                                                     // Unittest in query
@@ -379,11 +380,22 @@ use kphis_util::error;
 struct KphisApi;
 
 #[derive(OpenApi)]
-#[openapi(paths(app::get_app_asset), components(schemas(kphis_model::app::AppAsset)))]
+#[openapi(
+    version = "3.2.0",
+    paths(
+        sse::get_sse,
+        sse::get_sse_by_id,
+    ),
+    components(schemas(kphis_model::sse::SseMessage)),
+)]
+struct SseApi;
+
+#[derive(OpenApi)]
+#[openapi(version = "3.2.0", paths(app::get_app_asset), components(schemas(kphis_model::app::AppAsset)))]
 struct AssetsApi;
 
 #[derive(OpenApi)]
-#[openapi(paths(image::patient::get_patient_image,))]
+#[openapi(version = "3.2.0", paths(image::patient::get_patient_image,))]
 struct ImageApi;
 
 struct SecurityAddon;
@@ -410,11 +422,13 @@ impl Modify for SecurityAddon {
 
 #[derive(OpenApi)]
 #[openapi(
+    version = "3.2.0",
     modifiers(&SecurityAddon),
     nest(
         (path = "/assets", api = AssetsApi),
         (path = "/img", api = ImageApi),
         (path = "/api", api = KphisApi),
+        (path = "/sse", api = SseApi),
     ),
     tags(
         (name = "kphis", description = "KPHIS backend API"),

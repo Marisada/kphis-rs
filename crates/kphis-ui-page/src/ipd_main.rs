@@ -715,8 +715,8 @@ impl IpdMainPage {
                     //.attr("id", "pills-tabContent")
                     .child(html!("hr"))
                     .child_signal(page.active_tab.signal_cloned().map(clone!(app, page => move |tab| {
-                        let patient_cpn = page.patient.lock_ref();
-                        let patient = patient_cpn.patient.clone();
+                        let patient_lock = page.patient.lock_ref();
+                        let patient = patient_lock.patient.clone();
                         Some(match tab {
                             Tab::MedHx => Dom::empty(),
                             Tab::MedReconcile => {
@@ -744,7 +744,7 @@ impl IpdMainPage {
                             Tab::VitalSign => {
                                 let vs = VitalSignCpn::new(
                                     patient.clone(),
-                                    patient_cpn.loaded.clone(),
+                                    patient_lock.loaded.clone(),
                                     page.view_by.clone(),
                                 );
                                 VitalSignCpn::render(vs, app.clone())
@@ -767,7 +767,7 @@ impl IpdMainPage {
                             Tab::Lab => {
                                 let lab = LabCpn::new(
                                     patient.clone(),
-                                    patient_cpn.hn.clone(),
+                                    patient_lock.hn.clone(),
                                     page.an.clone(),
                                     Some(page.loaded_lab_unread_exists_spinner.clone()),
                                 );
@@ -775,25 +775,25 @@ impl IpdMainPage {
                             }
                             Tab::XRay => {
                                 let xray = XrayCpn::new_ipd(
-                                    patient_cpn.hn.clone(),
+                                    patient_lock.hn.clone(),
                                     page.an.clone(),
                                     Some(page.loaded_xray_unread_exists_spinner.clone()),
                                 );
                                 XrayCpn::render("ipd-main", xray, app.clone())
                             }
                             Tab::Emr => {
-                                let emr = EmrCpn::new(patient_cpn.hn.clone());
+                                let emr = EmrCpn::new(patient_lock.hn.clone());
                                 EmrCpn::render("ipd-main", emr, app.clone())
                             }
                             Tab::Document => {
                                 let document = DocumentCpn::new(
-                                    patient_cpn.vn.clone(),
+                                    patient_lock.vn.clone(),
                                     patient.clone(),
                                 );
                                 DocumentCpn::render(document, app.clone())
                             }
                             Tab::Doctor => {
-                                let doctor_in_charge = DoctorInChargeCpn::new(page.an.clone(), patient_cpn.hn.clone());
+                                let doctor_in_charge = DoctorInChargeCpn::new(page.an.clone(), patient_lock.hn.clone());
                                 DoctorInChargeCpn::render(doctor_in_charge, app.clone())
                             }
                             Tab::Consult => {

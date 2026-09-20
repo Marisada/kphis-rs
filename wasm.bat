@@ -101,12 +101,6 @@ if exist "sw.js.gz" (
     del sw.js.gz
 )
 
-if "%~1"=="client" (
-    if exist "snippets" (
-        rmdir /S /Q snippets
-    )
-)
-
 cd %project_path%
 
 :: wasm-pack build --target web --out-name %name% --out-dir wasm-pack/ --%mode%
@@ -130,10 +124,6 @@ if "%mode_name%"=="release" (
 
 move wasm-pack\%name%_bg.wasm %project_path%\%pwa_path%\
 move wasm-pack\%name%.js %project_path%\%pwa_path%\
-if "%~1"=="client" (
-    :: move /Y wasm-pack\snippets %project_path%\%pwa_path%\
-    xcopy wasm-pack\snippets %project_path%\%pwa_path%\snippets /E /H /C /I >NUL
-)
 
 cd %project_path%\%pwa_path%
 
@@ -142,11 +132,6 @@ if exist "%name%_bg.wasm" (
 )
 if exist "%name%.js" (
     echo build %project_path%\%pwa_path%\%name%.js successfully
-)
-if "%~1"=="client" (
-    if exist "snippets" (
-        echo build snippets successfully
-    )
 )
 
 For /f "tokens=2-4 delims=/ " %%a in ('date /t') do (set date_now=%%c%%a%%b)

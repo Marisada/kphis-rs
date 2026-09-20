@@ -337,7 +337,7 @@ impl DrugDetailModal {
                                         html!("div", {
                                             .class("col-sm-8")
                                             .child(html!("div", {
-                                                .attr("id", "med_input_group")
+                                                .attr("id", "modal_med_input_group")
                                                 .class(class::INPUT_GROUP)
                                                 .children([
                                                     html!("div", {
@@ -373,7 +373,7 @@ impl DrugDetailModal {
                                             }))
                                             .child_signal(modal.display_med_searchbox.signal_cloned().map(clone!(app, modal => move |show| {
                                                 if show {
-                                                    app.get_id("med_input_group").map(|elm| {
+                                                    app.get_id("modal_med_input_group").map(|elm| {
                                                         doms::under_box(
                                                             elm.get_bounding_client_rect(),
                                                             600.0, 300.0, app.window_scroll_y(),
@@ -393,9 +393,8 @@ impl DrugDetailModal {
                                 .children([
                                     html!("div", {
                                         .class(class::ROW_MY2)
-                                        .child(html!("label", {
+                                        .child(html!("span", {
                                             .class(class::COL_SM12_BOLD)
-                                            .attr("for","usage")
                                             .text("ข้อมูลทั่วไป (Info)")
                                         }))
                                     }),
@@ -407,7 +406,6 @@ impl DrugDetailModal {
                                                 if modal.is_form { dom
                                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                                         .class("form-control")
-                                                        .attr("id", "usage")
                                                         .attr("rows", "4")
                                                         .apply(mixins::textarea_value_auto_expand(modal.info.clone(), modal.changed.clone()))
                                                     }))
@@ -434,12 +432,12 @@ impl DrugDetailModal {
                                                 .children([
                                                     html!("label", {
                                                         .class(class::INPUT_GROUP_TEXT_BG_CYANS)
-                                                        .attr("for", "status")
+                                                        .attr("for", "modal_info_status")
                                                         .text("เปิดใช้งาน Info เมื่อเลือกใช้ยา")
                                                     }),
                                                     html!("select" => HtmlSelectElement, {
                                                         .class("form-select")
-                                                        .attr("id", "status")
+                                                        .attr("id", "modal_info_status")
                                                         .children([
                                                             html!("option", {.attr("value", "").text("เลือก")}),
                                                             html!("option", {.attr("value", "Y").text("ใช้งาน")}),
@@ -470,23 +468,23 @@ impl DrugDetailModal {
                                                     .child(html!("div", {
                                                         .class(class::INPUT_GROUP)
                                                         .children([
-                                                            doms::label_group_for("duration1", "ขั้นต่ำ เกิน"),
+                                                            doms::label_group_for("modal_duration1", "ขั้นต่ำ เกิน"),
                                                             html!("input" => HtmlInputElement, {
                                                                 .attr("type","number")
                                                                 .class("form-control")
-                                                                .attr("id","duration1")
+                                                                .attr("id","modal_duration1")
                                                                 .attr("min","0")
                                                                 .attr("max","999")
                                                                 .apply(mixins::string_value(modal.duration1.clone(), modal.changed.clone()))
                                                             }),
-                                                            doms::label_group_for("exceed_duration1_color", "วัน ตัวอักษรสี"),
+                                                            doms::label_group_for("modal_exceed_duration1_color", "วัน ตัวอักษรสี"),
                                                             html!("div", {
                                                                 .class("form-control")
                                                                 .child(html!("input" => HtmlInputElement, {
                                                                     .attr("type","color")
                                                                     .class(class::FULL)
                                                                     .attr("list","color-list")
-                                                                    .attr("id","exceed_duration1_color")
+                                                                    .attr("id","modal_exceed_duration1_color")
                                                                     .apply(mixins::string_value(modal.exceed_duration1_color.clone(), modal.changed.clone()))
                                                                 }))
                                                             }),
@@ -498,23 +496,23 @@ impl DrugDetailModal {
                                                     .child(html!("div", {
                                                         .class(class::INPUT_GROUP)
                                                         .children([
-                                                            doms::label_group_for("duration2", "ขั้นกลาง เกิน"),
+                                                            doms::label_group_for("modal_duration2", "ขั้นกลาง เกิน"),
                                                             html!("input" => HtmlInputElement, {
                                                                 .attr("type","number")
                                                                 .class("form-control")
-                                                                .attr("id","duration2")
+                                                                .attr("id","modal_duration2")
                                                                 .attr("min","0")
                                                                 .attr("max","999")
                                                                 .apply(mixins::string_value(modal.duration2.clone(), modal.changed.clone()))
                                                             }),
-                                                            doms::label_group_for("exceed_duration2_color", "วัน ตัวอักษรสี"),
+                                                            doms::label_group_for("modal_exceed_duration2_color", "วัน ตัวอักษรสี"),
                                                             html!("div", {
                                                                 .class("form-control")
                                                                 .child(html!("input" => HtmlInputElement, {
                                                                     .attr("type","color")
                                                                     .class(class::FULL)
                                                                     .attr("list","color-list")
-                                                                    .attr("id","exceed_duration2_color")
+                                                                    .attr("id","modal_exceed_duration2_color")
                                                                     .apply(mixins::string_value(modal.exceed_duration2_color.clone(), modal.changed.clone()))
                                                                 }))
                                                             }),
@@ -526,23 +524,23 @@ impl DrugDetailModal {
                                                     .child(html!("div", {
                                                         .class(class::INPUT_GROUP)
                                                         .children([
-                                                            doms::label_group_for("duration3", "ขั้นสูง เกิน"),
+                                                            doms::label_group_for("modal_duration3", "ขั้นสูง เกิน"),
                                                             html!("input" => HtmlInputElement, {
                                                                 .attr("type","number")
                                                                 .class("form-control")
-                                                                .attr("id","duration3")
+                                                                .attr("id","modal_duration3")
                                                                 .attr("min","0")
                                                                 .attr("max","999")
                                                                 .apply(mixins::string_value(modal.duration3.clone(), modal.changed.clone()))
                                                             }),
-                                                            doms::label_group_for("exceed_duration3_color", "วัน ตัวอักษรสี"),
+                                                            doms::label_group_for("modal_exceed_duration3_color", "วัน ตัวอักษรสี"),
                                                             html!("div", {
                                                                 .class("form-control")
                                                                 .child(html!("input" => HtmlInputElement, {
                                                                     .attr("type","color")
                                                                     .class(class::FULL)
                                                                     .attr("list","color-list")
-                                                                    .attr("id","exceed_duration3_color")
+                                                                    .attr("id","modal_exceed_duration3_color")
                                                                     .apply(mixins::string_value(modal.exceed_duration3_color.clone(), modal.changed.clone()))
                                                                 }))
                                                             }),
@@ -557,9 +555,8 @@ impl DrugDetailModal {
                                 .children([
                                     html!("div", {
                                         .class(class::ROW_MY2)
-                                        .child(html!("label", {
+                                        .child(html!("span", {
                                             .class(class::COL_SM12_BOLD)
-                                            .attr("for","usage")
                                             .text("เงื่อนไขการใช้ยา และขนาดยาที่เหมาะสม (DUE)")
                                         }))
                                     }),
@@ -571,7 +568,6 @@ impl DrugDetailModal {
                                                 if modal.is_form { dom
                                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                                         .class("form-control")
-                                                        .attr("id", "usage")
                                                         .attr("rows", "4")
                                                         .apply(mixins::textarea_value_auto_expand(modal.usage.clone(), modal.changed.clone()))
                                                     }))
@@ -598,12 +594,12 @@ impl DrugDetailModal {
                                                 .children([
                                                     html!("label", {
                                                         .class(class::INPUT_GROUP_TEXT_BG_GOLDS)
-                                                        .attr("for", "status")
+                                                        .attr("for", "modal_due_status")
                                                         .text("เปิดใช้งาน DUE เมื่อเลือกใช้ยา")
                                                     }),
                                                     html!("select" => HtmlSelectElement, {
                                                         .class("form-select")
-                                                        .attr("id", "status")
+                                                        .attr("id", "modal_due_status")
                                                         .children([
                                                             html!("option", {.attr("value", "").text("เลือก")}),
                                                             html!("option", {.attr("value", "Y").text("ใช้งาน")}),
@@ -624,9 +620,8 @@ impl DrugDetailModal {
                                 .children([
                                     html!("div", {
                                         .class(class::ROW_MY2)
-                                        .child(html!("label", {
+                                        .child(html!("span", {
                                             .class(class::COL_SM12_BOLD)
-                                            .attr("for","monitor")
                                             .text("การบริหารยา การติดตามอาการ และการแก้ปัญหาเบื้องต้น (Monitor)")
                                         }))
                                     }),
@@ -638,7 +633,6 @@ impl DrugDetailModal {
                                                 if modal.is_form { dom
                                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                                         .class("form-control")
-                                                        .attr("id", "monitor")
                                                         .attr("rows", "4")
                                                         .apply(mixins::textarea_value_auto_expand(modal.monitor.clone(), modal.changed.clone()))
                                                     }))
@@ -666,10 +660,10 @@ impl DrugDetailModal {
                                                     .child(html!("div", {
                                                         .class(class::INPUT_GROUP)
                                                         .children([
-                                                            doms::label_group_for("monitor_count", "จำนวนการติดตามอาการหลังได้รับยา อย่างน้อย"),
+                                                            doms::label_group_for("modal_monitor_count", "จำนวนการติดตามอาการหลังได้รับยา อย่างน้อย"),
                                                             html!("input" => HtmlInputElement, {
                                                                 .class("form-control")
-                                                                .attr("id","monitor_count")
+                                                                .attr("id","modal_monitor_count")
                                                                 .attr("type","number")
                                                                 .attr("min","0")
                                                                 .attr("max","255")
@@ -687,10 +681,10 @@ impl DrugDetailModal {
                                                     .child(html!("div", {
                                                         .class(class::INPUT_GROUP)
                                                         .children([
-                                                            doms::label_group_for("monitor_duration", "ควรได้รับการติดตามเป็นเวลา อย่างน้อย"),
+                                                            doms::label_group_for("modal_monitor_duration", "ควรได้รับการติดตามเป็นเวลา อย่างน้อย"),
                                                             html!("input" => HtmlInputElement, {
                                                                 .class("form-control")
-                                                                .attr("id","monitor_duration")
+                                                                .attr("id","modal_monitor_duration")
                                                                 .attr("type","number")
                                                                 .attr("min","0")
                                                                 .attr("max","65535")
@@ -712,12 +706,12 @@ impl DrugDetailModal {
                                                 .children([
                                                     html!("label", {
                                                         .class(class::INPUT_GROUP_TEXT_BG_REDS)
-                                                        .attr("for", "monitor_status")
+                                                        .attr("for", "modal_monitor_status")
                                                         .text("เปิดใช้งาน Monitor หลัง Action")
                                                     }),
                                                     html!("select" => HtmlSelectElement, {
                                                         .class("form-select")
-                                                        .attr("id", "monitor_status")
+                                                        .attr("id", "modal_monitor_status")
                                                         .children([
                                                             html!("option", {.attr("value", "").text("เลือก")}),
                                                             html!("option", {.attr("value", "Y").text("ใช้งาน")}),

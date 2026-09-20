@@ -36,7 +36,7 @@ fn init_visibility_checker(app: Rc<App>) {
         let document = w.document().unwrap();
         // initial setting
         app.visible.set(!document.hidden());
-        let hidden_cs = Closure::<dyn FnMut(_)>::new(clone!(app, document => move |_: Event| {
+        let hidden_cs = Closure::<dyn Fn(_)>::new(clone!(app, document => move |_: Event| {
             // hidden() will true when tab was closed or switched to another app
             let visible = !document.hidden();
             // log::debug!("set visible = {}", visible);

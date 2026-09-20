@@ -219,22 +219,22 @@ impl IoSelector {
                                         .child(html!("div", {
                                             .class(class::INPUT_GROUP)
                                             .children([
-                                                doms::label_group_for("display_io_date_from","วันที่"),
+                                                doms::label_group_for("modal_display_io_date_from","วันที่"),
                                                 doms::date_picker(
                                                     modal.start_io_date.clone(),
                                                     modal.changed.clone(), always(false), None,
                                                     |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
                                                     |d| d.class("rounded-0"),
-                                                    |d| d.class("rounded-0").attr("id", "display_vs_date_from"),
+                                                    |d| d.class("rounded-0").attr("id", "modal_display_io_date_from"),
                                                     |s| s, always(None),
                                                 ),
-                                                doms::label_group_for("display_io_date_to","ถึง"),
+                                                doms::label_group_for("modal_display_io_date_to","ถึง"),
                                                 doms::date_picker(
                                                     modal.end_io_date.clone(),
                                                     modal.changed.clone(), always(false), None,
                                                     |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
                                                     |d| d.class("rounded-start-0"),
-                                                    |d| d.class("rounded-start-0").attr("id", "display_vs_date_to"),
+                                                    |d| d.class("rounded-start-0").attr("id", "modal_display_io_date_to"),
                                                     |s| s, always(None),
                                                 ),
                                             ])

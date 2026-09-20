@@ -90,13 +90,13 @@ impl OpdErOrderNew {
                             .child(html!("div", {
                                 .class(class::INPUT_GROUP_SM)
                                 .class(class::M_LT)
-                                .attr("id", "new_vn_input_group")
+                                .attr("id", "modal_new_vn_input_group")
                                 .children([
-                                    doms::label_group_for("new_opd_visit_detail","Visit"),
+                                    doms::label_group_for("modal_new_opd_visit_detail","Visit"),
                                     html!("input", {
                                         .attr("type", "text")
                                         .class(class::FORM_CTRL_SM)
-                                        .attr("id", "new_opd_visit_detail")
+                                        .attr("id", "modal_new_opd_visit_detail")
                                         .attr("size", "50")
                                         .attr("readonly", "readonly")
                                         .style("cursor","pointer")
@@ -129,7 +129,7 @@ impl OpdErOrderNew {
                             }))
                             .child_signal(modal.display_patient_searchbox.signal_cloned().map(clone!(app, modal => move |show| {
                                 if show {
-                                    app.get_id("new_vn_input_group").map(|elm| {
+                                    app.get_id("modal_new_vn_input_group").map(|elm| {
                                         OpdVisitSearchboxCpn::render(
                                             OpdVisitSearchboxCpn::new(),
                                             modal.display_patient_searchbox.clone(),
@@ -149,13 +149,13 @@ impl OpdErOrderNew {
                                     .class(class::M_LT)
                                     .children([
                                         html!("label", {
-                                            .attr("for", "new_note")
+                                            .attr("for", "modal_new_note")
                                             .class("me-2")
                                             .text("Note")
                                         }),
                                         html!("textarea" => HtmlTextAreaElement, {
                                             .class("form-control")
-                                            .attr("id", "new_note")
+                                            .attr("id", "modal_new_note")
                                             .attr("rows", "3")
                                             .attr("cols", "50")
                                             .apply(mixins::string_value(modal.new_note.clone(), modal.changed.clone()))
@@ -168,10 +168,10 @@ impl OpdErOrderNew {
                                         .class(class::INPUT_GROUP_SM)
                                         .class(class::M_LT)
                                         .children([
-                                            doms::label_group_for("new_order_bedno","เตียง"),
+                                            doms::label_group_for("modal_new_order_bedno","เตียง"),
                                             html!("select" => HtmlSelectElement, {
                                                 .class(class::FORM_SELECT_SM)
-                                                .attr("id", "new_order_bedno")
+                                                .attr("id", "modal_new_order_bedno")
                                                 .child(html!("option", {
                                                     .attr("value", "")
                                                     .style("color","#777")

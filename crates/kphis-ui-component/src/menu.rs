@@ -1514,7 +1514,7 @@ impl MenuCpn {
                                 ),
                                 html!("div", {.class(class::FORM_TEXT_R).text("สามารถเลือกได้หลายหอผู้ป่วย")}),
                                 html!("label", {
-                                    .attr("for", "msg-splcty-select")
+                                    .attr("for", "msg-spclty-select")
                                     .class("form-label")
                                     .text("รับข่าวสารของแผนก")
                                 }),

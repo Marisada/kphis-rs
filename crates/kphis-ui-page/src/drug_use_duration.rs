@@ -100,10 +100,10 @@ impl DrugUseDurationPage {
                             .children([
                                 doms::form_inline_group_sm(clone!(page => move |group| { group
                                     .children([
-                                        doms::label_group_for("status","สถานะ Info"),
+                                        doms::label_group_for("info_status","สถานะ Info"),
                                         html!("select" => HtmlSelectElement, {
                                             .class("form-control")
-                                            .attr("id", "status")
+                                            .attr("id", "info_status")
                                             .children([
                                                 html!("option", {.attr("value", "").text("ทั้งหมด")}),
                                                 html!("option", {.attr("value", "Y").text("ใช้งาน")}),
@@ -115,10 +115,10 @@ impl DrugUseDurationPage {
                                 })),
                                 doms::form_inline_group_sm(clone!(page => move |group| { group
                                     .children([
-                                        doms::label_group_for("status","สถานะ DUE"),
+                                        doms::label_group_for("due_status","สถานะ DUE"),
                                         html!("select" => HtmlSelectElement, {
                                             .class("form-control")
-                                            .attr("id", "status")
+                                            .attr("id", "due_status")
                                             .children([
                                                 html!("option", {.attr("value", "").text("ทั้งหมด")}),
                                                 html!("option", {.attr("value", "Y").text("ใช้งาน")}),
@@ -130,10 +130,10 @@ impl DrugUseDurationPage {
                                 })),
                                 doms::form_inline_group_sm(clone!(page => move |group| { group
                                     .children([
-                                        doms::label_group_for("status","สถานะ Monitor"),
+                                        doms::label_group_for("monitor_status","สถานะ Monitor"),
                                         html!("select" => HtmlSelectElement, {
                                             .class("form-control")
-                                            .attr("id", "status")
+                                            .attr("id", "monitor_status")
                                             .children([
                                                 html!("option", {.attr("value", "").text("ทั้งหมด")}),
                                                 html!("option", {.attr("value", "Y").text("ใช้งาน")}),
