@@ -337,14 +337,14 @@ where
 }
 
 /// - update (mutable + changed) when key 'enter' or lost focus
-/// - not update (mutable + changed) every KeyDown
+/// - not update (mutable + changed) every KeyUp
 pub fn string_value_end(mutable: Mutable<String>, changed: Mutable<bool>) -> impl FnOnce(DomBuilder<HtmlInputElement>) -> DomBuilder<HtmlInputElement> {
     #[inline]
     move |dom| {
         with_node!(dom, element => {
             .prop_signal("value", mutable.signal_cloned())
             .event(clone!(element, mutable, changed => move |_: events::Change| with_string(&element.value(), mutable.clone(), changed.clone())))
-            .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
+            .event_with_options(&EventOptions::preventable(), move |event: events::KeyUp| {
                 if event.key() == "Enter" {
                     event.prevent_default();
                     with_string(&element.value(), mutable.clone(), changed.clone());
@@ -373,7 +373,8 @@ pub fn opt_string_value_end(mutable: Mutable<Option<String>>, changed: Mutable<b
         with_node!(dom, element => {
             .prop_signal("value", mutable.signal_cloned().map(|v| v.unwrap_or_default()))
             .event(clone!(element, mutable, changed => move |_: events::Change| with_string_opt(&element.value(), mutable.clone(), changed.clone())))
-            .event_with_options(&EventOptions::preventable(), move |event: events::KeyDown| {
+            // autofill may trigger KeyDown event, so we use KeyUp here
+            .event_with_options(&EventOptions::preventable(), move |event: events::KeyUp| {
                 if !element.is_textarea() && event.key() == "Enter" {
                     event.prevent_default();
                     with_string_opt(&element.value(), mutable.clone(), changed.clone());

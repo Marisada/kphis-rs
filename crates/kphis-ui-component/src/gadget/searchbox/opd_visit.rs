@@ -110,7 +110,8 @@ impl OpdVisitSearchboxCpn {
                                 .focused(true)
                                 .prop_signal("value", page.text_hn.signal_cloned())
                                 .with_node!(element => {
-                                    .event(clone!(page, element => move |_: events::KeyUp| {
+                                    // autofill may trigger KeyDown event, so we use KeyUp here
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -134,11 +135,6 @@ impl OpdVisitSearchboxCpn {
                                         }
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
-                                    }))
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
-                                        if let Some(handle) = page.timer_handle.get() {
-                                            Timeout::manual_drop(handle);
-                                        }
                                         if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
@@ -154,7 +150,8 @@ impl OpdVisitSearchboxCpn {
                                 .attr("autocomplete", "off")
                                 .prop_signal("value", page.text_qn.signal_cloned())
                                 .with_node!(element => {
-                                    .event(clone!(page, element => move |_: events::KeyUp| {
+                                    // autofill may trigger KeyDown event, so we use KeyUp here
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -178,11 +175,7 @@ impl OpdVisitSearchboxCpn {
                                         }
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
-                                    }))
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
-                                        if let Some(handle) = page.timer_handle.get() {
-                                            Timeout::manual_drop(handle);
-                                        }
+
                                         if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
@@ -198,7 +191,8 @@ impl OpdVisitSearchboxCpn {
                                 .attr("autocomplete", "off")
                                 .prop_signal("value", page.text_vn.signal_cloned())
                                 .with_node!(element => {
-                                    .event(clone!(page, element => move |_: events::KeyUp| {
+                                    // autofill may trigger KeyDown event, so we use KeyUp here
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -222,11 +216,7 @@ impl OpdVisitSearchboxCpn {
                                         }
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
-                                    }))
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
-                                        if let Some(handle) = page.timer_handle.get() {
-                                            Timeout::manual_drop(handle);
-                                        }
+
                                         if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
@@ -242,7 +232,8 @@ impl OpdVisitSearchboxCpn {
                                 .attr("autocomplete", "off")
                                 .prop_signal("value", page.text_ptname.signal_cloned())
                                 .with_node!(element => {
-                                    .event(clone!(page, element => move |_: events::KeyUp| {
+                                    // autofill may trigger KeyDown event, so we use KeyUp here
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -266,11 +257,7 @@ impl OpdVisitSearchboxCpn {
                                         }
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
-                                    }))
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
-                                        if let Some(handle) = page.timer_handle.get() {
-                                            Timeout::manual_drop(handle);
-                                        }
+
                                         if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
@@ -286,7 +273,8 @@ impl OpdVisitSearchboxCpn {
                                 .attr("autocomplete", "off")
                                 .prop_signal("value", page.text_cid.signal_cloned())
                                 .with_node!(element => {
-                                    .event(clone!(page, element => move |_: events::KeyUp| {
+                                    // autofill may trigger KeyDown event, so we use KeyUp here
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -310,11 +298,7 @@ impl OpdVisitSearchboxCpn {
                                         }
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
-                                    }))
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
-                                        if let Some(handle) = page.timer_handle.get() {
-                                            Timeout::manual_drop(handle);
-                                        }
+
                                         if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
