@@ -380,14 +380,7 @@ use kphis_util::error;
 struct KphisApi;
 
 #[derive(OpenApi)]
-#[openapi(
-    version = "3.2.0",
-    paths(
-        sse::get_sse,
-        sse::get_sse_by_id,
-    ),
-    components(schemas(kphis_model::sse::SseMessage)),
-)]
+#[openapi(version = "3.2.0", paths(sse::get_sse, sse::get_sse_by_id,), components(schemas(kphis_model::sse::SseMessage)))]
 struct SseApi;
 
 #[derive(OpenApi)]

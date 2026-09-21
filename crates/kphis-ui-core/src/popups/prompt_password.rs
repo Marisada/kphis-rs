@@ -136,7 +136,6 @@ impl PromptPasswordPopup {
                                             .event(clone!(page, element => move |_: events::Input| {
                                                 page.password.set(element.value());
                                             }))
-                                            // autofill may trigger KeyDown event, so we use KeyUp here
                                             .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
                                                 if event.key() == "Enter" {
                                                     event.prevent_default();
