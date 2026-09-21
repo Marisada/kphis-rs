@@ -127,7 +127,7 @@ impl PrescriptionScreenPage {
                             page.set_telemed_opt(&screen.visit);
                             page.pharmacy_care.set(screen.visit.as_ref().and_then(|visit| visit.pharmacy_care.clone()).unwrap_or_default());
                             page.pharmacy_care_changed.set_neq(false);
-                            page.lab_is_last.set_neq(false);
+                            // page.lab_is_last.set_neq(false);
                             if screen.visit.is_some() {
                                 page.visit.set(screen.visit.map(Rc::new));
                             }
@@ -373,7 +373,7 @@ impl PrescriptionScreenPage {
                                         .with_node!(element => {
                                             // autofill may trigger KeyDown event, so we use KeyUp here
                                             .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyUp| {
-                                                if event.code() == "Enter" {
+                                                if event.key() == "Enter" {
                                                     event.prevent_default();
                                                     page.search_text.set_neq(element.value());
                                                     page.changed.set_neq(true);
@@ -436,7 +436,7 @@ impl PrescriptionScreenPage {
                                             [&((ws.height as i32).saturating_sub(info_height + 140)).to_string(), "px"].concat()
                                         })))
                                         .style("overflow-y","auto")
-                                        .children(info.dates.clone().into_iter().map(|visit_date| {
+                                        .children(info.dates.clone().into_iter().enumerate().map(|(i, visit_date)| {
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_T_W100)
@@ -446,6 +446,7 @@ impl PrescriptionScreenPage {
                                                 .text(&date_and_time_th_opt_relative(&visit_date.vstdate, &visit_date.vsttime))
                                                 .event(clone!(page => move |_: events::Click| {
                                                     page.current_date.set(Some(visit_date.clone()));
+                                                    page.lab_is_last.set_neq(i == 0);
                                                     page.reload_visit.set_neq(true);
                                                 }))
                                             })

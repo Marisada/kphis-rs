@@ -112,7 +112,7 @@ where
                     })))
                     // key Enter will blur input
                     .event_with_options(&EventOptions::preventable(), clone!(element => move |event: events::KeyUp| {
-                        if event.code() == "Enter" {
+                        if event.key() == "Enter" {
                             element.blur().unwrap();
                             event.prevent_default();
                         }

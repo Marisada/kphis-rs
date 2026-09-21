@@ -245,7 +245,7 @@ impl LoginCpn {
                                     }))
                                 })
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
-                                    if event.code() == "Enter" {
+                                    if event.key() == "Enter" {
                                         event.prevent_default();
                                         page.changed.set_neq(true);
                                     }

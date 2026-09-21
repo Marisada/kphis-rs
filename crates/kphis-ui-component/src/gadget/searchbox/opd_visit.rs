@@ -135,7 +135,7 @@ impl OpdVisitSearchboxCpn {
                                         }
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
-                                        if event.code() == "Enter" {
+                                        if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
                                     }))
@@ -176,7 +176,7 @@ impl OpdVisitSearchboxCpn {
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
 
-                                        if event.code() == "Enter" {
+                                        if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
                                     }))
@@ -217,7 +217,7 @@ impl OpdVisitSearchboxCpn {
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
 
-                                        if event.code() == "Enter" {
+                                        if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
                                     }))
@@ -258,7 +258,7 @@ impl OpdVisitSearchboxCpn {
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
 
-                                        if event.code() == "Enter" {
+                                        if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
                                     }))
@@ -299,7 +299,7 @@ impl OpdVisitSearchboxCpn {
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
 
-                                        if event.code() == "Enter" {
+                                        if event.key() == "Enter" {
                                             event.prevent_default();
                                         }
                                     }))
