@@ -239,7 +239,6 @@ lab-codes = [
 ]
 # icode from hos.drugitems
 message-icodes = [
-    #{ message = 'มีการสั่งยา Methotrexate tab ต้องมี folic acid ร่วมด้วย', icodes = ['1483830'] },
     { message = 'มีการสั่งใช้ยากลุ่ม NSAIDs ซ้ำซ้อน',                       icodes = ['1000152','1490940','1491000','1000110','1000155','1610019'] },
     { message = 'มีการสั่งใช้ยากลุ่ม CCBs ซ้ำซ้อน',                         icodes = ['1000204','1490921','1600010'] },
     { message = 'มีการสั่งใช้ยากลุ่ม ACEIs ร่วมกับ ARBs',                    icodes = ['1000122','1460151','1560006'] },
@@ -247,16 +246,14 @@ message-icodes = [
 ]
 # from hos.drugitems
 message-egfr-icodes = [
-    { message = 'ควรหลีกเลี่ยงการใช้ยา Metformin (eGFR<30) : eGFR:',                    egfr = 30,  icodes = ['1000184'] },
-    { message = 'ควรหลีกเลี่ยงการใช้ยา Allopurinol (eGFR<20) : eGFR:',                  egfr = 20,  icodes = ['1000016'] },
-    { message = 'ควรหลีกเลี่ยงการใช้ยา Colohicine (eGFR<30) : eGFR:',                   egfr = 30,  icodes = ['1490977'] },
-    { message = 'ควรหลีกเลี่ยงการใช้ยา NSAIDs (eGFR<45) : eGFR:',                       egfr = 45,  icodes = ['1000152','1490940','1491000','1000110','1000155','1610019'] },
-    #{ message = 'ควรหลีกเลี่ยงการใช้ Dapagliflozin / Empagliflozia (eGFR<45) : eGFR:', egfr = 45,  icodes = ['1610071','1600038','1620116'] },
-    { message = 'ควรหลีกเลี่ยงการใช้ Atenolol (eGFR<35) : eGFR:',                       egfr = 35,  icodes = ['1440601'] },
-    #{ message = 'ควรหลีกเลี่ยงการใช้ Sitagliptin/Vidagliptin (eGFR<50) : eGFR:',       egfr = 50,  icodes = ['1540004','1600046'] },
-    #{ message = 'ควรหลีกเลี่ยงการใช้ยากลุ่ม Augmentin (eGFR<30) : eGFR:',                egfr = 30,  icodes = ['1483854'] },
-    { message = 'ควรหลีกเลี่ยงการใช้ยา Oseltamirir (eGFR<60) : eGFR:',                  egfr = 60,  icodes = ['1490945','1560003','1560004'] }
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Metformin (eGFR<30) eGFR:',                    egfr = 30,  icodes = ['1000184'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Allopurinol (eGFR<20) eGFR:',                  egfr = 20,  icodes = ['1000016'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Colohicine (eGFR<30) eGFR:',                   egfr = 30,  icodes = ['1490977'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา NSAIDs (eGFR<45) eGFR:',                       egfr = 45,  icodes = ['1000152','1490940','1491000','1000110','1000155','1610019'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ Atenolol (eGFR<35) eGFR:',                       egfr = 35,  icodes = ['1440601'] },
+    #{ message = 'ควรหลีกเลี่ยงการใช้ยากลุ่ม Augmentin (eGFR<30) eGFR:',                egfr = 30,  icodes = ['1483854'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยา Oseltamirir (eGFR<60) eGFR:',                  egfr = 60,  icodes = ['1490945','1560003','1560004'] }
 ]
 message-crcl-icodes = [
-    { message = 'ควรหลีกเลี่ยงการใช้ยากลุ่ม Quinolone (CrCl<30) : CrCl:',                 crcl = 30,  icodes = ['1000211','1000213','1000221','1440312','1481244','1570005','1620007'] },
+    { message = 'ควรหลีกเลี่ยงการใช้ยากลุ่ม Quinolone (CrCl<30) CrCl:',                 crcl = 30,  icodes = ['1000211','1000213','1000221','1440312','1481244','1570005','1620007'] },
 ]

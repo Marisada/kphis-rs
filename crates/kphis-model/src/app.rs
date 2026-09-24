@@ -27,6 +27,7 @@ use crate::{
     fetch::{blob_to_bytes, execute_fetch_text, fetch_blob_api, fetch_json_api, get_blob_from_url},
     image::file_path::ImagePath,
     order::Order,
+    prescription::{MessageDrugGroup, MessageDrugLabGroup},
     route::Route,
     score::SupportedScore,
     search::searchbox::DrugUsage,
@@ -1135,6 +1136,16 @@ pub struct AppStatus {
     pub hosxp_med_reconcilation_icode: String,
     #[Demo(value = r#"vec![String::from("HCT < 30%"), String::from("INR > 1.2")]"#)]
     pub lab_alerts: Vec<String>,
+
+    #[Demo(value = "vec![MessageDrugGroup::demo()]")]
+    pub message_dup_icodes: Vec<MessageDrugGroup>,
+    /// lowest limit of egfr for icodes
+    #[Demo(value = "vec![MessageDrugLabGroup::demo()]")]
+    pub message_egfr_icodes: Vec<MessageDrugLabGroup>,
+    /// lowest limit of crcl for icodes
+    #[Demo(value = "vec![MessageDrugLabGroup::demo()]")]
+    pub message_crcl_icodes: Vec<MessageDrugLabGroup>,
+
     #[Demo(value = "true")]
     pub has_pacs_host: bool,
     #[Demo(value = r#"Some(String::from("http://pacs/search?hn=[HN]"))"#)]

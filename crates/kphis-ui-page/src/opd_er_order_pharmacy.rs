@@ -163,7 +163,6 @@ impl OpdErOrderPharmacyPage {
                                             .attr("autocomplete","off")
                                             .prop_signal("value", page.patient.signal_cloned())
                                             .with_node!(element => {
-                                                // autofill may trigger KeyDown event, so we use KeyUp here
                                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
                                                     if event.key() == "Enter" {
                                                         event.prevent_default();

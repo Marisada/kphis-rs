@@ -1646,7 +1646,6 @@ where
                                 state.search_result.lock_mut().replace_cloned(results);
                             }))
                         })
-                        // autofill may trigger KeyDown event, so we use KeyUp here
                         .event_with_options(&EventOptions::preventable(), clone!(state => move |e: events::KeyUp| {
                             match e.key().as_str() {
                                 "Enter" => {
