@@ -40,7 +40,8 @@ async fn test_prescription_screen_page_visit_hx() {
 async fn test_prescription_screen_page_visit_drugs() {
     let app = new_app();
     let page = kphis_ui_page::prescription_screen::PrescriptionScreenPage::new(String::from("0001234"));
-    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_drugs(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), page, app);
+    page.set_visit(Some(kphis_model::prescription::PrescriptionVn::demo()));
+    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_drugs(page, app);
     replace_body(dom).await;
 }
 
@@ -100,6 +101,7 @@ async fn test_prescription_screen_page_pharmacy_care() {
 async fn test_prescription_screen_page_modal() {
     let app = new_app();
     let page = kphis_ui_page::prescription_screen::PrescriptionScreenPage::new(String::from("0001234"));
+    page.set_visit(Some(kphis_model::prescription::PrescriptionVn::demo()));
     let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_modal(page, app);
     replace_body(dom).await;
 }

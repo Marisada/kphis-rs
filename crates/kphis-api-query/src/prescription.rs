@@ -1,6 +1,6 @@
 use sqlx::{AssertSqlSafe, FromRow, MySql, Pool, Row};
 use std::cmp::Ordering;
-use time::Date;
+use time::{Date, Duration};
 
 use kphis_model::{
     fetch::ExecuteResponse,
@@ -68,8 +68,6 @@ pub async fn get_prescription_screen(
         Some(vn) => {
             let mut info_vn_opt = select_info_vn(&vn, pool, hosxp, kphis_extra).await?;
             if let Some(mut info_vn) = info_vn_opt.take() {
-                let an_opt = info_vn.an.as_ref().and_then(|s| str_some(s));
-                info_vn.medicines = select_info_medicine(&vn, &an_opt, pool, hosxp).await?;
                 info_vn.next_app = select_next_app(&vn, pool, hosxp).await?;
                 info_vn.drug_interactions = select_info_drug_interaction(&vn, pool, hosxp).await?;
                 let egfr = select_egfr(egfr_codes, false, &None, &vn, pool, hosxp).await?.unwrap_or(Lab::new("eGFR"));
@@ -94,6 +92,9 @@ pub async fn get_prescription_screen(
                 if let Some(hn) = &info_vn.hn
                     && !hn.is_empty()
                 {
+                    if let Some(end) = info_vn.dchdate.or(info_vn.vstdate) {
+                        info_vn.medicines = select_info_medicine_in_range(hn, end.saturating_sub(Duration::weeks(26)), end, pool, hosxp).await?;
+                    }
                     if !message_egfr_icodes.is_empty() {
                         let egfr_opt = select_egfr(egfr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
                         if let Some(egfr) = egfr_opt.and_then(|lab| lab.lab_order_result).and_then(|s| s.parse::<f64>().ok()) {
@@ -238,15 +239,30 @@ async fn select_info_vn(vn: &str, pool: &Pool<MySql>, hosxp: &str, kphis_extra: 
         .map_err(|e| Source::SQLx.to_error(500, e, "Select VN"))
 }
 
-async fn select_info_medicine(vn: &str, an_opt: &Option<String>, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<Medicine>, AppError> {
-    let info_medicine_sql = prescription::select_info_medicine(an_opt.is_some(), hosxp);
-    let mut info_medicine_query = sqlx::query(AssertSqlSafe(info_medicine_sql));
-    if let Some(an) = an_opt {
-        info_medicine_query = info_medicine_query.bind(an);
-    } else {
-        info_medicine_query = info_medicine_query.bind(vn);
-    }
-    info_medicine_query
+// async fn select_info_medicine(vn: &str, an_opt: &Option<String>, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<Medicine>, AppError> {
+//     let info_medicine_sql = prescription::select_info_medicine(an_opt.is_some(), hosxp);
+//     let mut info_medicine_query = sqlx::query(AssertSqlSafe(info_medicine_sql));
+//     if let Some(an) = an_opt {
+//         info_medicine_query = info_medicine_query.bind(an);
+//     } else {
+//         info_medicine_query = info_medicine_query.bind(vn);
+//     }
+//     info_medicine_query
+//         .fetch_all(pool)
+//         .await
+//         .map_err(|e| Source::SQLx.to_error(500, e, "Select VN Medicine"))?
+//         .iter()
+//         .map(Medicine::from_row)
+//         .collect::<sqlx::Result<Vec<Medicine>>>()
+//         .map_err(|e| Source::SQLx.to_error(500, e, "Select VN Medicine"))
+// }
+
+async fn select_info_medicine_in_range(hn: &str, start: Date, end: Date, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<Medicine>, AppError> {
+    let info_medicine_sql = prescription::select_info_medicine_in_range(hosxp);
+    sqlx::query(AssertSqlSafe(info_medicine_sql))
+        .bind(hn)
+        .bind(start)
+        .bind(end)
         .fetch_all(pool)
         .await
         .map_err(|e| Source::SQLx.to_error(500, e, "Select VN Medicine"))?
@@ -422,6 +438,7 @@ async fn update_pharmacy_care_prescription_screen(pharmacy_care: &Option<String>
 #[rustfmt::skip]
 mod tests {
 
+    use time::macros::date;
     use super::*;
     use kphis_sqlx_tester::MySqlTester;
     use kphis_util::datetime::date_8601;
@@ -587,6 +604,7 @@ mod tests {
     async fn sqlx_select_info_vn() {
         let tester = MySqlTester::new_hosxp_and_kphis_extra().await;
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/ovst.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/vn_stat.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/doctor.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/pttype.sql")).execute(&tester.db_pool).await.unwrap();
@@ -596,6 +614,7 @@ mod tests {
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/kphis_extra/prescription_screen.sql")).execute(&tester.db_pool).await.unwrap();
 
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/ovst.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/vn_stat.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/doctor.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/pttype.sql")).execute(&tester.db_pool).await.unwrap();
@@ -612,9 +631,32 @@ mod tests {
         assert!(not_found.is_none());
     }
 
+    // #[tokio::test]
+    // #[ignore]
+    // async fn sqlx_select_info_medicine() {
+    //     let tester = MySqlTester::new_hosxp().await;
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/drugusage.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/sp_use.sql")).execute(&tester.db_pool).await.unwrap();
+
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugusage.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/sp_use.sql")).execute(&tester.db_pool).await.unwrap();
+
+    //     let found_vn = select_info_medicine("661231235959", &None, &tester.db_pool, &tester.hosxp).await.unwrap();
+    //     assert_eq!(found_vn.len(), 6);
+    //     // vn is not used in this function, home-med only
+    //     let found_an = select_info_medicine("",&Some(String::from("660001234")),&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert_eq!(found_an.len(), 1);
+    //     let not_found = select_info_medicine("666666666666", &None, &tester.db_pool, &tester.hosxp).await.unwrap();
+    //     assert!(not_found.is_empty());
+    // }
+
     #[tokio::test]
     #[ignore]
-    async fn sqlx_select_info_medicine() {
+    async fn sqlx_select_info_medicine_in_range() {
         let tester = MySqlTester::new_hosxp().await;
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
@@ -626,12 +668,12 @@ mod tests {
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugusage.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/sp_use.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let found_vn = select_info_medicine("661231235959", &None, &tester.db_pool, &tester.hosxp).await.unwrap();
-        assert_eq!(found_vn.len(), 6);
-        // vn is not used in this function, home-med only
-        let found_an = select_info_medicine("",&Some(String::from("660001234")),&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert_eq!(found_an.len(), 1);
-        let not_found = select_info_medicine("666666666666", &None, &tester.db_pool, &tester.hosxp).await.unwrap();
+        let found_oneday = select_info_medicine_in_range("0001234", date!(2024-01-11), date!(2024-01-11), &tester.db_pool, &tester.hosxp).await.unwrap();
+        assert_eq!(found_oneday.len(), 1);
+        // if has an => home-med only
+        let found_inclusive = select_info_medicine_in_range("0001234",date!(2023-12-31), date!(2024-01-01), &tester.db_pool, &tester.hosxp).await.unwrap();
+        assert_eq!(found_inclusive.len(), 4);
+        let not_found = select_info_medicine_in_range("0006666", date!(2023-12-31), date!(2024-01-31), &tester.db_pool, &tester.hosxp).await.unwrap();
         assert!(not_found.is_empty());
     }
 

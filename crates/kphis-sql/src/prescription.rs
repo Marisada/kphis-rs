@@ -143,7 +143,7 @@ pub fn select_crcl(codes: &[u64], is_last: bool, not_after: &Option<Date>, hosxp
     ].concat()
 }
 
-// SELECT ovst.oqueue,ovst.vstdate,ovst.vsttime,ovst.hn,ovst.vn,ovst.an,doc.`name` AS doctor_name,pt.`name` AS pttype_name,opdc.cc,opdc.hpi,opdc.pe,
+// SELECT ovst.oqueue,ovst.vstdate,ovst.vsttime,ovst.hn,ovst.vn,ovst.an,ipt.dchdate,doc.`name` AS doctor_name,pt.`name` AS pttype_name,opdc.cc,opdc.hpi,opdc.pe,
 //     GROUP_CONCAT(CONCAT(ovd.icd10,' : ',icd.`name`) SEPARATOR '\n') AS diag,
 //     opdc.temperature,opdc.bps,opdc.bpd,opdc.bw,opdc.height,opdc.bmi,opdc.fbs
 //     doc1.`name` AS pharmacist_accept_name,sc.pharmacist_accept_time,
@@ -154,6 +154,7 @@ pub fn select_crcl(codes: &[u64], is_last: bool, not_after: &Option<Date>, hosxp
 //     doc5.`name` AS telemed_doctor_name,sc.telemed_time
 // FROM hos.ovst
 //     LEFT JOIN hos.vn_stat vns ON vns.vn=ovst.vn
+//     LEFT JOIN ",hosxp,".ipt ON ipt.an=ovst.an
 //     LEFT JOIN hos.doctor doc ON doc.`code`=ovst.doctor
 //     LEFT JOIN hos.pttype pt ON pt.pttype=ovst.pttype
 //     LEFT JOIN hos.opdscreen opdc ON opdc.vn=ovst.vn
@@ -169,7 +170,7 @@ pub fn select_crcl(codes: &[u64], is_last: bool, not_after: &Option<Date>, hosxp
 /// vn
 pub fn select_info_vn(hosxp: &str, kphis_extra: &str) -> String {
     [
-        "SELECT ovst.oqueue,ovst.vstdate,ovst.vsttime,ovst.hn,ovst.vn,ovst.an,doc.`name` AS doctor_name,pt.`name` AS pttype_name,opdc.cc,opdc.hpi,opdc.pe,\
+        "SELECT ovst.oqueue,ovst.vstdate,ovst.vsttime,ovst.hn,ovst.vn,ovst.an,ipt.dchdate,doc.`name` AS doctor_name,pt.`name` AS pttype_name,opdc.cc,opdc.hpi,opdc.pe,\
             GROUP_CONCAT(CONCAT(ovd.icd10,' : ',icd.`name`) SEPARATOR '\n') AS diag,\
             opdc.temperature,opdc.bps,opdc.bpd,opdc.bw,opdc.height,opdc.bmi,opdc.fbs,\
             doc1.`name` AS pharmacist_accept_name,sc.pharmacist_accept_time,\
@@ -181,6 +182,7 @@ pub fn select_info_vn(hosxp: &str, kphis_extra: &str) -> String {
             sc.pharmacy_care,doc6.`name` AS pharmacy_care_doctor_name,sc.pharmacy_care_time \
         FROM ",hosxp,".ovst \
             LEFT JOIN ",hosxp,".vn_stat vns ON vns.vn=ovst.vn \
+            LEFT JOIN ",hosxp,".ipt ON ipt.an=ovst.an \
             LEFT JOIN ",hosxp,".doctor doc ON doc.`code`=ovst.doctor \
             LEFT JOIN ",hosxp,".pttype pt ON pt.pttype=ovst.pttype \
             LEFT JOIN ",hosxp,".opdscreen opdc ON opdc.vn=ovst.vn \
@@ -197,54 +199,72 @@ pub fn select_info_vn(hosxp: &str, kphis_extra: &str) -> String {
     ].concat()
 }
 
-// // info_medicine
-// SELECT o.vn,o.an,o.hn,CONCAT(s.NAME,' ',s.strength,' ',s.units) AS name_drugitems,o.qty,o.sp_use,
-//     IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist,
-//     o.icode,o.drugusage,o.rxdate,o.rxtime,d.generic_name,s.strength,s.icode
+// // // info_medicine
+// // SELECT o.vn,o.an,o.hn,CONCAT(s.NAME,' ',s.strength,' ',s.units) AS name_drugitems,o.qty,o.sp_use,
+// //     IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist,
+// //     o.icode,o.drugusage,o.rxdate,o.rxtime,d.generic_name,s.strength,s.icode
+// // FROM hos.opitemrece o
+// //     INNER JOIN hos.drugitems d ON d.icode=o.icode
+// //     LEFT JOIN hos.s_drugitems s ON s.icode=o.icode
+// //     LEFT JOIN hos.drugusage dr ON dr.drugusage=o.drugusage
+// // WHERE 1=1
+// // // info_medicine_last_drug
+// // SELECT IF(o1.vn IS NULL,'AN','VN') AS type_,IF(o1.vn IS NULL,o1.an,o1.vn) AS type_data,
+// //     CONCAT(:strength,:drugusage)<>CONCAT(d1.strength,o1.drugusage) AS drug_change,
+// //     IF(o1.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o1.sp_use),dr.shortlist) AS shortlist,
+// //     TIMESTAMP(o1.rxdate,o1.rxtime) AS timestamp_1,
+// //     d1.generic_name,d1.strength,d1.units,o1.drugusage,o1.qty,o1.sp_use,
+// //     CONCAT(s.NAME,' ',s.strength,' ',s.units) AS name_drugitems,s.icode
+// // FROM hos.opitemrece o1
+// //     INNER JOIN hos.drugitems d1 ON d1.icode=o1.icode
+// //     LEFT JOIN hos.s_drugitems s ON s.icode=o1.icode
+// //     LEFT JOIN hos.drugusage dr ON dr.drugusage=o1.drugusage
+// // WHERE o1.hn=:hn AND o1.icode=:icode AND TIMESTAMP(o1.rxdate,o1.rxtime) < TIMESTAMP(:rxdate,:rxtime)
+// //     AND d1.generic_name=:generic_name AND TIMESTAMPDIFF(MONTH,o1.rxdate,:rxdate) <= 6
+// // ORDER BY TIMESTAMP(o1.rxdate) DESC LIMIT 1;
+// // // we change GET 'info_medicine' and USE 'info_medicine_last_drug'
+// // // to USE 'info_medicine' WITH 'previous prescription concat data'
+// // // and we remove hos.s_drugitems usage
+// // SELECT CONCAT(d.NAME,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,
+// //     IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist,
+// //     (SELECT CONCAT(IF(o1.vn IS NULL,'AN','VN'),'^',IF(o1.vn IS NULL,o1.an,o1.vn),'^',CONCAT(d1.NAME,' ',d1.strength,' ',d1.units),'^',d1.strength,'^',o1.qty,'^',o1.icode,'^',o1.rxdate,' ',o1.rxtime,'^',
+// // 	 	IF(o1.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o1.sp_use),dr1.shortlist))
+// //         FROM hos.opitemrece o1 INNER JOIN hos.drugitems d1 ON d1.icode=o1.icode LEFT JOIN hos.drugusage dr1 ON dr1.drugusage=o1.drugusage
+// // 		WHERE o1.hn=o.hn AND TIMESTAMP(o1.rxdate,o1.rxtime) < TIMESTAMP(o.rxdate,o.rxtime) AND d1.generic_name=d.generic_name
+// //         AND TIMESTAMPDIFF(MONTH,o1.rxdate,o.rxdate) <= 6 ORDER BY TIMESTAMP(o1.rxdate) DESC LIMIT 1) AS last_prescription
+// // FROM hos.opitemrece o INNER JOIN hos.drugitems d ON d.icode=o.icode LEFT JOIN hos.drugusage dr ON dr.drugusage=o.drugusage
+// // WHERE 1=1 AND o.vn='660726084730'
+// /// an || vn
+// pub fn select_info_medicine(is_admit: bool, hosxp: &str) -> String {
+//     let an_or_vn = if is_admit {" WHERE o.item_type='H' AND o.an=? "} else {" WHERE o.vn=? "};
+//     [
+//         "SELECT CONCAT(d.NAME,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,ADDTIME(CONVERT(o.rxdate,DATETIME),o.rxtime) AS rxdatetime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,\
+//             IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM ",hosxp,".sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist,\
+//             (SELECT CONCAT(IF(o1.vn IS NULL,'AN','VN'),'^',IF(o1.vn IS NULL,o1.an,o1.vn),'^',CONCAT(d1.NAME,' ',d1.strength,' ',d1.units),'^',d1.strength,'^',o1.qty,'^',o1.icode,'^',o1.rxdate,' ',o1.rxtime,'^',\
+//                 IF(o1.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM ",hosxp,".sp_use WHERE sp_use=o1.sp_use),dr1.shortlist)) \
+//                 FROM ",hosxp,".opitemrece o1 INNER JOIN ",hosxp,".drugitems d1 ON d1.icode=o1.icode LEFT JOIN ",hosxp,".drugusage dr1 ON dr1.drugusage=o1.drugusage \
+//                 WHERE o1.hn=o.hn AND TIMESTAMP(o1.rxdate,o1.rxtime) < TIMESTAMP(o.rxdate,o.rxtime) AND d1.generic_name=d.generic_name \
+//                     AND TIMESTAMPDIFF(MONTH,o1.rxdate,o.rxdate) <= 6 ORDER BY TIMESTAMP(o1.rxdate) DESC LIMIT 1) AS last_prescription \
+//         FROM ",hosxp,".opitemrece o INNER JOIN ",hosxp,".drugitems d ON d.icode=o.icode LEFT JOIN ",hosxp,".drugusage dr ON dr.drugusage=o.drugusage ",
+//         an_or_vn,"ORDER BY o.item_no;"
+//     ].concat()
+// }
+
+// SELECT CONCAT(d.NAME,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,
+//     IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist
 // FROM hos.opitemrece o
 //     INNER JOIN hos.drugitems d ON d.icode=o.icode
-//     LEFT JOIN hos.s_drugitems s ON s.icode=o.icode
 //     LEFT JOIN hos.drugusage dr ON dr.drugusage=o.drugusage
-// WHERE 1=1
-// // info_medicine_last_drug
-// SELECT IF(o1.vn IS NULL,'AN','VN') AS type_,IF(o1.vn IS NULL,o1.an,o1.vn) AS type_data,
-//     CONCAT(:strength,:drugusage)<>CONCAT(d1.strength,o1.drugusage) AS drug_change,
-//     IF(o1.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o1.sp_use),dr.shortlist) AS shortlist,
-//     TIMESTAMP(o1.rxdate,o1.rxtime) AS timestamp_1,
-//     d1.generic_name,d1.strength,d1.units,o1.drugusage,o1.qty,o1.sp_use,
-//     CONCAT(s.NAME,' ',s.strength,' ',s.units) AS name_drugitems,s.icode
-// FROM hos.opitemrece o1
-//     INNER JOIN hos.drugitems d1 ON d1.icode=o1.icode
-//     LEFT JOIN hos.s_drugitems s ON s.icode=o1.icode
-//     LEFT JOIN hos.drugusage dr ON dr.drugusage=o1.drugusage
-// WHERE o1.hn=:hn AND o1.icode=:icode AND TIMESTAMP(o1.rxdate,o1.rxtime) < TIMESTAMP(:rxdate,:rxtime)
-//     AND d1.generic_name=:generic_name AND TIMESTAMPDIFF(MONTH,o1.rxdate,:rxdate) <= 6
-// ORDER BY TIMESTAMP(o1.rxdate) DESC LIMIT 1;
-// // we change GET 'info_medicine' and USE 'info_medicine_last_drug'
-// // to USE 'info_medicine' WITH 'previous prescription concat data'
-// // and we remove hos.s_drugitems usage
-// SELECT CONCAT(d.NAME,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,
-//     IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist,
-//     (SELECT CONCAT(IF(o1.vn IS NULL,'AN','VN'),'^',IF(o1.vn IS NULL,o1.an,o1.vn),'^',CONCAT(d1.NAME,' ',d1.strength,' ',d1.units),'^',d1.strength,'^',o1.qty,'^',o1.icode,'^',o1.rxdate,' ',o1.rxtime,'^',
-// 	 	IF(o1.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o1.sp_use),dr1.shortlist))
-//         FROM hos.opitemrece o1 INNER JOIN hos.drugitems d1 ON d1.icode=o1.icode LEFT JOIN hos.drugusage dr1 ON dr1.drugusage=o1.drugusage
-// 		WHERE o1.hn=o.hn AND TIMESTAMP(o1.rxdate,o1.rxtime) < TIMESTAMP(o.rxdate,o.rxtime) AND d1.generic_name=d.generic_name
-//         AND TIMESTAMPDIFF(MONTH,o1.rxdate,o.rxdate) <= 6 ORDER BY TIMESTAMP(o1.rxdate) DESC LIMIT 1) AS last_prescription
-// FROM hos.opitemrece o INNER JOIN hos.drugitems d ON d.icode=o.icode LEFT JOIN hos.drugusage dr ON dr.drugusage=o.drugusage
-// WHERE 1=1 AND o.vn='660726084730'
-/// an || vn
-pub fn select_info_medicine(is_admit: bool, hosxp: &str) -> String {
-    let an_or_vn = if is_admit {" WHERE o.item_type='H' AND o.an=? "} else {" WHERE o.vn=? "};
+// WHERE o.hn=? AND (o.an IS NULL OR (o.an IS NOT NULL AND o.item_type='H')) AND o.vstdate BETWEEN ? AND ? ORDER BY o.rxdate ASC;
+/// hn, start-date, end-date
+pub fn select_info_medicine_in_range(hosxp: &str) -> String {
     [
-        "SELECT CONCAT(d.NAME,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,ADDTIME(CONVERT(o.rxdate,DATETIME),o.rxtime) AS rxdatetime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,\
-            IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM ",hosxp,".sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist,\
-            (SELECT CONCAT(IF(o1.vn IS NULL,'AN','VN'),'^',IF(o1.vn IS NULL,o1.an,o1.vn),'^',CONCAT(d1.NAME,' ',d1.strength,' ',d1.units),'^',d1.strength,'^',o1.qty,'^',o1.icode,'^',o1.rxdate,' ',o1.rxtime,'^',\
-                IF(o1.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM ",hosxp,".sp_use WHERE sp_use=o1.sp_use),dr1.shortlist)) \
-                FROM ",hosxp,".opitemrece o1 INNER JOIN ",hosxp,".drugitems d1 ON d1.icode=o1.icode LEFT JOIN ",hosxp,".drugusage dr1 ON dr1.drugusage=o1.drugusage \
-                WHERE o1.hn=o.hn AND TIMESTAMP(o1.rxdate,o1.rxtime) < TIMESTAMP(o.rxdate,o.rxtime) AND d1.generic_name=d.generic_name \
-                    AND TIMESTAMPDIFF(MONTH,o1.rxdate,o.rxdate) <= 6 ORDER BY TIMESTAMP(o1.rxdate) DESC LIMIT 1) AS last_prescription \
-        FROM ",hosxp,".opitemrece o INNER JOIN ",hosxp,".drugitems d ON d.icode=o.icode LEFT JOIN ",hosxp,".drugusage dr ON dr.drugusage=o.drugusage ",
-        an_or_vn,"ORDER BY o.item_no;"
+        "SELECT CONCAT(d.`name`,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,\
+            IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM ",hosxp,".sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist \
+        FROM ",hosxp,".opitemrece o \
+            INNER JOIN ",hosxp,".drugitems d ON d.icode=o.icode \
+            LEFT JOIN ",hosxp,".drugusage dr ON dr.drugusage=o.drugusage \
+        WHERE o.hn=? AND (o.an IS NULL OR (o.an IS NOT NULL AND o.item_type='H')) AND o.vstdate BETWEEN ? AND ? ORDER BY o.rxdate DESC, o.rxtime DESC, d.`name`;"
     ].concat()
 }
 

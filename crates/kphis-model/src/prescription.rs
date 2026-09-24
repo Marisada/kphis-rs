@@ -4,14 +4,14 @@ use sqlx::{
     FromRow,
     types::time::{Date, PrimitiveDateTime, Time},
 };
-use std::rc::Rc;
+use std::{collections::{HashMap, HashSet}, rc::Rc};
 use time::macros::{date, datetime, time};
 use utoipa::{IntoParams, ToSchema};
 
 use kphis_util::{
-    datetime::{date_th_opt, datetime_th_opt},
+    datetime::{date_th_opt, datetime_th_opt, date_and_time_th_opt_relative},
     error::{AppError, Source},
-    util::str_some,
+    util::sanity_dot_space,
 };
 
 use crate::{
@@ -203,6 +203,8 @@ pub struct PrescriptionVn {
     pub vstdate: Option<Date>,
     #[Demo(value = "Some(time!(23:59:59))")]
     pub vsttime: Option<Time>,
+    #[Demo(value = "Some(date!(2024-01-01))")]
+    pub dchdate: Option<Date>,
     #[Demo(value = r#"Some(String::from("0001234"))"#)]
     pub hn: Option<String>,
     #[Demo(value = r#"Some(String::from("661231235959"))"#)]
@@ -295,6 +297,63 @@ pub struct PrescriptionVn {
     pub mess_vn: Vec<String>,
 }
 
+impl PrescriptionVn {
+    pub fn current_meds_has_unique_generic_name(&self) -> bool {
+        let mut unique = HashSet::new();
+        self.medicines.iter()
+            .filter(|med| self.vn.is_some() && self.vn == med.vn)
+            .all(|med| unique.insert(&med.generic_name))
+    }
+
+    // self::medicines sorted by rxdate DESC (new to old)
+    /// return ([(current, [previous-same-generic])], [(newest-other, [previous-same-generic])])
+    pub fn explode_meds(&self) -> (Vec<(Medicine, Vec<Medicine>)>, Vec<(Medicine, Vec<Medicine>)>) {
+        if self.vn.is_none() {
+            (Vec::new(), Vec::new())
+        } else {
+            let mut currents = Vec::new();
+            let mut current_generic_names = HashSet::new();
+            let mut other_latest = Vec::new();
+            let mut used_icodes = HashSet::new();
+            let mut other_hx = HashMap::new();
+            let has_current = self.medicines.iter().any(|med| (self.an.is_some() && self.an == med.an) || med.vn == self.vn);
+            for med in self.medicines.iter() {
+                if let Some(icode) = med.icode.as_ref() {
+                    // allow duplicate icode in currents
+                    if has_current && ((self.an.is_some() && self.an == med.an) || med.vn == self.vn) {
+                        used_icodes.insert(icode);
+                        currents.push(med.clone());
+                        if let Some(generic_name) = med.generic_name.as_ref() {
+                            current_generic_names.insert(generic_name);
+                        }
+                    // screen out a visit that occurred after selected visit
+                    } else if has_current && currents.is_empty() {
+                        continue;
+                    // collect already matched generic-name/icode item to other_hx
+                    } else if let Some(generic_name) = med.generic_name.as_ref() && (current_generic_names.contains(generic_name) || used_icodes.contains(&icode)) {
+                        other_hx.entry(generic_name.clone()).and_modify(|v: &mut Vec<Medicine>| v.push(med.clone())).or_insert(vec![med.clone()]);
+                    // the rest is missed item
+                    } else {
+                        used_icodes.insert(icode);
+                        other_latest.push(med.clone());
+                    }
+                }
+            }
+
+            (
+                currents.into_iter().map(|item| {
+                    let hx = item.generic_name.as_ref().and_then(|gen_name| other_hx.get(gen_name)).cloned().unwrap_or_default();
+                    (item, hx)
+                }).collect(),
+                other_latest.into_iter().map(|item| {
+                    let hx = item.generic_name.as_ref().and_then(|gen_name| other_hx.get(gen_name)).cloned().unwrap_or_default();
+                    (item, hx)
+                }).collect(),
+            )
+        }
+    }
+}
+
 /// Medicine data of HosXp Prescription Info
 #[derive(Clone, Demo, Deserialize, Serialize, FromRow, ToSchema)]
 #[schema(example = json!(Medicine::demo()))]
@@ -309,8 +368,10 @@ pub struct Medicine {
     pub qty: Option<i32>,
     #[Demo(value = r#"Some(String::from("1000227"))"#)]
     pub icode: Option<String>,
-    #[Demo(value = r#"Some(datetime!(2023-12-31 23:59:59))"#)]
-    pub rxdatetime: Option<PrimitiveDateTime>,
+    #[Demo(value = r#"Some(date!(2023-12-31))"#)]
+    pub rxdate: Option<Date>,
+    #[Demo(value = r#"Some(time!(23:59:59))"#)]
+    pub rxtime: Option<Time>,
     #[Demo(value = r#"Some(String::from("0666"))"#)]
     pub drugusage: Option<String>,
     #[Demo(value = r#"Some(String::from("661231235959"))"#)]
@@ -323,41 +384,53 @@ pub struct Medicine {
     pub sp_use: Option<String>,
     #[Demo(value = r#"Some(String::from("22pt (2 เม็ด * 2 PC)"))"#)]
     pub shortlist: Option<String>,
-    /// type^code^name_drugitems^strength^qty^icode^datetime^shortlist
-    #[Demo(value = r#"Some(String::from("VN^660531084331^PARACETAMOL 500 mg. เม็ด^500 mg.^20^1000227^2023-05-31 09:49:12^22pt (2 เม็ด * 2 PC)"))"#)]
-    pub last_prescription: Option<String>,
+    // /// type^code^name_drugitems^strength^qty^icode^datetime^shortlist
+    // #[Demo(value = r#"Some(String::from("VN^660531084331^PARACETAMOL 500 mg. เม็ด^500 mg.^20^1000227^2023-05-31 09:49:12^22pt (2 เม็ด * 2 PC)"))"#)]
+    // pub last_prescription: Option<String>,
 }
 
-pub struct LastMedicine {
-    pub id_type: String,
-    pub id: Option<String>,
-    pub name_drugitems: Option<String>,
-    pub strength: Option<String>,
-    pub qty: Option<i32>,
-    pub icode: Option<String>,
-    pub rxdatetime: Option<String>,
-    pub shortlist: Option<String>,
-}
-impl LastMedicine {
-    pub fn new(concat: &Option<String>) -> Option<Self> {
-        concat.as_ref().map(|cc| cc.split('^').collect::<Vec<&str>>()).and_then(|lm| {
-            if lm.len() == 8 {
-                Some(Self {
-                    id_type: lm[0].to_owned(),
-                    id: str_some(&lm[1]),
-                    name_drugitems: str_some(&lm[2]),
-                    strength: str_some(&lm[3]),
-                    qty: lm[4].parse::<i32>().ok(),
-                    icode: str_some(&lm[5]),
-                    rxdatetime: str_some(&lm[6]),
-                    shortlist: str_some(&lm[7]),
-                })
-            } else {
-                None
-            }
-        })
+impl Medicine {
+    pub fn title(&self) -> String {
+        [
+            "- [", &date_and_time_th_opt_relative(&self.rxdate, &self.rxtime),
+            if self.an.is_some() {" HM"} else {""}, "] ",
+            &self.name_drugitems.clone().unwrap_or_default(), " : ", 
+            &self.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default(),
+            " #", &self.qty.map(|i| i.to_string()).unwrap_or(String::from("??")),
+        ].concat()
     }
 }
+
+// pub struct LastMedicine {
+//     pub id_type: String,
+//     pub id: Option<String>,
+//     pub name_drugitems: Option<String>,
+//     pub strength: Option<String>,
+//     pub qty: Option<i32>,
+//     pub icode: Option<String>,
+//     pub rxdatetime: Option<String>,
+//     pub shortlist: Option<String>,
+// }
+// impl LastMedicine {
+//     pub fn new(concat: &Option<String>) -> Option<Self> {
+//         concat.as_ref().map(|cc| cc.split('^').collect::<Vec<&str>>()).and_then(|lm| {
+//             if lm.len() == 8 {
+//                 Some(Self {
+//                     id_type: lm[0].to_owned(),
+//                     id: str_some(&lm[1]),
+//                     name_drugitems: str_some(&lm[2]),
+//                     strength: str_some(&lm[3]),
+//                     qty: lm[4].parse::<i32>().ok(),
+//                     icode: str_some(&lm[5]),
+//                     rxdatetime: str_some(&lm[6]),
+//                     shortlist: str_some(&lm[7]),
+//                 })
+//             } else {
+//                 None
+//             }
+//         })
+//     }
+// }
 
 /// Drug Interaction of HosXp Prescription Info
 #[derive(Clone, Demo, Deserialize, Serialize, FromRow, ToSchema)]

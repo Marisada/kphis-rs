@@ -2,15 +2,13 @@ use dominator::{Dom, EventOptions, clone, events, html, window_size, with_node};
 use futures_signals::{
     map_ref,
     signal::{Mutable, SignalExt, not},
+    signal_vec::{MutableVec, SignalVecExt},
 };
 use std::rc::Rc;
 use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlTextAreaElement};
 
 use kphis_model::{
-    endpoint::EndPoint,
-    fetch::Method,
-    prescription::{LastMedicine, PostalPatch, PrescriptionInfo, PrescriptionScreen, PrescriptionScreenParams, PrescriptionScreenPatch, PrescriptionVn, TelemedPatch, VisitDate},
-    route::Route,
+    endpoint::EndPoint, fetch::Method, prescription::{Medicine, PostalPatch, PrescriptionInfo, PrescriptionScreen, PrescriptionScreenParams, PrescriptionScreenPatch, PrescriptionVn, TelemedPatch, VisitDate}, route::Route,
 };
 use kphis_ui_app::App;
 use kphis_ui_component::{
@@ -19,7 +17,7 @@ use kphis_ui_component::{
 };
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
-    datetime::{date_and_time_th_opt_relative, date_th_relative, datetime_from_opt, datetime_str_th_relative, datetime_th_relative},
+    datetime::{date_and_time_th_opt_relative, date_th_relative, datetime_from_opt, datetime_th_relative},
     util::{f64_rescale, opt_zero_none, sanity_dot_space, str_some},
 };
 
@@ -38,6 +36,10 @@ pub struct PrescriptionScreenPage {
 
     info: Mutable<Option<Rc<PrescriptionInfo>>>,
     visit: Mutable<Option<Rc<PrescriptionVn>>>,
+
+    is_med_unique: Mutable<bool>,
+    current_meds: MutableVec<(Medicine, Vec<Medicine>)>,
+    previous_meds: MutableVec<(Medicine, Vec<Medicine>)>,
 
     telemed_changed: Mutable<bool>,
     telemed_add: Mutable<String>,
@@ -80,7 +82,21 @@ impl PrescriptionScreenPage {
         self.telemed_changed.set_neq(false);
     }
 
-    // pharmacy-prescription-screen-data-select.php
+    pub fn set_visit(&self, visit_opt: Option<PrescriptionVn>) {
+        if let Some(visit) = visit_opt {
+            self.is_med_unique.set(visit.current_meds_has_unique_generic_name());
+            let (current_meds, previous_meds) = visit.explode_meds();
+            self.current_meds.lock_mut().replace_cloned(current_meds);
+            self.previous_meds.lock_mut().replace_cloned(previous_meds);
+            self.visit.set(Some(Rc::new(visit)));
+        } else {
+            self.is_med_unique.set_neq(false);
+            self.current_meds.lock_mut().clear();
+            self.previous_meds.lock_mut().clear();
+            self.visit.set(None);
+        }
+    }
+
     fn submit_search(page: Rc<Self>, app: Rc<App>) {
         let search = str_some(&page.search_text.lock_ref());
         if search.is_some() {
@@ -100,9 +116,7 @@ impl PrescriptionScreenPage {
                             page.pharmacy_care.set(screen.visit.as_ref().and_then(|visit| visit.pharmacy_care.clone()).unwrap_or_default());
                             page.pharmacy_care_changed.set_neq(false);
                             page.lab_is_last.set_neq(true);
-                            if screen.visit.is_some() {
-                                page.visit.set(screen.visit.map(Rc::new));
-                            }
+                            page.set_visit(screen.visit);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -128,9 +142,7 @@ impl PrescriptionScreenPage {
                             page.pharmacy_care.set(screen.visit.as_ref().and_then(|visit| visit.pharmacy_care.clone()).unwrap_or_default());
                             page.pharmacy_care_changed.set_neq(false);
                             // page.lab_is_last.set_neq(false);
-                            if screen.visit.is_some() {
-                                page.visit.set(screen.visit.map(Rc::new));
-                            }
+                            page.set_visit(screen.visit);
                         }
                         Err(e) => {
                             app.alert_app_error(&e).await;
@@ -371,7 +383,7 @@ impl PrescriptionScreenPage {
                                         //.apply(|dom| mixins::string_value(dom, page.search_text.clone(), page.changed.clone()))
                                         .prop_signal("value", page.search_text.signal_cloned())
                                         .with_node!(element => {
-                                            .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyUp| {
+                                            .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyDown| {
                                                 if event.key() == "Enter" {
                                                     event.prevent_default();
                                                     page.search_text.set_neq(element.value());
@@ -460,7 +472,7 @@ impl PrescriptionScreenPage {
                                                 .style("column-gap","8px")
                                                 .children([
                                                     Self::render_visit_hx(visit, page.clone()),
-                                                    Self::render_visit_drugs(visit, page.clone(), app.clone()),
+                                                    Self::render_visit_drugs(page.clone(), app.clone()),
                                                     Self::render_drug_interaction(visit),
                                                     Self::render_labs(visit, page.clone(), app.clone()),
                                                     Self::render_visit_message(visit),
@@ -606,6 +618,22 @@ impl PrescriptionScreenPage {
             .children([
                 html!("div", {
                     .children([
+                        html!("span", {.class("fw-bold").text("VN : ")}),
+                        html!("span", {.text(&visit.vn.clone().unwrap_or_default())}),
+                    ])
+                    .apply(|dom| {
+                        if let Some(an) = visit.an.as_ref() {
+                            dom.children([
+                                html!("span", {.class("fw-bold").text(" AN : ")}),
+                                html!("span", {.text(&an)}),
+                            ])
+                        } else {
+                            dom
+                        }
+                    })
+                }),
+                html!("div", {
+                    .children([
                         html!("span", {.class("fw-bold").text("แพทย์ผู้ตรวจ : ")}),
                         html!("span", {.text(&visit.doctor_name.clone().unwrap_or_default())}),
                     ])
@@ -674,44 +702,64 @@ impl PrescriptionScreenPage {
                         })
                     ])
                 }),
-                html!("div", {
-                    .class("col")
-                    .child(html!("div", {
+            ])
+            .apply(|dom| {
+                if let Some(dchdate) = visit.dchdate.as_ref() {
+                    dom.child(html!("div", {
                         .children([
-                            html!("div", {.class("fw-bold").text("นัดหมาย :")}),
-                            html!("ul", {
-                                .children(visit.next_app.iter().map(clone!(page => move |next_app| {
-                                    let appointment_date = next_app.nextdate.and_then(|nextdate| {
-                                        page.info.lock_ref().as_ref().and_then(|info| {
-                                            info.dates.iter().find(|date| date.vstdate.map(|d| d == nextdate).unwrap_or_default()).cloned()
-                                        })
-                                    });
-                                    html!("li", {
-                                        .text(&next_app.string())
-                                        .apply_if(appointment_date.is_some(), |dom| { dom
-                                            .style("cursor","pointer")
-                                            .child(html!("i", {.class(class::FA_REPLY).class("ms-1")}))
-                                            .event(clone!(page => move |_:events::Click| {
-                                                page.current_date.set(appointment_date.clone());
-                                                page.reload_visit.set_neq(true);
-                                            }))
-                                        })
-                                    })
-                                })))
-                            }),
+                            html!("span", {.class("fw-bold").text("Discharge : ")}),
+                            html!("span", {.style("white-space","pre-wrap").text(&date_th_relative(dchdate))}),
                         ])
                     }))
-                }),
-            ])
+                } else {
+                    dom
+                }
+            })
+            .child(html!("div", {
+                .class("col")
+                .child(html!("div", {
+                    .children([
+                        html!("div", {.class("fw-bold").text("นัดหมาย :")}),
+                        html!("ul", {
+                            .children(visit.next_app.iter().map(clone!(page => move |next_app| {
+                                let appointment_date = next_app.nextdate.and_then(|nextdate| {
+                                    page.info.lock_ref().as_ref().and_then(|info| {
+                                        info.dates.iter().find(|date| date.vstdate.map(|d| d == nextdate).unwrap_or_default()).cloned()
+                                    })
+                                });
+                                html!("li", {
+                                    .text(&next_app.string())
+                                    .apply_if(appointment_date.is_some(), |dom| { dom
+                                        .style("cursor","pointer")
+                                        .child(html!("i", {.class(class::FA_REPLY).class("ms-1")}))
+                                        .event(clone!(page => move |_:events::Click| {
+                                            page.current_date.set(appointment_date.clone());
+                                            page.reload_visit.set_neq(true);
+                                        }))
+                                    })
+                                })
+                            })))
+                        }),
+                    ])
+                }))
+            }))
         })
     }
 
-    pub fn render_visit_drugs(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_drugs(page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
             .children([
-                html!("div", {.class(class::BOLD_T2).text("รายการยา")}),
+                html!("div", {
+                    .class(class::BOLD_T2)
+                    .text("รายการยา")
+                    .child_signal(page.is_med_unique.signal().map(|is_unique| {
+                        (!is_unique).then(|| {
+                            html!("span", {.class("text-danger").text(" (พบรายการยาที่มี generic name ซ้ำกัน)")})
+                        })
+                    }))
+                }),
                 html!("div", {
                     // .class("overflow-auto")
                     // .style("height", "40vh")
@@ -731,17 +779,25 @@ impl PrescriptionScreenPage {
                                 }))
                             }),
                             html!("tbody", {
-                                //.attr("id", "medicine")
-                                .children(visit.medicines.iter().enumerate().map(|(i, med)| {
-                                    let last_opt = LastMedicine::new(&med.last_prescription);
-                                    let is_same = last_opt.as_ref().map(|last| {
-                                        last.icode == med.icode && last.strength == med.strength && last.shortlist == med.shortlist
-                                    }).unwrap_or(true);
+                                .children_signal_vec(page.current_meds.signal_vec_cloned().enumerate().map(|(i, (med, prevs))| {
+                                    let (is_new, is_same) = if let Some(last) = prevs.first() {
+                                        (false, last.icode == med.icode && last.strength == med.strength && last.shortlist == med.shortlist)
+                                    } else {
+                                        (true, false)
+                                    };
 
                                     html!("tr", {
-                                        .apply_if(last_opt.is_none() || !is_same, |dom| dom.class("table-info"))
+                                        .apply(|dom| {
+                                            if is_new {
+                                                dom.class("table-info")
+                                            } else if is_same {
+                                                dom
+                                            } else {
+                                                dom.class("table-warning")
+                                            }
+                                        })
                                         .children([
-                                            html!("td", {.text(&(i+1).to_string())}),
+                                            html!("td", {.text(&(i.get().unwrap_or_default() + 1).to_string())}),
                                             html!("td", {
                                                 // .class("text-end")
                                                 .child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))
@@ -786,7 +842,6 @@ impl PrescriptionScreenPage {
                                 }))
                             }),
                             html!("tbody", {
-                                //.attr("id", "drug_interaction")
                                 .class("table-warning")
                                 .children(visit.drug_interactions.iter().enumerate().map(|(i,di)| {
                                     html!("tr", {.children([
@@ -812,7 +867,6 @@ impl PrescriptionScreenPage {
             .children([
                 html!("ul", {
                     .class(class::NAV_PILLS_T)
-                    //.attr("id", "pills-tab")
                     .attr("role", "tablist")
                     .children([
                         html!("li", {
@@ -826,8 +880,8 @@ impl PrescriptionScreenPage {
                                 .attr("aria-controls", "pills-home")
                                 .prop_signal("aria-selected", page.lab_is_last.signal().map(|is_last| if is_last {"true"} else {"false"}))
                                 .text("LAB ล่าสุด")
-                                .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::Click| {
-                                    e.prevent_default();
+                                .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
+                                    event.prevent_default();
                                     page.lab_is_last.set_neq(true);
                                 }))
                             }))
@@ -843,8 +897,8 @@ impl PrescriptionScreenPage {
                                 .attr("aria-controls", "pills-profile")
                                 .prop_signal("aria-selected", page.lab_is_last.signal().map(|is_last| if is_last {"false"} else {"true"}))
                                 .text("LAB ของ Visit")
-                                .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::Click| {
-                                    e.prevent_default();
+                                .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
+                                    event.prevent_default();
                                     page.lab_is_last.set_neq(false);
                                 }))
                             }))
@@ -853,7 +907,6 @@ impl PrescriptionScreenPage {
                 }),
                 html!("div", {
                     .class("tab-content")
-                    //.attr("id", "pills-tabContent")
                     .child_signal(page.lab_is_last.signal().map(clone!(app, page, visit => move |last| {
                         if last {
                             Some(html!("div", {
@@ -1668,8 +1721,9 @@ impl PrescriptionScreenPage {
                         .children([
                             html!("h5", {
                                 .class("modal-title")
-                                //.attr("id", "exampleModalLabel")
-                                .text("ยา")
+                                .text("รายการยา")
+                                .text_signal(page.visit.signal_ref(|opt| opt.as_ref().and_then(|visit| visit.vn.clone()).map(|vn| [" VN: ", &vn].concat()).unwrap_or_default()))
+                                .text_signal(page.visit.signal_ref(|opt| opt.as_ref().and_then(|visit| visit.an.clone()).map(|an| [" AN: ", &an].concat()).unwrap_or_default()))
                             }),
                             html!("button", {
                                 .attr("type", "button")
@@ -1690,83 +1744,229 @@ impl PrescriptionScreenPage {
                                 html!("div", {
                                     .class("overflow-auto")
                                     .style("overflow-y","auto")
-                                    .child(html!("table", {
-                                        .class(class::TABLE_SM_STRIP)
-                                        .children([
-                                            html!("thead", {
-                                                .child(html!("tr", {
-                                                    .children([
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("#")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาปัจจุบัน")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวน")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาเดิม")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวนเดิม")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้ปัจจุบัน")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้เดิม")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("วันที่ ที่ได้รับครั้งก่อนหน้า")}),
-                                                        html!("th", {.class("text-nowrap").attr("scope", "col").text("สรุป")}),
-                                                    ])
-                                                }))
-                                            }),
-                                            html!("tbody", {
-                                                //.attr("id", "info_medicine_last_tb")
-                                                .children_signal_vec(page.visit.signal_cloned().map(|opt| opt.as_ref().map(|visit| {
-                                                    visit.medicines.iter().enumerate().map(|(i, med)| {
-                                                        let last_opt = LastMedicine::new(&med.last_prescription);
-                                                        let is_icode_changed = last_opt.as_ref().map(|last| last.icode != med.icode).unwrap_or_default();
-                                                        let is_qty_changed = last_opt.as_ref().map(|last| last.qty != med.qty).unwrap_or_default();
-                                                        let is_strength_changed = last_opt.as_ref().map(|last| last.strength != med.strength).unwrap_or_default();
-                                                        let is_shortlist_changed = last_opt.as_ref().map(|last| last.shortlist != med.shortlist).unwrap_or_default();
+                                    .children([
+                                        html!("div", {
+                                            .class(class::BOLD_T2)
+                                            .text("รายการยาปัจจุบัน")
+                                            .child_signal(page.is_med_unique.signal().map(|is_unique| {
+                                                (!is_unique).then(|| {
+                                                    html!("span", {.class("text-danger").text(" (พบรายการยาที่มี generic name ซ้ำกัน)")})
+                                                })
+                                            }))
+                                        }),
+                                        html!("table", {
+                                            .class(class::TABLE_SM_STRIP)
+                                            .children([
+                                                html!("thead", {
+                                                    .child(html!("tr", {
+                                                        .children([
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("#")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาปัจจุบัน")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาเดิม")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้ปัจจุบัน")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้เดิม")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวน")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวนเดิม")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("วันที่ได้รับครั้งก่อนหน้า")}),
+                                                            html!("th", {.class("text-nowrap").attr("scope", "col").text("สรุป")}),
+                                                        ])
+                                                    }))
+                                                }),
+                                                html!("tbody", {
+                                                    .children_signal_vec(page.current_meds.signal_vec_cloned().enumerate().map(clone!(page => move |(i, (med, prevs))| {
+                                                        let last_opt = prevs.first().cloned();
+                                                        let (is_new, is_icode_changed, is_qty_changed, is_strength_changed, is_shortlist_changed) = if let Some(last) = last_opt.as_ref() {
+                                                            (false, last.icode != med.icode, last.qty != med.qty, last.strength != med.strength, last.shortlist != med.shortlist)
+                                                        } else {
+                                                            (true, false, false, false, false)
+                                                        };
 
                                                         html!("tr", {
-                                                            .apply_if(last_opt.is_none() || is_icode_changed || is_strength_changed || is_shortlist_changed, |dom| dom.class("table-warning"))
+                                                            .apply(|dom| {
+                                                                if is_new {
+                                                                    dom.class("table-info")
+                                                                } else if is_icode_changed || is_strength_changed || is_shortlist_changed {
+                                                                    dom.class("table-warning")
+                                                                } else {
+                                                                    dom
+                                                                }
+                                                            })
                                                             .children([
-                                                                html!("td", {.text(&(i+1).to_string())}),
+                                                                html!("td", {.text(&(i.get().unwrap_or_default() + 1).to_string())}),
                                                                 html!("td", {.child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))}),
-                                                                html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
                                                                 html!("td", {
-                                                                    .apply_if(is_icode_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.name_drugitems.clone()).unwrap_or_default()))
-                                                                }),
-                                                                html!("td", {
-                                                                    .apply_if(is_qty_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.qty.map(|i| i.to_string())).unwrap_or_default()))
+                                                                    .apply(|dom| {
+                                                                        if is_new {
+                                                                            dom.text("-")
+                                                                        } else if is_icode_changed {
+                                                                            dom.class(class::BOLD_RED).text(&last_opt.as_ref().and_then(|last| last.name_drugitems.clone()).unwrap_or(String::from("ไม่ระบุ")))
+                                                                        } else {
+                                                                            dom.child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)}))
+                                                                        }
+                                                                    })
                                                                 }),
                                                                 html!("td", {.text(&med.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default())}),
                                                                 html!("td", {
-                                                                    .apply_if(is_shortlist_changed, |dom| dom.text(&last_opt.as_ref().and_then(|last| last.shortlist.as_ref().map(|s| sanity_dot_space(s))).unwrap_or_default()))
+                                                                    .apply(|dom| {
+                                                                        if is_new {
+                                                                            dom.text("-")
+                                                                        } else if is_shortlist_changed {
+                                                                            dom.class(class::BOLD_RED).text(&last_opt.as_ref().and_then(|last| last.shortlist.as_ref().map(|s| sanity_dot_space(s))).unwrap_or(String::from("ไม่ระบุ")))
+                                                                        } else {
+                                                                            dom.child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)}))
+                                                                        }
+                                                                    })
+                                                                }),
+                                                                html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
+                                                                html!("td", {
+                                                                    .apply(|dom| {
+                                                                        if is_new {
+                                                                            dom.text("-")
+                                                                        } else if is_qty_changed {
+                                                                            dom.class(class::BOLD_RED).text(&last_opt.as_ref().and_then(|last| last.qty.map(|i| i.to_string())).unwrap_or(String::from("ไม่ระบุ")))
+                                                                        } else {
+                                                                            dom.child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)}))
+                                                                        }
+                                                                    })
                                                                 }),
                                                                 html!("td", {
-                                                                    .apply_if(last_opt.is_some(), |dom| dom.text(&last_opt.as_ref().and_then(|last| last.rxdatetime.as_ref().map(|s| datetime_str_th_relative(s))).unwrap_or_default()))
+                                                                    .text(&last_opt.as_ref().map(|last| {
+                                                                        [date_and_time_th_opt_relative(&last.rxdate, &last.rxtime).as_str(), if last.an.is_some() {" HM"} else {""}].concat()
+                                                                    }).unwrap_or(String::from("-")))
+                                                                    .text_signal(page.visit.signal_ref(move |opt| opt.as_ref().map(|visit| {
+                                                                        if let (Some(vst), Some(rx)) = (visit.vstdate, last_opt.as_ref().and_then(|last| last.rxdate)) {
+                                                                            let diff = (vst - rx).whole_days();
+                                                                                if diff == 0 {
+                                                                                    String::from(" (วันเดียวกัน)")
+                                                                                } else {
+                                                                                    [" (", &diff.to_string(), " วันก่อน)"].concat()
+                                                                                }
+                                                                        } else {
+                                                                            String::new()
+                                                                        }
+                                                                    }).unwrap_or_default()))
+                                                                    
                                                                 }),
                                                                 html!("td", {
-                                                                    .apply_if(last_opt.is_none(), |dom| dom.child(html!("span", {.class(class::BADGE_GOLD_L).style("cursor","default").text("ยาใหม่")})))
-                                                                    .children([
-                                                                        html!("span", {
-                                                                            .class(class::BADGE_L)
-                                                                            .style("cursor","default")
-                                                                            .class(if is_icode_changed {"text-bg-warning"} else {"text-bg-secondary"})
-                                                                            .text(if is_icode_changed {"icode เปลี่ยน"} else {"icode เดิม"})
-                                                                        }),
-                                                                        html!("span", {
-                                                                            .class(class::BADGE_L)
-                                                                            .style("cursor","default")
-                                                                            .class(if is_strength_changed {"text-bg-warning"} else {"text-bg-secondary"})
-                                                                            .text(if is_strength_changed {"Strength เปลี่ยน"} else {"Strength เดิม"})
-                                                                        }),
-                                                                        html!("span", {
-                                                                            .class(class::BADGE_L)
-                                                                            .style("cursor","default")
-                                                                            .class(if is_shortlist_changed {"text-bg-warning"} else {"text-bg-secondary"})
-                                                                            .text(if is_shortlist_changed {"วิธีใช้เปลี่ยน"} else {"วิธีใช้เดิม"})
-                                                                        }),
-                                                                    ])
+                                                                    .apply(|dom| {
+                                                                        if is_new {
+                                                                            dom.child(html!("span", {.class(class::BADGE_CYAN_L).style("cursor","default").text("ยาใหม่")}))
+                                                                        } else {
+                                                                            dom.children([
+                                                                                html!("span", {
+                                                                                    .class(class::BADGE_L)
+                                                                                    .style("cursor","default")
+                                                                                    .class(if is_icode_changed {"text-bg-warning"} else {"text-bg-secondary"})
+                                                                                    .text(if is_icode_changed {"icode เปลี่ยน"} else {"icode เดิม"})
+                                                                                }),
+                                                                                html!("span", {
+                                                                                    .class(class::BADGE_L)
+                                                                                    .style("cursor","default")
+                                                                                    .class(if is_qty_changed {"text-bg-warning"} else {"text-bg-secondary"})
+                                                                                    .text(if is_qty_changed {"ปริมาณเปลี่ยน"} else {"ปริมาณเดิม"})
+                                                                                }),
+                                                                                html!("span", {
+                                                                                    .class(class::BADGE_L)
+                                                                                    .style("cursor","default")
+                                                                                    .class(if is_strength_changed {"text-bg-warning"} else {"text-bg-secondary"})
+                                                                                    .text(if is_strength_changed {"Strength เปลี่ยน"} else {"Strength เดิม"})
+                                                                                }),
+                                                                                html!("span", {
+                                                                                    .class(class::BADGE_L)
+                                                                                    .style("cursor","default")
+                                                                                    .class(if is_shortlist_changed {"text-bg-warning"} else {"text-bg-secondary"})
+                                                                                    .text(if is_shortlist_changed {"วิธีใช้เปลี่ยน"} else {"วิธีใช้เดิม"})
+                                                                                }),
+                                                                            ])
+                                                                        }
+                                                                    })
+                                                                    .apply_if(!prevs.is_empty(), |dom| dom
+                                                                        .child(html!("span", {
+                                                                            .class(class::BADGE_GRAY_L)
+                                                                            .style("cursor","pointer")
+                                                                            .text("+")
+                                                                            .text(&prevs.len().to_string())
+                                                                            .child(html!("i", {.class(class::FA_INFO).class("ms-1")}))
+                                                                            .attr("title", &prevs.iter().map(|prev| prev.title()).collect::<Vec<String>>().join("\n"))
+                                                                        }))
+                                                                    )
                                                                 })
                                                             ])
                                                         })
-                                                    }).collect::<Vec<Dom>>()
-                                                }).unwrap_or_default()).to_signal_vec())
-                                            }),
-                                        ])
+                                                    })))
+                                                }),
+                                            ])
+                                        }),
+                                    ])
+                                    .child_signal(page.previous_meds.signal_vec_cloned().is_empty().map(|is_empty| {
+                                        (!is_empty).then(|| {
+                                            html!("div", {
+                                                .class(class::BOLD_T2)
+                                                .text("รายการยาอื่นๆ ที่เคยได้รับในช่วง 6 เดือนก่อน")
+                                            })
+                                        })
                                     }))
+                                    .child_signal(page.previous_meds.signal_vec_cloned().is_empty().map(clone!(page => move |is_empty| {
+                                        (!is_empty).then(|| {
+                                            html!("table", {
+                                                .class(class::TABLE_SM_STRIP)
+                                                .children([
+                                                    html!("thead", {
+                                                        .child(html!("tr", {
+                                                            .children([
+                                                                html!("th", {.class("text-nowrap").attr("scope", "col").text("#")}),
+                                                                html!("th", {.class("text-nowrap").attr("scope", "col").text("ยาที่เคยได้รับ")}),
+                                                                html!("th", {.class("text-nowrap").attr("scope", "col").text("วิธีใช้")}),
+                                                                html!("th", {.class("text-nowrap").attr("scope", "col").text("จำนวน")}),
+                                                                html!("th", {.class("text-nowrap").attr("scope", "col").text("วันที่ได้รับยาล่าสุด")}),
+                                                                html!("th", {.class("text-nowrap").attr("scope", "col").text("หมายเหตุ")}),
+                                                            ])
+                                                        }))
+                                                    }),
+                                                    html!("tbody", {
+                                                        .children_signal_vec(page.previous_meds.signal_vec_cloned().enumerate().map(clone!(page => move |(i, (med, prevs))| {
+                                                            html!("tr", {
+                                                                .children([
+                                                                    html!("td", {.text(&(i.get().unwrap_or_default() + 1).to_string())}),
+                                                                    html!("td", {.child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))}),
+                                                                    html!("td", {.text(&med.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default())}),
+                                                                    html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
+                                                                    html!("td", {
+                                                                        .text(&date_and_time_th_opt_relative(&med.rxdate, &med.rxtime))
+                                                                        .apply_if(med.an.is_some(), |dom| dom.text(" HM"))
+                                                                        .text_signal(page.visit.signal_ref(move |opt| opt.as_ref().map(|visit| {
+                                                                            if let (Some(vst), Some(rx)) = (visit.vstdate, med.rxdate) {
+                                                                                let diff = (vst - rx).whole_days();
+                                                                                if diff == 0 {
+                                                                                    String::from(" (วันเดียวกัน)")
+                                                                                } else {
+                                                                                    [" (", &diff.to_string(), " วันก่อน)"].concat()
+                                                                                }
+                                                                            } else {
+                                                                                String::new()
+                                                                            }
+                                                                        }).unwrap_or_default()))
+                                                                    }),
+                                                                    html!("td", {
+                                                                        .apply_if(!prevs.is_empty(), |dom| dom
+                                                                            .child(html!("span", {
+                                                                                .class(class::BADGE_GRAY_L)
+                                                                                .style("cursor","pointer")
+                                                                                .text("+")
+                                                                                .text(&prevs.len().to_string())
+                                                                                .child(html!("i", {.class(class::FA_INFO).class("ms-1")}))
+                                                                                .attr("title", &prevs.iter().map(|prev| prev.title()).collect::<Vec<String>>().join("\n"))
+                                                                            }))
+                                                                        )
+                                                                    })
+                                                                ])
+                                                            })
+                                                        })))
+                                                    }),
+                                                ])
+                                            })
+                                        })
+                                    })))
                                 }),
                             ])
                         }))
