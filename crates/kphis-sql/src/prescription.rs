@@ -154,7 +154,7 @@ pub fn select_crcl(codes: &[u64], is_last: bool, not_after: &Option<Date>, hosxp
 //     doc5.`name` AS telemed_doctor_name,sc.telemed_time
 // FROM hos.ovst
 //     LEFT JOIN hos.vn_stat vns ON vns.vn=ovst.vn
-//     LEFT JOIN ",hosxp,".ipt ON ipt.an=ovst.an
+//     LEFT JOIN hos.ipt ON ipt.an=ovst.an
 //     LEFT JOIN hos.doctor doc ON doc.`code`=ovst.doctor
 //     LEFT JOIN hos.pttype pt ON pt.pttype=ovst.pttype
 //     LEFT JOIN hos.opdscreen opdc ON opdc.vn=ovst.vn
@@ -250,12 +250,12 @@ pub fn select_info_vn(hosxp: &str, kphis_extra: &str) -> String {
 //     ].concat()
 // }
 
-// SELECT CONCAT(d.NAME,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,
+// SELECT CONCAT(d.`name`,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,
 //     IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist
 // FROM hos.opitemrece o
 //     INNER JOIN hos.drugitems d ON d.icode=o.icode
 //     LEFT JOIN hos.drugusage dr ON dr.drugusage=o.drugusage
-// WHERE o.hn=? AND (o.an IS NULL OR (o.an IS NOT NULL AND o.item_type='H')) AND o.vstdate BETWEEN ? AND ? ORDER BY o.rxdate ASC;
+// WHERE o.hn=? AND (o.an IS NULL OR (o.an IS NOT NULL AND o.item_type='H')) AND o.vstdate BETWEEN ? AND ? ORDER BY o.rxdate DESC, o.rxtime DESC, d.`name`;;
 /// hn, start-date, end-date
 pub fn select_info_medicine_in_range(hosxp: &str) -> String {
     [
@@ -287,55 +287,60 @@ pub fn select_info_drug_interaction(hosxp: &str) -> String {
 // // we not concat, and find 'hn' directly
 // SELECT nextdate,DATEDIFF(nextdate,DATE(NOW())) AS days FROM hos.oapp WHERE oapp.hn='0023215' AND oapp.nextdate >= DATE(NOW());
 // // edit
-// SELECT nextdate,DATEDIFF(nextdate,vstdate) AS days FROM ",hosxp,".oapp WHERE oapp.hn=? AND oapp.vn=?;
+// SELECT nextdate,c.`name` AS clinic_name,DATEDIFF(nextdate,IF(ipt.dchdate IS NULL,vstdate,ipt.dchdate)) AS days
+// FROM hos.oapp
+//    LEFT JOIN hos.ipt ON ipt.vn=oapp.vn
+//    LEFT JOIN hos.clinic c ON c.clinic=oapp.clinic
+// WHERE oapp.vn=?;
 /// vn
 pub fn select_next_app(hosxp: &str) -> String {
     [
-        "SELECT nextdate,c.`name` AS clinic_name,DATEDIFF(nextdate,vstdate) AS days \
+        "SELECT nextdate,c.`name` AS clinic_name,DATEDIFF(nextdate,IF(ipt.dchdate IS NULL,vstdate,ipt.dchdate)) AS days \
         FROM ",hosxp,".oapp \
+            LEFT JOIN ",hosxp,".ipt ON ipt.vn=oapp.vn \
             LEFT JOIN ",hosxp,".clinic c ON c.clinic=oapp.clinic \
-        WHERE oapp.vn=?;"
+            WHERE oapp.vn=?;"
     ].concat()
 }
 
-// // info_mess_vn
-pub fn select_info_message(messages: &[(String, Vec<String>)], hosxp: &str) -> String {
-    messages.iter().map(|(message, icodes)| select_icode_message(message, icodes, hosxp)).collect::<Vec<String>>().join("UNION ALL")
-}
-// (SELECT CONCAT('message',' : ','drug:(',GROUP_CONCAT(d.name),')') AS message FROM hos.opitemrece o INNER JOIN hos.drugitems d ON d.icode=o.icode
-// WHERE o.icode IN ('1000152','1520066','1000110','1000111','16000026','1000182','1520187','1600039','1550008') AND o.vn=? GROUP BY vn HAVING count(*) > 1 LIMIT 1)
-/// vn
-fn select_icode_message(message: &str, icodes: &[String], hosxp: &str) -> String {
-    [
-        "(SELECT CONCAT('",message,"',' : ','drug:(',GROUP_CONCAT(d.name),')') AS message FROM ",hosxp,".opitemrece o INNER JOIN ",hosxp,".drugitems d ON d.icode=o.icode \
-        WHERE o.icode IN ('",&icodes.join("','"),"') AND o.vn=? GROUP BY vn HAVING count(*) > 1 LIMIT 1)"
-    ].concat()
-}
+// // // info_mess_vn
+// pub fn select_info_message(messages: &[(String, Vec<String>)], hosxp: &str) -> String {
+//     messages.iter().map(|(message, icodes)| select_icode_message(message, icodes, hosxp)).collect::<Vec<String>>().join("UNION ALL")
+// }
+// // (SELECT CONCAT('message',' : ','drug:(',GROUP_CONCAT(d.name),')') AS message FROM hos.opitemrece o INNER JOIN hos.drugitems d ON d.icode=o.icode
+// // WHERE o.icode IN ('1000152','1520066','1000110','1000111','16000026','1000182','1520187','1600039','1550008') AND o.vn=? GROUP BY vn HAVING count(*) > 1 LIMIT 1)
+// /// vn
+// fn select_icode_message(message: &str, icodes: &[String], hosxp: &str) -> String {
+//     [
+//         "(SELECT CONCAT('",message,"',' : ','drug:(',GROUP_CONCAT(d.name),')') AS message FROM ",hosxp,".opitemrece o INNER JOIN ",hosxp,".drugitems d ON d.icode=o.icode \
+//         WHERE o.icode IN ('",&icodes.join("','"),"') AND o.vn=? GROUP BY vn HAVING count(*) > 1 LIMIT 1)"
+//     ].concat()
+// }
 
-/// vn
-pub fn select_info_ckd_message(
-    messages: &[(String, u64, Vec<String>)],
-    lab: &str,
-    pt_value: &str,
-    hosxp: &str,
-) -> String {
-    messages.iter().map(|(message, target, icodes)| {select_icode_ckd_message(message, lab, pt_value, &target.to_string(), icodes, hosxp)}).collect::<Vec<String>>().join("UNION ALL")
-}
-// (SELECT CONCAT('message',' : ','eGFR:',?) AS message FROM hos.opitemrece o
-// WHERE o.icode IN ('1000152','1520066','1000110','1000111','1600026','1000182','1520187','1600039','1550008') AND ? < 45 AND o.vn=? LIMIT 1)
-fn select_icode_ckd_message(
-    message: &str,
-    lab: &str,
-    pt_value: &str,
-    target: &str,
-    icodes: &[String],
-    hosxp: &str,
-) -> String {
-    [
-        "(SELECT CONCAT('",message," ",lab," : ',",pt_value,") AS message FROM ",hosxp,".opitemrece o \
-        WHERE o.icode IN ('",&icodes.join("','"),"') AND ",pt_value," < ",target," AND o.vn=? LIMIT 1)"
-    ].concat()
-}
+// /// vn
+// pub fn select_info_ckd_message(
+//     messages: &[(String, u64, Vec<String>)],
+//     lab: &str,
+//     pt_value: &str,
+//     hosxp: &str,
+// ) -> String {
+//     messages.iter().map(|(message, target, icodes)| {select_icode_ckd_message(message, lab, pt_value, &target.to_string(), icodes, hosxp)}).collect::<Vec<String>>().join("UNION ALL")
+// }
+// // (SELECT CONCAT('message',' : ','eGFR:',?) AS message FROM hos.opitemrece o
+// // WHERE o.icode IN ('1000152','1520066','1000110','1000111','1600026','1000182','1520187','1600039','1550008') AND ? < 45 AND o.vn=? LIMIT 1)
+// fn select_icode_ckd_message(
+//     message: &str,
+//     lab: &str,
+//     pt_value: &str,
+//     target: &str,
+//     icodes: &[String],
+//     hosxp: &str,
+// ) -> String {
+//     [
+//         "(SELECT CONCAT('",message," ",lab," : ',",pt_value,") AS message FROM ",hosxp,".opitemrece o \
+//         WHERE o.icode IN ('",&icodes.join("','"),"') AND ",pt_value," < ",target," AND o.vn=? LIMIT 1)"
+//     ].concat()
+// }
 
 /// vn, doctorcode, user, user
 pub fn insert_duplicate_update_accept_prescription_screen(kphis_extra: &str) -> String {

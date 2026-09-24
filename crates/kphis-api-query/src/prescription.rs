@@ -23,9 +23,6 @@ pub async fn get_prescription_screen(
     egfr_codes: &[u64],
     scr_codes: &[u64],
     lab_codes: &[(String, Vec<u64>)],
-    message_icodes: &[(String, Vec<String>)],
-    message_egfr_icodes: &[(String, u64, Vec<String>)],
-    message_crcl_icodes: &[(String, u64, Vec<String>)],
     pool: &Pool<MySql>,
     hosxp: &str,
     kphis_extra: &str,
@@ -85,9 +82,9 @@ pub async fn get_prescription_screen(
                     }
                 }
 
-                if !message_icodes.is_empty() {
-                    info_vn.mess_vn.extend(select_info_message(message_icodes, &vn, pool, hosxp).await?);
-                }
+                // if !message_icodes.is_empty() {
+                //     info_vn.mess_vn.extend(select_info_message(message_icodes, &vn, pool, hosxp).await?);
+                // }
 
                 if let Some(hn) = &info_vn.hn
                     && !hn.is_empty()
@@ -95,21 +92,23 @@ pub async fn get_prescription_screen(
                     if let Some(end) = info_vn.dchdate.or(info_vn.vstdate) {
                         info_vn.medicines = select_info_medicine_in_range(hn, end.saturating_sub(Duration::weeks(26)), end, pool, hosxp).await?;
                     }
-                    if !message_egfr_icodes.is_empty() {
-                        let egfr_opt = select_egfr(egfr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
-                        if let Some(egfr) = egfr_opt.and_then(|lab| lab.lab_order_result).and_then(|s| s.parse::<f64>().ok()) {
-                            let messages_egfr = select_info_ckd_message(message_egfr_icodes, "eGFR", &egfr.to_string(), &vn, pool, hosxp).await?;
-                            info_vn.mess_vn.extend(messages_egfr);
-                        }
-                    }
+                    info_vn.latest_egfr = select_egfr(egfr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
+                    // if !message_egfr_icodes.is_empty() {
+                    //     let egfr_opt = select_egfr(egfr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
+                    //     if let Some(egfr) = egfr_opt.and_then(|lab| lab.lab_order_result).and_then(|s| s.parse::<f64>().ok()) {
+                    //         let messages_egfr = select_info_ckd_message(message_egfr_icodes, "eGFR", &egfr.to_string(), &vn, pool, hosxp).await?;
+                    //         info_vn.mess_vn.extend(messages_egfr);
+                    //     }
+                    // }
 
-                    if !message_crcl_icodes.is_empty() {
-                        let crcl_opt = select_crcl(scr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
-                        if let Some(crcl) = crcl_opt.and_then(|lab| lab.lab_order_result).and_then(|s| s.parse::<f64>().ok()) {
-                            let messages_crcl = select_info_ckd_message(message_crcl_icodes, "CrCl", &crcl.to_string(), &vn, pool, hosxp).await?;
-                            info_vn.mess_vn.extend(messages_crcl);
-                        }
-                    }
+                    info_vn.latest_crcl = select_crcl(scr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
+                    // if !message_crcl_icodes.is_empty() {
+                    //     let crcl_opt = select_crcl(scr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
+                    //     if let Some(crcl) = crcl_opt.and_then(|lab| lab.lab_order_result).and_then(|s| s.parse::<f64>().ok()) {
+                    //         let messages_crcl = select_info_ckd_message(message_crcl_icodes, "CrCl", &crcl.to_string(), &vn, pool, hosxp).await?;
+                    //         info_vn.mess_vn.extend(messages_crcl);
+                    //     }
+                    // }
                 }
                 info_vn_opt = Some(info_vn)
             }
@@ -282,21 +281,21 @@ async fn select_info_drug_interaction(vn: &str, pool: &Pool<MySql>, hosxp: &str)
         .map_err(|e| Source::SQLx.to_error(500, e, "Select VN Drug Interaction"))
 }
 
-async fn select_info_message(message_icodes: &[(String, Vec<String>)], vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<String>, AppError> {
-    let message_sql = prescription::select_info_message(message_icodes, hosxp);
-    let mut message_query = sqlx::query(AssertSqlSafe(message_sql));
-    for _ in 0..message_icodes.len() {
-        message_query = message_query.bind(vn);
-    }
-    message_query
-        .fetch_all(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Select Message"))?
-        .iter()
-        .filter_map(|row| row.try_get("message").transpose())
-        .collect::<sqlx::Result<Vec<String>>>()
-        .map_err(|e| Source::SQLx.to_error(500, e, "Select Message"))
-}
+// async fn select_info_message(message_icodes: &[(String, Vec<String>)], vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<String>, AppError> {
+//     let message_sql = prescription::select_info_message(message_icodes, hosxp);
+//     let mut message_query = sqlx::query(AssertSqlSafe(message_sql));
+//     for _ in 0..message_icodes.len() {
+//         message_query = message_query.bind(vn);
+//     }
+//     message_query
+//         .fetch_all(pool)
+//         .await
+//         .map_err(|e| Source::SQLx.to_error(500, e, "Select Message"))?
+//         .iter()
+//         .filter_map(|row| row.try_get("message").transpose())
+//         .collect::<sqlx::Result<Vec<String>>>()
+//         .map_err(|e| Source::SQLx.to_error(500, e, "Select Message"))
+// }
 
 pub async fn select_next_app(vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<NextAppointment>, AppError> {
     let next_app_sql = prescription::select_next_app(hosxp);
@@ -308,21 +307,21 @@ pub async fn select_next_app(vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Resul
         .map_err(|e| Source::SQLx.to_error(500, e, "Select Next Appointment"))
 }
 
-async fn select_info_ckd_message(message_egfr_icodes: &[(String, u64, Vec<String>)], lab: &str, pt_value: &str, vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<String>, AppError> {
-    let message_egfr_sql = prescription::select_info_ckd_message(message_egfr_icodes, lab, pt_value, hosxp);
-    let mut message_egfr_query = sqlx::query(AssertSqlSafe(message_egfr_sql));
-    for _ in 0..message_egfr_icodes.len() {
-        message_egfr_query = message_egfr_query.bind(vn);
-    }
-    message_egfr_query
-        .fetch_all(pool)
-        .await
-        .map_err(|e| Source::SQLx.to_error(500, e, "Select Message eGFR"))?
-        .iter()
-        .filter_map(|row| row.try_get("message").transpose())
-        .collect::<sqlx::Result<Vec<String>>>()
-        .map_err(|e| Source::SQLx.to_error(500, e, "Select Message eGFR"))
-}
+// async fn select_info_ckd_message(message_egfr_icodes: &[(String, u64, Vec<String>)], lab: &str, pt_value: &str, vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<String>, AppError> {
+//     let message_egfr_sql = prescription::select_info_ckd_message(message_egfr_icodes, lab, pt_value, hosxp);
+//     let mut message_egfr_query = sqlx::query(AssertSqlSafe(message_egfr_sql));
+//     for _ in 0..message_egfr_icodes.len() {
+//         message_egfr_query = message_egfr_query.bind(vn);
+//     }
+//     message_egfr_query
+//         .fetch_all(pool)
+//         .await
+//         .map_err(|e| Source::SQLx.to_error(500, e, "Select Message eGFR"))?
+//         .iter()
+//         .filter_map(|row| row.try_get("message").transpose())
+//         .collect::<sqlx::Result<Vec<String>>>()
+//         .map_err(|e| Source::SQLx.to_error(500, e, "Select Message eGFR"))
+// }
 
 pub async fn post_prescription_screen(vn: &str, doctorcode: &str, user: &str, pool: &Pool<MySql>, kphis_extra: &str) -> Result<ExecuteResponse, AppError> {
     let sql = prescription::insert_duplicate_update_accept_prescription_screen(kphis_extra);
@@ -697,32 +696,35 @@ mod tests {
         assert!(not_found.is_empty());
     }
 
-    #[tokio::test]
-    #[ignore]
-    async fn sqlx_select_info_message() {
-        let tester = MySqlTester::new_hosxp().await;
-        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
-        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+    // #[tokio::test]
+    // #[ignore]
+    // async fn sqlx_select_info_message() {
+    //     let tester = MySqlTester::new_hosxp().await;
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
 
-        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
-        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let message_icodes = vec![(String::from("Effect"),vec![String::from("1000222"), String::from("1900333")])];
-        let found = select_info_message(&message_icodes,"661231235959",&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert_eq!(found.len(), 1);
-        let no_effect = select_info_message(&message_icodes,"670111111111",&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert!(no_effect.is_empty());
-        let not_found = select_info_message(&message_icodes,"666666666666",&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert!(not_found.is_empty());
-    }
+    //     let message_icodes = vec![(String::from("Effect"),vec![String::from("1000222"), String::from("1900333")])];
+    //     let found = select_info_message(&message_icodes,"661231235959",&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert_eq!(found.len(), 1);
+    //     let no_effect = select_info_message(&message_icodes,"670111111111",&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert!(no_effect.is_empty());
+    //     let not_found = select_info_message(&message_icodes,"666666666666",&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert!(not_found.is_empty());
+    // }
 
     #[tokio::test]
     #[ignore]
     async fn sqlx_select_next_app() {
         let tester = MySqlTester::new_hosxp().await;
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/oapp.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/clinic.sql")).execute(&tester.db_pool).await.unwrap();
+
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/oapp.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/clinic.sql")).execute(&tester.db_pool).await.unwrap();
 
         let found = select_next_app("661231235959", &tester.db_pool, &tester.hosxp).await.unwrap();
@@ -731,23 +733,23 @@ mod tests {
         assert!(not_found.is_empty());
     }
 
-    #[tokio::test]
-    #[ignore]
-    async fn sqlx_select_info_ckd_message() {
-        let tester = MySqlTester::new_hosxp().await;
-        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
-        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
+    // #[tokio::test]
+    // #[ignore]
+    // async fn sqlx_select_info_ckd_message() {
+    //     let tester = MySqlTester::new_hosxp().await;
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
+    //     sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/opitemrece.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let message_egfr_icodes = vec![(String::from("Message"), 30, vec![String::from("1900333")])];
-        let below = select_info_ckd_message(&message_egfr_icodes,"eGFR",&20.to_string(),"661231235959",&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert_eq!(below.len(), 1);
-        let equal = select_info_ckd_message(&message_egfr_icodes,"eGFR",&30.to_string(),"661231235959",&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert!(equal.is_empty());
-        let no_message = select_info_ckd_message(&message_egfr_icodes,"eGFR",&20.to_string(),"670111111111",&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert!(no_message.is_empty());
-        let not_found = select_info_ckd_message(&message_egfr_icodes,"eGFR",&20.to_string(),"666666666666",&tester.db_pool,&tester.hosxp).await.unwrap();
-        assert!(not_found.is_empty());
-    }
+    //     let message_egfr_icodes = vec![(String::from("Message"), 30, vec![String::from("1900333")])];
+    //     let below = select_info_ckd_message(&message_egfr_icodes,"eGFR",&20.to_string(),"661231235959",&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert_eq!(below.len(), 1);
+    //     let equal = select_info_ckd_message(&message_egfr_icodes,"eGFR",&30.to_string(),"661231235959",&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert!(equal.is_empty());
+    //     let no_message = select_info_ckd_message(&message_egfr_icodes,"eGFR",&20.to_string(),"670111111111",&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert!(no_message.is_empty());
+    //     let not_found = select_info_ckd_message(&message_egfr_icodes,"eGFR",&20.to_string(),"666666666666",&tester.db_pool,&tester.hosxp).await.unwrap();
+    //     assert!(not_found.is_empty());
+    // }
 
     #[tokio::test]
     #[ignore]

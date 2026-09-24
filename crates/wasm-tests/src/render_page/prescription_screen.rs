@@ -61,7 +61,8 @@ async fn test_prescription_screen_page_labs() {
 
 #[wasm_bindgen_test]
 async fn test_prescription_screen_page_visit_message() {
-    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_message(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()));
+    let app = new_app();
+    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_message(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), app);
     replace_body(dom).await;
 }
 
@@ -104,4 +105,29 @@ async fn test_prescription_screen_page_modal() {
     page.set_visit(Some(kphis_model::prescription::PrescriptionVn::demo()));
     let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_modal(page, app);
     replace_body(dom).await;
+}
+
+#[wasm_bindgen_test]
+async fn test_prescription_screen_page_alert_message() {
+    let app = new_app();
+    let mut visit = kphis_model::prescription::PrescriptionVn::demo();
+    let mut lab = kphis_model::prescription::Lab::demo();
+    lab.lab_order_result = Some(String::from("15.5"));
+    visit.latest_egfr = Some(lab.clone());
+    visit.latest_crcl = Some(lab.clone());
+    let mut med1 = kphis_model::prescription::Medicine::demo();
+    med1.icode = Some(String::from("1000110"));
+    med1.name_drugitems = Some(String::from("IBUPROFEN 400 mg tab"));
+    let mut med2 = kphis_model::prescription::Medicine::demo();
+    med2.icode = Some(String::from("1000152"));
+    med2.name_drugitems = Some(String::from("DICLOFENAC 25 mg tab"));
+    let mut med3 = kphis_model::prescription::Medicine::demo();
+    med3.icode = Some(String::from("1000184"));
+    med3.name_drugitems = Some(String::from("METFORMIN 500 mg tab"));
+    visit.medicines = vec![med1, med2, med3];
+
+    let result = visit.drug_alert_messages(app.state());
+    // 1. Duplicate, 2. eGFR, 3.CrCl (test with eGFR demo)
+    let expected = "มีการสั่งใช้ยากลุ่ม NSAIDs ซ้ำซ้อน : IBUPROFEN 400 mg tab, DICLOFENAC 25 mg tab, ควรหลีกเลี่ยงการใช้ยา Metformin (eGFR<30) eGFR: 15.5 mL/min (METFORMIN 500 mg tab), ควรหลีกเลี่ยงการใช้ยา Metformin (eGFR<30) eGFR: 15.5 mL/min (METFORMIN 500 mg tab)";
+    assert_eq!(result.join(", "), String::from(expected));
 }

@@ -40,6 +40,7 @@ use kphis_model::{
     claim::Claims,
     endpoint::EndPoint,
     pacs::PacsConfig,
+    prescription::{MessageDrugGroup, MessageDrugLabGroup},
     score::SupportedScore,
     select_utils::ColorSelectOption,
     sse::{SseData, SseGroup, SseMessage},
@@ -357,27 +358,26 @@ impl ApiState {
                     })
                 })
                 .collect(),
-            message_icodes: config
+            message_dup_icodes: config
                 .get_array("message-icodes")
                 .expect("'message-icodes' not found in config file")
                 .into_iter()
                 .flat_map(|v| {
                     let item = v.into_table().expect("Can not parse into table");
-                    item.get("message").cloned().map(|name| {
-                        (
-                            name.into_string().expect("Can not parse into string"),
-                            item.get("icodes")
-                                .cloned()
-                                .map(|codes| {
-                                    codes
-                                        .into_array()
-                                        .expect("Can not parse into array")
-                                        .into_iter()
-                                        .map(|code| code.into_string().expect("Can not parse into integer"))
-                                        .collect::<Vec<String>>()
-                                })
-                                .unwrap_or_default(),
-                        )
+                    item.get("message").cloned().map(|name| MessageDrugGroup {
+                        message: name.into_string().expect("Can not parse into string"),
+                        icodes: item
+                            .get("icodes")
+                            .cloned()
+                            .map(|codes| {
+                                codes
+                                    .into_array()
+                                    .expect("Can not parse into array")
+                                    .into_iter()
+                                    .map(|code| code.into_string().expect("Can not parse into integer"))
+                                    .collect::<Vec<String>>()
+                            })
+                            .unwrap_or_default(),
                     })
                 })
                 .collect(),
@@ -387,22 +387,21 @@ impl ApiState {
                 .into_iter()
                 .flat_map(|v| {
                     let item = v.into_table().expect("Can not parse into table");
-                    item.get("message").cloned().map(|name| {
-                        (
-                            name.into_string().expect("Can not parse into string"),
-                            item.get("egfr").cloned().map(|egfr| egfr.into_uint().expect("Can not parse into integer")).unwrap_or(30),
-                            item.get("icodes")
-                                .cloned()
-                                .map(|codes| {
-                                    codes
-                                        .into_array()
-                                        .expect("Can not parse into array")
-                                        .into_iter()
-                                        .map(|code| code.into_string().expect("Can not parse into integer"))
-                                        .collect::<Vec<String>>()
-                                })
-                                .unwrap_or_default(),
-                        )
+                    item.get("message").cloned().map(|name| MessageDrugLabGroup {
+                        message: name.into_string().expect("Can not parse into string"),
+                        lab_value: item.get("egfr").cloned().map(|egfr| egfr.into_float().expect("Can not parse into integer")).unwrap_or(30.0),
+                        icodes: item
+                            .get("icodes")
+                            .cloned()
+                            .map(|codes| {
+                                codes
+                                    .into_array()
+                                    .expect("Can not parse into array")
+                                    .into_iter()
+                                    .map(|code| code.into_string().expect("Can not parse into integer"))
+                                    .collect::<Vec<String>>()
+                            })
+                            .unwrap_or_default(),
                     })
                 })
                 .collect(),
@@ -412,22 +411,21 @@ impl ApiState {
                 .into_iter()
                 .flat_map(|v| {
                     let item = v.into_table().expect("Can not parse into table");
-                    item.get("message").cloned().map(|name| {
-                        (
-                            name.into_string().expect("Can not parse into string"),
-                            item.get("crcl").cloned().map(|egfr| egfr.into_uint().expect("Can not parse into integer")).unwrap_or(30),
-                            item.get("icodes")
-                                .cloned()
-                                .map(|codes| {
-                                    codes
-                                        .into_array()
-                                        .expect("Can not parse into array")
-                                        .into_iter()
-                                        .map(|code| code.into_string().expect("Can not parse into integer"))
-                                        .collect::<Vec<String>>()
-                                })
-                                .unwrap_or_default(),
-                        )
+                    item.get("message").cloned().map(|name| MessageDrugLabGroup {
+                        message: name.into_string().expect("Can not parse into string"),
+                        lab_value: item.get("crcl").cloned().map(|egfr| egfr.into_float().expect("Can not parse into integer")).unwrap_or(30.0),
+                        icodes: item
+                            .get("icodes")
+                            .cloned()
+                            .map(|codes| {
+                                codes
+                                    .into_array()
+                                    .expect("Can not parse into array")
+                                    .into_iter()
+                                    .map(|code| code.into_string().expect("Can not parse into integer"))
+                                    .collect::<Vec<String>>()
+                            })
+                            .unwrap_or_default(),
                     })
                 })
                 .collect(),
@@ -761,15 +759,15 @@ impl ApiState {
     pub fn lab_codes(&self) -> Vec<(String, Vec<u64>)> {
         self.app_config.lab_codes.clone()
     }
-    pub fn message_icodes(&self) -> Vec<(String, Vec<String>)> {
-        self.app_config.message_icodes.clone()
-    }
-    pub fn message_egfr_icodes(&self) -> Vec<(String, u64, Vec<String>)> {
-        self.app_config.message_egfr_icodes.clone()
-    }
-    pub fn message_crcl_icodes(&self) -> Vec<(String, u64, Vec<String>)> {
-        self.app_config.message_crcl_icodes.clone()
-    }
+    // pub fn message_icodes(&self) -> Vec<(String, Vec<String>)> {
+    //     self.app_config.message_icodes.clone()
+    // }
+    // pub fn message_egfr_icodes(&self) -> Vec<(String, u64, Vec<String>)> {
+    //     self.app_config.message_egfr_icodes.clone()
+    // }
+    // pub fn message_crcl_icodes(&self) -> Vec<(String, u64, Vec<String>)> {
+    //     self.app_config.message_crcl_icodes.clone()
+    // }
 
     // pub async fn get_app_asset(&self, etag: &Option<String>) -> Result<AppAsset, AppError> {
     //     let (exp, etag, app_asset) = {
@@ -1044,9 +1042,9 @@ pub struct ApiConfig {
     pub scr_codes: Vec<u64>,
     pub egfr_codes: Vec<u64>,
     pub lab_codes: Vec<(String, Vec<u64>)>,
-    pub message_icodes: Vec<(String, Vec<String>)>,
-    pub message_egfr_icodes: Vec<(String, u64, Vec<String>)>,
-    pub message_crcl_icodes: Vec<(String, u64, Vec<String>)>,
+    pub message_dup_icodes: Vec<MessageDrugGroup>,
+    pub message_egfr_icodes: Vec<MessageDrugLabGroup>,
+    pub message_crcl_icodes: Vec<MessageDrugLabGroup>,
 
     pub pacs_hn_url: Option<String>,
     pub ekg_hn_url: Option<String>,

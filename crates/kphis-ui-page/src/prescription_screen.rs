@@ -8,7 +8,10 @@ use std::rc::Rc;
 use web_sys::{HtmlButtonElement, HtmlInputElement, HtmlTextAreaElement};
 
 use kphis_model::{
-    endpoint::EndPoint, fetch::Method, prescription::{Medicine, PostalPatch, PrescriptionInfo, PrescriptionScreen, PrescriptionScreenParams, PrescriptionScreenPatch, PrescriptionVn, TelemedPatch, VisitDate}, route::Route,
+    endpoint::EndPoint,
+    fetch::Method,
+    prescription::{Medicine, PostalPatch, PrescriptionInfo, PrescriptionScreen, PrescriptionScreenParams, PrescriptionScreenPatch, PrescriptionVn, TelemedPatch, VisitDate},
+    route::Route,
 };
 use kphis_ui_app::App;
 use kphis_ui_component::{
@@ -475,7 +478,7 @@ impl PrescriptionScreenPage {
                                                     Self::render_visit_drugs(page.clone(), app.clone()),
                                                     Self::render_drug_interaction(visit),
                                                     Self::render_labs(visit, page.clone(), app.clone()),
-                                                    Self::render_visit_message(visit),
+                                                    Self::render_visit_message(visit, app.clone()),
                                                     Self::render_visit_action(visit, page.clone(), app.clone()),
                                                     Self::render_visit_postal(visit, page.clone(), app.clone()),
                                                     Self::render_visit_telemed(visit, page.clone(), app.clone()),
@@ -1114,7 +1117,8 @@ impl PrescriptionScreenPage {
         })
     }
 
-    pub fn render_visit_message(visit: &Rc<PrescriptionVn>) -> Dom {
+    pub fn render_visit_message(visit: &Rc<PrescriptionVn>, app: Rc<App>) -> Dom {
+        let messages = visit.drug_alert_messages(app.state());
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1123,14 +1127,14 @@ impl PrescriptionScreenPage {
                 html!("ul", {
                     .class(class::BORDER_T2_Y)
                     .apply(|dom| {
-                        if visit.mess_vn.is_empty() {
+                        if messages.is_empty() {
                             dom.text("ไม่มีข้อความเตือนการใช้ยา")
                         } else {
                             dom.class(class::TXT_WHITE_RED)
                         }
                     })
-                    .children(visit.mess_vn.iter().map(|mess| {
-                        html!("li", {.text(mess)})
+                    .children(messages.iter().map(|msg| {
+                        html!("li", {.text(msg)})
                     }))
                 }),
             ])
@@ -1845,7 +1849,7 @@ impl PrescriptionScreenPage {
                                                                             String::new()
                                                                         }
                                                                     }).unwrap_or_default()))
-                                                                    
+
                                                                 }),
                                                                 html!("td", {
                                                                     .apply(|dom| {
