@@ -856,7 +856,7 @@ pub const TXT_NOWRAP_L: [&str; 2] = ["text-nowrap","me-1"];
 
 pub const TXT_U_L: [&str; 2] = ["text-decoration-underline","me-1"];
 
-pub const TXT_WHITE_RED: [&str; 2] = ["text-white","bg-danger"];
+pub const TXT_WHITE_RED_ROUND_PB: [&str; 4] = ["text-white","bg-danger","rounded","pb-2"];
 
 pub const TRUNC_SM: [&str; 2] = ["text-truncate","text-sm"];
 pub const TRUNC_BOLD: [&str; 2] = ["text-truncate","fw-bold"];

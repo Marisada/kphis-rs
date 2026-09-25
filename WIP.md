@@ -61,16 +61,15 @@
 - Add changed to `CHANGELOG.md`
 
 ## NOTE : Cargo Audit alert
-> - `rsa` please follow https://github.com/RustCrypto/RSA/issues/19 and https://github.com/RustCrypto/RSA/pull/394
-> - `paste` wait for `rav1e`,`hayagriva` and `biblatex` to change `paste` to a maintained one
-> - `yaml-rust` wait for `syntect` and `two-face` to change `yaml-rust` to a maintained one
+> - `quick-xml` (7.5 high): wait for `citationberg` of `typst` to update version
+> - `bincode` (unmaintained): wait for `syntect` to update dependency
+> - `paste` (unmaintained): wait for `rav1e`, `pulp`, `hayagriva` and `biblatex` to update dependency
+> - `rustybuzz` (unmaintained): wait for `usvg` and `typst` to update dependency
+> - `ttf-parser` (unmaintained): wait for `usvg`, `typst`, `rustybuzz` and `fontdb` to update dependency
+> - `yaml-rust` (unmaintained): wait for `syntect` to update dependency
 
 ## NOTE : getrandom used by rand and ulid crate
 > - v0.2 has a good supported for `wasm32-unknown-unknown` with `js` feature (has no effect on targets other than `wasm32-unknown-unknown`)
 > - v0.3 need `rustflags = ['--cfg', 'getrandom_backend="wasm_js"']` for WASM and need crate `wasm_js` feature, can bloat Cargo.lock and is known to cause build issues on some non-web WASM platforms, even when a different backend is selected via getrandom_backend
 > - v0.4 NOT support `wasm32-unknown-unknown`, read [getrandom](https://docs.rs/getrandom/latest/getrandom/) for more information
 > - NOW we use only v0.2 and `Any crate included in frontend that use getrandom v0.4` will error on compile/runtime, ex. `rand`, `ulid`, `totp`, `orion` crate
-
-> - EMR wrong date count after discharge
-> - Prescription's missed medication check
-> - Prescription medication/lab check at client side

@@ -1,9 +1,9 @@
-## 0.4.21 (2026-09-19)
+## 0.4.21 (2026-09-25)
 > - *(Config)* Added `log-centralize-host` for remote UDP syslog
 > - Fixed menu responsiveness
 > - Fixed to display `ประวัติการสั่งยา` in ipd-main, opd-er-main and ipd-pre-order-main
 > - Fixed `lab` tab in `prescription-screen` to show a corresponded lab of last/old visit
-> - Fixed SASS of `date-picker`, `nice-select2` and `bootstrap`
+> - Fixed SCSS of `date-picker`, `nice-select2` and `bootstrap`
 > - Removed Bootstrap's javascript
 > - Removed NiceSelect2's javascript
 > - Added watermark to reports
@@ -13,6 +13,7 @@
 > - Added I/O selector to `progress-note`, `index-note-form` and `refer-out`
 > - Changed `report-designer` input to multiple selector
 > - Fixed the javascript binding event listener leak
+> - Fixed `prescription-screen` to include home-med data and added previous 6 months medications 
 
 ## 0.4.20 (2026-08-02)
 > - *(Config)* Added `real-ip-header` to get real client IP address behind reverse proxy

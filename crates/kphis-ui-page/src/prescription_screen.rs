@@ -1130,7 +1130,7 @@ impl PrescriptionScreenPage {
                         if messages.is_empty() {
                             dom.text("ไม่มีข้อความเตือนการใช้ยา")
                         } else {
-                            dom.class(class::TXT_WHITE_RED)
+                            dom.class(class::TXT_WHITE_RED_ROUND_PB)
                         }
                     })
                     .children(messages.iter().map(|msg| {
@@ -1834,22 +1834,27 @@ impl PrescriptionScreenPage {
                                                                     })
                                                                 }),
                                                                 html!("td", {
-                                                                    .text(&last_opt.as_ref().map(|last| {
-                                                                        [date_and_time_th_opt_relative(&last.rxdate, &last.rxtime).as_str(), if last.an.is_some() {" HM"} else {""}].concat()
-                                                                    }).unwrap_or(String::from("-")))
-                                                                    .text_signal(page.visit.signal_ref(move |opt| opt.as_ref().map(|visit| {
-                                                                        if let (Some(vst), Some(rx)) = (visit.vstdate, last_opt.as_ref().and_then(|last| last.rxdate)) {
-                                                                            let diff = (vst - rx).whole_days();
-                                                                                if diff == 0 {
-                                                                                    String::from(" (วันเดียวกัน)")
+                                                                    .apply(|dom| {
+                                                                        if let Some(last) = last_opt.as_ref() {
+                                                                            let rxdate = last.rxdate;
+                                                                            dom.text(&date_and_time_th_opt_relative(&rxdate, &last.rxtime))
+                                                                            .text_signal(page.visit.signal_ref(move |opt| opt.as_ref().map(|visit| {
+                                                                                if let (Some(vst), Some(rx)) = (visit.vstdate, rxdate) {
+                                                                                    let diff = (vst - rx).whole_days();
+                                                                                        if diff == 0 {
+                                                                                            String::from(" (วันเดียวกัน)")
+                                                                                        } else {
+                                                                                            [" (", &diff.to_string(), " วันก่อน)"].concat()
+                                                                                        }
                                                                                 } else {
-                                                                                    [" (", &diff.to_string(), " วันก่อน)"].concat()
+                                                                                    String::new()
                                                                                 }
+                                                                            }).unwrap_or_default()))
+                                                                            .apply_if(last.an.is_some(), |d| d.child(html!("span", {.class(class::BADGE_BLUE_R).style("cursor","default").text("HM")})))
                                                                         } else {
-                                                                            String::new()
+                                                                            dom.text("-")
                                                                         }
-                                                                    }).unwrap_or_default()))
-
+                                                                    })
                                                                 }),
                                                                 html!("td", {
                                                                     .apply(|dom| {
@@ -1937,7 +1942,6 @@ impl PrescriptionScreenPage {
                                                                     html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
                                                                     html!("td", {
                                                                         .text(&date_and_time_th_opt_relative(&med.rxdate, &med.rxtime))
-                                                                        .apply_if(med.an.is_some(), |dom| dom.text(" HM"))
                                                                         .text_signal(page.visit.signal_ref(move |opt| opt.as_ref().map(|visit| {
                                                                             if let (Some(vst), Some(rx)) = (visit.vstdate, med.rxdate) {
                                                                                 let diff = (vst - rx).whole_days();
@@ -1950,6 +1954,7 @@ impl PrescriptionScreenPage {
                                                                                 String::new()
                                                                             }
                                                                         }).unwrap_or_default()))
+                                                                        .apply_if(med.an.is_some(), |dom| dom.child(html!("span", {.class(class::BADGE_BLUE_R).style("cursor","default").text("HM")})))
                                                                     }),
                                                                     html!("td", {
                                                                         .apply_if(!prevs.is_empty(), |dom| dom
