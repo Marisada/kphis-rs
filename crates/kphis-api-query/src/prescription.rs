@@ -23,6 +23,7 @@ pub async fn get_prescription_screen(
     egfr_codes: &[u64],
     scr_codes: &[u64],
     lab_codes: &[(String, Vec<u64>)],
+    med_rec_icode: &str,
     pool: &Pool<MySql>,
     hosxp: &str,
     kphis_extra: &str,
@@ -90,7 +91,7 @@ pub async fn get_prescription_screen(
                     && !hn.is_empty()
                 {
                     if let Some(end) = info_vn.dchdate.or(info_vn.vstdate) {
-                        info_vn.medicines = select_info_medicine_in_range(hn, end.saturating_sub(Duration::weeks(26)), end, pool, hosxp).await?;
+                        info_vn.medicines = select_info_medicine_in_range(hn, end.saturating_sub(Duration::weeks(26)), end, med_rec_icode, pool, hosxp).await?;
                     }
                     info_vn.latest_egfr = select_egfr(egfr_codes, true, &info_vn.vstdate, &hn, pool, hosxp).await?;
                     // if !message_egfr_icodes.is_empty() {
@@ -256,8 +257,8 @@ async fn select_info_vn(vn: &str, pool: &Pool<MySql>, hosxp: &str, kphis_extra: 
 //         .map_err(|e| Source::SQLx.to_error(500, e, "Select VN Medicine"))
 // }
 
-async fn select_info_medicine_in_range(hn: &str, start: Date, end: Date, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<Medicine>, AppError> {
-    let info_medicine_sql = prescription::select_info_medicine_in_range(hosxp);
+async fn select_info_medicine_in_range(hn: &str, start: Date, end: Date, med_rec_icode: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<Medicine>, AppError> {
+    let info_medicine_sql = prescription::select_info_medicine_in_range(med_rec_icode, hosxp);
     sqlx::query(AssertSqlSafe(info_medicine_sql))
         .bind(hn)
         .bind(start)
@@ -667,12 +668,12 @@ mod tests {
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugusage.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/sp_use.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let found_oneday = select_info_medicine_in_range("0001234", date!(2024-01-11), date!(2024-01-11), &tester.db_pool, &tester.hosxp).await.unwrap();
+        let found_oneday = select_info_medicine_in_range("0001234", date!(2024-01-11), date!(2024-01-11), "1900333", &tester.db_pool, &tester.hosxp).await.unwrap();
         assert_eq!(found_oneday.len(), 1);
         // if has an => home-med only
-        let found_inclusive = select_info_medicine_in_range("0001234",date!(2023-12-31), date!(2024-01-01), &tester.db_pool, &tester.hosxp).await.unwrap();
+        let found_inclusive = select_info_medicine_in_range("0001234",date!(2023-12-31), date!(2024-01-01), "1900333", &tester.db_pool, &tester.hosxp).await.unwrap();
         assert_eq!(found_inclusive.len(), 4);
-        let not_found = select_info_medicine_in_range("0006666", date!(2023-12-31), date!(2024-01-31), &tester.db_pool, &tester.hosxp).await.unwrap();
+        let not_found = select_info_medicine_in_range("0006666", date!(2023-12-31), date!(2024-01-31), "1900333", &tester.db_pool, &tester.hosxp).await.unwrap();
         assert!(not_found.is_empty());
     }
 

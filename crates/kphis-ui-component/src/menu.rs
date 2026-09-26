@@ -754,7 +754,8 @@ impl MenuCpn {
                 }
             })
             .apply(|dom| {
-                if prescription_screen_child.is_none() && ipd_pharm_children.is_empty() && opd_er_pharm_children.is_empty() {
+                let is_pharm = app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess);
+                if !(is_pharm && prescription_screen_child.is_some()) && ipd_pharm_children.is_empty() && opd_er_pharm_children.is_empty() {
                     dom
                 } else {
                     dom.child(html!("li", {

@@ -394,7 +394,8 @@ impl Route {
             }
             Self::PermissionList => app.endpoint_is_allow(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow(&Method::GET, &EndPoint::UserRoleRole, false),
             Self::PrescriptionScreen { .. } => {
-                (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess)) && app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
+                app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
+                // (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess)) && app.endpoint_is_allow(&Method::GET, &EndPoint::PrescrptionScreen, false)
             }
             Self::DrugUseDuration => app.endpoint_is_allow(&Method::POST, &EndPoint::DrugUseDuration, false),
             Self::ReportViewer => {

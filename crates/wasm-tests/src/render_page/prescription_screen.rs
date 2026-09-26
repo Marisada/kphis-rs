@@ -70,7 +70,7 @@ async fn test_prescription_screen_page_visit_message() {
 async fn test_prescription_screen_page_visit_action() {
     let app = new_app();
     let page = kphis_ui_page::prescription_screen::PrescriptionScreenPage::new(String::from("0001234"));
-    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_action(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), page, app);
+    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_action(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), true, page, app);
     replace_body(dom).await;
 }
 
@@ -78,7 +78,7 @@ async fn test_prescription_screen_page_visit_action() {
 async fn test_prescription_screen_page_visit_postal() {
     let app = new_app();
     let page = kphis_ui_page::prescription_screen::PrescriptionScreenPage::new(String::from("0001234"));
-    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_postal(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), page, app);
+    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_postal(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), true, page, app);
     replace_body(dom).await;
 }
 
@@ -86,7 +86,7 @@ async fn test_prescription_screen_page_visit_postal() {
 async fn test_prescription_screen_page_visit_telemed() {
     let app = new_app();
     let page = kphis_ui_page::prescription_screen::PrescriptionScreenPage::new(String::from("0001234"));
-    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_telemed(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), page, app);
+    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_visit_telemed(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), true, page, app);
     replace_body(dom).await;
 }
 
@@ -94,7 +94,7 @@ async fn test_prescription_screen_page_visit_telemed() {
 async fn test_prescription_screen_page_pharmacy_care() {
     let app = new_app();
     let page = kphis_ui_page::prescription_screen::PrescriptionScreenPage::new(String::from("0001234"));
-    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_pharmacy_care(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), page, app);
+    let dom = kphis_ui_page::prescription_screen::PrescriptionScreenPage::render_pharmacy_care(&Rc::new(kphis_model::prescription::PrescriptionVn::demo()), true, page, app);
     replace_body(dom).await;
 }
 

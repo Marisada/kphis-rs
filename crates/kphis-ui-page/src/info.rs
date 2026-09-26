@@ -126,29 +126,34 @@ impl Announcement {
                 html!("div", {
                     .class("card-header")
                     .attr("role","button")
+                    .style_signal("border-bottom-style", is_show.signal().map(|show| if show {"inherit"} else {"none"}))
                     .prop_signal("aria-expanded", is_show.signal().map(|show| if show {"true"} else {"false"}))
-                    .child(html!("i",{.class(class::FA_BULLHORN)}))
-                    .text("\u{00a0}\u{00a0}")
+                    .child(html!("i", {.class(class::FA_BULLHORN).class("me-2")}))
                     .text(&self.title)
                     .child(html!("span", {
                         .class("float-end")
                         .text(&date_th(&self.date))
+                        .child_signal(is_show.signal().map(|show| {
+                            Some(if show {
+                                html!("i", {.class(class::FA_ANGLE_DOWN_R)})
+                            } else {
+                                html!("i", {.class(class::FA_ANGLE_UP_R)})
+                            })
+                        }))
                     }))
                     .event(clone!(is_show => move |_:events::Click| {
                         is_show.set(!is_show.get());
                     }))
                 }),
-                html!("div",{
-                    .class(["announcement","collapse"])
+                html!("div", {
+                    .class("collapse")
                     .class_signal("show", is_show.signal())
-                    .child(html!("div",{
+                    .child(html!("div", {
                         .class("card-body")
-                        .child(html!("div",{
+                        .child(html!("ul", {
                             .class("card-text")
-                            .child(html!("ul",{
-                                .children(self.items.iter().map(|item| {
-                                    html!("li",{.text(&item)})
-                                }))
+                            .children(self.items.iter().map(|item| {
+                                html!("li", {.text(&item)})
                             }))
                         }))
                     }))

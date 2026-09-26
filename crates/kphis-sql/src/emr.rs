@@ -33,7 +33,7 @@ pub fn select_visits(hosxp: &str,  kphis: &str) -> String {
 /// vn
 pub fn select_visit_detail(hosxp: &str) -> String {
     [
-        "SELECT o.vn,o.vstdate,o.vsttime,ipt.an,p.hn,CONCAT(p.pname,p.fname,' ',p.lname) AS ptname,\
+        "SELECT o.vn,o.vstdate,o.vsttime,ipt.dchdate,ipt.an,p.hn,CONCAT(p.pname,p.fname,' ',p.lname) AS ptname,\
             CONCAT(v.age_y,' ปี ',v.age_m,'  เดือน ',v.age_d,'  วัน') AS age_th,o.pttype,pt.name AS pttype_name,\
             od.bps,od.bpd,od.height,od.bw,od.pulse,od.temperature,od.cc,od.hpi,od.pmh,od.fh,od.sh,od.hr,od.pe,od.rr,od.bmi,\
             ovstist.name AS ovstist_name,d.name AS doctor_name,\
@@ -50,11 +50,11 @@ pub fn select_visit_detail(hosxp: &str) -> String {
     ].concat()
 }
 
-// SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd101.name,''),' (PDX)'),CONCAT(IFNULL(ovstdiag.icd10,''),':',IFNULL(icd101.name,''))) AS diagnosis,diagtype,ovst_diag_id
+// SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd101.name,''),' (PDx)'),CONCAT(IFNULL(ovstdiag.icd10,''),':',IFNULL(icd101.name,''))) AS diagnosis,diagtype,ovst_diag_id
 //      FROM hos.ovstdiag LEFT JOIN hos.icd101 ON icd101.code=ovstdiag.icd10
 //      WHERE vn=? ORDER BY ovstdiag.diagtype,ovstdiag.icd10;
 // UNION
-// SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),':',IFNULL(icd9cm1.name,''),' (PDX)'),CONCAT(IFNULL(ovstdiag.icd10,''),':',IFNULL(icd9cm1.name,''))) AS diagnosis, diagtype, ovst_diag_id
+// SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),':',IFNULL(icd9cm1.name,''),' (PDx)'),CONCAT(IFNULL(ovstdiag.icd10,''),':',IFNULL(icd9cm1.name,''))) AS diagnosis, diagtype, ovst_diag_id
 //      FROM hos.ovstdiag INNER JOIN hos.icd9cm1 ON icd9cm1.code=ovstdiag.icd10
 //      WHERE vn=?
 // ORDER BY diagtype,ovst_diag_id;
@@ -62,38 +62,64 @@ pub fn select_visit_detail(hosxp: &str) -> String {
 /// return 'diagnosis'
 pub fn select_diagnosis(hosxp: &str) -> String {
     [
-        "SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd101.name,''),' (PDX)'),CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd101.name,''))) AS diagnosis,diagtype,ovst_diag_id \
+        "SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd101.name,''),' (PDx)'),CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd101.name,''))) AS diagnosis,diagtype,ovst_diag_id \
             FROM ",hosxp,".ovstdiag INNER JOIN ",hosxp,".icd101 ON icd101.code=ovstdiag.icd10 \
             WHERE vn=? \
         UNION \
-        SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd9cm1.name,''),' (PDX)'),CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd9cm1.name,''))) AS diagnosis,diagtype,ovst_diag_id \
+        SELECT IF(ovstdiag.diagtype=1,CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd9cm1.name,''),' (PDx)'),CONCAT(IFNULL(ovstdiag.icd10,''),' : ',IFNULL(icd9cm1.name,''))) AS diagnosis,diagtype,ovst_diag_id \
             FROM ",hosxp,".ovstdiag INNER JOIN ",hosxp,".icd9cm1 ON icd9cm1.code=ovstdiag.icd10 \
             WHERE vn=? \
         ORDER BY diagtype,ovst_diag_id;"
     ].concat()
 }
 
-// SELECT CONCAT(IFNULL(d.name,''),' ',IFNULL(d.strength,''),' ',
-//     IF(o1.sp_use <> '',CONCAT(IFNULL(u.name1,''),' ',IFNULL(u.name2,''),' ',IFNULL(u.name3,'')),''),
-//     IFNULL(du.shortlist,''),' X ',IFNULL(o1.qty,'')) AS drug
-// FROM hos.opitemrece o1
-//     INNER JOIN hos.drugitems d ON o1.icode=d.icode
-//     LEFT JOIN hos.drugusage du ON du.drugusage=o1.drugusage
-//     LEFT JOIN hos.sp_use u ON u.sp_use=o1.sp_use
-// WHERE o1.vn=? ORDER BY o1.item_no;
-/// vn|an(is_home_med)<br>
-/// return 'drug'
-pub fn select_drug(hosxp: &str, is_home_med: bool) -> String {
-    let w = if is_home_med {"o1.an=? AND o1.item_type='H'"} else {"o1.vn=?"};
+// // SELECT CONCAT(IFNULL(d.name,''),' ',IFNULL(d.strength,''),' ',
+// //     IF(o1.sp_use <> '',CONCAT(IFNULL(u.name1,''),' ',IFNULL(u.name2,''),' ',IFNULL(u.name3,'')),''),
+// //     IFNULL(du.shortlist,''),' X ',IFNULL(o1.qty,'')) AS drug
+// // FROM hos.opitemrece o1
+// //     INNER JOIN hos.drugitems d ON o1.icode=d.icode
+// //     LEFT JOIN hos.drugusage du ON du.drugusage=o1.drugusage
+// //     LEFT JOIN hos.sp_use u ON u.sp_use=o1.sp_use
+// // WHERE o1.vn=? ORDER BY o1.item_no;
+// /// vn|an(is_home_med)
+// pub fn select_drug(hosxp: &str, is_home_med: bool) -> String {
+//     let w = if is_home_med {"o1.an=? AND o1.item_type='H'"} else {"o1.vn=?"};
+//     [
+//         "SELECT CONCAT(IFNULL(d.name,''),' ',IFNULL(d.strength,''),' ',\
+//             IF(o1.sp_use <> '',CONCAT(IFNULL(u.name1,''),' ',IFNULL(u.name2,''),' ',IFNULL(u.name3,'')),''),\
+//             IFNULL(du.shortlist,''),' X ',IFNULL(o1.qty,'')) AS drug \
+//         FROM ",hosxp,".opitemrece o1 \
+//             INNER JOIN ",hosxp,".drugitems d ON o1.icode=d.icode \
+//             LEFT JOIN ",hosxp,".drugusage du ON du.drugusage=o1.drugusage \
+//             LEFT JOIN ",hosxp,".sp_use u ON u.sp_use=o1.sp_use \
+//         WHERE ",w," ORDER BY o1.item_no;"
+//     ].concat()
+// }
+
+// SELECT CONCAT(d.`name`,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,
+//     IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name1,sp.name1) AS name1,
+//     IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name2,sp.name2) AS name2,
+//     IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name3,sp.name3) AS name3,
+//     du.shortlist, IF(d.icode='1111111',1,0) AS is_medrec 
+// FROM hos.opitemrece o
+//     INNER JOIN hos.drugitems d ON d.icode=o.icode
+//     LEFT JOIN hos.sp_use sp ON sp.sp_use=o.sp_use
+//     LEFT JOIN hos.drugusage dr ON dr.drugusage=o.drugusage
+// WHERE o.hn=? AND (o.an IS NULL OR (o.an IS NOT NULL AND o.item_type='H')) AND o.vstdate BETWEEN ? AND ? ORDER BY o.rxdate DESC, o.rxtime DESC, d.`name`;;
+/// vn|an(is_home_med)
+pub fn select_drug(is_home_med: bool, med_rec_icode: &str, hosxp: &str) -> String {
+    let w = if is_home_med {"o.an=? AND o.item_type='H'"} else {"o.vn=?"};
     [
-        "SELECT CONCAT(IFNULL(d.name,''),' ',IFNULL(d.strength,''),' ',\
-            IF(o1.sp_use <> '',CONCAT(IFNULL(u.name1,''),' ',IFNULL(u.name2,''),' ',IFNULL(u.name3,'')),''),\
-            IFNULL(du.shortlist,''),' X ',IFNULL(o1.qty,'')) AS drug \
-        FROM ",hosxp,".opitemrece o1 \
-            INNER JOIN ",hosxp,".drugitems d ON o1.icode=d.icode \
-            LEFT JOIN ",hosxp,".drugusage du ON du.drugusage=o1.drugusage \
-            LEFT JOIN ",hosxp,".sp_use u ON u.sp_use=o1.sp_use \
-        WHERE ",w," ORDER BY o1.item_no;"
+        "SELECT CONCAT(d.`name`,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,\
+            IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name1,sp.name1) AS name1,\
+            IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name2,sp.name2) AS name2,\
+            IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name3,sp.name3) AS name3,\
+            du.shortlist, IF(d.icode='",med_rec_icode,"',1,0) AS is_medrec \
+        FROM ",hosxp,".opitemrece o \
+            INNER JOIN ",hosxp,".drugitems d ON d.icode=o.icode \
+            LEFT JOIN ",hosxp,".sp_use sp ON sp.sp_use=o.sp_use \
+            LEFT JOIN ",hosxp,".drugusage du ON du.drugusage=o.drugusage \
+        WHERE ",w," ORDER BY o.item_no;"
     ].concat()
 }
 

@@ -119,7 +119,9 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         }
         EndPoint::EmrVisitVn => {
             if paths.len() == 1 {
-                kphis_api_query::emr::get_emr_visit(paths[0], &app.db_pool, &app.hosxp()).await.map(|s| serde_json::json!(s).to_string())
+                kphis_api_query::emr::get_emr_visit(paths[0], &app.app_config.hosxp_med_reconcilation_icode, &app.db_pool, &app.hosxp())
+                    .await
+                    .map(|s| serde_json::json!(s).to_string())
             } else {
                 Err(invalid)
             }
@@ -1042,6 +1044,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
                     &app.egfr_codes(),
                     &app.scr_codes(),
                     &app.lab_codes(),
+                    &app.app_config.hosxp_med_reconcilation_icode,
                     &app.db_pool,
                     &app.hosxp(),
                     &app.kphis_extra(),

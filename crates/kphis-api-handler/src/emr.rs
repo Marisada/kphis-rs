@@ -41,7 +41,7 @@ pub async fn get_emr_date(Path(hn): Path<String>, ctx: RequestState) -> Result<J
 pub async fn get_emr_visit(Path(vn): Path<String>, ctx: RequestState) -> Result<Json<Option<EmrVisit>>, AppError> {
     ctx.authorize(false).await?;
 
-    let response = emr::get_emr_visit(&vn, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
+    let response = emr::get_emr_visit(&vn, &ctx.api_state.app_config.hosxp_med_reconcilation_icode, &ctx.api_state.db_pool, &ctx.api_state.hosxp()).await?;
 
     Ok(Json(response))
 }

@@ -18,8 +18,8 @@ use kphis_model::{
 use kphis_ui_app::App;
 use kphis_ui_core::{binding::Viewer, class};
 use kphis_util::{
-    datetime::{date_th_opt, time_hm_opt},
-    util::{f64_rescale, sanity_dot_space, str_some, zero_none},
+    datetime::{date_th_opt, date_th_relative, time_hm_opt},
+    util::{f64_rescale, str_some, zero_none},
 };
 
 use crate::{
@@ -424,39 +424,51 @@ impl EmrCpn {
                                 html!("li", {
                                     .children([
                                         html!("span", {.class(class::BOLD_L2).text("OPD Med :")}),
-                                        html!("ul", {.children(visit.drugs.iter().map(|s| {
-                                            html!("li", {.text(&sanity_dot_space(s))})
+                                        html!("ul", {.children(visit.drugs.iter().map(|med| {
+                                            html!("li", {.text(&med.label())})
+                                        }))}),
+                                    ])
+                                }),
+                                html!("li", {
+                                    .children([
+                                        html!("span", {.class(class::BOLD_L2).text("OPD Non-Med :")}),
+                                        html!("ul", {.children(visit.nondrugs.iter().map(|dx| {
+                                            html!("li", {.text(dx)})
                                         }))}),
                                     ])
                                 }),
                             ])
-                            .apply_if(visit.an.is_some(), |dom| {dom
-                                .child(html!("li", {
-                                    .children([
-                                        html!("span", {.class(class::BOLD_L2).text("Home Med :")}),
-                                        html!("ul", {.children(visit.home_drugs.iter().map(|s| {
-                                            html!("li", {.text(&sanity_dot_space(s))})
-                                        }))}),
-                                    ])
-                                }))
+                            .apply(|dom| {
+                                if let Some(dchdate) = visit.dchdate.as_ref() {
+                                    dom.child(html!("li", {
+                                        .children([
+                                            html!("span", {.class(class::BOLD_L2).text("Discharge :")}),
+                                            html!("span", {.style("white-space","pre-wrap").text(&date_th_relative(dchdate))}),
+                                        ])
+                                    }))
+                                } else {
+                                    dom
+                                }
                             })
-                            .child(html!("li", {
-                                .children([
-                                    html!("span", {.class(class::BOLD_L2).text("OPD Non-Drug :")}),
-                                    html!("ul", {.children(visit.nondrugs.iter().map(|dx| {
-                                        html!("li", {.text(dx)})
-                                    }))}),
-                                ])
-                            }))
                             .apply_if(visit.an.is_some(), |dom| {dom
-                                .child(html!("li", {
-                                    .children([
-                                        html!("span", {.class(class::BOLD_L2).text("Home Non-Drug :")}),
-                                        html!("ul", {.children(visit.home_nondrugs.iter().map(|dx| {
-                                            html!("li", {.text(dx)})
-                                        }))}),
-                                    ])
-                                }))
+                                .children([
+                                    html!("li", {
+                                        .children([
+                                            html!("span", {.class(class::BOLD_L2).text("Home Med :")}),
+                                            html!("ul", {.children(visit.home_drugs.iter().map(|med| {
+                                                html!("li", {.text(&med.label())})
+                                            }))}),
+                                        ])
+                                    }),
+                                    html!("li", {
+                                        .children([
+                                            html!("span", {.class(class::BOLD_L2).text("Home Non-Med :")}),
+                                            html!("ul", {.children(visit.home_nondrugs.iter().map(|dx| {
+                                                html!("li", {.text(dx)})
+                                            }))}),
+                                        ])
+                                    }),
+                                ])
                             })
                             .apply_if(visit.has_data_refer_out, |dom| dom
                                 .child(html!("li", {

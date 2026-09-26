@@ -12,6 +12,7 @@ use kphis_model::{
     fetch::Method,
     prescription::{Medicine, PostalPatch, PrescriptionInfo, PrescriptionScreen, PrescriptionScreenParams, PrescriptionScreenPatch, PrescriptionVn, TelemedPatch, VisitDate},
     route::Route,
+    user::permission::Permission,
 };
 use kphis_ui_app::App;
 use kphis_ui_component::{
@@ -30,6 +31,8 @@ use kphis_util::{
 /// - GET `EndPoint::LabItem` (LabHistory, guarded, cannot click lab result)
 #[derive(Clone, Default)]
 pub struct PrescriptionScreenPage {
+    allow_search: bool,
+
     loaded: Mutable<bool>,
     reload_visit: Mutable<bool>,
     changed: Mutable<bool>,
@@ -62,6 +65,7 @@ pub struct PrescriptionScreenPage {
 impl PrescriptionScreenPage {
     pub fn new(search_text: String) -> Rc<Self> {
         Rc::new(Self {
+            allow_search: search_text.is_empty(),
             search_text: Mutable::new(search_text),
             ..Default::default()
         })
@@ -313,6 +317,7 @@ impl PrescriptionScreenPage {
 
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
         app.set_title("KPHIS - Prescription Screen");
+        let allow_patch = (app.has_permission(Permission::IpdPharmacyOrderMainProgramAccess) || app.has_permission(Permission::OpdErPharmacyOrderProgramAccess)) && app.endpoint_is_allow(&Method::PATCH, &EndPoint::PrescrptionScreen, false);
 
         html!("div", {
             .future(map_ref!(
@@ -371,7 +376,9 @@ impl PrescriptionScreenPage {
                             .class("col-auto")
                             .child(html!("h3", {.text("Screen ใบสั่งยา")}))
                         }),
-                        html!("div", {
+                    ])
+                    .apply_if(page.allow_search, |dom| dom
+                        .child(html!("div", {
                             .class("col-auto")
                             .child(html!("div", {
                                 .class(class::INPUT_GROUP)
@@ -398,18 +405,18 @@ impl PrescriptionScreenPage {
                                             }))
                                         })
                                     }),
-                                    html!("button", {
-                                        .attr("type", "button")
-                                        .class(class::BTN_L_BLUE)
-                                        .text("ค้นหา")
-                                        .event(clone!(page => move |_: events::Click| {
-                                            page.changed.set_neq(true);
-                                        }))
-                                    })
                                 ])
+                                .child(html!("button", {
+                                    .attr("type", "button")
+                                    .class(class::BTN_L_BLUE)
+                                    .text("ค้นหา")
+                                    .event(clone!(page => move |_: events::Click| {
+                                        page.changed.set_neq(true);
+                                    }))
+                                }))
                             }))
-                        }),
-                    ])
+                        }))
+                    )
                     .child_signal(app.loader_is_loading().map(|is_loading| {
                         is_loading.then(|| {
                             html!("div", {
@@ -479,10 +486,10 @@ impl PrescriptionScreenPage {
                                                     Self::render_drug_interaction(visit),
                                                     Self::render_labs(visit, page.clone(), app.clone()),
                                                     Self::render_visit_message(visit, app.clone()),
-                                                    Self::render_visit_action(visit, page.clone(), app.clone()),
-                                                    Self::render_visit_postal(visit, page.clone(), app.clone()),
-                                                    Self::render_visit_telemed(visit, page.clone(), app.clone()),
-                                                    Self::render_pharmacy_care(visit, page.clone(), app.clone()),
+                                                    Self::render_visit_action(visit, allow_patch, page.clone(), app.clone()),
+                                                    Self::render_visit_postal(visit, allow_patch, page.clone(), app.clone()),
+                                                    Self::render_visit_telemed(visit, allow_patch, page.clone(), app.clone()),
+                                                    Self::render_pharmacy_care(visit, allow_patch, page.clone(), app.clone()),
                                                 ])
                                             })
                                         })
@@ -783,8 +790,9 @@ impl PrescriptionScreenPage {
                             }),
                             html!("tbody", {
                                 .children_signal_vec(page.current_meds.signal_vec_cloned().enumerate().map(|(i, (med, prevs))| {
+                                    let med_shortlist = med.shortlist();
                                     let (is_new, is_same) = if let Some(last) = prevs.first() {
-                                        (false, last.icode == med.icode && last.strength == med.strength && last.shortlist == med.shortlist)
+                                        (false, last.icode == med.icode && last.strength == med.strength && last.shortlist() == med_shortlist)
                                     } else {
                                         (true, false)
                                     };
@@ -803,10 +811,12 @@ impl PrescriptionScreenPage {
                                             html!("td", {.text(&(i.get().unwrap_or_default() + 1).to_string())}),
                                             html!("td", {
                                                 // .class("text-end")
-                                                .child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))
+                                                .child(html!("span", {
+                                                    .text(&med.med_name())
+                                                }))
                                             }),
                                             html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
-                                            html!("td", {.text(&med.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default())}),
+                                            html!("td", {.text(&sanity_dot_space(&med_shortlist))}),
                                         ])
                                     })
                                 }))
@@ -1141,13 +1151,12 @@ impl PrescriptionScreenPage {
         })
     }
 
-    pub fn render_visit_action(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_action(visit: &Rc<PrescriptionVn>, allow_patch: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
         let total_minutes_opt = if let (Some(visit_datetime), Some(pharmacist_done_time)) = (datetime_from_opt(visit.vstdate, visit.vsttime), visit.pharmacist_done_time) {
             Some((pharmacist_done_time - visit_datetime).whole_minutes())
         } else {
             None
         };
-        let allow_patch = app.endpoint_is_allow(&Method::PATCH, &EndPoint::PrescrptionScreen, false);
 
         html!("div", {
             .class(class::BOX_ROUND_T)
@@ -1363,7 +1372,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    pub fn render_visit_postal(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_postal(visit: &Rc<PrescriptionVn>, allow_patch: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1377,7 +1386,7 @@ impl PrescriptionScreenPage {
                     .apply(|dom| {
                         if visit.vn.is_some() && visit.pharmacist_check_time.is_some() {
                             let is_ok = visit.postal_status.as_ref().map(|s| s == "Y");
-                            let edit_btn_opt = app.endpoint_is_allow(&Method::PATCH, &EndPoint::PrescrptionScreen, false).then(|| {
+                            let edit_btn_opt = allow_patch.then(|| {
                                 html!("button" => HtmlButtonElement, {
                                     .apply(|d| {
                                         match is_ok {
@@ -1445,7 +1454,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    pub fn render_visit_telemed(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_visit_telemed(visit: &Rc<PrescriptionVn>, allow_patch: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1473,6 +1482,7 @@ impl PrescriptionScreenPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("id","telemed_add")
                                                 .attr("rows","1")
+                                                .apply_if(!allow_patch, |d| d.attr("disabled",""))
                                                 .apply(mixins::textarea_value_auto_expand(page.telemed_add.clone(), page.telemed_changed.clone()))
                                             }))
                                         }),
@@ -1492,6 +1502,7 @@ impl PrescriptionScreenPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("id","telemed_dose_up")
                                                 .attr("rows","1")
+                                                .apply_if(!allow_patch, |d| d.attr("disabled",""))
                                                 .apply(mixins::textarea_value_auto_expand(page.telemed_dose_up.clone(), page.telemed_changed.clone()))
                                             }))
                                         }),
@@ -1511,6 +1522,7 @@ impl PrescriptionScreenPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("id","telemed_dose_down")
                                                 .attr("rows","1")
+                                                .apply_if(!allow_patch, |d| d.attr("disabled",""))
                                                 .apply(mixins::textarea_value_auto_expand(page.telemed_dose_down.clone(), page.telemed_changed.clone()))
                                             }))
                                         }),
@@ -1530,6 +1542,7 @@ impl PrescriptionScreenPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("id","telemed_off")
                                                 .attr("rows","1")
+                                                .apply_if(!allow_patch, |d| d.attr("disabled",""))
                                                 .apply(mixins::textarea_value_auto_expand(page.telemed_off.clone(), page.telemed_changed.clone()))
                                             }))
                                         }),
@@ -1549,6 +1562,7 @@ impl PrescriptionScreenPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("id","telemed_other")
                                                 .attr("rows","1")
+                                                .apply_if(!allow_patch, |d| d.attr("disabled",""))
                                                 .apply(mixins::textarea_value_auto_expand(page.telemed_other.clone(), page.telemed_changed.clone()))
                                             }))
                                         }),
@@ -1556,17 +1570,15 @@ impl PrescriptionScreenPage {
                                 }),
                             ])
                             .apply(|dom| {
-                                let edit_btn_opt = if app.endpoint_is_allow(&Method::PATCH, &EndPoint::PrescrptionScreen, false) {
-                                    Some(html!("button" => HtmlButtonElement, {
+                                let edit_btn_opt = allow_patch.then(|| {
+                                    html!("button" => HtmlButtonElement, {
                                         .class(class::BTN_R_BLUE)
                                         .text("บันทึก")
                                         .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page, visit => move || {
                                             Self::update_telemed(visit.clone(), page.clone(), app.clone());
                                         }), not(page.telemed_changed.signal()), app.state()))
-                                    }))
-                                } else {
-                                    None
-                                };
+                                    })
+                                });
                                 if let (Some(telemed_doctor_name), Some(telemed_time)) = (&visit.telemed_doctor_name, visit.telemed_time) {
                                     dom.children([
                                         html!("li", {
@@ -1582,8 +1594,8 @@ impl PrescriptionScreenPage {
                                             .class(class::TXT_R_B2)
                                             .apply(|d| {
                                                 if let Some(edit_btn) = edit_btn_opt {
-                                                    d.child_signal(page.telemed_changed.signal().map(clone!(page, visit => move |changed| {
-                                                        changed.then(|| {
+                                                    d.child_signal(page.telemed_changed.signal().map(clone!(page, visit => move |telemed_changed| {
+                                                        telemed_changed.then(|| {
                                                             html!("button" => HtmlButtonElement, {
                                                                 .class(class::BTN_R_GRAY)
                                                                 .text("ยกเลิก")
@@ -1625,7 +1637,7 @@ impl PrescriptionScreenPage {
         })
     }
 
-    pub fn render_pharmacy_care(visit: &Rc<PrescriptionVn>, page: Rc<Self>, app: Rc<App>) -> Dom {
+    pub fn render_pharmacy_care(visit: &Rc<PrescriptionVn>, allow_patch: bool, page: Rc<Self>, app: Rc<App>) -> Dom {
         html!("div", {
             .class(class::BOX_ROUND_T)
             .style("break-inside","avoid")
@@ -1639,22 +1651,21 @@ impl PrescriptionScreenPage {
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
                         .attr("rows","1")
+                        .apply_if(!allow_patch, |d| d.attr("disabled",""))
                         .apply(mixins::textarea_value_auto_expand(page.pharmacy_care.clone(), page.pharmacy_care_changed.clone()))
                     }))
                 }),
             ])
             .apply(|dom| {
-                let edit_btn_opt = if app.endpoint_is_allow(&Method::PATCH, &EndPoint::PrescrptionScreen, false) {
-                    Some(html!("button" => HtmlButtonElement, {
+                let edit_btn_opt = allow_patch.then(|| {
+                    html!("button" => HtmlButtonElement, {
                         .class(class::BTN_R_BLUE)
                         .text("บันทึก")
                         .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page, visit => move || {
                             Self::update_pharmacy_care(visit.clone(), page.clone(), app.clone());
                         }), not(page.pharmacy_care_changed.signal()), app.state()))
-                    }))
-                } else {
-                    None
-                };
+                    })
+                });
                 if let (Some(pharmacy_care_doctor_name), Some(pharmacy_care_time)) = (&visit.pharmacy_care_doctor_name, visit.pharmacy_care_time) {
                     dom.children([
                         html!("ul", {
@@ -1672,8 +1683,8 @@ impl PrescriptionScreenPage {
                             .class(class::TXT_R_B2)
                             .apply(|d| {
                                 if let Some(edit_btn) = edit_btn_opt {
-                                    d.child_signal(page.pharmacy_care_changed.signal().map(clone!(page, visit => move |changed| {
-                                        changed.then(|| {
+                                    d.child_signal(page.pharmacy_care_changed.signal().map(clone!(page, visit => move |pharmacy_care_changed| {
+                                        pharmacy_care_changed.then(|| {
                                             html!("button" => HtmlButtonElement, {
                                                 .class(class::BTN_R_GRAY)
                                                 .text("ยกเลิก")
@@ -1779,8 +1790,9 @@ impl PrescriptionScreenPage {
                                                 html!("tbody", {
                                                     .children_signal_vec(page.current_meds.signal_vec_cloned().enumerate().map(clone!(page => move |(i, (med, prevs))| {
                                                         let last_opt = prevs.first().cloned();
+                                                        let med_shortlist = med.shortlist();
                                                         let (is_new, is_icode_changed, is_qty_changed, is_strength_changed, is_shortlist_changed) = if let Some(last) = last_opt.as_ref() {
-                                                            (false, last.icode != med.icode, last.qty != med.qty, last.strength != med.strength, last.shortlist != med.shortlist)
+                                                            (false, last.icode != med.icode, last.qty != med.qty, last.strength != med.strength, last.shortlist() != med_shortlist)
                                                         } else {
                                                             (true, false, false, false, false)
                                                         };
@@ -1797,25 +1809,25 @@ impl PrescriptionScreenPage {
                                                             })
                                                             .children([
                                                                 html!("td", {.text(&(i.get().unwrap_or_default() + 1).to_string())}),
-                                                                html!("td", {.child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))}),
+                                                                html!("td", {.child(html!("span",{.text(&med.med_name())}))}),
                                                                 html!("td", {
                                                                     .apply(|dom| {
                                                                         if is_new {
                                                                             dom.text("-")
                                                                         } else if is_icode_changed {
-                                                                            dom.class(class::BOLD_RED).text(&last_opt.as_ref().and_then(|last| last.name_drugitems.clone()).unwrap_or(String::from("ไม่ระบุ")))
+                                                                            dom.class(class::BOLD_RED).text(&last_opt.as_ref().map(|last| last.med_name()).unwrap_or(String::from("ไม่ระบุ")))
                                                                         } else {
                                                                             dom.child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)}))
                                                                         }
                                                                     })
                                                                 }),
-                                                                html!("td", {.text(&med.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default())}),
+                                                                html!("td", {.text(&sanity_dot_space(&med_shortlist))}),
                                                                 html!("td", {
                                                                     .apply(|dom| {
                                                                         if is_new {
                                                                             dom.text("-")
                                                                         } else if is_shortlist_changed {
-                                                                            dom.class(class::BOLD_RED).text(&last_opt.as_ref().and_then(|last| last.shortlist.as_ref().map(|s| sanity_dot_space(s))).unwrap_or(String::from("ไม่ระบุ")))
+                                                                            dom.class(class::BOLD_RED).text(&last_opt.as_ref().map(|last| sanity_dot_space(&last.shortlist())).unwrap_or(String::from("ไม่ระบุ")))
                                                                         } else {
                                                                             dom.child(html!("i", {.class(class::FA_CHECK_CIRCLE_GREEN)}))
                                                                         }
@@ -1937,8 +1949,8 @@ impl PrescriptionScreenPage {
                                                             html!("tr", {
                                                                 .children([
                                                                     html!("td", {.text(&(i.get().unwrap_or_default() + 1).to_string())}),
-                                                                    html!("td", {.child(html!("span",{.text(&med.name_drugitems.clone().unwrap_or_default())}))}),
-                                                                    html!("td", {.text(&med.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default())}),
+                                                                    html!("td", {.child(html!("span",{.text(&med.med_name())}))}),
+                                                                    html!("td", {.text(&sanity_dot_space(&med.shortlist()))}),
                                                                     html!("td", {.text(&med.qty.map(|i| i.to_string()).unwrap_or_default())}),
                                                                     html!("td", {
                                                                         .text(&date_and_time_th_opt_relative(&med.rxdate, &med.rxtime))
