@@ -309,7 +309,8 @@ pub struct PrescriptionVn {
 impl PrescriptionVn {
     pub fn current_meds_has_unique_generic_name(&self) -> bool {
         let mut unique = HashSet::new();
-        self.medicines.iter().filter(|med| self.vn.is_some() && self.vn == med.vn).all(|med| unique.insert(&med.generic_name))
+        // medrec_icode always has the same generic name, se we skip them here
+        self.medicines.iter().filter(|med| self.vn.is_some() && self.vn == med.vn).all(|med| med.is_medrec || unique.insert(&med.generic_name))
     }
 
     // self::medicines sorted by rxdate DESC (new to old)
@@ -328,23 +329,37 @@ impl PrescriptionVn {
                 if let Some(icode) = med.icode.as_ref() {
                     // allow duplicate icode in currents
                     if has_current && ((self.an.is_some() && self.an == med.an) || med.vn == self.vn) {
-                        used_icodes.insert(icode);
-                        currents.push(med.clone());
-                        if let Some(generic_name) = med.generic_name.as_ref() {
-                            current_generic_names.insert(generic_name);
+                        if med.is_medrec {
+                            // medrec has the same icode, so we not insert to used_icode
+                            currents.push(med.clone());
+                            // try using name1 as generic name
+                            if let Some(generic_name) = med.name1.as_ref() {
+                                current_generic_names.insert(generic_name);
+                            }
+                        } else {
+                            used_icodes.insert(icode);
+                            currents.push(med.clone());
+                            if let Some(generic_name) = med.generic_name.as_ref() {
+                                current_generic_names.insert(generic_name);
+                            }
                         }
                     // screen out a visit that occurred after selected visit
                     } else if has_current && currents.is_empty() {
                         continue;
-                    // collect already matched generic-name/icode item to other_hx
-                    } else if let Some(generic_name) = med.generic_name.as_ref()
-                        && (current_generic_names.contains(generic_name) || used_icodes.contains(&icode))
-                    {
-                        other_hx.entry(generic_name.clone()).and_modify(|v: &mut Vec<Medicine>| v.push(med.clone())).or_insert(vec![med.clone()]);
-                    // the rest is missed item
                     } else {
-                        used_icodes.insert(icode);
-                        other_latest.push(med.clone());
+                        let generic_opt = if med.is_medrec { med.name1.as_ref() } else { med.generic_name.as_ref() };
+                        // collect already matched generic-name/icode item to other_hx
+                        if let Some(generic_name) = generic_opt
+                            && (current_generic_names.contains(generic_name) || used_icodes.contains(&icode))
+                        {
+                            other_hx.entry(generic_name.clone()).and_modify(|v: &mut Vec<Medicine>| v.push(med.clone())).or_insert(vec![med.clone()]);
+                        // the rest is missed item
+                        } else {
+                            if !med.is_medrec {
+                                used_icodes.insert(icode);
+                            }
+                            other_latest.push(med.clone());
+                        }
                     }
                 }
             }
@@ -353,14 +368,16 @@ impl PrescriptionVn {
                 currents
                     .into_iter()
                     .map(|item| {
-                        let hx = item.generic_name.as_ref().and_then(|gen_name| other_hx.get(gen_name)).cloned().unwrap_or_default();
+                        let generic_opt = if item.is_medrec { item.name1.as_ref() } else { item.generic_name.as_ref() };
+                        let hx = generic_opt.and_then(|gen_name| other_hx.get(gen_name)).cloned().unwrap_or_default();
                         (item, hx)
                     })
                     .collect(),
                 other_latest
                     .into_iter()
                     .map(|item| {
-                        let hx = item.generic_name.as_ref().and_then(|gen_name| other_hx.get(gen_name)).cloned().unwrap_or_default();
+                        let generic_opt = if item.is_medrec { item.name1.as_ref() } else { item.generic_name.as_ref() };
+                        let hx = generic_opt.and_then(|gen_name| other_hx.get(gen_name)).cloned().unwrap_or_default();
                         (item, hx)
                     })
                     .collect(),
@@ -414,7 +431,7 @@ impl PrescriptionVn {
 }
 
 /// Medicine data of HosXp Prescription Info
-#[derive(Clone, Demo, Deserialize, Serialize, FromRow, ToSchema)]
+#[derive(Clone, Debug, Demo, Deserialize, Serialize, FromRow, ToSchema)]
 #[schema(example = json!(Medicine::demo()))]
 pub struct Medicine {
     #[Demo(value = r#"Some(String::from("PARACETAMOL"))"#)]
@@ -431,18 +448,26 @@ pub struct Medicine {
     pub rxdate: Option<Date>,
     #[Demo(value = r#"Some(time!(23:59:59))"#)]
     pub rxtime: Option<Time>,
-    #[Demo(value = r#"Some(String::from("0666"))"#)]
-    pub drugusage: Option<String>,
     #[Demo(value = r#"Some(String::from("661231235959"))"#)]
     pub vn: Option<String>,
     #[Demo(value = r#"Some(String::from("660001234"))"#)]
     pub an: Option<String>,
     #[Demo(value = r#"Some(String::from("0001234"))"#)]
     pub hn: Option<String>,
+    #[Demo(value = r#"Some(String::from("0666"))"#)]
+    pub drugusage: Option<String>,
     #[Demo(value = r#"Some(String::from("1111111"))"#)]
     pub sp_use: Option<String>,
+    #[Demo(value = r#"Some(String::from("รับประทานครั้งละ 1 เม็ด"))"#)]
+    pub name1: Option<String>,
+    #[Demo(value = r#"Some(String::from("ทุก 4-6 ชั่วโมง"))"#)]
+    pub name2: Option<String>,
+    #[Demo(value = r#"Some(String::from("เวลามีไข้"))"#)]
+    pub name3: Option<String>,
     #[Demo(value = r#"Some(String::from("22pt (2 เม็ด * 2 PC)"))"#)]
     pub shortlist: Option<String>,
+    #[Demo(value = "false")]
+    pub is_medrec: bool,
     // /// type^code^name_drugitems^strength^qty^icode^datetime^shortlist
     // #[Demo(value = r#"Some(String::from("VN^660531084331^PARACETAMOL 500 mg. เม็ด^500 mg.^20^1000227^2023-05-31 09:49:12^22pt (2 เม็ด * 2 PC)"))"#)]
     // pub last_prescription: Option<String>,
@@ -455,13 +480,45 @@ impl Medicine {
             &date_and_time_th_opt_relative(&self.rxdate, &self.rxtime),
             if self.an.is_some() { " HM" } else { "" },
             "] ",
-            &self.name_drugitems.clone().unwrap_or_default(),
+            &self.med_name(),
             " : ",
-            &self.shortlist.as_ref().map(|s| sanity_dot_space(s)).unwrap_or_default(),
+            &sanity_dot_space(&self.shortlist()),
             " #",
             &self.qty.map(|i| i.to_string()).unwrap_or(String::from("??")),
         ]
         .concat()
+    }
+
+    pub fn label(&self) -> String {
+        [&self.med_name(), " : ", &sanity_dot_space(&self.shortlist()), " #", &self.qty.map(|i| i.to_string()).unwrap_or(String::from("??"))].concat()
+    }
+
+    pub fn med_name(&self) -> String {
+        if self.is_medrec {
+            // medrec always has sp_use, use name1 as med-name
+            self.name1.clone().unwrap_or_default()
+        } else {
+            self.name_drugitems.clone().unwrap_or_default()
+        }
+    }
+
+    pub fn shortlist(&self) -> String {
+        if self.is_medrec {
+            [&self.name2.clone().unwrap_or_default(), " ", &self.name3.clone().unwrap_or_default()].concat()
+        } else if let Some(shortlist) = self.shortlist.as_ref() {
+            [
+                shortlist,
+                " : ",
+                &self.name1.clone().unwrap_or_default(),
+                " ",
+                &self.name2.clone().unwrap_or_default(),
+                " ",
+                &self.name3.clone().unwrap_or_default(),
+            ]
+            .concat()
+        } else {
+            [&self.name1.clone().unwrap_or_default(), " ", &self.name2.clone().unwrap_or_default(), " ", &self.name3.clone().unwrap_or_default()].concat()
+        }
     }
 }
 

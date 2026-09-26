@@ -563,8 +563,12 @@ impl IpdMainPage {
                             doms::nav_item_external_url(&hn_url, "Scan ")
                         })
                     })))
-                    .child_signal(page.patient.signal_cloned().map(|pt_mut| pt_mut.patient.signal_cloned()).flatten().map(clone!(app => move |pt_opt| {
-                        pt_opt.and_then(|pt| pt.hn()).and_then(|hn| {
+                    .child_signal(map_ref! {
+                        let hn_opt = page.patient.signal_cloned().map(|pt_mut| pt_mut.patient.signal_cloned()).flatten().map(|pt_opt| pt_opt.and_then(|pt| pt.hn())),
+                        let is_allow = page.view_by.signal_ref(|view_by| ["doctor","nurse","pharmacist"].contains(&view_by.as_str())) =>
+                        (hn_opt.clone(), *is_allow)
+                    }.map(clone!(app, page => move |(hn_opt, is_allow)| {
+                        if is_allow && let Some(hn) = hn_opt.and_then(|s| str_some(&s)) {
                             let route = Route::PrescriptionScreen {hn};
                             if route.has_permission(app.state()) {
                                 Some(html!("li", {
@@ -583,7 +587,9 @@ impl IpdMainPage {
                             } else {
                                 None
                             }
-                        })
+                        } else {
+                            None
+                        }
                     })))
                     .apply_if(
                         app.endpoint_is_allow(&Method::GET, &EndPoint::EmrDateHn, false)

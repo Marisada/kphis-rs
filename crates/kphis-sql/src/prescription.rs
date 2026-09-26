@@ -251,19 +251,27 @@ pub fn select_info_vn(hosxp: &str, kphis_extra: &str) -> String {
 // }
 
 // SELECT CONCAT(d.`name`,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,
-//     IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM hos.sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist
+//     IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name1,sp.name1) AS name1,
+//     IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name2,sp.name2) AS name2,
+//     IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name3,sp.name3) AS name3,
+//     du.shortlist, IF(d.icode='1111111',1,0) AS is_medrec 
 // FROM hos.opitemrece o
 //     INNER JOIN hos.drugitems d ON d.icode=o.icode
+//     LEFT JOIN hos.sp_use sp ON sp.sp_use=o.sp_use
 //     LEFT JOIN hos.drugusage dr ON dr.drugusage=o.drugusage
 // WHERE o.hn=? AND (o.an IS NULL OR (o.an IS NOT NULL AND o.item_type='H')) AND o.vstdate BETWEEN ? AND ? ORDER BY o.rxdate DESC, o.rxtime DESC, d.`name`;;
 /// hn, start-date, end-date
-pub fn select_info_medicine_in_range(hosxp: &str) -> String {
+pub fn select_info_medicine_in_range(med_rec_icode: &str, hosxp: &str) -> String {
     [
         "SELECT CONCAT(d.`name`,' ',d.strength,' ',d.units) AS name_drugitems,d.generic_name,d.strength,o.qty,o.icode,o.rxdate,o.rxtime,o.drugusage,o.vn,o.an,o.hn,o.sp_use,\
-            IF(o.sp_use <> '',(SELECT CONCAT(IFNULL(name1,''),' ',IFNULL(name2,''),' ',IFNULL(name3,'')) FROM ",hosxp,".sp_use WHERE sp_use=o.sp_use),dr.shortlist) AS shortlist \
+            IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name1,sp.name1) AS name1,\
+            IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name2,sp.name2) AS name2,\
+            IF(o.sp_use IS NULL OR TRIM(o.sp_use)='',du.name3,sp.name3) AS name3,\
+            du.shortlist, IF(d.icode='",med_rec_icode,"',1,0) AS is_medrec \
         FROM ",hosxp,".opitemrece o \
             INNER JOIN ",hosxp,".drugitems d ON d.icode=o.icode \
-            LEFT JOIN ",hosxp,".drugusage dr ON dr.drugusage=o.drugusage \
+            LEFT JOIN ",hosxp,".sp_use sp ON sp.sp_use=o.sp_use \
+            LEFT JOIN ",hosxp,".drugusage du ON du.drugusage=o.drugusage \
         WHERE o.hn=? AND (o.an IS NULL OR (o.an IS NOT NULL AND o.item_type='H')) AND o.vstdate BETWEEN ? AND ? ORDER BY o.rxdate DESC, o.rxtime DESC, d.`name`;"
     ].concat()
 }

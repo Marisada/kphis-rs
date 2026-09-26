@@ -785,6 +785,7 @@ impl App {
                 app.user.set(None);
                 app.app_asset.set(None);
                 app.sse_end(0);
+                app.renew_access_token_cache.set((0, (false, false)));
                 if is_clean {
                     if let Err(e) = AppAsset::patch_asset(app.state()).await {
                         log::error!("Error:{}",e.message);

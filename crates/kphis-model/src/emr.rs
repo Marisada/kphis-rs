@@ -10,7 +10,13 @@ use utoipa::ToSchema;
 
 use kphis_util::error::{AppError, Source};
 
-use crate::{app::AppState, endpoint::EndPoint, fetch::fetch_json_api, image::scan_his::ScanHisExists, prescription::NextAppointment};
+use crate::{
+    app::AppState,
+    endpoint::EndPoint,
+    fetch::fetch_json_api,
+    image::scan_his::ScanHisExists,
+    prescription::{Medicine, NextAppointment},
+};
 
 /// Key parts of EMR Visit
 #[derive(Clone, Debug, Demo, Deserialize, FromRow, Serialize, ToSchema)]
@@ -55,6 +61,8 @@ pub struct EmrVisit {
     pub vstdate: Option<Date>,
     #[Demo(value = "Some(time!(23:59:59))")]
     pub vsttime: Option<Time>,
+    #[Demo(value = "Some(date!(2024-01-01))")]
+    pub dchdate: Option<Date>,
     #[Demo(value = r#"Some(String::from("66001234"))"#)]
     pub an: Option<String>,
     #[Demo(value = r#"Some(String::from("0001234"))"#)]
@@ -107,11 +115,11 @@ pub struct EmrVisit {
     #[Demo(value = r#"vec![String::from("I10 : Essential Hypertension (PDX)")]"#)]
     pub diagnoses: Vec<String>,
     #[sqlx(skip)]
-    #[Demo(value = r#"vec![String::from("PARACETAMOL 500 mg. 1prtq6(1 เม็ด q 6 ชม) X 10")]"#)]
-    pub drugs: Vec<String>,
+    #[Demo(value = r#"vec![Medicine::demo()]"#)]
+    pub drugs: Vec<Medicine>,
     #[sqlx(skip)]
-    #[Demo(value = r#"vec![String::from("PARACETAMOL 500 mg. 1prtq6(1 เม็ด q 6 ชม) X 10")]"#)]
-    pub home_drugs: Vec<String>,
+    #[Demo(value = r#"vec![Medicine::demo()]"#)]
+    pub home_drugs: Vec<Medicine>,
     #[sqlx(skip)]
     #[Demo(value = r#"vec![String::from("ค่าบริการผู้ป่วยนอกในเวลาราชการ(55020) X 1")]"#)]
     pub nondrugs: Vec<String>,

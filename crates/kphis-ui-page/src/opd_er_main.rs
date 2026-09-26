@@ -1014,15 +1014,19 @@ impl OpdErMainPage {
                             doms::nav_item_external_url(&hn_url, "Scan ")
                         })
                     })))
-                    .child_signal(page.hn.signal_cloned().map(clone!(app => move |hn| {
-                        if !hn.is_empty() {
-                            let route = Route::PrescriptionScreen{ hn };
+                    .child_signal(map_ref! {
+                        let hn_opt = page.patient.signal_cloned().map(|pt_mut| pt_mut.patient.signal_cloned()).flatten().map(|pt_opt| pt_opt.and_then(|pt| pt.hn())),
+                        let is_allow = page.view_by.signal_ref(|view_by| ["doctor","nurse","pharmacist"].contains(&view_by.as_str())) =>
+                        (hn_opt.clone(), *is_allow)
+                    }.map(clone!(app, page => move |(hn_opt, is_allow)| {
+                        if is_allow && let Some(hn) = hn_opt.and_then(|s| str_some(&s)) {
+                            let route = Route::PrescriptionScreen {hn};
                             if route.has_permission(app.state()) {
                                 Some(html!("li", {
                                     .class(class::NAV_ITEM_PY)
                                     .child(html!("a", {
                                         .class("nav-link")
-                                        .attr("href", "#")
+                                        .attr("href","#")
                                         .text("ประวัติการสั่งยา ")
                                         .child(html!("i", {.class(class::FA_DISPLAY)}))
                                         .event_with_options(&EventOptions::preventable(), move |event: events::Click| {

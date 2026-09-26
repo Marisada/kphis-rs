@@ -28,6 +28,7 @@ pub async fn get_prescription_screen(Query(params): Query<PrescriptionScreenPara
         &ctx.api_state.egfr_codes(),
         &ctx.api_state.scr_codes(),
         &ctx.api_state.lab_codes(),
+        &ctx.api_state.app_config.hosxp_med_reconcilation_icode,
         &ctx.api_state.db_pool,
         &ctx.api_state.hosxp(),
         &ctx.api_state.kphis_extra(),

@@ -3,6 +3,7 @@ use sqlx::{AssertSqlSafe, FromRow, MySql, Pool, Row};
 use kphis_model::{
     emr::{EmrDate, EmrVisit},
     image::scan_his::ScanHisExists,
+    prescription::Medicine,
 };
 use kphis_sql::{emr, image::scan_his};
 use kphis_util::error::{AppError, Source};
@@ -21,17 +22,17 @@ pub async fn get_emr_date(hn: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &str
     Ok(result)
 }
 
-pub async fn get_emr_visit(vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Option<EmrVisit>, AppError> {
+pub async fn get_emr_visit(vn: &str, med_rec_icode: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Option<EmrVisit>, AppError> {
     let mut result = select_visit_detail(vn, pool, hosxp).await?;
 
     if let Some(visit) = result.as_mut() {
         visit.diagnoses = select_diagnosis(vn, pool, hosxp).await?;
-        visit.drugs = select_drug(vn, false, pool, hosxp).await?;
+        visit.drugs = select_drug(vn, false, med_rec_icode, pool, hosxp).await?;
         visit.nondrugs = select_nondrug(vn, false, pool, hosxp).await?;
         visit.next_app = select_next_app(&vn, pool, hosxp).await?;
 
         if let Some(an) = visit.an.as_ref() {
-            visit.home_drugs = select_drug(an, true, pool, hosxp).await?;
+            visit.home_drugs = select_drug(an, true, med_rec_icode, pool, hosxp).await?;
             visit.home_nondrugs = select_nondrug(an, true, pool, hosxp).await?;
         }
         visit.image_exists = select_his_image_exists(&visit.vn, &visit.an, pool, hosxp).await?;
@@ -61,13 +62,13 @@ async fn select_diagnosis(vn: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<V
 }
 
 /// is_home_med use an, else vn
-async fn select_drug(vnan: &str, is_home_med: bool, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<String>, AppError> {
-    let drugs_sql = emr::select_drug(hosxp, is_home_med);
+async fn select_drug(vnan: &str, is_home_med: bool, med_rec_icode: &str, pool: &Pool<MySql>, hosxp: &str) -> Result<Vec<Medicine>, AppError> {
+    let drugs_sql = emr::select_drug(is_home_med, med_rec_icode, hosxp);
     query1_all(vnan, &drugs_sql, pool, "Select EmrDrugs")
         .await?
         .iter()
-        .filter_map(|row| row.try_get("drug").transpose())
-        .collect::<sqlx::Result<Vec<String>>>()
+        .map(Medicine::from_row)
+        .collect::<sqlx::Result<Vec<Medicine>>>()
         .map_err(|e| Source::SQLx.to_error(500, e, "Select EmrDrugs"))
 }
 
@@ -185,11 +186,11 @@ mod tests {
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugusage.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/sp_use.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let found_vn = select_drug("661231235959", false, &tester.db_pool, &tester.hosxp).await.unwrap();
+        let found_vn = select_drug("661231235959", false, "1900333", &tester.db_pool, &tester.hosxp).await.unwrap();
         assert_eq!(found_vn.len(), 6);
-        let found_an = select_drug("660001234", true, &tester.db_pool, &tester.hosxp).await.unwrap();
+        let found_an = select_drug("660001234", true, "1900333", &tester.db_pool, &tester.hosxp).await.unwrap();
         assert_eq!(found_an.len(), 1);
-        let not_found = select_drug("991231235959", false, &tester.db_pool, &tester.hosxp).await.unwrap();
+        let not_found = select_drug("991231235959", false, "1900333", &tester.db_pool, &tester.hosxp).await.unwrap();
         assert!(not_found.is_empty());
     }
 
