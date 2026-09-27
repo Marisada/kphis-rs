@@ -103,7 +103,7 @@ fn med_rec_item_from_row(row: &MySqlRow) -> sqlx::Result<MedReconciliationItem> 
         last_dose_taken_time: row.try_get("last_dose_taken_time")?,
         last_dose_taken_remark: row.try_get("last_dose_taken_remark")?,
         used: row.try_get("used")?,
-        allergy_agent: row.try_get("allergy_agent")?,
+        // allergy_agent: row.try_get("allergy_agent")?,
         allergy_agent_symptom: row.try_get("allergy_agent_symptom")?,
         allergy_count_force_no_order: row.try_get("allergy_count_force_no_order")?,
         generic_name: row.try_get("generic_name")?,

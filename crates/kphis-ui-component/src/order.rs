@@ -2949,6 +2949,7 @@ impl OrderCpn {
                                 let order_item_mut = OrderItemMutable::new("off", None);
                                 order_item_mut.order_item_detail.set([&med_name_opt.clone().unwrap_or_default(), new_line, &detail].concat());
                                 order_item_mut.off_order_item_id.set(Some(order_item.order_item_id));
+                                order_item_mut.allergy_agent_symptom.set(order_item.allergy_agent_symptom.clone());
                                 page.offs_by_parent.lock_mut().push_cloned(order_item_mut);
                             }
                             page.edit_order.set(None);
@@ -3482,6 +3483,7 @@ impl OrderCpn {
                         let order_item_mut = OrderItemMutable::new("off", None);
                         order_item_mut.order_item_detail.set([&med_name_opt.clone().unwrap_or_default(), new_line, &detail].concat());
                         order_item_mut.off_order_item_id.set(Some(order_item.order_item_id));
+                        order_item_mut.allergy_agent_symptom.set(order_item.allergy_agent_symptom.clone());
                         page.offs_by_parent.lock_mut().push_cloned(order_item_mut);
                     }
                     page.edit_order.set(None);
@@ -4229,6 +4231,7 @@ pub struct OrderItemMutable {
     pub info: Mutable<Option<String>>,
     pub info_status: Mutable<Option<String>>,
 
+    pub allergy_agent_symptom: Mutable<Option<String>>,
     pub med_reconciliation_item_id: Mutable<Option<u32>>,
     pub old_drugusage: Mutable<Option<String>>,
     pub receive_from: Mutable<Option<String>>,
@@ -4324,6 +4327,7 @@ impl From<OrderItem> for OrderItemMutable {
             info: Mutable::new(item.info),
             info_status: Mutable::new(item.info_status),
 
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
             med_reconciliation_item_id: Mutable::new(item.med_reconciliation_item_id),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4355,6 +4359,7 @@ impl From<MedOrderItem> for OrderItemMutable {
             info: Mutable::new(item.info),
             info_status: Mutable::new(item.info_status),
 
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
             med_reconciliation_item_id: Mutable::new(item.med_reconciliation_item_id),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4385,6 +4390,7 @@ impl From<MedReconciliationItem> for OrderItemMutable {
             info: Mutable::new(item.info),
             info_status: Mutable::new(item.info_status),
 
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
             med_reconciliation_item_id: Mutable::new(Some(item.med_reconciliation_item_id)),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4411,6 +4417,7 @@ impl From<PreOrderItem> for OrderItemMutable {
             med_name: Mutable::new(item.med_name),
             generic_name: Mutable::new(item.generic_name),
             dosageform: Mutable::new(item.dosageform),
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
             ..Default::default()
         }
     }

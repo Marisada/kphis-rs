@@ -362,14 +362,19 @@ pub fn get_home_med_from_cont(hosxp: &str, kphis: &str) -> String {
             ) AS off_by_datetime,\
             IF(mr.custom_med_name IS NULL OR mr.custom_med_name='',CONCAT(di.`name`,' ',di.strength,' ',di.units),mr.custom_med_name) AS med_name,\
             di.generic_name,di.dosageform,di.displaycolor,di.addict_type_id,di.habit_forming_type,\
-            mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used \
+            mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used,\
+            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom \
         FROM ",kphis,".ipd_order_item oi \
             JOIN ",kphis,".ipd_order o ON o.order_id=oi.order_id \
             LEFT JOIN ",kphis,".kphis_drug_use_duration dud ON dud.icode=oi.icode \
             LEFT JOIN ",kphis,".ipd_med_reconciliation_item mr ON mr.med_reconciliation_item_id=oi.med_reconciliation_item_id \
             LEFT JOIN ",hosxp,".drugitems di ON di.icode=oi.icode \
+            LEFT JOIN ",hosxp,".ipt ON oi.an=ipt.an \
+            LEFT JOIN ",hosxp,".opd_allergy allergy ON (\
+                (allergy.agent LIKE CONCAT('%',di.generic_name,'%') AND allergy.hn=ipt.hn AND di.generic_name IS NOT NULL AND TRIM(di.generic_name) <> '') \
+                OR (di.generic_name LIKE CONCAT('%',allergy.agent,'%') AND allergy.hn=ipt.hn AND allergy.agent IS NOT NULL AND TRIM(allergy.agent) <> '')) \
         WHERE oi.an=? AND oi.order_item_type IN ('med','injection') AND o.order_type='continuous' AND o.order_confirm='Y' \
-        HAVING off_by_datetime IS NULL ORDER BY oi.order_item_id;"
+        GROUP BY oi.order_item_id HAVING off_by_datetime IS NULL ORDER BY oi.order_item_id;"
     ].concat()
 }
 
@@ -502,14 +507,19 @@ pub fn select_one_day_previous(hosxp: &str, kphis: &str) -> String {
             (SELECT TIMESTAMP(ofo.order_date,ofo.order_time) FROM ",kphis,".ipd_order_item ofoi JOIN ",kphis,".ipd_order ofo ON ofoi.order_id=ofo.order_id AND ofo.an=ofoi.an AND ofo.order_confirm='Y' \
                 WHERE ofoi.off_order_item_id=oi.order_item_id AND ofoi.order_item_type='off' AND ofo.an=oi.an LIMIT 1) AS off_by_datetime,\
             CONCAT(di.`name`,' ',di.strength,' ',di.units) AS med_name,di.generic_name,di.dosageform,di.displaycolor,di.addict_type_id,di.habit_forming_type,\
-            mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used \
+            mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used,\
+            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom \
         FROM ",kphis,".ipd_order_item oi \
             JOIN ",kphis,".ipd_order o ON o.order_id=oi.order_id \
             LEFT JOIN ",kphis,".kphis_drug_use_duration dud ON dud.icode=oi.icode \
             LEFT JOIN ",kphis,".ipd_med_reconciliation_item mr ON mr.med_reconciliation_item_id=oi.med_reconciliation_item_id \
             LEFT JOIN ",hosxp,".drugitems di ON di.icode=oi.icode \
+            LEFT JOIN ",hosxp,".ipt ON oi.an=ipt.an \
+            LEFT JOIN ",hosxp,".opd_allergy allergy ON (\
+                (allergy.agent LIKE CONCAT('%',di.generic_name,'%') AND allergy.hn=ipt.hn AND di.generic_name IS NOT NULL AND TRIM(di.generic_name) <> '') \
+                OR (di.generic_name LIKE CONCAT('%',allergy.agent,'%') AND allergy.hn=ipt.hn AND allergy.agent IS NOT NULL AND TRIM(allergy.agent) <> '')) \
         WHERE oi.an=? AND oi.order_item_type <> 'off' AND o.order_type='oneday' AND o.order_confirm='Y' AND o.order_date=DATE_ADD(DATE(NOW()),INTERVAL -1 DAY) \
-        HAVING off_by_datetime IS NULL ORDER BY oi.order_item_id;"
+        GROUP BY oi.order_item_id HAVING off_by_datetime IS NULL ORDER BY oi.order_item_id;"
     ].concat()
 }
 

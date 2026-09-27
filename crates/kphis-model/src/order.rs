@@ -1120,6 +1120,8 @@ pub struct MedOrderItem {
     #[Demo(value = r#"Some(String::from("Y"))"#)]
     pub info_status: Option<String>,
 
+    #[Demo(value = r#"Some(String::from("PARACETAMOL=Rash"))"#)]
+    pub allergy_agent_symptom: Option<String>,
     #[Demo(value = "Some(1)")]
     pub med_reconciliation_item_id: Option<u32>,
     #[Demo(value = r#"Some(String::from("1 prn"))"#)]

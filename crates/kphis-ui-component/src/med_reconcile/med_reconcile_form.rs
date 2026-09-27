@@ -156,17 +156,19 @@ impl MedReconForm {
 
     fn can_add_hold_items(&self, app: &Rc<App>) -> impl Signal<Item = bool> + use<> {
         map_ref! {
+            let is_changed = self.use_changed.signal(),
             let can_add = self.can_add_cont_order(&app),
-            let no_h = self.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| item.used.signal_cloned().map(|used| used.as_str() == "H")).is_empty() =>
-            *can_add && !no_h
+            let no_h = self.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| item.used.signal_ref(|used| used.as_str() == "H")).is_empty() =>
+            !is_changed && *can_add && !no_h
         }
     }
 
     fn can_add_used_items(&self, app: &Rc<App>) -> impl Signal<Item = bool> + use<> {
         map_ref! {
+            let is_changed = self.use_changed.signal(),
             let can_add = self.can_add_cont_order(&app),
-            let no_y = self.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| item.used.signal_cloned().map(|used| used.as_str() == "Y")).is_empty() =>
-            *can_add && !no_y
+            let no_y = self.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| item.used.signal_ref(|used| used.as_str() == "Y")).is_empty() =>
+            !is_changed && *can_add && !no_y
         }
     }
 
@@ -192,7 +194,6 @@ impl MedReconForm {
         }
     }
 
-    // ipd-dr-med-reconcile-doctor-confirm.php + med_reconciliation_id
     // recon SET doctor=doctor_code, doctor_confirm_datetime=NOW()
     // item SET use,changed_drugusage,last_dose_taken_time,last_dose_taken_remark
     // => page.doctor_name.set_neq(app.doctor_name());
@@ -223,7 +224,6 @@ impl MedReconForm {
         );
     }
 
-    // ipd-dr-med-reconcile-pharmacist-confirm.php + med_reconciliation_id
     // recon SET phamacist_confirm_datetime=NOW()
     // item SET last_dose_taken_time, last_dose_taken_remark
     // => page.pharmacist_confirm_datetime.set(js_now().js_string());
@@ -251,7 +251,6 @@ impl MedReconForm {
         );
     }
 
-    // ipd-dr-med-reconcile-pharmacist-unconfirm.php + med_reconciliation_id
     // recon SET phamacist_confirm_datetime=null
     // item SET none
     // => page.pharmacist_confirm_datetime.set(String::new());
@@ -296,7 +295,6 @@ impl MedReconForm {
         );
     }
 
-    // ipd-dr-med-reconcile-last-dose-save.php + med_reconciliation_id
     // recon SET none
     // item SET last_dose_taken_time,last_dose_taken_remark
     // => page.last_changed.set(false);
@@ -359,7 +357,7 @@ impl MedReconForm {
                 med_name: str_some(&item.med_name.lock_ref()).or(str_some(&item.custom_med_name.lock_ref())),
                 generic_name: str_some(&item.generic_name.lock_ref()),
                 dosageform: str_some(&item.dosageform.lock_ref()),
-                allergy_agent_symptom: str_some(&item.allergy_agent.lock_ref()).map(|agent| [&agent, item.allergy_agent_symptom.lock_ref().as_str()].join("=")),
+                allergy_agent_symptom: str_some(&item.allergy_agent_symptom.lock_ref()),
                 due_usage: str_some(&item.due_usage.lock_ref()),
                 due_status: str_some(&item.due_status.lock_ref()),
                 info: str_some(&item.info.lock_ref()),
@@ -459,7 +457,7 @@ impl MedReconForm {
                 info: str_some(&item.info.lock_ref()),
                 info_status: str_some(&item.info_status.lock_ref()),
 
-                allergy_agent_symptom: str_some(&item.allergy_agent.lock_ref()).map(|agent| [&agent, item.allergy_agent_symptom.lock_ref().as_str()].join("=")),
+                allergy_agent_symptom: str_some(&item.allergy_agent_symptom.lock_ref()),
 
                 med_reconciliation_item_id: zero_none(item.med_reconciliation_item_id.get()),
                 old_drugusage: str_some(&item.old_drugusage.lock_ref()),
@@ -699,11 +697,17 @@ impl MedReconForm {
                                                         .text(&item.med_name.lock_ref())
                                                         .apply_if(!item.med_name.lock_ref().is_empty() && !item.custom_med_name.lock_ref().is_empty(), |dom| dom.child(html!("br")))
                                                         .text(&item.custom_med_name.lock_ref())
-                                                        .apply_if(!item.allergy_agent.lock_ref().is_empty(), |dom| dom
+                                                        .apply_if(!item.allergy_agent_symptom.lock_ref().is_empty(), |dom| dom
                                                             .child(html!("br"))
                                                             .child(html!("span", {
                                                                 .class("text-danger")
-                                                                .text(&["แพ้ยา: ", &item.allergy_agent.lock_ref().as_str(), "=", &item.allergy_agent_symptom.lock_ref().as_str()].concat())
+                                                                .text(&["แพ้ยา : ", &item.allergy_agent_symptom.lock_ref().as_str()].concat())
+                                                                .apply_if(!item.allergy_count_force_no_order.lock_ref().is_zero(), |d| d
+                                                                    .child(html!("span", {
+                                                                        .class(class::BADGE_RED_R)
+                                                                        .text("มีคำสั่งห้ามใช้")
+                                                                    }))
+                                                                )
                                                             }))
                                                         )
                                                     }),
@@ -762,14 +766,15 @@ impl MedReconForm {
                                                                     .class("form-check-input")
                                                                     .apply(mixins::radio_match(item.used.clone(), page.use_changed.clone(), "Y"))
                                                                     .with_node!(element => {
+                                                                        // allow doctor to consider the allery agent that `hos.opd_allergy.force_no_oder` != 'Y'
                                                                         .future(map_ref!{
                                                                             let can_consider = page.can_consider(&app),
                                                                             // let is_doctor_confirmed = page.is_doctor_confirmed(),
-                                                                            let allergy_agent = item.allergy_agent.signal_cloned(),
+                                                                            // let allergy_agent_symptom = item.allergy_agent_symptom.signal_cloned(),
                                                                             let allergy_count = item.allergy_count_force_no_order.signal_cloned(),
                                                                             let used = item.used.signal_cloned() =>
-                                                                            !(*can_consider && used != "Y" && allergy_agent.is_empty() && allergy_count.is_zero())
-                                                                            // !((*can_consider || (*is_doctor_confirmed && used == "Y")) && allergy_agent.is_empty() && allergy_count.is_zero())
+                                                                            !(*can_consider && used != "Y" && allergy_count.is_zero())
+                                                                            // !((*can_consider || (*is_doctor_confirmed && used == "Y")) && allergy_agent_symptom.is_empty() && allergy_count.is_zero())
                                                                         }.for_each(move |disabled| {
                                                                             element.set_disabled(disabled);
                                                                             async {}
@@ -1096,11 +1101,9 @@ impl MedReconForm {
                             let phamacist_confirm_datetime = page.pharmacist_confirm_datetime.signal_cloned(),
                             let doctor_confirm_datetime = page.doctor_confirm_datetime.signal_cloned(),
                             let view_by = page.view_by.signal_cloned(),
-                            let is_no_unused = page.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| {
-                                item.used.signal_cloned().map(|s| s.is_empty())
-                            }).is_empty(),
+                            let all_used_filled = page.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| item.used.signal_ref(|s| s.is_empty())).is_empty(),
                             let use_changed = page.use_changed.signal() =>
-                            view_by == "doctor" && !phamacist_confirm_datetime.is_empty() && *is_no_unused && (doctor_confirm_datetime.is_empty() || *use_changed)
+                            view_by == "doctor" && !phamacist_confirm_datetime.is_empty() && *all_used_filled && (doctor_confirm_datetime.is_empty() || *use_changed)
                         }.map(clone!(app, page => move |can| {
                             can.then(|| {
                                 html!("button" => HtmlButtonElement, {
@@ -1111,6 +1114,73 @@ impl MedReconForm {
                                     .apply(mixins::click_with_loader_checked(clone!(app, page => move || {
                                         Self::doctor_confirm_recon(page.clone(), app.clone());
                                     }), app.state()))
+                                })
+                            })
+                        })))
+                        .child_signal(map_ref!{
+                            let phamacist_confirm_datetime = page.pharmacist_confirm_datetime.signal_cloned(),
+                            let view_by = page.view_by.signal_cloned(),
+                            let is_all_used_h = page.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| item.used.signal_ref(|s| s.as_str() != "H")).is_empty() =>
+                            view_by == "doctor" && !phamacist_confirm_datetime.is_empty() && !is_all_used_h
+                        }.map(clone!(app, page => move |can| {
+                            can.then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_BLUEO)
+                                    .class(class::FLOAT_RR_Y1)
+                                    .text("Hold ทั้งหมด")
+                                    .event(clone!(page => move |_:events::Click| {
+                                        for item in page.med_reconciliation_items.lock_ref().iter() {
+                                            item.used.set_neq(String::from("H"));
+                                        }
+                                        page.use_changed.set_neq(true);
+                                    }))
+                                })
+                            })
+                        })))
+                        .child_signal(map_ref!{
+                            let phamacist_confirm_datetime = page.pharmacist_confirm_datetime.signal_cloned(),
+                            let view_by = page.view_by.signal_cloned(),
+                            let is_all_used_n = page.med_reconciliation_items.signal_vec_cloned().filter_signal_cloned(|item| item.used.signal_ref(|s| s.as_str() != "N")).is_empty() =>
+                            view_by == "doctor" && !phamacist_confirm_datetime.is_empty() && !is_all_used_n
+                        }.map(clone!(app, page => move |can| {
+                            can.then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_BLUEO)
+                                    .class(class::FLOAT_RR_Y1)
+                                    .text("ไม่สั่งใช้ทั้งหมด")
+                                    .event(clone!(page => move |_:events::Click| {
+                                        for item in page.med_reconciliation_items.lock_ref().iter() {
+                                            item.used.set_neq(String::from("N"));
+                                        }
+                                        page.use_changed.set_neq(true);
+                                    }))
+                                })
+                            })
+                        })))
+                        .child_signal(map_ref!{
+                            let phamacist_confirm_datetime = page.pharmacist_confirm_datetime.signal_cloned(),
+                            let view_by = page.view_by.signal_cloned(),
+                            let is_all_used_y = page.med_reconciliation_items.signal_vec_cloned()
+                                .filter_signal_cloned(|item| item.allergy_agent_symptom.signal_ref(|s| s.is_empty()))
+                                .filter_signal_cloned(|item| item.used.signal_ref(|s| s.as_str() != "Y")).is_empty() =>
+                            view_by == "doctor" && !phamacist_confirm_datetime.is_empty() && !is_all_used_y
+                        }.map(clone!(app, page => move |can| {
+                            can.then(|| {
+                                html!("button" => HtmlButtonElement, {
+                                    .attr("type", "button")
+                                    .class(class::BTN_BLUEO)
+                                    .class(class::FLOAT_RR_Y1)
+                                    .text("สั่งใช้ทั้งหมด")
+                                    .event(clone!(page => move |_:events::Click| {
+                                        for item in page.med_reconciliation_items.lock_ref().iter() {
+                                            if item.allergy_agent_symptom.lock_ref().is_empty() {
+                                                item.used.set_neq(String::from("Y"));
+                                            }
+                                        }
+                                        page.use_changed.set_neq(true);
+                                    }))
                                 })
                             })
                         })))
@@ -1312,13 +1382,12 @@ impl MedReconForm {
                                     page.show_modal_note.set(false);
                                 }))
                             }),
+
                         ])
                     }),
                     html!("div", {
                         .class("modal-body")
-                        //.attr("id", "med_reconciliation_note_form_modal_body")
                         .child(html!("div", {
-                            //.attr("id", "med-reconciliation-note-form")
                             .child(html!("div", {
                                 .class("mb-3")
                                 .child(html!("textarea" => HtmlTextAreaElement, {
@@ -1377,8 +1446,9 @@ struct MedReconItem {
     receive_qty: Mutable<String>,          // i32
     last_dose_taken_time: Mutable<String>, // datetime
     last_dose_taken_remark: Mutable<String>,
+    /// Y = Yes, N = No, H = Hold
     used: Mutable<String>, // use
-    allergy_agent: Mutable<String>,
+    // allergy_agent: Mutable<String>,
     allergy_agent_symptom: Mutable<String>,
     allergy_count_force_no_order: Mutable<Decimal>, // decimal
     // common_name: Mutable<String>,
@@ -1409,7 +1479,7 @@ impl From<MedReconciliationItem> for MedReconItem {
             last_dose_taken_time: Mutable::new(item.last_dose_taken_time.map(|dt| dt.js_string()).unwrap_or_default()), // datetime
             last_dose_taken_remark: Mutable::new(item.last_dose_taken_remark.unwrap_or_default()),
             used: Mutable::new(item.used.unwrap_or_default()), // use
-            allergy_agent: Mutable::new(item.allergy_agent.unwrap_or_default()),
+            // allergy_agent: Mutable::new(item.allergy_agent.unwrap_or_default()),
             allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom.unwrap_or_default()),
             allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order), // decimal
             // common_name: Mutable::new(item.common_name.unwrap_or_default()),
@@ -1438,6 +1508,6 @@ fn new_patch_item(item: &Rc<MedReconItem>) -> MedReconciliationItemPatch {
         changed_drugusage: str_some(&item.changed_drugusage.lock_ref()),
         last_dose_taken_time: datetime_8601(&item.last_dose_taken_time.lock_ref()),
         last_dose_taken_remark: str_some(&item.last_dose_taken_remark.lock_ref()),
-        used: str_some(&item.used.get_cloned()),
+        used: str_some(&item.used.lock_ref()),
     }
 }

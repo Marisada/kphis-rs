@@ -1042,6 +1042,15 @@ impl OneDayForm {
                                                 }),
                                                 search_drugusage("280px", med.order_item_detail.clone(), app.clone()),
                                             ])
+                                            .child_signal(med.allergy_agent_symptom.signal_ref(|opt| {
+                                                opt.as_ref().map(|allergy_agent_symptom| {
+                                                    html!("div", {
+                                                        .class(class::BOLD_RED_R)
+                                                        .text("แพ้ยา : ")
+                                                        .text(allergy_agent_symptom)
+                                                    })
+                                                })
+                                            }))
                                             .child_signal(map_ref!{
                                                 let is_due = med.due_status.signal_ref(|opt| opt.as_ref().map(|due_status| due_status == "Y").unwrap_or_default()),
                                                 let has_info = med.info_status.signal_ref(|opt| opt.as_ref().map(|info_status| info_status == "Y").unwrap_or_default()) =>
@@ -1539,6 +1548,15 @@ impl OneDayForm {
                                                     }),
                                                     search_drugusage("280px", home_medication.order_item_detail.clone(), app.clone()),
                                                 ])
+                                                .child_signal(home_medication.allergy_agent_symptom.signal_ref(|opt| {
+                                                    opt.as_ref().map(|allergy_agent_symptom| {
+                                                        html!("div", {
+                                                            .class(class::BOLD_RED_R)
+                                                            .text("แพ้ยา : ")
+                                                            .text(allergy_agent_symptom)
+                                                        })
+                                                    })
+                                                }))
                                                 .child_signal(map_ref!{
                                                     let is_due = home_medication.due_status.signal_ref(|opt| opt.as_ref().map(|due_status| due_status == "Y").unwrap_or_default()),
                                                     let has_info = home_medication.info_status.signal_ref(|opt| opt.as_ref().map(|info_status| info_status == "Y").unwrap_or_default()) =>

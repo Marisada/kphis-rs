@@ -113,7 +113,8 @@ pub const BOLD_GOLD: [&str; 3] = ["fw-bold","text-warning","me-1"];
 pub const BOLD_GREEN: [&str; 3] = ["fw-bold","text-success","me-1"];
 pub const BOLD_RED: [&str; 2] = ["fw-bold","text-danger"];
 pub const BOLD_RED_L: [&str; 3] = ["fw-bold","text-danger","me-1"];
-pub const BOLD_RED_R: [&str; 4] = ["fw-bold","text-danger","float-end","me-1"];
+pub const BOLD_RED_R: [&str; 3] = ["fw-bold","text-danger","ms-1"];
+pub const BOLD_RED_FR: [&str; 4] = ["fw-bold","text-danger","float-end","me-1"];
 // pub const BOLD_WHITE: [&str;3] = ["fw-bold","text-white","me-1"];
 
 pub const BOLD_BG_CYAN: [&str; 2] = ["fw-bold","text-bg-info"];

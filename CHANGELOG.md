@@ -14,6 +14,8 @@
 > - Changed `report-designer` input to multiple selector
 > - Fixed the javascript binding event listener leak
 > - Fixed `prescription-screen` to include home-med data and added previous 6 months medications 
+> - Added `สั่งใช้ทั้งหมด`, `ไม่สั่งใช้ทั้งหมด` and `Hold ทั้งหมด` to `med-reconciliation` component
+> - Show drug-allergy to active `order` input component
 
 ## 0.4.20 (2026-08-02)
 > - *(Config)* Added `real-ip-header` to get real client IP address behind reverse proxy
