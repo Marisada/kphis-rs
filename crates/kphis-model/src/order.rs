@@ -1,4 +1,5 @@
 use derive_demo::Demo;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     FromRow, MySql, Pool,
@@ -715,6 +716,8 @@ pub struct OrderItem {
 
     #[Demo(value = r#"Some(String::from("PARACETAMOL=Rash"))"#)]
     pub allergy_agent_symptom: Option<String>,
+    #[Demo(value = "Decimal::new(1,0)")]
+    pub allergy_count_force_no_order: Decimal,
     #[Demo(value = "Some(10)")]
     pub first_qty: Option<i32>,
     #[Demo(value = "Some(10)")]
@@ -898,6 +901,7 @@ impl From<PreOrderItem> for OrderItem {
             off_displaycolor: item.off_displaycolor,
             off_order_item_detail: item.off_order_item_detail,
             allergy_agent_symptom: item.allergy_agent_symptom,
+            allergy_count_force_no_order: item.allergy_count_force_no_order,
             first_qty: None,
             qty: None,
 
@@ -968,6 +972,7 @@ impl From<&Rc<MedReconciliationItem>> for OrderItem {
             off_displaycolor: None,
             off_order_item_detail: None,
             allergy_agent_symptom: item.allergy_agent_symptom.clone(),
+            allergy_count_force_no_order: item.allergy_count_force_no_order,
             first_qty: None,
             qty: None,
 
@@ -1120,6 +1125,10 @@ pub struct MedOrderItem {
     #[Demo(value = r#"Some(String::from("Y"))"#)]
     pub info_status: Option<String>,
 
+    #[Demo(value = r#"Some(String::from("PARACETAMOL=Rash"))"#)]
+    pub allergy_agent_symptom: Option<String>,
+    #[Demo(value = "Decimal::new(1,0)")]
+    pub allergy_count_force_no_order: Decimal,
     #[Demo(value = "Some(1)")]
     pub med_reconciliation_item_id: Option<u32>,
     #[Demo(value = r#"Some(String::from("1 prn"))"#)]

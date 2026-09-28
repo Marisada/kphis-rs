@@ -139,11 +139,11 @@ impl IpdPreOrderListPage {
                     .children([
                         doms::form_inline(clone!(app, page => move |form| { form
                             .children([
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("pre_order_type","ประเภทใบ Order"),
                                         html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_SELECT_SM)
+                                            .class("form-select")
                                             .attr("id", "pre_order_type")
                                             .children([
                                                 html!("option", {
@@ -178,18 +178,18 @@ impl IpdPreOrderListPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("order_doctor","ผู้บันทึก"),
                                         doms::select_box(
                                             "order_doctor", Some("ทั้งหมด"), false,
                                             page.order_doctor.clone(), page.changed.clone(),
-                                            |d| d.class(class::FORM_CTRL_SM), || {},
+                                            |d| d.class("form-control"), || {},
                                             all_doctor_select_option,
                                         ),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_GRAY)
+                                            .class(class::BTN_GRAY)
                                             .child(html!("i", {.class(class::FA_USER)}))
                                             .event(clone!(app, page => move |_: events::Click| {
                                                 let doctor_code = app.doctor_code().unwrap_or_default();
@@ -202,7 +202,7 @@ impl IpdPreOrderListPage {
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_RED)
+                                            .class(class::BTN_RED)
                                             .child(html!("i", {.class(class::FA_X)}))
                                             .event(clone!(page => move |_: events::Click| {
                                                 let no_doctor = page.order_doctor.lock_ref().is_empty();
@@ -216,20 +216,20 @@ impl IpdPreOrderListPage {
                                 })),
                             ])
                             .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxPatientText, false), |dom| dom
-                                .child(doms::form_inline_group_sm(clone!(page => move |group| { group
+                                .child(doms::form_inline_group(clone!(page => move |group| { group
                                     .attr("id", "hn_input_group")
                                     .children([
                                         doms::label_group_for("ptname","HN "),
                                         html!("input", {
                                             .attr("type", "text")
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .attr("id", "ptname")
                                             .attr("readonly", "readonly")
                                             .attr("size", "35")
                                             .prop_signal("value", page.pt_name.signal_cloned())
                                         }),
                                         html!("button", {
-                                            .class(class::BTN_SM_GRAY)
+                                            .class(class::BTN_GRAY)
                                             //.attr("id", "hn-button")
                                             .attr("type", "button")
                                             .child(html!("i", {.class(class::FA_SEARCH)}))
@@ -238,7 +238,7 @@ impl IpdPreOrderListPage {
                                             }))
                                         }),
                                         html!("button", {
-                                            .class(class::BTN_SM_RED)
+                                            .class(class::BTN_RED)
                                             .attr("type", "button")
                                             .child(html!("i", {
                                                 .class(class::FA_X)
@@ -270,44 +270,44 @@ impl IpdPreOrderListPage {
                                 })))
                             )
                             .children([
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("start_order_date","วันที่บันทึก"),
                                         doms::date_picker(
                                             page.start_order_date.clone(),
                                             page.changed.clone(), always(false), None,
-                                            |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0).attr("id", "start_order_date"),
+                                            |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                            |d| d.class("rounded-0"),
+                                            |d| d.class("rounded-0").attr("id", "start_order_date"),
                                             |s| s, always(None),
                                         ),
                                         doms::label_group_for("end_order_date","ถึง"),
                                         doms::date_picker(
                                             page.end_order_date.clone(),
                                             page.changed.clone(), always(false), None,
-                                            |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
-                                            |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "end_order_date"),
+                                            |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                            |d| d.class("rounded-start-0"),
+                                            |d| d.class("rounded-start-0").attr("id", "end_order_date"),
                                             |s| s, always(None),
                                         ),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("template_name_list","ชื่อ Template"),
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
-                                            .class(class::FORM_CTRL_SM)
+                                            .class("form-control")
                                             .attr("id", "template_name_list")
                                             .apply(mixins::string_value_end(page.template_name.clone(), page.changed.clone()))
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("used","ใช้งาน"),
                                         html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_SELECT_SM)
+                                            .class("form-select")
                                             .attr("id", "used")
                                             .children([
                                                 html!("option", {
@@ -344,7 +344,7 @@ impl IpdPreOrderListPage {
                                     .apply_if(app.endpoint_is_allow(&Method::POST, &EndPoint::IpdPreOrderMaster, true), |dom| {
                                         dom.child(html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_L_BLUE)
+                                            .class(class::BTN_L_BLUE)
                                             .child(html!("i", {.class(class::FA_PLUS)}))
                                             .text(" เพิ่มใบ Order ใหม่")
                                             .event(clone!(app, page => move |_: events::Click| {
@@ -355,7 +355,7 @@ impl IpdPreOrderListPage {
                                     })
                                     .child(html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_SEARCH)}))
                                         .text(" ค้นหา")
                                         .event(clone!(page => move |_: events::Click| {

@@ -39,7 +39,6 @@ pub struct ReportViewerPage {
     vnan: Mutable<String>,
 
     loaded_custom_templates_compact: Mutable<bool>,
-
     system_templates: MutableVec<SystemReport>,
     selected_system_template: Mutable<Option<SystemReport>>,
 
@@ -151,7 +150,7 @@ impl ReportViewerPage {
     }
 
     fn load_and_render_svg(page: Rc<Self>, app: Rc<App>) {
-        if let (Some(template), Some(ids)) = match *page.report_type.lock_ref() {
+        let (template_opt, ids_opt) = match *page.report_type.lock_ref() {
             ReportType::Ipd | ReportType::OpdEr => (
                 page.selected_system_template.get_cloned().map(|selected| TypstReport::from_system_with_coercion(selected, &app.state().report_coercions())),
                 str_some(&page.vnan.lock_ref()),
@@ -160,7 +159,8 @@ impl ReportViewerPage {
                 page.selected_custom_template.get_cloned().map(|selected| TypstReport::Custom(selected)),
                 str_some(&page.ids.lock_ref().iter().map(|param| param.to_request_id()).collect::<Vec<String>>().join("|")),
             ),
-        } {
+        };
+        if let (Some(template), Some(ids)) = (template_opt, ids_opt) {
             app.async_load(
                 true,
                 clone!(app, page => async move {
@@ -599,7 +599,6 @@ impl ReportViewerPage {
                                             }))
                                         }
                                     }
-
                                 })))
                                 .child_signal(app.loader_is_loading().map(clone!(page => move |is_loading| {
                                     Some(if is_loading {
@@ -693,7 +692,7 @@ impl ReportViewerPage {
                                                 }),
                                                 html!("button", {
                                                     .attr("type", "button")
-                                                    .class(class::BTN_SM_BLUE)
+                                                    .class(class::BTN_BLUE)
                                                     .text("ค้นหา")
                                                     .event(clone!(page => move |_: events::Click| {
                                                         page.search_changed.set_neq(true);

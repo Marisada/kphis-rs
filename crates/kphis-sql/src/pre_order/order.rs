@@ -101,7 +101,8 @@ pub fn select_order_item(
         "SELECT oi.*,ooi.order_item_detail AS off_order_item_detail,null AS off_by_order_item_id,\
         CONCAT(di.`name`,' ',di.strength,' ',di.units) AS med_name,di.displaycolor,di.generic_name,di.dosageform,ooi.icode AS off_icode,\
         CONCAT(off_di.`name`,' ',off_di.strength,' ',off_di.units) AS off_med_name,off_di.displaycolor AS off_displaycolor,\
-        GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom \
+        GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
+        SUM(IF(allergy.force_no_order='Y',1,0)) AS allergy_count_force_no_order \
         FROM ",kphis,".ipd_pre_order_item oi JOIN ",kphis,".ipd_pre_order o ON o.order_id=oi.order_id \
             LEFT JOIN ",kphis,".ipd_pre_order_item ooi ON ooi.order_item_id=oi.off_order_item_id \
             LEFT JOIN ",hosxp,".drugitems di ON di.icode=oi.icode \

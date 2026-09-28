@@ -134,6 +134,7 @@ impl OpdVisitSearchboxCpn {
                                         }
                                         page.timer_handle.set(Some(wait.handle()));
                                         wait.forget();
+
                                         if event.key() == "Enter" {
                                             event.prevent_default();
                                         }

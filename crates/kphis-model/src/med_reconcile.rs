@@ -60,6 +60,7 @@ pub struct MedReconciliationParams {
     pub opd_er_order_master_id: Option<u32>,
     pub med_reconciliation_id: Option<u32>,
     pub med_reconciliation_item_id: Option<u32>,
+    /// Y = Yes, N = No, H = Hold
     pub used: Option<String>,
     pub patch: Option<String>, // for PATCH api [doctor,pharm,unconfirm,last]
 }
@@ -220,10 +221,11 @@ pub struct MedReconciliationItem {
     pub last_dose_taken_time: Option<PrimitiveDateTime>,
     #[Demo(value = r#"Some(String::from("Remark"))"#)]
     pub last_dose_taken_remark: Option<String>,
+    /// Y = Yes, N = No, H = Hold
     #[Demo(value = r#"Some(String::from("Y"))"#)]
     pub used: Option<String>, // use
-    #[Demo(value = r#"Some(String::from("PARACETAMOL"))"#)]
-    pub allergy_agent: Option<String>,
+    // #[Demo(value = r#"Some(String::from("PARACETAMOL"))"#)]
+    // pub allergy_agent: Option<String>,
     #[Demo(value = r#"Some(String::from("PARACETAMOL=Rash"))"#)]
     pub allergy_agent_symptom: Option<String>,
     #[Demo(value = "Decimal::new(1,0)")]
@@ -320,6 +322,7 @@ pub struct MedReconciliationItemPatch {
     pub last_dose_taken_time: Option<PrimitiveDateTime>,
     #[Demo(value = r#"Some(String::from("Remark"))"#)]
     pub last_dose_taken_remark: Option<String>,
+    /// Y = Yes, N = No, H = Hold
     #[Demo(value = r#"Some(String::from("Y"))"#)]
     pub used: Option<String>,
 }

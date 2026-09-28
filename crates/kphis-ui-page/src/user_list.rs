@@ -272,7 +272,7 @@ impl UserListPage {
                     .children([
                         doms::form_inline(clone!(page => move |form| { form
                             .children([
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("loginname","Login name"),
                                         html!("input" => HtmlInputElement, {
@@ -283,7 +283,7 @@ impl UserListPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("name","ชื่อ-นามสกุล"),
                                         html!("input" => HtmlInputElement, {
@@ -294,11 +294,11 @@ impl UserListPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("role","Role"),
                                         html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_SELECT_SM)
+                                            .class("form-select")
                                             .attr("id", "role")
                                             .child(html!("option", {.attr("value", "").text("เลือก") }))
                                             .children_signal_vec(page.roles_option.signal_vec_cloned().map(|role| {
@@ -309,11 +309,11 @@ impl UserListPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("hosxp-group","HOSxP group"),
                                         html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_SELECT_SM)
+                                            .class("form-select")
                                             .attr("id", "hosxp-group")
                                             .child(html!("option", {.attr("value", "ALL_GROUP").text("เลือก")}))
                                             .children_signal_vec(page.hosxp_groups.signal_vec_cloned().map(|group| {
@@ -324,7 +324,7 @@ impl UserListPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("account-disable","ปิดใช้งาน"),
                                         html!("select" => HtmlSelectElement, {
@@ -343,7 +343,7 @@ impl UserListPage {
                                 doms::form_inline_end(clone!(page => move |end| {end
                                     .child(html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_SEARCH)}))
                                         .text(" ค้นหา")
                                         .event(clone!(page => move |_: events::Click| {

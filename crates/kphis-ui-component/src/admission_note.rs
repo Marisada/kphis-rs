@@ -58,7 +58,8 @@ impl AdmissionNoteCpn {
     // we use IpdAdmissionNoteDrRaw + load index_note
     // instead of ipd-nurse-index-print-data.php
     fn load(page: Rc<Self>, app: Rc<App>) {
-        if let Some((an, is_pre_admit)) = page.patient.lock_ref().as_ref().and_then(|pt| pt.visit_type.an_and_is_pre_admit_owned()) {
+        let tuple = page.patient.lock_ref().as_ref().and_then(|pt| pt.visit_type.an_and_is_pre_admit_owned());
+        if let Some((an, is_pre_admit)) = tuple {
             app.async_load(
                 true,
                 clone!(app, page, an => async move {

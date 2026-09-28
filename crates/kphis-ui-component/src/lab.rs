@@ -796,13 +796,13 @@ impl LabCpn {
                                                     )
                                                     .apply_if(matches!(result_cmp, LabCmp::High), |dom| { dom
                                                         .child(html!("span", {
-                                                            .class(class::BOLD_RED_R)
+                                                            .class(class::BOLD_RED_FR)
                                                             .text("H")
                                                         }))
                                                     })
                                                     .apply_if(matches!(result_cmp, LabCmp::Low), |dom| { dom
                                                         .child(html!("span", {
-                                                            .class(class::BOLD_RED_R)
+                                                            .class(class::BOLD_RED_FR)
                                                             .text("L")
                                                         }))
                                                     })
@@ -832,13 +832,13 @@ impl LabCpn {
                                                     }))
                                                     .apply_if(matches!(prev_cmp, LabCmp::High), |dom| { dom
                                                         .child(html!("span", {
-                                                            .class(class::BOLD_RED_R)
+                                                            .class(class::BOLD_RED_FR)
                                                             .text("H")
                                                         }))
                                                     })
                                                     .apply_if(matches!(prev_cmp, LabCmp::Low), |dom| { dom
                                                         .child(html!("span", {
-                                                            .class(class::BOLD_RED_R)
+                                                            .class(class::BOLD_RED_FR)
                                                             .text("L")
                                                         }))
                                                     })

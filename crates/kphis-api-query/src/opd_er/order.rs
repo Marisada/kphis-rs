@@ -226,6 +226,7 @@ fn order_item_from_row(row: &MySqlRow) -> sqlx::Result<OrderItem> {
         off_displaycolor: row.try_get("off_displaycolor")?,
         off_order_item_detail: row.try_get("off_order_item_detail")?,
         allergy_agent_symptom: row.try_get("allergy_agent_symptom")?,
+        allergy_count_force_no_order: row.try_get("allergy_count_force_no_order")?,
         first_qty: row.try_get("first_qty")?,
         qty: row.try_get("qty")?,
 

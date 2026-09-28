@@ -63,8 +63,7 @@ pub fn select_ivfluid_searchbox(ivfluid: &str, hosxp: &str) -> String {
 /// hn, hn, '%' + search_text + '%', '%' + search_text + '%'
 pub fn select_med_searchbox(hosxp: &str, kphis: &str) -> String {
     [
-        "SELECT GROUP_CONCAT(DISTINCT(allergy.agent) ORDER BY allergy.agent) AS allergy_agent,\
-            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
+        "SELECT GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
             SUM(IF(allergy.force_no_order = 'Y',1,0)) AS allergy_count_force_no_order,\
             CONCAT(di.`name`, ' ', di.strength, ' ',di.units) AS med_name,di.icode,di.displaycolor,di.dosageform,dud.`usage` AS due_usage,dud.`status` AS due_status,dud.info,dud.info_status,\
             du.drugusage,CONCAT(IFNULL(du.name1,''),' ',IFNULL(du.name2,''),' ',IFNULL(du.name3,'')) AS `usage`,di.generic_name,di.show_notify,di.show_notify_text \
@@ -88,7 +87,7 @@ pub fn select_med_searchbox(hosxp: &str, kphis: &str) -> String {
 /// '%' + search_text + '%', '%' + search_text + '%'
 pub fn select_med_searchbox_without_hn(hosxp: &str, kphis: &str) -> String {
     [
-        "SELECT NULL AS allergy_agent,NULL AS allergy_agent_symptom,0.0 AS allergy_count_force_no_order,\
+        "SELECT NULL AS allergy_agent_symptom,0.0 AS allergy_count_force_no_order,\
             CONCAT(di.`name`, ' ', di.strength, ' ',di.units) AS med_name,di.icode,di.displaycolor,di.dosageform,dud.`usage` AS due_usage,dud.`status` AS due_status,dud.info,dud.info_status,\
             du.drugusage,CONCAT(IFNULL(du.name1,''),' ',IFNULL(du.name2,''),' ',IFNULL(du.name3,'')) AS `usage`,di.generic_name,di.show_notify,di.show_notify_text \
         FROM ",hosxp,".drugitems di \

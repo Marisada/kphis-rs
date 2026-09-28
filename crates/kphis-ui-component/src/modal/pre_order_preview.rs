@@ -38,6 +38,7 @@ pub enum ToOrderType {
     OpdErOrder,
 }
 
+// body of PreOrderSeelct modal
 /// - GET `EndPoint::IpdPreOrderMaster`
 /// - GET `EndPoint::IpdPreOrderOrder`
 /// - GET `EndPoint::IpdPreOrderProgressNote`

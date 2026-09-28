@@ -556,7 +556,7 @@ impl XrayCpn {
                                                     html!("img", {
                                                         .attr("src", &[PATH_PREFIX_API_XRAY_THUMBNAIL, &PacsParams {
                                                             study_uid: str_some(&image.study_uid),
-                                                            series_uid: str_some(&&image.series_uid),
+                                                            series_uid: str_some(&image.series_uid),
                                                             object_uid: str_some(&image.object_uid),
                                                             file_path: str_some(&image.file_path),
                                                             ..Default::default()

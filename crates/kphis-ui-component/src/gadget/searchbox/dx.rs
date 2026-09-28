@@ -416,7 +416,7 @@ impl DxSearchboxCpn {
                             .style("max-width","65px")
                             .prop_signal("value", page.icd10_raw.signal_ref(|code| icd10_dot(code)))
                             .with_node!(element => {
-                                .event(clone!(page => move |_: events::Change| {
+                                .event(clone!(page => move |_: events::Input| {
                                     let value = element.value().replace('.', "").to_ascii_uppercase();
                                     let is_neq = page.icd10_raw.lock_ref().as_str() != value.as_str();
                                     if is_neq {

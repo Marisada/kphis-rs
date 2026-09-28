@@ -66,7 +66,7 @@ impl DoctorInChargeCpn {
 
     // ipd-nurse-doctor-in-charge-table.php
     fn load_table(page: Rc<Self>, app: Rc<App>) {
-        let an_opt = str_some(&&page.an.lock_ref());
+        let an_opt = str_some(&page.an.lock_ref());
         if let Some(an) = an_opt {
             let params = DoctorInChargeParams { an: Some(an), ..Default::default() };
             app.async_load(

@@ -259,6 +259,7 @@ fn order_item_from_row(row: &MySqlRow) -> sqlx::Result<OrderItem> {
         off_displaycolor: row.try_get("off_displaycolor")?,
         off_order_item_detail: row.try_get("off_order_item_detail")?,
         allergy_agent_symptom: row.try_get("allergy_agent_symptom")?,
+        allergy_count_force_no_order: row.try_get("allergy_count_force_no_order")?,
         first_qty: row.try_get("first_qty")?,
         qty: row.try_get("qty")?,
 
@@ -383,6 +384,7 @@ fn prev_order_item_from_row(row: &MySqlRow) -> sqlx::Result<OrderItem> {
         off_displaycolor: None,
         off_order_item_detail: None,
         allergy_agent_symptom: row.try_get("allergy_agent_symptom")?,
+        allergy_count_force_no_order: row.try_get("allergy_count_force_no_order")?,
         first_qty: row.try_get("first_qty")?,
         qty: row.try_get("qty")?,
 
@@ -1216,12 +1218,16 @@ mod tests {
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/kphis/ipd_med_reconciliation_item.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/kphis/kphis_drug_use_duration.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/opd_allergy.sql")).execute(&tester.db_pool).await.unwrap();
 
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_order.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_order_item.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_med_reconciliation_item.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/kphis_drug_use_duration.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/opd_allergy.sql")).execute(&tester.db_pool).await.unwrap();
 
         let found = get_previous_one_day_order("670001234", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found.len(), 1);
@@ -1251,12 +1257,16 @@ mod tests {
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/kphis/ipd_med_reconciliation_item.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/kphis/kphis_drug_use_duration.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/opd_allergy.sql")).execute(&tester.db_pool).await.unwrap();
 
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_order.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_order_item.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_med_reconciliation_item.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/kphis_drug_use_duration.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/drugitems.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/opd_allergy.sql")).execute(&tester.db_pool).await.unwrap();
 
         let found = get_home_med_from_cont("660001234", &tester.db_pool, &tester.hosxp, &tester.kphis).await.unwrap();
         assert_eq!(found.len(), 2); // minus 1 offed

@@ -392,7 +392,7 @@ pub fn render_order_table(source: MutableVec<Rc<OpdErOrderPharmacy>>, label: &st
     })
 }
 
-fn render_pharmacy_order(i: usize, row: Rc<OpdErOrderPharmacy>, app: Rc<App>) -> Dom {
+pub fn render_pharmacy_order(i: usize, row: Rc<OpdErOrderPharmacy>, app: Rc<App>) -> Dom {
     let age_y = row.age_y.unwrap_or_default();
     let age_m = row.age_m.unwrap_or_default();
     let age_d = row.age_d.unwrap_or_default();

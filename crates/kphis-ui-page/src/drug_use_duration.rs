@@ -98,7 +98,7 @@ impl DrugUseDurationPage {
                     .children([
                         doms::form_inline(clone!(app, page => move |form| { form
                             .children([
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("info_status","สถานะ Info"),
                                         html!("select" => HtmlSelectElement, {
@@ -113,7 +113,7 @@ impl DrugUseDurationPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("due_status","สถานะ DUE"),
                                         html!("select" => HtmlSelectElement, {
@@ -128,7 +128,7 @@ impl DrugUseDurationPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("monitor_status","สถานะ Monitor"),
                                         html!("select" => HtmlSelectElement, {
@@ -143,7 +143,7 @@ impl DrugUseDurationPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("icode","icode"),
                                         html!("input" => HtmlInputElement, {
@@ -161,7 +161,7 @@ impl DrugUseDurationPage {
                                         }),
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_GRAY)
+                                            .class(class::BTN_GRAY)
                                             .child(html!("i", {.class(class::FA_SEARCH)}))
                                             .text(" ค้นหา")
                                             .event(clone!(page => move |_: events::Click| {
@@ -173,7 +173,7 @@ impl DrugUseDurationPage {
                                 doms::form_inline_end(clone!(app, page => move |group| { group
                                     .child(html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_BLUE)
+                                        .class(class::BTN_BLUE)
                                         .child(html!("i", {.class(class::FA_PLUS)}))
                                         .text(" เพิ่ม")
                                         .event(clone!(page => move |_: events::Click| {

@@ -71,7 +71,6 @@ pub fn get_med_reconciliation_item(
     [
         "SELECT mri.med_reconciliation_item_id,mri.med_reconciliation_id,mri.opd_er_order_master_id,mri.icode,mri.med_name,mri.custom_med_name,mri.receive_from,mri.receive_date,\
             mri.old_drugusage,mri.changed_drugusage,mri.receive_qty,mri.last_dose_taken_time,mri.last_dose_taken_remark,mri.`use` AS used,dud.`usage` AS due_usage,dud.`status` AS due_status,dud.info,dud.info_status,\
-            GROUP_CONCAT(DISTINCT(allergy.agent) ORDER BY allergy.agent) AS allergy_agent,\
             GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
             SUM(IF(allergy.force_no_order='Y',1,0)) AS allergy_count_force_no_order,\
             di.generic_name,di.dosageform,di.show_notify,di.show_notify_text \

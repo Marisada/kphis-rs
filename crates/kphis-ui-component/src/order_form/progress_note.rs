@@ -838,14 +838,14 @@ impl ProgressNoteForm {
                     }),
                 ])
             }))
-            .child_signal(page.io_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
-                opt.map(|modal| {
-                    IoSelector::render_modal(modal.clone(), page.io_selector_modal.clone(), app.clone())
-                })
-            })))
             .child_signal(page.vs_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
                 opt.map(|modal| {
                     VsSelector::render_modal(modal.clone(), page.vs_selector_modal.clone(), app.clone())
+                })
+            })))
+            .child_signal(page.io_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {
+                opt.map(|modal| {
+                    IoSelector::render_modal(modal.clone(), page.io_selector_modal.clone(), app.clone())
                 })
             })))
             .child_signal(page.lab_selector_modal.signal_cloned().map(clone!(app, page => move |opt| {

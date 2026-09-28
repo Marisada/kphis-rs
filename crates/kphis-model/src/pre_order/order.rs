@@ -1,4 +1,5 @@
 use derive_demo::Demo;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::{
     FromRow,
@@ -193,6 +194,8 @@ pub struct PreOrderItem {
     pub off_displaycolor: Option<i32>,
     #[Demo(value = r#"Some(String::from("PENICILLIN=Rash"))"#)]
     pub allergy_agent_symptom: Option<String>,
+    #[Demo(value = "Decimal::new(1,0)")]
+    pub allergy_count_force_no_order: Decimal,
 }
 
 /// Item of IPD Medical Pre-Order

@@ -356,11 +356,11 @@ impl PermissionListPage {
                     .children([
                         doms::form_inline(clone!(app, page => move |form| { form
                             .children([
-                                doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("role","Role"),
                                         html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_SELECT_SM_MONO)
+                                            .class(class::FORM_SELECT_MONO)
                                             // .style("width","250px")
                                             .attr("id", "role")
                                             .children([
@@ -402,11 +402,11 @@ impl PermissionListPage {
                                         }),
                                     ])
                                 })),
-                                doms::form_inline_group_sm(clone!(page => move |group| { group
+                                doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
                                         doms::label_group_for("permission","Permission"),
                                         html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_SELECT_SM)
+                                            .class("form-select")
                                             // .style("width","250px")
                                             .attr("id", "permission")
                                             .child(html!("option", {.attr("value", "").text("เลือก")}))
@@ -422,6 +422,7 @@ impl PermissionListPage {
                                         .child(html!("button", {
                                             .attr("type", "button")
                                             .class(class::BTN_L_BLUE)
+                                            .class("py-2")
                                             //.attr("id", "buttonCreateNewRole")
                                             .child(html!("i", {.class(class::FA_PLUS)}))
                                             .text(" สร้าง Role")

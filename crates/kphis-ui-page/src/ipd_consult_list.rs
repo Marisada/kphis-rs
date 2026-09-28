@@ -132,7 +132,7 @@ impl IpdConsultListPage {
                 .children([
                     doms::form_inline(clone!(app, page => move |form| { form
                         .children([
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("spclty","แผนกที่รับ Consult"),
                                     html!("div", {
@@ -141,20 +141,20 @@ impl IpdConsultListPage {
                                             "spclty", Some("ทั้งหมด"), false,
                                             app.spclty_select.clone(),
                                             page.changed.clone(),
-                                            |d| d.class(class::FORM_CTRL_SM),
+                                            |d| d.class("form-control"),
                                             clone!(app => move || app.to_local_storage()),
                                             spclty_kphis_select_option,
                                         ))
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(app, page, all_doctor_select_option => move |group| { group
+                            doms::form_inline_group(clone!(app, page, all_doctor_select_option => move |group| { group
                                 .children([
                                     doms::label_group_for("consult_dr_search","แพทย์ผู้รับ Consult"),
                                     doms::select_box(
                                         "consult_dr_search", Some("ทั้งหมด"), false,
                                         page.consult_dr_search.clone(), page.changed.clone(),
-                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        |d| d.class("form-control"), || {},
                                         all_doctor_select_option,
                                     ),
                                 ])
@@ -189,13 +189,13 @@ impl IpdConsultListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("consult_dr_reply_search","แพทย์ผู้ตอบ Consult"),
                                     doms::select_box(
                                         "consult_dr_reply_search", Some("ทั้งหมด"), false,
                                         page.consult_dr_reply_search.clone(), page.changed.clone(),
-                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        |d| d.class("form-control"), || {},
                                         all_doctor_select_option,
                                     ),
                                 ])
@@ -229,7 +229,7 @@ impl IpdConsultListPage {
                                     }))
                                 }))
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("search_consult_status","สถานะ"),
                                     html!("select" => HtmlSelectElement, {
@@ -264,7 +264,7 @@ impl IpdConsultListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("search_consult_emergency","เร่งด่วน"),
                                     html!("select" => HtmlSelectElement, {
@@ -291,12 +291,12 @@ impl IpdConsultListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("patient","HN, AN, CID, ชื่อ-สกุล"),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
-                                        .class(class::FORM_CTRL_SM)
+                                        .class("form-control")
                                         .attr("id", "patient")
                                         .attr("autocomplete","off")
                                         .apply(mixins::string_value_end(page.patient.clone(), page.changed.clone()))
@@ -307,7 +307,7 @@ impl IpdConsultListPage {
                                 .children([
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_L_GRAY)
+                                        .class(class::BTN_L_GRAY)
                                         .child(html!("i", {.class(class::FA_SEARCH)}))
                                         .text(" ค้นหา")
                                         .event(clone!(page => move |_: events::Click| {
@@ -316,7 +316,7 @@ impl IpdConsultListPage {
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_UNDO)}))
                                         .text(" กลับสู่การค้นหาเริ่มต้น")
                                         .event(clone!(app, page => move |_: events::Click| {

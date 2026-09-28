@@ -512,12 +512,12 @@ pub fn redraw_index_plan(
     order_items_all: MutableVec<Rc<OrderItem>>,
     nurse_assign: Mutable<String>,
     order_item_type: Mutable<String>,
-    status: Mutable<Option<String>>,
+    status_mutable: Mutable<Option<String>>,
     app: Rc<App>,
 ) {
     let nurse_assign = str_some(&nurse_assign.lock_ref());
     let order_item_type = str_some(&order_item_type.lock_ref());
-    let items = match status.lock_ref().as_ref() {
+    let items = match status_mutable.lock_ref().as_ref() {
         Some(status) => match status.as_str() {
             "wait" => order_items_all
                 .lock_ref()
@@ -682,21 +682,34 @@ pub fn render_index_plan(
                             html!("br"),
                             html!("span", {
                                 .apply_if(row.off_by_datetime.is_some(), |d| d.style("text-decoration","line-through"))
-                                .apply_if(!med_name.is_empty(), |d| {
-                                    d.child(html!("span", {
+                                .apply_if(!med_name.is_empty(), |has_med| {
+                                    has_med.child(html!("span", {
                                         .style("white-space","pre-wrap")
-                                        .apply_if(is_med, |dd| {
-                                            dd.class(class::BOLD_BLUE_EM_L)
+                                        .apply_if(is_med, |d| {
+                                            d.class(class::BOLD_BLUE_EM_L)
                                         })
                                         .text(&med_name)
                                     }))
                                     // Drug allergy badge
-                                    .apply_if(row.allergy_agent_symptom.is_some(), |d| d.child(html!("div", {
-                                        .class(class::BADGE_WRAP_R_RED)
-                                        .style("cursor","help")
-                                        .attr("title", &row.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                                        .text("แพ้ยา/เฝ้าระวัง")
-                                    })))
+                                    .apply(|d| {
+                                        if !row.allergy_count_force_no_order.is_zero() {
+                                            d.child(html!("div", {
+                                                .class(class::BADGE_WRAP_R_RED)
+                                                .style("cursor","help")
+                                                .attr("title", &row.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
+                                                .text("แพ้ยา/ห้ามสั่งใช้")
+                                            }))
+                                        } else if row.allergy_agent_symptom.is_some() {
+                                            d.child(html!("div", {
+                                                .class(class::BADGE_WRAP_R_RED)
+                                                .style("cursor","help")
+                                                .attr("title", &row.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
+                                                .text("แพ้ยา/เฝ้าระวัง")
+                                            }))
+                                        } else {
+                                            d
+                                        }
+                                    })
                                     // HAD/LASA badge
                                     .children(app.drug_alert_badge(row.displaycolor))
                                     // Med Reconcile badge

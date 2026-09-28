@@ -4,6 +4,7 @@ use futures_signals::{
     signal::{Mutable, Signal, SignalExt, always, not},
     signal_vec::{MutableVec, SignalVecExt},
 };
+use rust_decimal::Decimal;
 use std::{
     collections::HashSet,
     rc::Rc,
@@ -181,14 +182,14 @@ pub struct OrderCpn {
     edit_order: Mutable<Option<Rc<Order>>>,
     edit_progress_note: Mutable<Option<Rc<ProgressNote>>>,
 
-    pre_order_select_modal: Mutable<Option<Rc<PreOrderSelect>>>,
-    index_plan_action_modal: Mutable<Option<Rc<IndexPlanActionForm>>>,
-
     pub off_icodes: Mutable<Vec<Rc<OffOrderItem>>>,
     // pub off_med_plan_numbers: MutableVec<i32>,
     pub off_medplans: MutableVec<Rc<OffMedPlanMutable>>,
     pub retain_medplans: MutableVec<Rc<OffMedPlanMutable>>,
     pub medplans: MutableVec<Rc<MedPlanMutable>>,
+
+    pre_order_select_modal: Mutable<Option<Rc<PreOrderSelect>>>,
+    index_plan_action_modal: Mutable<Option<Rc<IndexPlanActionForm>>>,
     medplan_form_modal: Mutable<Option<Rc<MedPlanForm>>>,
 }
 
@@ -2949,6 +2950,8 @@ impl OrderCpn {
                                 let order_item_mut = OrderItemMutable::new("off", None);
                                 order_item_mut.order_item_detail.set([&med_name_opt.clone().unwrap_or_default(), new_line, &detail].concat());
                                 order_item_mut.off_order_item_id.set(Some(order_item.order_item_id));
+                                order_item_mut.allergy_agent_symptom.set(order_item.allergy_agent_symptom.clone());
+                                order_item_mut.allergy_count_force_no_order.set(order_item.allergy_count_force_no_order);
                                 page.offs_by_parent.lock_mut().push_cloned(order_item_mut);
                             }
                             page.edit_order.set(None);
@@ -2990,17 +2993,17 @@ impl OrderCpn {
                             if let Some(due) = due_mutables.items.iter().find(|dm| dm.order_item_id == order_item.order_item_id) {
                                 dom.child_signal(due.due_doctor.signal_cloned().map(clone!(app, due => move |opt| {
                                     opt.is_some().then(|| {
-                                        let show_modal = Mutable::new(false);
+                                        let show_notice = Mutable::new(false);
                                         html!("button", {
                                             .attr("type","button")
                                             .class(class::BTN_SM_FR_RT)
                                             .class(due.btn_color())
                                             .text("DUE")
-                                            .event(clone!(show_modal => move |_:events::Click| {
-                                                show_modal.set(true);
+                                            .event(clone!(show_notice => move |_:events::Click| {
+                                                show_notice.set(true);
                                             }))
-                                            .future(show_modal.signal().for_each(clone!(app, due, show_modal => move |is_show| {
-                                                clone!(app, due, show_modal => async move {
+                                            .future(show_notice.signal().for_each(clone!(app, due, show_notice => move |is_show| {
+                                                clone!(app, due, show_notice => async move {
                                                     if is_show {
                                                         let content = html!("div", {
                                                             .class("p-2")
@@ -3054,7 +3057,7 @@ impl OrderCpn {
                                                             ])
                                                         });
                                                         app.dom_with_close("Drug Utilization Evaluation : DUE", content, false).await;
-                                                        show_modal.set(false);
+                                                        show_notice.set(false);
                                                     }
                                                 })
                                             })))
@@ -3146,7 +3149,11 @@ impl OrderCpn {
                                 .class(class::BADGE_WRAP_R_RED)
                                 .style("cursor","help")
                                 .attr("title", &order_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                                .text("แพ้ยา/เฝ้าระวัง")
+                                .text(if order_item.allergy_count_force_no_order.is_zero() {
+                                    "แพ้ยา/เฝ้าระวัง"
+                                } else {
+                                    "แพ้ยา/ห้ามสั่งใช้"
+                                })
                             }))
                         })
                         // HAD/LASA BADGE
@@ -3204,7 +3211,7 @@ impl OrderCpn {
                             flags.is_nurse || flags.is_pharmacist,
                             !flags.is_readonly && flags.is_nurse,
                             page.clone(),
-                            app.clone()
+                            app.clone(),
                         ))))
                     })
                     // DUE/Info BOX
@@ -3482,6 +3489,8 @@ impl OrderCpn {
                         let order_item_mut = OrderItemMutable::new("off", None);
                         order_item_mut.order_item_detail.set([&med_name_opt.clone().unwrap_or_default(), new_line, &detail].concat());
                         order_item_mut.off_order_item_id.set(Some(order_item.order_item_id));
+                        order_item_mut.allergy_agent_symptom.set(order_item.allergy_agent_symptom.clone());
+                        order_item_mut.allergy_count_force_no_order.set(order_item.allergy_count_force_no_order);
                         page.offs_by_parent.lock_mut().push_cloned(order_item_mut);
                     }
                     page.edit_order.set(None);
@@ -3615,7 +3624,11 @@ impl OrderCpn {
                     .class(class::BADGE_WRAP_R_RED)
                     .style("cursor","help")
                     .attr("title", &order_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                    .text("แพ้ยา/เฝ้าระวัง")
+                    .text(if order_item.allergy_count_force_no_order.is_zero() {
+                        "แพ้ยา/เฝ้าระวัง"
+                    } else {
+                        "แพ้ยา/ห้ามสั่งใช้"
+                    })
                 })))
                 // HAD/LASA badge
                 .children(app.drug_alert_badge(order_item.displaycolor))
@@ -3671,7 +3684,7 @@ impl OrderCpn {
                     is_nurse || is_pharmacist,
                     !is_readonly && is_nurse,
                     page.clone(),
-                    app.clone()
+                    app.clone(),
                 )))
             })
         })
@@ -3728,7 +3741,11 @@ impl OrderCpn {
                     .class(class::BADGE_WRAP_R_RED)
                     .style("cursor","help")
                     .attr("title", &med_rec_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                    .text("แพ้ยา/เฝ้าระวัง")
+                    .text(if med_rec_item.allergy_count_force_no_order.is_zero() {
+                        "แพ้ยา/เฝ้าระวัง"
+                    } else {
+                        "แพ้ยา/ห้ามสั่งใช้"
+                    })
                 })))
                 .apply_if(med_rec_item.changed_drugusage.is_some() || med_rec_item.old_drugusage.is_some(), |dom| dom.child(html!("br")))
                 .text(&med_rec_item.changed_drugusage.clone().or(med_rec_item.old_drugusage.clone()).unwrap_or_default())
@@ -4229,6 +4246,8 @@ pub struct OrderItemMutable {
     pub info: Mutable<Option<String>>,
     pub info_status: Mutable<Option<String>>,
 
+    pub allergy_agent_symptom: Mutable<Option<String>>,
+    pub allergy_count_force_no_order: Mutable<Decimal>,
     pub med_reconciliation_item_id: Mutable<Option<u32>>,
     pub old_drugusage: Mutable<Option<String>>,
     pub receive_from: Mutable<Option<String>>,
@@ -4324,6 +4343,8 @@ impl From<OrderItem> for OrderItemMutable {
             info: Mutable::new(item.info),
             info_status: Mutable::new(item.info_status),
 
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             med_reconciliation_item_id: Mutable::new(item.med_reconciliation_item_id),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4355,6 +4376,8 @@ impl From<MedOrderItem> for OrderItemMutable {
             info: Mutable::new(item.info),
             info_status: Mutable::new(item.info_status),
 
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             med_reconciliation_item_id: Mutable::new(item.med_reconciliation_item_id),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4385,6 +4408,8 @@ impl From<MedReconciliationItem> for OrderItemMutable {
             info: Mutable::new(item.info),
             info_status: Mutable::new(item.info_status),
 
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             med_reconciliation_item_id: Mutable::new(Some(item.med_reconciliation_item_id)),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4411,6 +4436,8 @@ impl From<PreOrderItem> for OrderItemMutable {
             med_name: Mutable::new(item.med_name),
             generic_name: Mutable::new(item.generic_name),
             dosageform: Mutable::new(item.dosageform),
+            allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             ..Default::default()
         }
     }

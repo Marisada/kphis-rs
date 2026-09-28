@@ -143,8 +143,8 @@ pub struct MedSearchbox {
     pub show_notify: Option<String>,
     #[Demo(value = r#"Some(String::from("***ALERT!!!***"))"#)]
     pub show_notify_text: Option<String>,
-    #[Demo(value = r#"Some(String::from("PENICILLIN"))"#)]
-    pub allergy_agent: Option<String>,
+    // #[Demo(value = r#"Some(String::from("PENICILLIN"))"#)]
+    // pub allergy_agent: Option<String>,
     #[Demo(value = r#"Some(String::from("PENICILLIN=Rash"))"#)]
     pub allergy_agent_symptom: Option<String>,
     #[Demo(value = "Decimal::new(0,0)")]
