@@ -505,7 +505,7 @@ impl MedReconcileCpn {
                                                 })))
                                                 .children([
                                                     MedSearchboxCpn::render_modals(med_search_box, app.clone()),
-                                                    doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                                    doms::form_inline_group_sm(clone!(page => move |group| { group
                                                         .attr("id", "old_drugusage_input_group")
                                                         .children([
                                                             doms::label_group_for("old_drugusage","วิธีใช้"),

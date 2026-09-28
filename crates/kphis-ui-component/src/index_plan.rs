@@ -512,12 +512,12 @@ pub fn redraw_index_plan(
     order_items_all: MutableVec<Rc<OrderItem>>,
     nurse_assign: Mutable<String>,
     order_item_type: Mutable<String>,
-    status: Mutable<Option<String>>,
+    status_mutable: Mutable<Option<String>>,
     app: Rc<App>,
 ) {
     let nurse_assign = str_some(&nurse_assign.lock_ref());
     let order_item_type = str_some(&order_item_type.lock_ref());
-    let items = match status.lock_ref().as_ref() {
+    let items = match status_mutable.lock_ref().as_ref() {
         Some(status) => match status.as_str() {
             "wait" => order_items_all
                 .lock_ref()
@@ -697,7 +697,7 @@ pub fn render_index_plan(
                                                 .class(class::BADGE_WRAP_R_RED)
                                                 .style("cursor","help")
                                                 .attr("title", &row.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                                                .text("แพ้ยา/ห้ามใช้")
+                                                .text("แพ้ยา/ห้ามสั่งใช้")
                                             }))
                                         } else if row.allergy_agent_symptom.is_some() {
                                             d.child(html!("div", {
@@ -708,7 +708,7 @@ pub fn render_index_plan(
                                             }))
                                         } else {
                                             d
-                                        } 
+                                        }
                                     })
                                     // HAD/LASA badge
                                     .children(app.drug_alert_badge(row.displaycolor))

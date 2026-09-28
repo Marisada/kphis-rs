@@ -717,23 +717,23 @@ impl ContinuousForm {
                                                 }),
                                                 search_drugusage("280px", med.order_item_detail.clone(), app.clone()),
                                             ])
-                                            .child_signal(med.allergy_agent_symptom.signal_ref(|opt| {
+                                            .child_signal(med.allergy_agent_symptom.signal_ref(clone!(med => move |opt| {
                                                 opt.as_ref().map(|allergy_agent_symptom| {
                                                     html!("div", {
                                                         .class(class::BOLD_RED_R)
                                                         .text("แพ้ยา : ")
                                                         .text(allergy_agent_symptom)
+                                                        .child_signal(med.allergy_count_force_no_order.signal().map(|allergy_count_force_no_order| {
+                                                            (!allergy_count_force_no_order.is_zero()).then(|| {
+                                                                html!("span", {
+                                                                    .class(class::BADGE_RED_R)
+                                                                    .text("ห้ามสั่งใช้")
+                                                                })
+                                                            })
+                                                        }))
                                                     })
                                                 })
-                                            }))
-                                            .child_signal(med.allergy_count_force_no_order.signal().map(|allergy_count_force_no_order| {
-                                                (!allergy_count_force_no_order.is_zero()).then(|| {
-                                                    html!("span", {
-                                                        .class(class::BADGE_RED_R)
-                                                        .text("มีคำสั่งห้ามใช้")
-                                                    })
-                                                })
-                                            }))
+                                            })))
                                             .child_signal(map_ref!{
                                                 let is_due = med.due_status.signal_ref(|opt| opt.as_ref().map(|due_status| due_status == "Y").unwrap_or_default()),
                                                 let has_info = med.info_status.signal_ref(|opt| opt.as_ref().map(|info_status| info_status == "Y").unwrap_or_default()) =>

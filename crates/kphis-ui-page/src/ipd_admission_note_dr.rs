@@ -8084,14 +8084,6 @@ impl AddictAssist {
                         ])
                     }))
                 }),
-                html!("div", {
-                    .class(class::COL_SM1_PT1)
-                    .child(html!("a", {
-                        .attr("href","#")
-                        .class("pt-1")
-
-                    }))
-                }),
             ])
         })
     }

@@ -820,7 +820,7 @@ impl OpdErMainPage {
                             .class(class::NAV_ITEM_PY)
                             .child(html!("a", {
                                 .class("nav-link")
-                                .class_signal("active", page.active_tab.signal_cloned().map(|tab| matches!(tab, Tab::MedReconcile)))
+                                .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::MedReconcile)))
                                 .attr("href","#")
                                 .text("Med Reconciliation ")
                                 .child_signal(map_ref! {

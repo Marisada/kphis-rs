@@ -196,13 +196,13 @@ impl IpdPreAdmitListPage {
             .child(doms::alert_row(clone!(app, page => move |alert| {
                 alert.children([
                     doms::form_inline(clone!(app, page => move |form| {
-                        form.child(doms::form_inline_group_sm(clone!(page => move |group| { group
+                        form.child(doms::form_inline_group(clone!(page => move |group| { group
                             .children([
                                 doms::label_group_for("status","ประเภท"),
                                 html!("div", {
                                     .class(class::FLEX_GROW1)
                                     .child(html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_CTRL_SM)
+                                        .class("form-control")
                                         .attr("id", "status")
                                         .children([
                                             html!("option", {
@@ -248,18 +248,18 @@ impl IpdPreAdmitListPage {
                         })))
                         .children([
                             // .style("width","350px")
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("doctor_in_charge","แพทย์เจ้าของไข้"),
                                     doms::select_box(
                                         "doctor_in_charge", Some("ทั้งหมด"), false,
                                         page.doctor_in_charge.clone(), page.changed.clone(),
-                                        |d| d.class(class::FORM_CTRL_SM), || {},
+                                        |d| d.class("form-control"), || {},
                                         doctor_select_option,
                                     ),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_USER)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let doctor_code = app.doctor_code().unwrap_or_default();
@@ -272,7 +272,7 @@ impl IpdPreAdmitListPage {
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_RED)
+                                        .class(class::BTN_RED)
                                         .child(html!("i", {.class(class::FA_X)}))
                                         .event(clone!(app, page => move |_: events::Click| {
                                             let no_doctor = page.doctor_in_charge.lock_ref().is_empty();
@@ -284,19 +284,19 @@ impl IpdPreAdmitListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("patient","HN, AN, CID, ชื่อ-สกุล"),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
-                                        .class(class::FORM_CTRL_SM)
+                                        .class("form-control")
                                         .attr("id", "patient")
                                         .attr("autocomplete","off")
                                         .apply(mixins::string_value_end(page.patient.clone(), page.changed.clone()))
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_SEARCH)}))
                                         .text(" ค้นหา")
                                         .event(clone!(page => move |_: events::Click| {
@@ -311,13 +311,13 @@ impl IpdPreAdmitListPage {
                             && app.endpoint_is_allow(&Method::GET, &EndPoint::SearchBoxOpdVisitModeText, false)
                             && allow_patch,
                         |dom| dom
-                            .child(doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            .child(doms::form_inline_group(clone!(app, page => move |group| { group
                                 .attr("id", "check_an_exists_input_group")
                                 .children([
                                     doms::label_group_for("check_an","ยกเลิก AN ใน KPHIS"),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
-                                        .class(class::FORM_CTRL_SM)
+                                        .class("form-control")
                                         .attr("id", "check_an")
                                         .attr("autocomplete","off")
                                         .style("max-width","100px")
@@ -325,7 +325,7 @@ impl IpdPreAdmitListPage {
                                     }),
                                     html!("button", {
                                         .attr("type", "button")
-                                        .class(class::BTN_SM_GRAY)
+                                        .class(class::BTN_GRAY)
                                         .visible_signal(page.an_exists.signal_cloned().map(|an_exists| an_exists == 0))
                                         .child(html!("i", {.class(class::FA_SEARCH)}))
                                         .event(clone!(page => move |_: events::Click| {
@@ -338,7 +338,7 @@ impl IpdPreAdmitListPage {
                                         1 => {
                                             Some(html!("button" => HtmlButtonElement, {
                                                 .attr("type","button")
-                                                .class(class::BTN_SM)
+                                                .class("btn")
                                                 .class_signal("btn-warning", page.revoke_to_vn.signal_cloned().map(|vn| !vn.is_empty()))
                                                 .class_signal("btn-secondary", page.revoke_to_vn.signal_cloned().map(|vn| vn.is_empty()))
                                                 .text_signal(page.revoke_to_vn_detail.signal_cloned().map(|detail| {
@@ -388,7 +388,7 @@ impl IpdPreAdmitListPage {
                             ).then(|| {
                                 html!("button", {
                                     .attr("type", "button")
-                                    .class(class::BTN_SM_R_BLUE)
+                                    .class(class::BTN_R_BLUE)
                                     .child(html!("i", {.class(class::FA_PLUS)}))
                                     .text(" เพิ่มใบ Order ใหม่")
                                     .event(clone!(app, page => move |_: events::Click| {

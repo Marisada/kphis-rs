@@ -1063,7 +1063,6 @@ impl ReferOutCpn {
                             html!("a", {
                                 .class(class::NAV_ITEM_LINK_P2)
                                 .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::ReferOut)))
-                                .attr("id", "nav-refer-out-tab")
                                 .attr("href","#")
                                 .text("Refer Out")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {
@@ -1079,7 +1078,6 @@ impl ReferOutCpn {
                             html!("a", {
                                 .class(class::NAV_ITEM_LINK_P2)
                                 .class_signal("active", page.active_tab.signal_ref(|tab| matches!(tab, Tab::ReferNote)))
-                                .attr("id", "nav-refer-note-tab")
                                 .attr("href","#")
                                 .text("บันทึกข้อความ")
                                 .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::Click| {

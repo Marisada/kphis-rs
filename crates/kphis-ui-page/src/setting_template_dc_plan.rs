@@ -501,9 +501,9 @@ impl SettingTemplateDcPlanPage {
             .child(html!("div", {
                 .children([
                     html!("div", {
-                        .class("row")
-                        .child(html!("h4", {
-                            .child(html!("label", {
+                        .class(class::ROW_B)
+                        .child(html!("h5", {
+                            .child(html!("span", {
                                 .class(class::FORM_COL_LBL_AUTO)
                                 .child(html!("i", {.class(class::FA_USER_COG)}))
                                 .text(" Template Nursing Discharge Plan บันทึก/แก้ไข")

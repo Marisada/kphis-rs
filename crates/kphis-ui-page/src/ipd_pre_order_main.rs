@@ -217,9 +217,8 @@ impl IpdPreOrderPage {
                         html!("li", {
                             .class("nav-item")
                             .child(html!("a", {
-                                .class("nav-link")
+                                .class(class::BTN_L_BLUE)
                                 .attr("href", "#")
-                                .attr("role", "tab")
                                 .child(html!("i", {.class(class::FA_L_ARROW)}))
                                 .text(" กลับ")
                                 .event_with_options(&EventOptions::preventable(), clone!(app, page => move |event: events::Click| {
@@ -237,9 +236,10 @@ impl IpdPreOrderPage {
                         }),
                         html!("li", {
                             .class("nav-item")
-                            .child(html!("h4", {
-                                .class("nav-link")
-                                .text("บันทึก IPD Order ล่วงหน้า / IPD Order Template")
+                            .child(html!("h5", {
+                                .class("m-2")
+                                .text("บันทึก IPD Order ")
+                                .text_signal(page.is_template().map(|is_template| if is_template {"Template"} else {"ล่วงหน้า"}))
                             }))
                         }),
                     ])

@@ -59,13 +59,13 @@ impl MedSearchboxCpn {
         self.text.set_neq(String::new());
         self.results.lock_mut().clear();
         self.status_text.set_neq(Some(String::from("กรอกข้อความเพื่อค้นหา")));
-
         self.selected_result.set(None);
         self.drug_notify_modal.set(None);
-        self.drug_duplication_checked.set_neq(false);
         self.drug_duplication_modal.set(None);
-        self.drug_interaction_checked.set_neq(false);
         self.drug_interaction_modal.set(None);
+
+        self.drug_duplication_checked.set_neq(false);
+        self.drug_interaction_checked.set_neq(false);
         self.allowed.set_neq(false);
     }
 
@@ -281,12 +281,12 @@ impl MedSearchboxCpn {
                                                 dom.child(html!("div", {
                                                     .class(class::BOLD_RED_L)
                                                     .text(&["แพ้ยา : ", &result.allergy_agent_symptom.clone().unwrap_or_default()].concat())
-                                                }))
-                                            })
-                                            .apply_if(!result.allergy_count_force_no_order.is_zero(), |dom| {
-                                                dom.child(html!("span", {
-                                                    .class(class::BADGE_RED_R)
-                                                    .text("มีการห้ามสั่งใช้")
+                                                    .apply_if(!result.allergy_count_force_no_order.is_zero(), |d| d
+                                                        .child(html!("span", {
+                                                            .class(class::BADGE_RED_R)
+                                                            .text("ห้ามสั่งใช้")
+                                                        }))
+                                                    )
                                                 }))
                                             })
                                             // ipd-dr-order.php:664, check_drug_duplication_and_interaction()
@@ -315,7 +315,7 @@ impl MedSearchboxCpn {
                                                 }
                                                 let allergy_passed = if result.allergy_agent_symptom.is_some() {
                                                     let not_forced = result.allergy_count_force_no_order.is_zero();
-                                                    app.alert_error("พบประวัติการแพ้ยา", &["แพ้ยา : ", &result.allergy_agent_symptom.clone().unwrap_or_default(), if not_forced {""} else {" (มีการห้ามสั่งใช้)"}].concat());
+                                                    app.alert_error("พบประวัติการแพ้ยา", &["แพ้ยา : ", &result.allergy_agent_symptom.clone().unwrap_or_default(), if not_forced {""} else {" (ห้ามสั่งใช้)"}].concat());
                                                     not_forced
                                                 } else {
                                                     true

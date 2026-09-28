@@ -178,37 +178,37 @@ impl OpdErOrderListPage {
                 .children([
                     doms::form_inline(clone!(app, page => move |form| { form
                         .children([
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("order_date","วันที่บันทึกรายการ"),
                                     doms::date_picker(
                                         page.order_date.clone(),
                                         page.changed.clone(), always(false), None,
-                                        |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "order_date"),
+                                        |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                        |d| d.class("rounded-start-0"),
+                                        |d| d.class("rounded-start-0").attr("id", "order_date"),
                                         |s| s, always(None),
                                     ),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("vstdate","วันที่ส่งตรวจ"),
                                     doms::date_picker(
                                         page.vstdate.clone(),
                                         page.changed.clone(), always(false), None,
-                                        |d| d.class(class::FLEX_GROW1).style("min-width","120px"),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L),
-                                        |d| d.class(class::FORM_CTRL_ONLY_SM_R0_L).attr("id", "vstdate"),
+                                        |d| d.class(class::FLEX_GROW1).style("min-width","135px"),
+                                        |d| d.class("rounded-start-0"),
+                                        |d| d.class("rounded-start-0").attr("id", "vstdate"),
                                         |s| s, always(None),
                                     ),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("bedno","เตียง"),
                                     html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_SELECT_SM)
+                                        .class("form-select")
                                         // .style("width","150px")
                                         .attr("id", "bedno")
                                         .child(html!("option", {
@@ -225,11 +225,11 @@ impl OpdErOrderListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("er_patient_status","สถานะ"),
                                     html!("select" => HtmlSelectElement, {
-                                        .class(class::FORM_SELECT_SM)
+                                        .class("form-select")
                                         .attr("id", "er_patient_status")
                                         .child(html!("option", {.attr("value", "in_er").attr("selected", "").text("ผู้ป่วยใน ER")}))
                                         .children([
@@ -253,34 +253,34 @@ impl OpdErOrderListPage {
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("hn","HN"),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
-                                        .class(class::FORM_CTRL_SM)
+                                        .class("form-control")
                                         .attr("id", "hn")
                                         .prop_signal("size", app.hosxp_hn_len_signal().map(|n| n.to_owned()))
                                         .apply(mixins::string_value_end(page.hn.clone(), page.changed.clone()))
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .children([
                                     doms::label_group_for("qn","QN"),
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
-                                        .class(class::FORM_CTRL_SM)
+                                        .class("form-control")
                                         .attr("id", "qn")
                                         .attr("size", "5")
                                         .apply(mixins::string_value_end(page.qn.clone(), page.changed.clone()))
                                     }),
                                 ])
                             })),
-                            doms::form_inline_group_sm(clone!(page => move |group| { group
+                            doms::form_inline_group(clone!(page => move |group| { group
                                 .child(html!("button", {
                                     .attr("type", "button")
-                                    .class(class::BTN_SM_GRAY)
+                                    .class(class::BTN_GRAY)
                                     .child(html!("i", {.class(class::FA_SEARCH)}))
                                     .text(" ค้นหา")
                                     .event(clone!(page => move |_: events::Click| {
@@ -289,7 +289,7 @@ impl OpdErOrderListPage {
                                 }))
                             })),
                             // OPD_ER_ORDER_ADD
-                            doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                            doms::form_inline_group(clone!(app, page => move |group| { group
                                 .child_signal(page.view_by.signal_cloned().map(clone!(app, page => move |view_by| {
                                     (app.has_permission(Permission::OpdErOrderAdd)
                                         && app.endpoint_is_allow(&Method::POST, &EndPoint::OpdErOrderMaster, false)
@@ -297,7 +297,7 @@ impl OpdErOrderListPage {
                                     ).then(|| {
                                         html!("button", {
                                             .attr("type", "button")
-                                            .class(class::BTN_SM_R_BLUE)
+                                            .class(class::BTN_R_BLUE)
                                             .child(html!("i", {.class(class::FA_PLUS)}))
                                             .text(" เพิ่มใบ Order ใหม่")
                                             .event(clone!(app, page => move |_: events::Click| {
@@ -310,11 +310,11 @@ impl OpdErOrderListPage {
                                 })))
                             })),
                             doms::form_inline_end(clone!(app, page => move |end| { end
-                                .child(doms::form_inline_group_sm(clone!(app, page => move |group| { group
+                                .child(doms::form_inline_group(clone!(app, page => move |group| { group
                                     .children([
                                         doms::label_group_for("refresh_interval","รอบการ Update "),
                                         html!("select" => HtmlSelectElement, {
-                                            .class(class::FORM_SELECT_SM)
+                                            .class("form-select")
                                             .attr("id", "refresh_interval")
                                             .children([
                                                 html!("option", {.attr("value", "0").text("ไม่ต้องทำ")}),

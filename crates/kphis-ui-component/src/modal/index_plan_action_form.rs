@@ -1434,7 +1434,7 @@ impl IndexPlanActionForm {
                             .child(html!("button", {
                                 .attr("type", "button")
                                 .class(class::ACCORDION_BTN_CYANS_P2)
-                                .class_signal("collapsed", accordion.signal_ref(|acc| matches!(acc, PlanTimeShow::Hours)))
+                                .class_signal("collapsed", accordion.signal_ref(|acc| !matches!(acc, PlanTimeShow::Single)))
                                 .prop_signal("aria-expanded", accordion.signal_ref(|acc| if matches!(acc, PlanTimeShow::Single) {"true"} else {"false"}))
                                 .attr("aria-controls","modal-plan-sch-time-single")
                                 .text("รายละเอียด")
@@ -1776,7 +1776,7 @@ impl IndexPlanActionForm {
         })
     }
 
-    pub fn render_actions_list(allow_all: bool, plan_id_opt: Option<u32>, order_item_opt: Option<Rc<OrderItem>>, modal: Rc<Self>) -> Option<Dom> {
+    fn render_actions_list(allow_all: bool, plan_id_opt: Option<u32>, order_item_opt: Option<Rc<OrderItem>>, modal: Rc<Self>) -> Option<Dom> {
         let (gut_id, title) = if plan_id_opt.is_some() { ("modal-actions-list", "") } else { ("modal-all-actions-list", "ทั้งหมด") };
         let accordion_opened = Mutable::new(false);
         modal.plan_actions(plan_id_opt, order_item_opt.clone(), allow_all).and_then(|actions| {
@@ -2788,7 +2788,7 @@ impl IndexPlanActionForm {
     pub fn plan_dom(plan: Rc<IndexPlan>, modal: Rc<Self>, custom_label: Option<String>) -> Dom {
         let plan_id = plan.plan_id;
         let label = custom_label.unwrap_or([date_th_opt(&plan.plan_date), time_hm_opt(&plan.plan_time)].join(" "));
-        let actions_len = modal.plan_actions(Some(plan.plan_id), modal.order_item.get_cloned(), false).map(|actions| actions.len()).unwrap_or_default();
+        let actions_len = modal.plan_actions(Some(plan_id), modal.order_item.get_cloned(), false).map(|actions| actions.len()).unwrap_or_default();
         html!("a", {
             .class(class::NAV_ITEM_LINK)
             .class_signal("active", modal.plan_id.signal_ref(move |opt| opt.map(|id| id == plan_id).unwrap_or_default()))
@@ -2807,7 +2807,7 @@ impl IndexPlanActionForm {
                         modal.set_no_more_action();
                     }
                     FormType::Action => {
-                        modal.plan_id.set_neq(zero_none(plan.plan_id));
+                        modal.plan_id.set_neq(zero_none(plan_id));
                         modal.plan_detail.set_neq(plan.plan_detail.clone().unwrap_or_default());
                         // modal.selected_plan_time.set(plan.plan_time);
                         modal.set_new_or_no_action();
@@ -3381,7 +3381,7 @@ pub fn render_order_item(order_item: Rc<OrderItem>, app: Rc<App>) -> Dom {
                                     .text(if order_item.allergy_count_force_no_order.is_zero() {
                                         "แพ้ยา/เฝ้าระวัง"
                                     } else {
-                                        "แพ้ยา/ห้ามใช้"
+                                        "แพ้ยา/ห้ามสั่งใช้"
                                     })
                                     .attr("title", &order_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
                                 })))

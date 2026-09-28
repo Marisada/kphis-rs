@@ -42,10 +42,10 @@ impl IpdPasscodeForm {
     }
 
     // getCurrentWardPasscodeData.php
-    async fn get_current_ward_passcode_data(page: Rc<Self>, app: Rc<App>) {
+    async fn get_current_ward_passcode_data(modal: Rc<Self>, app: Rc<App>) {
         {
-            page.using_passcode.lock_mut().clear();
-            page.not_using_passcode.lock_mut().clear();
+            modal.using_passcode.lock_mut().clear();
+            modal.not_using_passcode.lock_mut().clear();
         }
         // GET `EndPoint::IpdPasscode`
         match ConfigIpdWardPasscode::call_api_get(app.state()).await {
@@ -53,8 +53,8 @@ impl IpdPasscodeForm {
                 // TODO diff new vs old vec
                 let new_using = extract_using_passcode(true, &all_ward);
                 let new_not_using = extract_using_passcode(false, &all_ward);
-                page.using_passcode.lock_mut().extend(new_using);
-                page.not_using_passcode.lock_mut().extend(new_not_using);
+                modal.using_passcode.lock_mut().extend(new_using);
+                modal.not_using_passcode.lock_mut().extend(new_not_using);
             }
             Err(e) => {
                 app.alert_app_error(&e).await;
@@ -63,16 +63,16 @@ impl IpdPasscodeForm {
     }
 
     // genIpdWardPasscode.php
-    fn gen_ipd_ward_passcode(page: Rc<Self>, app: Rc<App>) {
+    fn gen_ipd_ward_passcode(modal: Rc<Self>, app: Rc<App>) {
         if app.can_change_ward_passcode() {
             app.async_load(
                 true,
-                clone!(app, page => async move {
-                    let password_lock = page.password.lock_ref();
+                clone!(app, modal => async move {
+                    let password_lock = modal.password.lock_ref();
                     match hash(&password_lock) {
                         Ok(pwd) => {
                             let request = PasscodeGenRequest {
-                                ward: page.ward.get_cloned(),
+                                ward: modal.ward.get_cloned(),
                                 password: pwd,
                                 mode: PasscodeGenRequestMode::Gen,
                             };
@@ -81,7 +81,7 @@ impl IpdPasscodeForm {
                                 Ok(response) => {
                                     match response.passcode {
                                         Some(passcode) => {
-                                            Self::get_current_ward_passcode_data(page.clone(), app.clone()).await;
+                                            Self::get_current_ward_passcode_data(modal.clone(), app.clone()).await;
                                             // change alert to inline dom text
                                             app.alert("Passcode ใหม่", &passcode);
                                         }
@@ -94,7 +94,7 @@ impl IpdPasscodeForm {
                                     app.alert_app_error(&e).await;
                                 }
                             }
-                            page.password.set_neq(String::new());
+                            modal.password.set_neq(String::new());
                         }
                         Err(e) => {
                             app.alert_error_with_clipboard(CONTACT_ADMIN, &["Error: ", &e.to_string()].concat()).await;
@@ -107,13 +107,13 @@ impl IpdPasscodeForm {
         }
     }
     // removeIpdWardPasscode.php
-    fn remove_ipd_ward_passcode(ward: String, page: Rc<Self>, app: Rc<App>) {
+    fn remove_ipd_ward_passcode(ward: String, modal: Rc<Self>, app: Rc<App>) {
         app.async_load(
             true,
-            clone!(app, page => async move {
+            clone!(app, modal => async move {
                 if app.confirm("ยืนยันยกเลิกการใช้ Passcode").await {
                     if app.can_change_ward_passcode() {
-                        let password_lock = page.password.lock_ref();
+                        let password_lock = modal.password.lock_ref();
                         match hash(&password_lock) {
                             Ok(pwd) => {
                                 let request = PasscodeGenRequest {
@@ -125,7 +125,7 @@ impl IpdPasscodeForm {
                                 match request.call_api_post(app.state()).await {
                                     Ok(response) => match response.passcode {
                                         Some(_remove) => {
-                                            Self::get_current_ward_passcode_data(page.clone(), app.clone()).await;
+                                            Self::get_current_ward_passcode_data(modal.clone(), app.clone()).await;
                                             // change alert to inline dom text
                                             app.alert("ยกเลิกการใช้ Passcode เรียบร้อยแล้ว", "");
                                         }
@@ -137,7 +137,7 @@ impl IpdPasscodeForm {
                                         app.alert_app_error(&e).await;
                                     }
                                 }
-                                page.password.set_neq(String::new());
+                                modal.password.set_neq(String::new());
                             }
                             Err(e) => {
                                 app.alert_error_with_clipboard(CONTACT_ADMIN, &["Error: ", &e.to_string()].concat()).await;
@@ -151,7 +151,7 @@ impl IpdPasscodeForm {
         );
     }
 
-    pub fn render_using_passcode(item: Rc<ConfigIpdWardPasscode>, i: usize, app: Rc<App>, page: Rc<Self>) -> Dom {
+    pub fn render_using_passcode(item: Rc<ConfigIpdWardPasscode>, i: usize, app: Rc<App>, modal: Rc<Self>) -> Dom {
         html!("li", {
             .class("list-group-item")
             .children([
@@ -163,9 +163,9 @@ impl IpdPasscodeForm {
                     .attr("type", "button")
                     .class(class::BTN_SM_FR_GRAY)
                     .text("ยกเลิกการใช้")
-                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, page => move || {
-                        Self::remove_ipd_ward_passcode(item.ward.clone(), page.clone(), app.clone())
-                    }), page.password.signal_cloned().map(|pwd| pwd.is_empty()), app.state()))
+                    .apply(mixins::click_with_loader_checked_or_true_disable_signal(clone!(app, modal => move || {
+                        Self::remove_ipd_ward_passcode(item.ward.clone(), modal.clone(), app.clone())
+                    }), modal.password.signal_cloned().map(|pwd| pwd.is_empty()), app.state()))
                 })
             ])
         })
@@ -280,7 +280,7 @@ impl IpdPasscodeForm {
                                                             .attr("id", "modal_passcode_password")
                                                             .attr("placeholder","Password HOSxP")
                                                             .attr("autocomplete","off")
-                                                            // .apply(mixins::string_value(page.password.clone(), page.changed.clone()))
+                                                            // .apply(mixins::string_value(modal.password.clone(), modal.changed.clone()))
                                                             .prop_signal("value", modal.password.signal_cloned())
                                                             .with_node!(element => {
                                                                 .event(clone!(modal => move |_: events::Input| {

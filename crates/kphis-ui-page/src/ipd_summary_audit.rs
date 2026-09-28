@@ -1278,7 +1278,7 @@ impl IpdSummaryAuditMutable {
             rev_dch_datetime: datetime_8601(&self.rev_dch_datetime.lock_ref()),
             rev_leaveday: self.rev_leaveday.lock_ref().parse::<i32>().ok(),
             rev_sex: str_some(&self.rev_sex.lock_ref()),
-            rev_birthday: date_8601(&self.rev_birthday.get_cloned()),
+            rev_birthday: date_8601(&self.rev_birthday.lock_ref()),
             rev_bw: self.rev_bw.lock_ref().parse::<i32>().ok(),
             rev_dchstts: str_some(&self.rev_dchstts.lock_ref()),
             rev_dchtype: str_some(&self.rev_dchtype.lock_ref()),
@@ -1493,9 +1493,9 @@ impl IpdSummaryAuditMutable {
                                                 }))
                                             }),
                                             html!("button", {
+                                                .attr("type", "button")
                                                 .class(class::BTN_SM_BLUEO)
                                                 .class_signal("active", audit.audit_type.signal_ref(move |t| t == "E"))
-                                                .attr("type", "button")
                                                 .text("External")
                                                 .event(clone!(audit => move |_: events::Click| {
                                                     audit.audit_type.set(String::from("E"));

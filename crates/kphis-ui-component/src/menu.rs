@@ -2156,7 +2156,7 @@ impl MenuCpn {
                             .text(if order_item.allergy_count_force_no_order.is_zero() {
                                 "แพ้ยา/เฝ้าระวัง"
                             } else {
-                                "แพ้ยา/ห้ามใช้"
+                                "แพ้ยา/ห้ามสั่งใช้"
                             })
                         })))
                         // HAD/LASA badge

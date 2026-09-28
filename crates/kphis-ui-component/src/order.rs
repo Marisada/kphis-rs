@@ -182,14 +182,14 @@ pub struct OrderCpn {
     edit_order: Mutable<Option<Rc<Order>>>,
     edit_progress_note: Mutable<Option<Rc<ProgressNote>>>,
 
-    pre_order_select_modal: Mutable<Option<Rc<PreOrderSelect>>>,
-    index_plan_action_modal: Mutable<Option<Rc<IndexPlanActionForm>>>,
-
     pub off_icodes: Mutable<Vec<Rc<OffOrderItem>>>,
     // pub off_med_plan_numbers: MutableVec<i32>,
     pub off_medplans: MutableVec<Rc<OffMedPlanMutable>>,
     pub retain_medplans: MutableVec<Rc<OffMedPlanMutable>>,
     pub medplans: MutableVec<Rc<MedPlanMutable>>,
+
+    pre_order_select_modal: Mutable<Option<Rc<PreOrderSelect>>>,
+    index_plan_action_modal: Mutable<Option<Rc<IndexPlanActionForm>>>,
     medplan_form_modal: Mutable<Option<Rc<MedPlanForm>>>,
 }
 
@@ -2993,17 +2993,17 @@ impl OrderCpn {
                             if let Some(due) = due_mutables.items.iter().find(|dm| dm.order_item_id == order_item.order_item_id) {
                                 dom.child_signal(due.due_doctor.signal_cloned().map(clone!(app, due => move |opt| {
                                     opt.is_some().then(|| {
-                                        let show_modal = Mutable::new(false);
+                                        let show_notice = Mutable::new(false);
                                         html!("button", {
                                             .attr("type","button")
                                             .class(class::BTN_SM_FR_RT)
                                             .class(due.btn_color())
                                             .text("DUE")
-                                            .event(clone!(show_modal => move |_:events::Click| {
-                                                show_modal.set(true);
+                                            .event(clone!(show_notice => move |_:events::Click| {
+                                                show_notice.set(true);
                                             }))
-                                            .future(show_modal.signal().for_each(clone!(app, due, show_modal => move |is_show| {
-                                                clone!(app, due, show_modal => async move {
+                                            .future(show_notice.signal().for_each(clone!(app, due, show_notice => move |is_show| {
+                                                clone!(app, due, show_notice => async move {
                                                     if is_show {
                                                         let content = html!("div", {
                                                             .class("p-2")
@@ -3057,7 +3057,7 @@ impl OrderCpn {
                                                             ])
                                                         });
                                                         app.dom_with_close("Drug Utilization Evaluation : DUE", content, false).await;
-                                                        show_modal.set(false);
+                                                        show_notice.set(false);
                                                     }
                                                 })
                                             })))
@@ -3152,7 +3152,7 @@ impl OrderCpn {
                                 .text(if order_item.allergy_count_force_no_order.is_zero() {
                                     "แพ้ยา/เฝ้าระวัง"
                                 } else {
-                                    "แพ้ยา/ห้ามใช้"
+                                    "แพ้ยา/ห้ามสั่งใช้"
                                 })
                             }))
                         })
@@ -3211,7 +3211,7 @@ impl OrderCpn {
                             flags.is_nurse || flags.is_pharmacist,
                             !flags.is_readonly && flags.is_nurse,
                             page.clone(),
-                            app.clone()
+                            app.clone(),
                         ))))
                     })
                     // DUE/Info BOX
@@ -3627,7 +3627,7 @@ impl OrderCpn {
                     .text(if order_item.allergy_count_force_no_order.is_zero() {
                         "แพ้ยา/เฝ้าระวัง"
                     } else {
-                        "แพ้ยา/ห้ามใช้"
+                        "แพ้ยา/ห้ามสั่งใช้"
                     })
                 })))
                 // HAD/LASA badge
@@ -3684,7 +3684,7 @@ impl OrderCpn {
                     is_nurse || is_pharmacist,
                     !is_readonly && is_nurse,
                     page.clone(),
-                    app.clone()
+                    app.clone(),
                 )))
             })
         })
@@ -3744,7 +3744,7 @@ impl OrderCpn {
                     .text(if med_rec_item.allergy_count_force_no_order.is_zero() {
                         "แพ้ยา/เฝ้าระวัง"
                     } else {
-                        "แพ้ยา/ห้ามใช้"
+                        "แพ้ยา/ห้ามสั่งใช้"
                     })
                 })))
                 .apply_if(med_rec_item.changed_drugusage.is_some() || med_rec_item.old_drugusage.is_some(), |dom| dom.child(html!("br")))

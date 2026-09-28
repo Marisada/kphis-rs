@@ -707,7 +707,7 @@ impl MedReconForm {
                                                                 .apply_if(!item.allergy_count_force_no_order.lock_ref().is_zero(), |d| d
                                                                     .child(html!("span", {
                                                                         .class(class::BADGE_RED_R)
-                                                                        .text("มีคำสั่งห้ามใช้")
+                                                                        .text("ห้ามสั่งใช้")
                                                                     }))
                                                                 )
                                                             }))
