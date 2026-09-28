@@ -6,7 +6,6 @@ use futures_signals::{
     signal::{Mutable, SignalExt},
     signal_vec::{MutableVec, SignalVecExt},
 };
-use rust_decimal::Decimal;
 use std::{collections::HashSet, rc::Rc};
 use web_sys::HtmlInputElement;
 
@@ -147,6 +146,7 @@ impl MedSearchboxCpn {
                         order_item.info.set(result.info.clone());
                         order_item.info_status.set(result.info_status.clone());
                         order_item.allergy_agent_symptom.set(result.allergy_agent_symptom.clone());
+                        order_item.allergy_count_force_no_order.set(result.allergy_count_force_no_order);
                         lock.push_cloned(order_item);
                         if is_homemed {
                             order_form.display_homemed_searchbox().set(false);
@@ -283,7 +283,7 @@ impl MedSearchboxCpn {
                                                     .text(&["แพ้ยา : ", &result.allergy_agent_symptom.clone().unwrap_or_default()].concat())
                                                 }))
                                             })
-                                            .apply_if(result.allergy_count_force_no_order > Decimal::ZERO, |dom| {
+                                            .apply_if(!result.allergy_count_force_no_order.is_zero(), |dom| {
                                                 dom.child(html!("span", {
                                                     .class(class::BADGE_RED_R)
                                                     .text("มีการห้ามสั่งใช้")
@@ -314,13 +314,9 @@ impl MedSearchboxCpn {
                                                     }
                                                 }
                                                 let allergy_passed = if result.allergy_agent_symptom.is_some() {
-                                                    if result.allergy_count_force_no_order > Decimal::ZERO {
-                                                        app.alert_error("พบประวัติการแพ้ยา", &["แพ้ยา : ", &result.allergy_agent_symptom.clone().unwrap_or_default(), " (มีการห้ามสั่งใช้)"].concat());
-                                                        false
-                                                    } else {
-                                                        app.alert_error("พบประวัติการแพ้ยา", &["แพ้ยา : ", &result.allergy_agent_symptom.clone().unwrap_or_default()].concat());
-                                                        true
-                                                    }
+                                                    let not_forced = result.allergy_count_force_no_order.is_zero();
+                                                    app.alert_error("พบประวัติการแพ้ยา", &["แพ้ยา : ", &result.allergy_agent_symptom.clone().unwrap_or_default(), if not_forced {""} else {" (มีการห้ามสั่งใช้)"}].concat());
+                                                    not_forced
                                                 } else {
                                                     true
                                                 };

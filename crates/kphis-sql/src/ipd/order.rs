@@ -182,7 +182,8 @@ pub fn select_order_item(
             di.displaycolor,di.generic_name,di.dosageform,di.addict_type_id,di.habit_forming_type,ooi.icode AS off_icode,\
             IF(omr.custom_med_name IS NULL OR omr.custom_med_name='',CONCAT(off_di.`name`,' ',off_di.strength,' ',off_di.units),omr.custom_med_name) AS off_med_name,off_di.displaycolor AS off_displaycolor,\
             mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used,\
-            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom \
+            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
+            SUM(IF(allergy.force_no_order='Y',1,0)) AS allergy_count_force_no_order \
         FROM ",kphis,".ipd_order_item oi \
             JOIN ",kphis,".ipd_order o ON o.order_id=oi.order_id \
             LEFT JOIN ",kphis,".kphis_drug_use_duration dud ON dud.icode=oi.icode \
@@ -363,7 +364,8 @@ pub fn get_home_med_from_cont(hosxp: &str, kphis: &str) -> String {
             IF(mr.custom_med_name IS NULL OR mr.custom_med_name='',CONCAT(di.`name`,' ',di.strength,' ',di.units),mr.custom_med_name) AS med_name,\
             di.generic_name,di.dosageform,di.displaycolor,di.addict_type_id,di.habit_forming_type,\
             mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used,\
-            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom \
+            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
+            SUM(IF(allergy.force_no_order='Y',1,0)) AS allergy_count_force_no_order \
         FROM ",kphis,".ipd_order_item oi \
             JOIN ",kphis,".ipd_order o ON o.order_id=oi.order_id \
             LEFT JOIN ",kphis,".kphis_drug_use_duration dud ON dud.icode=oi.icode \
@@ -443,6 +445,7 @@ pub fn select_previous(params: &OrderParams, hosxp: &str, kphis: &str) -> String
             di.generic_name,di.dosageform,di.displaycolor,di.addict_type_id,di.habit_forming_type,\
             mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used,\
             GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
+            SUM(IF(allergy.force_no_order='Y',1,0)) AS allergy_count_force_no_order,\
             o.order_date,o.order_time,DATEDIFF(DATE(?), o.order_date) AS order_duration,\
             dud.`usage` AS due_usage,dud.status AS due_status,dud.monitor,dud.monitor_count,dud.monitor_duration,dud.monitor_status,dud.info,dud.info_status,\
             dud.duration1,dud.exceed_duration1_color,dud.duration2,dud.exceed_duration2_color,dud.duration3,dud.exceed_duration3_color \
@@ -508,7 +511,8 @@ pub fn select_one_day_previous(hosxp: &str, kphis: &str) -> String {
                 WHERE ofoi.off_order_item_id=oi.order_item_id AND ofoi.order_item_type='off' AND ofo.an=oi.an LIMIT 1) AS off_by_datetime,\
             CONCAT(di.`name`,' ',di.strength,' ',di.units) AS med_name,di.generic_name,di.dosageform,di.displaycolor,di.addict_type_id,di.habit_forming_type,\
             mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used,\
-            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom \
+            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
+            SUM(IF(allergy.force_no_order='Y',1,0)) AS allergy_count_force_no_order \
         FROM ",kphis,".ipd_order_item oi \
             JOIN ",kphis,".ipd_order o ON o.order_id=oi.order_id \
             LEFT JOIN ",kphis,".kphis_drug_use_duration dud ON dud.icode=oi.icode \

@@ -3378,7 +3378,11 @@ pub fn render_order_item(order_item: Rc<OrderItem>, app: Rc<App>) -> Dom {
                                 .apply_if(order_item.allergy_agent_symptom.is_some(), |d| d.child(html!("div", {
                                     .class(class::BADGE_WRAP_R_RED)
                                     .style("cursor","help")
-                                    .text("แพ้ยา/เฝ้าระวัง")
+                                    .text(if order_item.allergy_count_force_no_order.is_zero() {
+                                        "แพ้ยา/เฝ้าระวัง"
+                                    } else {
+                                        "แพ้ยา/ห้ามใช้"
+                                    })
                                     .attr("title", &order_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
                                 })))
                                 // HAD/LASA badge

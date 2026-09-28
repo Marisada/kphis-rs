@@ -162,7 +162,8 @@ pub fn select_order_item(
             di.displaycolor,di.generic_name,di.dosageform,di.addict_type_id,di.habit_forming_type,ooi.icode AS off_icode,\
             IF(omr.custom_med_name IS NULL OR omr.custom_med_name='',CONCAT(off_di.`name`,' ',off_di.strength,' ',off_di.units),omr.custom_med_name) AS off_med_name,off_di.displaycolOR AS off_displaycolor,\
             mr.old_drugusage,mr.receive_from,mr.receive_date,mr.receive_qty,mr.last_dose_taken_time,mr.last_dose_taken_remark,mr.`use` AS used,\
-            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom \
+            GROUP_CONCAT(DISTINCT(CONCAT(allergy.agent,'=',IFNULL(allergy.symptom,''))) ORDER BY allergy.agent) AS allergy_agent_symptom,\
+            SUM(IF(allergy.force_no_order='Y',1,0)) AS allergy_count_force_no_order \
         FROM ",kphis,".opd_er_order_item oi \
             JOIN ",kphis,".opd_er_order o ON o.order_id=oi.order_id \
             LEFT JOIN ",kphis,".kphis_drug_use_duration dud ON dud.icode=oi.icode \

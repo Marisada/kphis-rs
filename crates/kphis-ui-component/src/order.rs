@@ -4,6 +4,7 @@ use futures_signals::{
     signal::{Mutable, Signal, SignalExt, always, not},
     signal_vec::{MutableVec, SignalVecExt},
 };
+use rust_decimal::Decimal;
 use std::{
     collections::HashSet,
     rc::Rc,
@@ -2950,6 +2951,7 @@ impl OrderCpn {
                                 order_item_mut.order_item_detail.set([&med_name_opt.clone().unwrap_or_default(), new_line, &detail].concat());
                                 order_item_mut.off_order_item_id.set(Some(order_item.order_item_id));
                                 order_item_mut.allergy_agent_symptom.set(order_item.allergy_agent_symptom.clone());
+                                order_item_mut.allergy_count_force_no_order.set(order_item.allergy_count_force_no_order);
                                 page.offs_by_parent.lock_mut().push_cloned(order_item_mut);
                             }
                             page.edit_order.set(None);
@@ -3147,7 +3149,11 @@ impl OrderCpn {
                                 .class(class::BADGE_WRAP_R_RED)
                                 .style("cursor","help")
                                 .attr("title", &order_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                                .text("แพ้ยา/เฝ้าระวัง")
+                                .text(if order_item.allergy_count_force_no_order.is_zero() {
+                                    "แพ้ยา/เฝ้าระวัง"
+                                } else {
+                                    "แพ้ยา/ห้ามใช้"
+                                })
                             }))
                         })
                         // HAD/LASA BADGE
@@ -3484,6 +3490,7 @@ impl OrderCpn {
                         order_item_mut.order_item_detail.set([&med_name_opt.clone().unwrap_or_default(), new_line, &detail].concat());
                         order_item_mut.off_order_item_id.set(Some(order_item.order_item_id));
                         order_item_mut.allergy_agent_symptom.set(order_item.allergy_agent_symptom.clone());
+                        order_item_mut.allergy_count_force_no_order.set(order_item.allergy_count_force_no_order);
                         page.offs_by_parent.lock_mut().push_cloned(order_item_mut);
                     }
                     page.edit_order.set(None);
@@ -3617,7 +3624,11 @@ impl OrderCpn {
                     .class(class::BADGE_WRAP_R_RED)
                     .style("cursor","help")
                     .attr("title", &order_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                    .text("แพ้ยา/เฝ้าระวัง")
+                    .text(if order_item.allergy_count_force_no_order.is_zero() {
+                        "แพ้ยา/เฝ้าระวัง"
+                    } else {
+                        "แพ้ยา/ห้ามใช้"
+                    })
                 })))
                 // HAD/LASA badge
                 .children(app.drug_alert_badge(order_item.displaycolor))
@@ -3730,7 +3741,11 @@ impl OrderCpn {
                     .class(class::BADGE_WRAP_R_RED)
                     .style("cursor","help")
                     .attr("title", &med_rec_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                    .text("แพ้ยา/เฝ้าระวัง")
+                    .text(if med_rec_item.allergy_count_force_no_order.is_zero() {
+                        "แพ้ยา/เฝ้าระวัง"
+                    } else {
+                        "แพ้ยา/ห้ามใช้"
+                    })
                 })))
                 .apply_if(med_rec_item.changed_drugusage.is_some() || med_rec_item.old_drugusage.is_some(), |dom| dom.child(html!("br")))
                 .text(&med_rec_item.changed_drugusage.clone().or(med_rec_item.old_drugusage.clone()).unwrap_or_default())
@@ -4232,6 +4247,7 @@ pub struct OrderItemMutable {
     pub info_status: Mutable<Option<String>>,
 
     pub allergy_agent_symptom: Mutable<Option<String>>,
+    pub allergy_count_force_no_order: Mutable<Decimal>,
     pub med_reconciliation_item_id: Mutable<Option<u32>>,
     pub old_drugusage: Mutable<Option<String>>,
     pub receive_from: Mutable<Option<String>>,
@@ -4328,6 +4344,7 @@ impl From<OrderItem> for OrderItemMutable {
             info_status: Mutable::new(item.info_status),
 
             allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             med_reconciliation_item_id: Mutable::new(item.med_reconciliation_item_id),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4360,6 +4377,7 @@ impl From<MedOrderItem> for OrderItemMutable {
             info_status: Mutable::new(item.info_status),
 
             allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             med_reconciliation_item_id: Mutable::new(item.med_reconciliation_item_id),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4391,6 +4409,7 @@ impl From<MedReconciliationItem> for OrderItemMutable {
             info_status: Mutable::new(item.info_status),
 
             allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             med_reconciliation_item_id: Mutable::new(Some(item.med_reconciliation_item_id)),
             old_drugusage: Mutable::new(item.old_drugusage),
             receive_from: Mutable::new(item.receive_from),
@@ -4418,6 +4437,7 @@ impl From<PreOrderItem> for OrderItemMutable {
             generic_name: Mutable::new(item.generic_name),
             dosageform: Mutable::new(item.dosageform),
             allergy_agent_symptom: Mutable::new(item.allergy_agent_symptom),
+            allergy_count_force_no_order: Mutable::new(item.allergy_count_force_no_order),
             ..Default::default()
         }
     }

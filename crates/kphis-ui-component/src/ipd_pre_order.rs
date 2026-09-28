@@ -610,8 +610,13 @@ pub fn render_order(order: Rc<PreOrder>, is_oneday: bool, used: Mutable<String>,
                                         html!("small", {
                                             .class(class::BOLD_RED_L)
                                             .attr("role","button")
-                                            .attr("title","แพ้ยา/เฝ้าระวัง")
                                             .text(&order_item.allergy_agent_symptom.clone().unwrap_or_default())
+                                            .apply_if(!order_item.allergy_count_force_no_order.is_zero(), |d| d
+                                                .child(html!("span", {
+                                                    .class(class::BADGE_RED_R)
+                                                    .text("มีคำสั่งห้ามใช้")
+                                                }))
+                                            )
                                         })
                                     ]))
                                 })

@@ -358,6 +358,7 @@ impl MedReconForm {
                 generic_name: str_some(&item.generic_name.lock_ref()),
                 dosageform: str_some(&item.dosageform.lock_ref()),
                 allergy_agent_symptom: str_some(&item.allergy_agent_symptom.lock_ref()),
+                allergy_count_force_no_order: item.allergy_count_force_no_order.get(),
                 due_usage: str_some(&item.due_usage.lock_ref()),
                 due_status: str_some(&item.due_status.lock_ref()),
                 info: str_some(&item.info.lock_ref()),
@@ -458,6 +459,7 @@ impl MedReconForm {
                 info_status: str_some(&item.info_status.lock_ref()),
 
                 allergy_agent_symptom: str_some(&item.allergy_agent_symptom.lock_ref()),
+                allergy_count_force_no_order: item.allergy_count_force_no_order.get(),
 
                 med_reconciliation_item_id: zero_none(item.med_reconciliation_item_id.get()),
                 old_drugusage: str_some(&item.old_drugusage.lock_ref()),

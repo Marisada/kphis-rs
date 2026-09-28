@@ -2153,7 +2153,11 @@ impl MenuCpn {
                             .class(class::BADGE_WRAP_R_RED)
                             .style("cursor","help")
                             .attr("title", &order_item.allergy_agent_symptom.clone().unwrap_or(String::from("ไม่ระบุอาการ")))
-                            .text("แพ้ยา/เฝ้าระวัง")
+                            .text(if order_item.allergy_count_force_no_order.is_zero() {
+                                "แพ้ยา/เฝ้าระวัง"
+                            } else {
+                                "แพ้ยา/ห้ามใช้"
+                            })
                         })))
                         // HAD/LASA badge
                         .children(app.drug_alert_badge(order_item.displaycolor))
