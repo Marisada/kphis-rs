@@ -142,36 +142,39 @@ async fn run(config: config::Config, json_handle: Arc<RwLock<JsonActorHandle>>) 
     let keep_log_day = config.get_int("app-keep-log-day").expect("Not found 'app-keep-log-day' in config file");
 
     // #1 cron job: Cleaning logs and messages
-    let state_c1 = state.clone();
+    let state_cleaner = state.clone();
     let cron_cleaner = config.get_string("app-cron-cleaner").expect("Not found 'app-cron-cleaner' in config file");
     let clean_job = Job::new_async(cron_cleaner.as_str(), move |_uuid, _l| {
-        let state_cc = state_c1.clone();
+        let state_cleaner_clone = state_cleaner.clone();
         Box::pin(async move {
-            debug!("Cleaning logs and messages schedule start..");
-            if let Err(e) = delete_expired_log_and_message(keep_log_day, &state_cc.db_pool, &state_cc.kphis_log()).await {
+            debug!("Cleaning online-users, logs and messages schedule start..");
+            if let Err(e) = delete_expired_log_and_message(keep_log_day, &state_cleaner_clone.db_pool, &state_cleaner_clone.kphis_log()).await {
                 warn!("Cannot {}: {}", &e.action, &e.message);
             }
-            debug!("Cleaning logs and messages finished");
+            if let Err(e) = state_cleaner_clone.online_clean().await {
+                warn!("Cleaning online-users error with {}", e.message);
+            }
+            debug!("Cleaning online-users, logs and messages finished");
         })
     })
     .expect("Fail to create cleaning job");
     let _ = sched.add(clean_job).await.expect("Fail adding clean job to Schedule");
 
     // #2 cron job : Check triggers
-    let state_c2 = state.clone();
+    let state_trigger = state.clone();
     let cron_trigger = config.get_string("app-cron-trigger").expect("Not found 'app-cron-trigger' in config file");
     let trigger_job = Job::new_async(cron_trigger.as_str(), move |_uuid, _l| {
-        let state_cc = state_c2.clone();
+        let state_trigger_clone = state_trigger.clone();
         Box::pin(async move {
             debug!("Check triggers schedule start..");
-            state_cc.check_and_apply_triggers().await;
+            state_trigger_clone.check_and_apply_triggers().await;
             debug!("Checking triggers finished");
         })
     })
     .expect("Fail to create trigger job");
     let _ = sched.add(trigger_job).await.expect("Fail adding trigger job to Schedule");
 
-    // #3 cron job
+    // #3 cron job : reload SSL
     if let Some((_, tls_config, cert_path, key_path)) = https_config.clone() {
         let cron_reload_cert = config.get_string("app-cron-reload-cert").expect("Not found 'app-cron-reload-cert' in config file");
         let cert_job = Job::new_async(cron_reload_cert.as_str(), move |_uuid, _l| {
