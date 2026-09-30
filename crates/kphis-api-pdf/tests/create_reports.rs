@@ -89,6 +89,7 @@ async fn pdf_creator(state: &ApiState, world: &mut SystemWorld, is_pre_admit: bo
         roles: vec![CurrentUserRole::demo()],
         permissions: Vec::new(),
         addr: "127.0.0.1:12345".parse::<SocketAddr>().unwrap(),
+        ts: 0,
     };
 
     let output_folder = create_pdf_output_folder(using_bundle, is_pre_admit).unwrap();
@@ -143,6 +144,7 @@ async fn pdf_all(state: &ApiState, world: &mut SystemWorld, is_pre_admit: bool, 
         roles: vec![CurrentUserRole::demo()],
         permissions: Vec::new(),
         addr: "127.0.0.1:12345".parse::<SocketAddr>().unwrap(),
+        ts: 0,
     };
 
     let output_folder = create_pdf_output_folder(using_bundle, is_pre_admit).unwrap();

@@ -413,7 +413,7 @@ impl MenuCpn {
                                 .child(html!("div", {
                                     // .class("ms-2")
                                     .style("cursor","pointer")
-                                    .child(html!("i", {.class(class::FA_PILLS).style("font-size","24px")}))
+                                    .child(html!("i", {.class(class::FA_PILLS).style("font-size","24px").style("padding-top","8px")}))
                                     .attr("title","Drug information")
                                     .event(clone!(app, menu => move |_:events::Click| {
                                         menu.drug_details_modal.set(Some(DrugDetailModal::new(false)));

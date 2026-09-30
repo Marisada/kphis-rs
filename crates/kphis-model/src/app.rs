@@ -732,14 +732,14 @@ impl AppState {
     }
     /// is_pre_admit == use VN as AN and check OPD-ER permission instead (if not exists will bypass checking)
     pub fn endpoint_is_allow(&self, method: &Method, endpoint: &EndPoint, is_pre_admit: bool) -> bool {
-        if self.is_production() {
-            if let Some(permissions) = self.user.lock_ref().as_ref().map(|user| user.permissions.lock_ref()) {
-                endpoint.is_allow(method, &permissions, is_pre_admit)
-            } else {
-                false
-            }
+        if self.is_production() { self.endpoint_is_allow_inner(method, endpoint, is_pre_admit) } else { true }
+    }
+    // not check is_production()
+    pub fn endpoint_is_allow_inner(&self, method: &Method, endpoint: &EndPoint, is_pre_admit: bool) -> bool {
+        if let Some(permissions) = self.user.lock_ref().as_ref().map(|user| user.permissions.lock_ref()) {
+            endpoint.is_allow(method, &permissions, is_pre_admit)
         } else {
-            true
+            false
         }
     }
     pub fn can_change_ward_passcode(&self) -> bool {

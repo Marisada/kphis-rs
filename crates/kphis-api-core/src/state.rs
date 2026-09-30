@@ -510,6 +510,7 @@ impl ApiState {
                 roles: roles.to_vec(),
                 permissions: permissions.to_vec(),
                 addr,
+                ts: get_timestamp_server().unwrap_or_default(),
             },
         );
     }
@@ -517,6 +518,21 @@ impl ApiState {
     pub async fn online_get(&self, state_id: u128) -> Option<UserState> {
         let guard = self.online_users.lock().await;
         guard.get(&state_id).cloned()
+    }
+    pub async fn online_set_ts(&self, state_id: u128) -> Result<(), AppError> {
+        let ts = get_timestamp_server()?;
+        let mut guard = self.online_users.lock().await;
+        if let Some(user) = guard.get_mut(&state_id) {
+            user.ts = ts;
+        }
+        Ok(())
+    }
+    pub async fn online_clean(&self) -> Result<(), AppError> {
+        let ts = get_timestamp_server()?;
+        let refresh_limit_seconds = self.refresh_limit() * 60;
+        let mut guard = self.online_users.lock().await;
+        guard.retain(|_, user| ts.saturating_sub(user.ts) < refresh_limit_seconds);
+        Ok(())
     }
 
     pub async fn online_update_msg_group(&self, state_id: u128, sse_group: &SseGroup) {
@@ -729,9 +745,11 @@ impl ApiState {
     pub fn hosxp_vn_len(&self) -> usize {
         self.app_config.hosxp_vn_length
     }
+    /// in minutes
     pub fn access_limit(&self) -> u64 {
         self.app_config.access_token_expire_minutes
     }
+    /// in minutes
     pub fn refresh_limit(&self) -> u64 {
         self.app_config.refresh_token_expire_minutes
     }
@@ -759,27 +777,6 @@ impl ApiState {
     pub fn lab_codes(&self) -> Vec<(String, Vec<u64>)> {
         self.app_config.lab_codes.clone()
     }
-    // pub fn message_icodes(&self) -> Vec<(String, Vec<String>)> {
-    //     self.app_config.message_icodes.clone()
-    // }
-    // pub fn message_egfr_icodes(&self) -> Vec<(String, u64, Vec<String>)> {
-    //     self.app_config.message_egfr_icodes.clone()
-    // }
-    // pub fn message_crcl_icodes(&self) -> Vec<(String, u64, Vec<String>)> {
-    //     self.app_config.message_crcl_icodes.clone()
-    // }
-
-    // pub async fn get_app_asset(&self, etag: &Option<String>) -> Result<AppAsset, AppError> {
-    //     let (exp, etag, app_asset) = {
-    //         let lock = self.app_asset_cache.lock().await;
-    //         (lock.exp, lock.etag.clone(), lock.app_asset.clone())
-    //     };
-    //     let now = get_timestamp_server()?;
-    //     if exp < now {
-    //         self.reload_app_asset();
-    //     }
-    //     Ok(app_asset)
-    // }
 
     pub fn reload_app_asset(&mut self) {
         if let Ok(now) = get_timestamp_server() {
@@ -873,7 +870,6 @@ pub struct RequestState {
 }
 
 impl RequestState {
-    /// - Error 400 when user_state is None
     /// - Error 403 when not-production and (non-get-read_only or endpoint-not-allowed)
     pub async fn authorize(&self, is_pre_admit: bool) -> Result<(), AppError> {
         let endpoint_with_prefix = self.matched_path.as_str();
@@ -890,12 +886,6 @@ impl RequestState {
         }
     }
 }
-
-// fn access_detail(method: &Method, path_query: &Option<PathAndQuery>, accepted: bool) -> String {
-//     let path = path_query.as_ref().map(|pq| pq.to_string()).unwrap_or_default();
-//     let status = if accepted { "accepted" } else { "rejected" };
-//     ["{\"method\":\"", method.as_ref(), "\",\"path\":\"", &path, "\",\"status\":\"", status, "\"}"].concat()
-// }
 
 impl<S> FromRequestParts<S> for RequestState
 where
@@ -920,6 +910,7 @@ where
                     .ok_or_else(|| Source::App.to_error(401, "กรุณาเข้าสู่ระบบใหม่", "Get UserState").with_title(ErrorTitle::NoUserState))?;
 
                 if user.addr.ip() == real_addr.ip() {
+                    api_state.online_set_ts(state_id).await?;
                     user
                 } else {
                     return Err(Source::App.to_error(401, "Mismatched IP Address", "Get UserState"));
@@ -941,33 +932,8 @@ pub struct UserState {
     pub roles: Vec<CurrentUserRole>,
     pub permissions: Vec<Permission>,
     pub addr: SocketAddr,
+    pub ts: u64,
 }
-
-// impl UserState {
-//     /// May error 401, 500
-//     pub async fn from_token(token: &str, addr: SocketAddr, app: &ApiState) -> Result<Self, AppError> {
-//         let claims = get_claim_public(token, &app.paseto.public)?;
-//         let now_ts = get_timestamp_server()?;
-//         if claims.iat > now_ts || claims.exp < now_ts {
-//             return Err(AppError::app_401("Verify Token").with_title(ErrorTitle::Security));
-//         }
-//         let state_id = get_state_id(&claims)?;
-//         let user_state = app
-//             .online_get(state_id)
-//             .await
-//             .ok_or_else(|| Source::App.to_error(401, "กรุณาเข้าสู่ระบบใหม่", "Get UserState").with_title(ErrorTitle::NoUserState))?;
-
-//         if user_state.addr.ip() == addr.ip() {
-//             Ok(user_state)
-//         } else {
-//             Err(Source::App.to_error(401, "Mismatched IP Address", "Get UserState"))
-//         }
-//     }
-
-//     pub fn trace_req_by(&self) {
-//         tracing::debug!("requested by {} from {}", self.user.name, self.addr);
-//     }
-// }
 
 pub fn get_state_id(claims: &Claims) -> Result<u128, AppError> {
     let Ulid(state_id) = Ulid::from_string(&claims.sub).map_err(|e| Source::UlidDecode.to_error(401, e, "Claims"))?;
@@ -1060,8 +1026,6 @@ impl ApiConfig {
         let shift_evening_start = self.shift_evening_start;
         let shift_night_start = self.shift_night_start;
         (shift_day_start > shift_night_start || shift_night_start > shift_evening_start) && shift_evening_start > shift_day_start
-        // (shift_night_start > shift_evening_start && shift_evening_start > shift_day_start) ||
-        // (shift_evening_start > shift_day_start && shift_day_start > shift_night_start)
     }
 }
 
