@@ -285,11 +285,11 @@ impl UserListPage {
                                 })),
                                 doms::form_inline_group(clone!(page => move |group| { group
                                     .children([
-                                        doms::label_group_for("name","ชื่อ-นามสกุล"),
+                                        doms::label_group_for("fullname","ชื่อ-นามสกุล"),
                                         html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
-                                            .attr("id", "name")
+                                            .attr("id", "fullname")
                                             .apply(mixins::string_value_end(page.name.clone(), page.changed.clone()))
                                         }),
                                     ])

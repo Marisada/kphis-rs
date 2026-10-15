@@ -687,7 +687,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ผู้ให้ข้อมูล")}))
                         }),
@@ -721,7 +721,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("อาการสำคัญ")}))
                         }),
@@ -733,7 +733,7 @@ impl IpdAdmissionNoteNursePage {
                                 .apply(mixins::textarea_value_auto_expand(page.chief_complaints.clone(), page.changed.clone()))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ประวัติการเจ็บป่วยปัจจุบัน")}))
                         }),
@@ -751,7 +751,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("สัญญาณชีพแรกรับ")}))
                             .apply_if(app.endpoint_is_allow(&Method::GET, &EndPoint::IpdPreOrderOrder, app.is_pre_admit(&page.an.lock_ref())), |dom| dom
@@ -803,7 +803,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ความรู้สึกตัว")}))
                         }),
@@ -829,7 +829,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ลักษณะการหายใจ")}))
                         }),
@@ -889,7 +889,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ระบบหัวใจ")}))
                         }),
@@ -965,7 +965,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การไหลเวียนโลหิต")}))
                         }),
@@ -1069,7 +1069,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("สภาพผิวหนัง")}))
                         }),
@@ -1151,7 +1151,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ความเจ็บปวด")}))
                         }),
@@ -1182,7 +1182,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_OFS3)
                             .child(html!("b", {.text("ลักษณะการเจ็บปวด")}))
                         }),
@@ -1232,7 +1232,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM1_OFS5)
                             .child(html!("b", {.text("Pain Score")}))
                         }),
@@ -1244,7 +1244,7 @@ impl IpdAdmissionNoteNursePage {
                         ),
                         html!("div", {
                             .class("col-sm-3")
-                            .child(html!("label", {.text("คะแนน")}))
+                            .child(html!("span", {.text("คะแนน")}))
                         }),
                     ])
                 }),
@@ -1330,7 +1330,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ด้านพฤติกรรม")}))
                         }),
@@ -1400,7 +1400,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ด้านอารมณ์")}))
                         }),
@@ -1470,7 +1470,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ความกังวลใจ")}))
                         }),
@@ -1535,7 +1535,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .child(html!("b", {.text("ความต้องการด้านจิตวิญญาณ")}))
                         }),
@@ -1629,7 +1629,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การศึกษา")}))
                         }),
@@ -1657,7 +1657,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("อาชีพ(ระบุ)")}))
                         }),
@@ -1673,7 +1673,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("รายได้")}))
                         }),
@@ -1691,7 +1691,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ผู้ให้ความช่วยเหลือดูแล")}))
                         }),
@@ -1732,7 +1732,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_OFS2)
                             .child(html!("b", {.text("อาชีพผู้ดูแล(ระบุ)")}))
                         }),
@@ -1793,7 +1793,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การดูแลตนเอง")}))
                         }),
@@ -1810,7 +1810,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("พฤติกรรมเสี่ยง")}))
                         }),
@@ -1845,14 +1845,14 @@ impl IpdAdmissionNoteNursePage {
                             page.changed.clone(), "col-sm-1",
                             Some(20),
                         ),
-                        html!("label", {.class("col-sm-1").text("ปี ปริมาณ")}),
+                        html!("span", {.class("col-sm-1").text("ปี ปริมาณ")}),
                         doms::text_disable_by_not_container(
                             page.smoke_frequency.clone(),
                             page.smoking.clone(), "Y",
                             page.changed.clone(), "col-sm-1",
                             Some(20),
                         ),
-                        html!("label", {.class("col-sm-1").text("/วัน เลิกเมื่อ")}),
+                        html!("span", {.class("col-sm-1").text("/วัน เลิกเมื่อ")}),
                         doms::text_disable_by_not_container(
                             page.smoke_stopped.clone(),
                             page.smoking.clone(), "Y",
@@ -1879,14 +1879,14 @@ impl IpdAdmissionNoteNursePage {
                             page.changed.clone(), "col-sm-1",
                             Some(20),
                         ),
-                        html!("label", {.class("col-sm-1").text("ปี ปริมาณ")}),
+                        html!("span", {.class("col-sm-1").text("ปี ปริมาณ")}),
                         doms::text_disable_by_not_container(
                             page.alc_frequency.clone(),
                             page.alcohol.clone(), "Y",
                             page.changed.clone(), "col-sm-1",
                             Some(20),
                         ),
-                        html!("label", {.class("col-sm-1").text("/วัน เลิกเมื่อ")}),
+                        html!("span", {.class("col-sm-1").text("/วัน เลิกเมื่อ")}),
                         doms::text_disable_by_not_container(
                             page.alc_stopped.clone(),
                             page.alcohol.clone(), "Y",
@@ -1920,21 +1920,21 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {.class(class::COL_SM1_OFS2_R).text("ระยะเวลาที่ใช้")}),
+                        html!("span", {.class(class::COL_SM1_OFS2_R).text("ระยะเวลาที่ใช้")}),
                         doms::text_disable_by_not_container(
                             page.med_year.clone(),
                             page.medication_used.clone(), "Y",
                             page.changed.clone(), "col-sm-1",
                             Some(30),
                         ),
-                        html!("label", {.class(class::COL_SM1_R).text("ปริมาณ")}),
+                        html!("span", {.class(class::COL_SM1_R).text("ปริมาณ")}),
                         doms::text_disable_by_not_container(
                             page.med_frequency.clone(),
                             page.medication_used.clone(), "Y",
                             page.changed.clone(), "col-sm-1",
                             Some(20),
                         ),
-                        html!("label", {.class("col-sm-1").text("/วัน เลิกเมื่อ")}),
+                        html!("span", {.class("col-sm-1").text("/วัน เลิกเมื่อ")}),
                         doms::text_disable_by_not_container(
                             page.med_stopped.clone(),
                             page.medication_used.clone(), "Y",
@@ -1982,7 +1982,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .child(html!("b", {.text("ปัญหาการรับประทานอาหาร")}))
                         }),
@@ -2062,7 +2062,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ปัสสาวะ")}))
                         }),
@@ -2121,7 +2121,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("อุจจาระ")}))
                         }),
@@ -2243,7 +2243,7 @@ impl IpdAdmissionNoteNursePage {
                             page.changed.clone(), "col-sm-1",
                             Some(20),
                         ),
-                        html!("div", {.class("col-sm-1").child(html!("label", {.text("ชม.")}))}),
+                        html!("div", {.class("col-sm-1").child(html!("span", {.text("ชม.")}))}),
                         html!("div", {.class(class::FORM_CHK_COL_SM2).children([
                             doms::checkbox_binding_texts_container(
                                 page.sleep_problems.clone(),
@@ -2264,7 +2264,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การใช้ยานอนหลับ")}))
                         }),
@@ -2304,7 +2304,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การรับรู้")}))
                         }),
@@ -2322,7 +2322,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ความจำ")}))
                         }),
@@ -2350,7 +2350,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การได้ยิน")}))
                         }),
@@ -2398,7 +2398,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การมองเห็น")}))
                         }),
@@ -2455,7 +2455,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("การพูด")}))
                         }),
@@ -2491,7 +2491,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("กระทบต่อภาพลักษณ์")}))
                         }),
@@ -2519,7 +2519,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("กระทบต่อความสามารถ")}))
                         }),
@@ -2555,7 +2555,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("ความเจ็บป่วยมีผลกระทบ")}))
                         }),
@@ -2643,7 +2643,7 @@ impl IpdAdmissionNoteNursePage {
                         html!("div", {
                             .class("row")
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .child(html!("b", {.text("ประจำเดือน")}))
                                 }),
@@ -2706,7 +2706,7 @@ impl IpdAdmissionNoteNursePage {
                         html!("div", {
                             .class("row")
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::FORM_CHK_COL_SM1_OFS3)
                                     .child(html!("b", {.text("LMP")}))
                                 }),
@@ -2736,7 +2736,7 @@ impl IpdAdmissionNoteNursePage {
                                     page.changed.clone(), "col-sm-1",
                                     Some(2),
                                 ),
-                                html!("div", {.class("col-sm-1").child(html!("label", {.text("ปี")}))}),
+                                html!("div", {.class("col-sm-1").child(html!("span", {.text("ปี")}))}),
                             ])
                         }),
                         html!("p"),
@@ -2745,7 +2745,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .child(html!("b", {.text("เต้านม")}))
                         }),
@@ -2787,7 +2787,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM4_R)
                             .child(html!("b", {.text("วิธีแก้ไขความไม่สบายใจ/กังวล/เครียด/อื่นๆ")}))
                         }),
@@ -2851,7 +2851,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM4_R)
                             .child(html!("b", {.text("เชื่อว่าการเจ็บป่วยครั้งนี้มีสาเหตุจาก")}))
                         }),
@@ -2893,7 +2893,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM4_R)
                             .child(html!("b", {.text("สิ่งยึดเหนี่ยวด้านจิตใจ")}))
                         }),
@@ -2921,7 +2921,7 @@ impl IpdAdmissionNoteNursePage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM4_R)
                             .child(html!("b", {.text("ความต้องการปฏิบัติกิจกรรมทางศาสนา")}))
                         }),

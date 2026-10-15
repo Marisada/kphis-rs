@@ -434,7 +434,7 @@ impl MedReconcileCpn {
                                                 .child(doms::form_inline_group_sm(clone!(app, page => move |group| { group
                                                     .attr("id", "med_input_group")
                                                     .child(html!("label", {
-                                                        .prop_signal("for", page.med_name.signal_cloned().map(|med_name| if med_name.is_empty() {"medrec_name"} else {"med_name"}))
+                                                        .attr_signal("for", page.med_name.signal_ref(|med_name| if med_name.is_empty() {"medrec_name"} else {"med_name"}))
                                                         .class("input-group-text")
                                                         .text("ชื่อยา")
                                                     }))

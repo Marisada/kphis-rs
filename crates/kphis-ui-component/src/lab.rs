@@ -469,29 +469,36 @@ impl LabCpn {
                 html!("div", {
                     .class(class::CARD_HEAD_CYANS)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("HN : ")}))
                             .text(&detail.hn.clone().unwrap_or_default())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
-                            .child(html!("b", {.text(&[
-                                if detail.department.as_ref().map(|d| d == "OPD").unwrap_or_default() {"VN"} else {"AN"}, " : "
-                            ].concat())}))
+                            .child(html!("b", {.text(match detail.vn.as_ref() {
+                                Some(vnan) => {
+                                    if vnan.len() == app.hosxp_an_len() {
+                                        "AN : "
+                                    } else {
+                                        "VN : "
+                                    }
+                                }
+                                None => "",
+                            })}))
                             .text(&detail.vn.clone().unwrap_or_default())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("Lab Order No. : ")}))
                             .text(&page.lab_order_number.get().to_string())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("ใบ Lab : ")}))
                             .text(&detail.form_name.clone().unwrap_or_default())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("Detail : ")}))
                             .text(&detail.lab_name_cc.clone().unwrap_or_default())
@@ -499,7 +506,7 @@ impl LabCpn {
                     ])
                     .apply(|dom| {
                         if let Some(specimen_name_cc) = &detail.specimen_name_cc {
-                            dom.child(html!("label", {
+                            dom.child(html!("span", {
                                 .class("me-2")
                                 .child(html!("b", {.text("Specimen : ")}))
                                 .text(specimen_name_cc)
@@ -509,21 +516,21 @@ impl LabCpn {
                         }
                     })
                     .apply_if(detail.order_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("เวลาที่สั่ง : ")}))
                             .text(&[date_th_opt(&detail.order_date), time_hm_opt(&detail.order_time)].join(" "))
                         }))
                     })
                     .apply_if(detail.receive_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("เวลาที่รับ : ")}))
                             .text(&[date_th_opt(&detail.receive_date), time_hm_opt(&detail.receive_time)].join(" "))
                         }))
                     })
                     .apply_if(detail.report_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .child(html!("b", {.text("เวลาที่รายงาน : ")}))
                             .text(&[date_th_opt(&detail.report_date), time_hm_opt(&detail.report_time)].join(" "))
                         }))

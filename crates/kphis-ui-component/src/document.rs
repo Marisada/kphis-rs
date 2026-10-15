@@ -198,7 +198,7 @@ pub fn check_unused(level: u8, label: &str) -> Dom {
                 }),
                 html!("div", {
                     .class(label_class)
-                    .child(html!("label", {.text(label)}))
+                    .child(html!("span", {.text(label)}))
                 }),
             ])
         }))
@@ -229,7 +229,7 @@ pub fn check_used_group(level: u8, label: &str, is_used: bool) -> Dom {
                 }),
                 html!("div", {
                     .class(label_class)
-                    .child(html!("label", {.text(label)}))
+                    .child(html!("span", {.text(label)}))
                 }),
             ])
         }))
@@ -352,7 +352,7 @@ pub fn check_used(level: u8, label: &str, sources: Vec<PdfSource>, pdf_path_muta
                 }),
                 html!("div", {
                     .class(label_class)
-                    .child(html!("label", {.text(label)}))
+                    .child(html!("span", {.text(label)}))
                     .children(badges)
                     .child(html!("i", {
                         .class(class::FA_SPIN_R)

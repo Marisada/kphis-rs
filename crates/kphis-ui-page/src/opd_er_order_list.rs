@@ -234,7 +234,7 @@ impl OpdErOrderListPage {
                                         .child(html!("option", {.attr("value", "in_er").attr("selected", "").text("ผู้ป่วยใน ER")}))
                                         .children([
                                             html!("optgroup", {
-                                                .attr("label", "Discharge แล้ว")
+                                                .attr("span", "Discharge แล้ว")
                                                 .children([
                                                     html!("option", {.attr("value", "7").text("Discharge แล้ว")}),
                                                     html!("option", {.attr("value", "7_1").text("Discharge แล้ว - กลับบ้าน")}),
@@ -340,7 +340,7 @@ impl OpdErOrderListPage {
                                                 }))
                                             })
                                         }),
-                                        html!("label", {
+                                        html!("span", {
                                             .class("input-group-text")
                                             .child(doms::timer_svg(page.timer_second.clone()))
                                         }),

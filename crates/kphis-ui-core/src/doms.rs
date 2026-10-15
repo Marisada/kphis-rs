@@ -834,7 +834,7 @@ pub fn label_group_for(id: &str, text: &str) -> Dom {
 pub fn label_row_12(text: &str) -> Dom {
     html!("div", {
         .class(class::ROW)
-        .child(html!("label", {
+        .child(html!("span", {
             .class("col-sm-12")
             .child(html!("b", {.text(text)}))
         }))

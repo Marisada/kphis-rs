@@ -1536,7 +1536,7 @@ impl DcPlanCpn {
                                         page.changed.set_neq(true);
                                     }))
                                 }),
-                                html!("label", {
+                                html!("span", {
                                     .class("input-group-text")
                                     .text_signal(user_name_mutable.signal_cloned())
                                 }),

@@ -1585,7 +1585,7 @@ impl OpdErEmergencyCpn {
                             (!name.is_empty()).then(|| {
                                 html!("div", {
                                     .class(class::ROW)
-                                    .child(html!("label", {
+                                    .child(html!("span", {
                                         .class(class::COL_MD12_R)
                                         // .attr("id", "opd_er_pe_doctor_name")
                                         .text("บันทึกโดย : ")
@@ -1770,11 +1770,11 @@ impl OpdErEmergencyCpn {
                                     .children([
                                         html!("div", {
                                             .class("col-md-5")
-                                            .child(html!("label", {.text("ชื่อยา")}))
+                                            .child(html!("span", {.text("ชื่อยา")}))
                                         }),
                                         html!("div", {
                                             .class("col-md-5")
-                                            .child(html!("label", {.text("อาการที่แพ้")}))
+                                            .child(html!("span", {.text("อาการที่แพ้")}))
                                         }),
                                     ])
                                 }),
@@ -1949,13 +1949,13 @@ impl OpdErEmergencyCpn {
                             .children([
                                 html!("div", {
                                     .class("col-sm-6")
-                                    .child(html!("label", {
+                                    .child(html!("span", {
                                         .text("เวลาที่มาถึง ER")
                                     }))
                                 }),
                                 html!("div", {
                                     .class("col-sm-6")
-                                    .child(html!("label", {
+                                    .child(html!("span", {
                                         .text("เวลาคัดกรอง")
                                     }))
                                 }),
@@ -2045,13 +2045,13 @@ impl OpdErEmergencyCpn {
                             .children([
                                 html!("div", {
                                     .class("col-sm-6")
-                                    .child(html!("label", {
+                                    .child(html!("span", {
                                         .text("เวลาที่รายงาน")
                                     }))
                                 }),
                                 html!("div", {
                                     .class("col-sm-6")
-                                    .child(html!("label", {
+                                    .child(html!("span", {
                                         .text("เวลาที่พบแพทย์")
                                     }))
                                 }),
@@ -2375,7 +2375,7 @@ impl OpdErEmergencyCpn {
                                 (!name.is_empty()).then(|| {
                                     html!("div", {
                                         .class(class::ROW)
-                                        .child(html!("label", {
+                                        .child(html!("span", {
                                             .class(class::COL_MD12_R)
                                             // .attr("id", "er_consult_doctorcode_name")
                                             .text("บันทึกโดย : ")
@@ -2543,7 +2543,7 @@ impl OpdErEmergencyCpn {
                                     (!name.is_empty()).then(|| {
                                         html!("div", {
                                             .class(class::ROW)
-                                            .child(html!("label", {
+                                            .child(html!("span", {
                                                 .class(class::COL_MD12_R)
                                                 // .attr("id", "set_ft_doctor_name")
                                                 .text("บันทึกโดย : ")
@@ -2764,7 +2764,7 @@ impl ConsultItem {
                     .children([
                         html!("div", {
                             .class("row")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .text("แผนก")
                             }))
                         }),
@@ -2835,7 +2835,7 @@ impl ConsultItem {
                         }),
                         html!("div", {
                             .class("row")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .text("แพทย์เวรที่มาดู")
                             }))
                         }),

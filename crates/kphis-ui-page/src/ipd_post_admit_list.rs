@@ -141,56 +141,50 @@ impl IpdPostAdmitListPage {
                             doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
                                     doms::label_group_for("summary_status","สถานะ"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class("form-control")
-                                            .attr("id", "summary_status")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(AuditStatus::iter().map(|status| {
-                                                html!("option", {.attr("value", status.as_ref()).text(status.status_text())})
-                                            }))
-                                            .prop_signal("value", app.summary_status_select.signal_cloned())
-                                            .with_node!(element => {
-                                                .event(clone!(app, page, element => move |_: events::Change| {
-                                                    let value = element.value();
-                                                    app.use_date_limit.set_neq(AuditStatus::from_str(&value).map(|status| status.is_list_with_date_limit()).unwrap_or(true));
-                                                    app.summary_status_select.set_neq(value);
-                                                    app.to_local_storage();
-                                                    page.changed.set_neq(true);
-                                                }))
-                                            })
+                                    html!("select" => HtmlSelectElement, {
+                                        .class("form-select")
+                                        .attr("id", "summary_status")
+                                        .child(html!("option", {
+                                            .attr("value","")
+                                            .text("ทั้งหมด")
                                         }))
+                                        .children(AuditStatus::iter().map(|status| {
+                                            html!("option", {.attr("value", status.as_ref()).text(status.status_text())})
+                                        }))
+                                        .prop_signal("value", app.summary_status_select.signal_cloned())
+                                        .with_node!(element => {
+                                            .event(clone!(app, page, element => move |_: events::Change| {
+                                                let value = element.value();
+                                                app.use_date_limit.set_neq(AuditStatus::from_str(&value).map(|status| status.is_list_with_date_limit()).unwrap_or(true));
+                                                app.summary_status_select.set_neq(value);
+                                                app.to_local_storage();
+                                                page.changed.set_neq(true);
+                                            }))
+                                        })
                                     }),
                                 ])
                             })),
                             doms::form_inline_group(clone!(app, page => move |group| { group
                                 .children([
-                                    doms::label_group_for("ward","สิทธิ์"),
-                                    html!("div", {
-                                        .class(class::FLEX_GROW1)
-                                        .child(html!("select" => HtmlSelectElement, {
-                                            .class("form-select")
-                                            .attr("id", "inscl")
-                                            .child(html!("option", {
-                                                .attr("value","")
-                                                .text("ทั้งหมด")
-                                            }))
-                                            .children(inscl_select_option.iter().map(|option| {
-                                                doms::select_option(option, &app.inscl_select.lock_ref())
-                                            }))
-                                            .prop_signal("value", app.inscl_select.signal_cloned())
-                                            .with_node!(element => {
-                                                .event(clone!(app, page, element => move |_: events::Change| {
-                                                    app.inscl_select.set_neq(element.value());
-                                                    app.to_local_storage();
-                                                    page.changed.set_neq(true);
-                                                }))
-                                            })
+                                    doms::label_group_for("inscl","สิทธิ์"),
+                                    html!("select" => HtmlSelectElement, {
+                                        .class("form-select")
+                                        .attr("id", "inscl")
+                                        .child(html!("option", {
+                                            .attr("value","")
+                                            .text("ทั้งหมด")
                                         }))
+                                        .children(inscl_select_option.iter().map(|option| {
+                                            doms::select_option(option, &app.inscl_select.lock_ref())
+                                        }))
+                                        .prop_signal("value", app.inscl_select.signal_cloned())
+                                        .with_node!(element => {
+                                            .event(clone!(app, page, element => move |_: events::Change| {
+                                                app.inscl_select.set_neq(element.value());
+                                                app.to_local_storage();
+                                                page.changed.set_neq(true);
+                                            }))
+                                        })
                                     }),
                                 ])
                             })),

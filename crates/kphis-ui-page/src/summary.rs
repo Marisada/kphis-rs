@@ -1060,7 +1060,7 @@ impl SummaryPage {
                                             .class("row")
                                             .child(html!("div", {
                                                 .class("col")
-                                                .child(html!("label", {
+                                                .child(html!("span", {
                                                     .class("fw-bold")
                                                     .style("user-select","none")
                                                     .text("(1) PRINCIPAL DIAGNOSIS")
@@ -1956,9 +1956,8 @@ impl SummaryPage {
                                                 .child(html!("div", {
                                                     .class("col")
                                                     .children([
-                                                        html!("label", {
+                                                        html!("span", {
                                                             .class("col-form-label")
-                                                            //.attr("for", "hospital_refer")
                                                             .text("ชื่อสถานพยาบาลที่ส่งต่อ")
                                                         }),
                                                         HospSearchboxCpn::render(HospSearchboxCpn::new(page.hospital_refer.clone()), app.clone(), page.changed.clone(), can_save_summary, true),
