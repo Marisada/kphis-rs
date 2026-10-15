@@ -39,13 +39,8 @@ pub async fn get_app_asset(
     if app.app_asset_cache_exp < now {
         app.reload_app_asset();
     }
-    // send old app_asset
-    let app_asset_bytes = {
-        let lock = app.app_asset_bytes_cache.lock().await;
-        lock.clone()
-    };
 
-    let body = Full::new(Bytes::from(app_asset_bytes));
+    let body = Full::new(Bytes::copy_from_slice(&app.app_asset_bytes_cache.lock().await));
     Response::builder()
         .header(header::CONTENT_TYPE, "application/octet-stream")
         .body(body)

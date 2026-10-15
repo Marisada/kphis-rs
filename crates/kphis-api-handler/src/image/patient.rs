@@ -50,8 +50,7 @@ pub async fn get_patient_image(Path(hn): Path<String>, State(app): State<ApiStat
 }
 
 fn svg_file_response() -> Result<Response<Full<Bytes>>, AppError> {
-    let user_svg = DEFAULT_SVG_USER.as_bytes();
-    let body = Full::new(Bytes::from(user_svg.to_vec()));
+    let body = Full::new(Bytes::from(DEFAULT_SVG_USER));
     Response::builder()
         .status(200)
         .header(header::CONTENT_TYPE, "image/svg+xml")

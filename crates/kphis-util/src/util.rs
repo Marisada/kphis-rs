@@ -684,8 +684,6 @@ fn split_to_3<'a>(raw: &'a [&str], line1_limit: usize, line2_limit: usize, or_en
 #[rustfmt::skip]
 pub mod tests {
 
-    use std::u64;
-
     use super::*;
     use rust_decimal::Decimal;
     use time::{Date, Month};

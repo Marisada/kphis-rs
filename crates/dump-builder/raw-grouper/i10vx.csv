@@ -2659,14 +2659,14 @@ F1005,จริง,"Alcohol, acute intoxication with coma",เท็จ
 F1006,จริง,"Alcohol, acute intoxication with convulsions",เท็จ
 F1007,จริง,"Alcohol, acute intoxication, pathological intoxication",เท็จ
 F101,จริง,"Alcohol, harmful use",เท็จ
-F102,จริง,"Alcohol, dependence sydrome",เท็จ
-F1020,จริง,"Alcohol, dependence sydrome, currently abstinent",เท็จ
-F1021,จริง,"Alcohol, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1022,จริง,"Alcohol, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1023,จริง,"Alcohol, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1024,จริง,"Alcohol, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1025,จริง,"Alcohol, dependence sydrome, continuous use",เท็จ
-F1026,จริง,"Alcohol, dependence sydrome, episodic use (dipsomania)",เท็จ
+F102,จริง,"Alcohol, dependence syndrome",เท็จ
+F1020,จริง,"Alcohol, dependence syndrome, currently abstinent",เท็จ
+F1021,จริง,"Alcohol, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1022,จริง,"Alcohol, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1023,จริง,"Alcohol, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1024,จริง,"Alcohol, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1025,จริง,"Alcohol, dependence syndrome, continuous use",เท็จ
+F1026,จริง,"Alcohol, dependence syndrome, episodic use (dipsomania)",เท็จ
 F103,จริง,"Alcohol, withdrawal state",เท็จ
 F1030,จริง,"Alcohol, withdrawal state, uncomplicated",เท็จ
 F1031,จริง,"Alcohol, withdrawal state with convulsions",เท็จ
@@ -2702,14 +2702,14 @@ F1105,จริง,"Opioids, acute intoxication with coma",เท็จ
 F1106,จริง,"Opioids, acute intoxication with convulsions",เท็จ
 F1107,จริง,"Opioids, acute intoxication, pathological intoxication",เท็จ
 F111,จริง,"Opioids, harmful use",เท็จ
-F112,จริง,"Opioids, dependence sydrome",เท็จ
-F1120,จริง,"Opioids, dependence sydrome, currently abstinent",เท็จ
-F1121,จริง,"Opioids, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1122,จริง,"Opioids, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1123,จริง,"Opioids, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1124,จริง,"Opioids, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1125,จริง,"Opioids, dependence sydrome, continuous use",เท็จ
-F1126,จริง,"Opioids, dependence sydrome, episodic use (dipsomania)",เท็จ
+F112,จริง,"Opioids, dependence syndrome",เท็จ
+F1120,จริง,"Opioids, dependence syndrome, currently abstinent",เท็จ
+F1121,จริง,"Opioids, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1122,จริง,"Opioids, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1123,จริง,"Opioids, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1124,จริง,"Opioids, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1125,จริง,"Opioids, dependence syndrome, continuous use",เท็จ
+F1126,จริง,"Opioids, dependence syndrome, episodic use (dipsomania)",เท็จ
 F113,จริง,"Opioids, withdrawal state",เท็จ
 F1130,จริง,"Opioids, withdrawal state, uncomplicated",เท็จ
 F1131,จริง,"Opioids, withdrawal state with convulsions",เท็จ
@@ -2745,14 +2745,14 @@ F1205,จริง,"Cannabinoids, acute intoxication with coma",เท็จ
 F1206,จริง,"Cannabinoids, acute intoxication with convulsions",เท็จ
 F1207,จริง,"Cannabinoids, acute intoxication, pathological intoxication",เท็จ
 F121,จริง,"Cannabinoids, harmful use",เท็จ
-F122,จริง,"Cannabinoids, dependence sydrome",เท็จ
-F1220,จริง,"Cannabinoids, dependence sydrome, currently abstinent",เท็จ
-F1221,จริง,"Cannabinoids, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1222,จริง,"Cannabinoids, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1223,จริง,"Cannabinoids, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1224,จริง,"Cannabinoids, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1225,จริง,"Cannabinoids, dependence sydrome, continuous use",เท็จ
-F1226,จริง,"Cannabinoids, dependence sydrome, episodic use (dipsomania)",เท็จ
+F122,จริง,"Cannabinoids, dependence syndrome",เท็จ
+F1220,จริง,"Cannabinoids, dependence syndrome, currently abstinent",เท็จ
+F1221,จริง,"Cannabinoids, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1222,จริง,"Cannabinoids, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1223,จริง,"Cannabinoids, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1224,จริง,"Cannabinoids, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1225,จริง,"Cannabinoids, dependence syndrome, continuous use",เท็จ
+F1226,จริง,"Cannabinoids, dependence syndrome, episodic use (dipsomania)",เท็จ
 F123,จริง,"Cannabinoids, withdrawal state",เท็จ
 F1230,จริง,"Cannabinoids, withdrawal state, uncomplicated",เท็จ
 F1231,จริง,"Cannabinoids, withdrawal state with convulsions",เท็จ
@@ -2788,14 +2788,14 @@ F1305,จริง,"Sedatives or hypnotics, acute intoxication with coma",เท
 F1306,จริง,"Sedatives or hypnotics, acute intoxication with convulsions",เท็จ
 F1307,จริง,"Sedatives or hypnotics, acute intoxication, pathological intoxication",เท็จ
 F131,จริง,"Sedatives or hypnotics, harmful use",เท็จ
-F132,จริง,"Sedatives or hypnotics, dependence sydrome",เท็จ
-F1320,จริง,"Sedatives or hypnotics, dependence sydrome, currently abstinent",เท็จ
-F1321,จริง,"Sedatives or hypnotics, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1322,จริง,"Sedatives or hypnotics, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1323,จริง,"Sedatives or hypnotics, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1324,จริง,"Sedatives or hypnotics, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1325,จริง,"Sedatives or hypnotics, dependence sydrome, continuous use",เท็จ
-F1326,จริง,"Sedatives or hypnotics, dependence sydrome, episodic use (dipsomania)",เท็จ
+F132,จริง,"Sedatives or hypnotics, dependence syndrome",เท็จ
+F1320,จริง,"Sedatives or hypnotics, dependence syndrome, currently abstinent",เท็จ
+F1321,จริง,"Sedatives or hypnotics, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1322,จริง,"Sedatives or hypnotics, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1323,จริง,"Sedatives or hypnotics, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1324,จริง,"Sedatives or hypnotics, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1325,จริง,"Sedatives or hypnotics, dependence syndrome, continuous use",เท็จ
+F1326,จริง,"Sedatives or hypnotics, dependence syndrome, episodic use (dipsomania)",เท็จ
 F133,จริง,"Sedatives or hypnotics, withdrawal state",เท็จ
 F1330,จริง,"Sedatives or hypnotics, withdrawal state, uncomplicated",เท็จ
 F1331,จริง,"Sedatives or hypnotics, withdrawal state with convulsions",เท็จ
@@ -2831,14 +2831,14 @@ F1405,จริง,"Cocaine, acute intoxication with coma",เท็จ
 F1406,จริง,"Cocaine, acute intoxication with convulsions",เท็จ
 F1407,จริง,"Cocaine, acute intoxication, pathological intoxication",เท็จ
 F141,จริง,"Cocaine, harmful use",เท็จ
-F142,จริง,"Cocaine, dependence sydrome",เท็จ
-F1420,จริง,"Cocaine, dependence sydrome, currently abstinent",เท็จ
-F1421,จริง,"Cocaine, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1422,จริง,"Cocaine, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1423,จริง,"Cocaine, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1424,จริง,"Cocaine, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1425,จริง,"Cocaine, dependence sydrome, continuous use",เท็จ
-F1426,จริง,"Cocaine, dependence sydrome, episodic use (dipsomania)",เท็จ
+F142,จริง,"Cocaine, dependence syndrome",เท็จ
+F1420,จริง,"Cocaine, dependence syndrome, currently abstinent",เท็จ
+F1421,จริง,"Cocaine, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1422,จริง,"Cocaine, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1423,จริง,"Cocaine, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1424,จริง,"Cocaine, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1425,จริง,"Cocaine, dependence syndrome, continuous use",เท็จ
+F1426,จริง,"Cocaine, dependence syndrome, episodic use (dipsomania)",เท็จ
 F143,จริง,"Cocaine, withdrawal state",เท็จ
 F1430,จริง,"Cocaine, withdrawal state, uncomplicated",เท็จ
 F1431,จริง,"Cocaine, withdrawal state with convulsions",เท็จ
@@ -2874,14 +2874,14 @@ F1505,จริง,"Other stimulants including caffeine, acute intoxication with
 F1506,จริง,"Other stimulants including caffeine, acute intoxication with convulsions",เท็จ
 F1507,จริง,"Other stimulants including caffeine, acute intoxication, pathological intoxication",เท็จ
 F151,จริง,"Other stimulants including caffeine, harmful use",เท็จ
-F152,จริง,"Other stimulants including caffeine, dependence sydrome",เท็จ
-F1520,จริง,"Other stimulants including caffeine, dependence sydrome, currently abstinent",เท็จ
-F1521,จริง,"Other stimulants including caffeine, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1522,จริง,"Other stimulants including caffeine, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1523,จริง,"Other stimulants including caffeine, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1524,จริง,"Other stimulants including caffeine, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1525,จริง,"Other stimulants including caffeine, dependence sydrome, continuous use",เท็จ
-F1526,จริง,"Other stimulants including caffeine, dependence sydrome, episodic use (dipsomania)",เท็จ
+F152,จริง,"Other stimulants including caffeine, dependence syndrome",เท็จ
+F1520,จริง,"Other stimulants including caffeine, dependence syndrome, currently abstinent",เท็จ
+F1521,จริง,"Other stimulants including caffeine, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1522,จริง,"Other stimulants including caffeine, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1523,จริง,"Other stimulants including caffeine, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1524,จริง,"Other stimulants including caffeine, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1525,จริง,"Other stimulants including caffeine, dependence syndrome, continuous use",เท็จ
+F1526,จริง,"Other stimulants including caffeine, dependence syndrome, episodic use (dipsomania)",เท็จ
 F153,จริง,"Other stimulants including caffeine, withdrawal state",เท็จ
 F1530,จริง,"Other stimulants including caffeine, withdrawal state, uncomplicated",เท็จ
 F1531,จริง,"Other stimulants including caffeine, withdrawal state with convulsions",เท็จ
@@ -2917,14 +2917,14 @@ F1605,จริง,"Hallucinogens, acute intoxication with coma",เท็จ
 F1606,จริง,"Hallucinogens, acute intoxication with convulsions",เท็จ
 F1607,จริง,"Hallucinogens, acute intoxication, pathological intoxication",เท็จ
 F161,จริง,"Hallucinogens, harmful use",เท็จ
-F162,จริง,"Hallucinogens, dependence sydrome",เท็จ
-F1620,จริง,"Hallucinogens, dependence sydrome, currently abstinent",เท็จ
-F1621,จริง,"Hallucinogens, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1622,จริง,"Hallucinogens, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1623,จริง,"Hallucinogens, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1624,จริง,"Hallucinogens, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1625,จริง,"Hallucinogens, dependence sydrome, continuous use",เท็จ
-F1626,จริง,"Hallucinogens, dependence sydrome, episodic use (dipsomania)",เท็จ
+F162,จริง,"Hallucinogens, dependence syndrome",เท็จ
+F1620,จริง,"Hallucinogens, dependence syndrome, currently abstinent",เท็จ
+F1621,จริง,"Hallucinogens, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1622,จริง,"Hallucinogens, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1623,จริง,"Hallucinogens, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1624,จริง,"Hallucinogens, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1625,จริง,"Hallucinogens, dependence syndrome, continuous use",เท็จ
+F1626,จริง,"Hallucinogens, dependence syndrome, episodic use (dipsomania)",เท็จ
 F163,จริง,"Hallucinogens, withdrawal state",เท็จ
 F1630,จริง,"Hallucinogens, withdrawal state, uncomplicated",เท็จ
 F1631,จริง,"Hallucinogens, withdrawal state with convulsions",เท็จ
@@ -2960,14 +2960,14 @@ F1705,จริง,"Tobacco, acute intoxication with coma",เท็จ
 F1706,จริง,"Tobacco, acute intoxication with convulsions",เท็จ
 F1707,จริง,"Tobacco, acute intoxication, pathological intoxication",เท็จ
 F171,จริง,"Tobacco, harmful use",เท็จ
-F172,จริง,"Tobacco, dependence sydrome",เท็จ
-F1720,จริง,"Tobacco, dependence sydrome, currently abstinent",เท็จ
-F1721,จริง,"Tobacco, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1722,จริง,"Tobacco, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1723,จริง,"Tobacco, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1724,จริง,"Tobacco, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1725,จริง,"Tobacco, dependence sydrome, continuous use",เท็จ
-F1726,จริง,"Tobacco, dependence sydrome, episodic use (dipsomania)",เท็จ
+F172,จริง,"Tobacco, dependence syndrome",เท็จ
+F1720,จริง,"Tobacco, dependence syndrome, currently abstinent",เท็จ
+F1721,จริง,"Tobacco, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1722,จริง,"Tobacco, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1723,จริง,"Tobacco, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1724,จริง,"Tobacco, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1725,จริง,"Tobacco, dependence syndrome, continuous use",เท็จ
+F1726,จริง,"Tobacco, dependence syndrome, episodic use (dipsomania)",เท็จ
 F173,จริง,"Tobacco, withdrawal state",เท็จ
 F1730,จริง,"Tobacco, withdrawal state, uncomplicated",เท็จ
 F1731,จริง,"Tobacco, withdrawal state with convulsions",เท็จ
@@ -3003,14 +3003,14 @@ F1805,จริง,"Volatile solvents, acute intoxication with coma",เท็�
 F1806,จริง,"Volatile solvents, acute intoxication with convulsions",เท็จ
 F1807,จริง,"Volatile solvents, acute intoxication, pathological intoxication",เท็จ
 F181,จริง,"Volatile solvents, harmful use",เท็จ
-F182,จริง,"Volatile solvents, dependence sydrome",เท็จ
-F1820,จริง,"Volatile solvents, dependence sydrome, currently abstinent",เท็จ
-F1821,จริง,"Volatile solvents, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1822,จริง,"Volatile solvents, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1823,จริง,"Volatile solvents, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1824,จริง,"Volatile solvents, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1825,จริง,"Volatile solvents, dependence sydrome, continuous use",เท็จ
-F1826,จริง,"Volatile solvents, dependence sydrome, episodic use (dipsomania)",เท็จ
+F182,จริง,"Volatile solvents, dependence syndrome",เท็จ
+F1820,จริง,"Volatile solvents, dependence syndrome, currently abstinent",เท็จ
+F1821,จริง,"Volatile solvents, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1822,จริง,"Volatile solvents, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1823,จริง,"Volatile solvents, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1824,จริง,"Volatile solvents, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1825,จริง,"Volatile solvents, dependence syndrome, continuous use",เท็จ
+F1826,จริง,"Volatile solvents, dependence syndrome, episodic use (dipsomania)",เท็จ
 F183,จริง,"Volatile solvents, withdrawal state",เท็จ
 F1830,จริง,"Volatile solvents, withdrawal state, uncomplicated",เท็จ
 F1831,จริง,"Volatile solvents, withdrawal state with convulsions",เท็จ
@@ -3046,14 +3046,14 @@ F1905,จริง,"Multiple drug use and use of other psychoactive substances, 
 F1906,จริง,"Multiple drug use and use of other psychoactive substances, acute intoxication with convulsions",เท็จ
 F1907,จริง,"Multiple drug use and use of other psychoactive substances, acute intoxication, pathological intoxication",เท็จ
 F191,จริง,"Multiple drug use and use of other psychoactive substances, harmful use",เท็จ
-F192,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome",เท็จ
-F1920,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome, currently abstinent",เท็จ
-F1921,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome, currently abstinent, but in a protected environment",เท็จ
-F1922,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
-F1923,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
-F1924,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome, currently using the substance (active dependence)",เท็จ
-F1925,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome, continuous use",เท็จ
-F1926,จริง,"Multiple drug use and use of other psychoactive substances, dependence sydrome, episodic use (dipsomania)",เท็จ
+F192,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome",เท็จ
+F1920,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome, currently abstinent",เท็จ
+F1921,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome, currently abstinent, but in a protected environment",เท็จ
+F1922,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome, currently on a clinically supervised maintenance or replacement regime (controlled dependence)",เท็จ
+F1923,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome, currently abstinent, but receiving treatment with aversive or blocking drugs",เท็จ
+F1924,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome, currently using the substance (active dependence)",เท็จ
+F1925,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome, continuous use",เท็จ
+F1926,จริง,"Multiple drug use and use of other psychoactive substances, dependence syndrome, episodic use (dipsomania)",เท็จ
 F193,จริง,"Multiple drug use and use of other psychoactive substances, withdrawal state",เท็จ
 F1930,จริง,"Multiple drug use and use of other psychoactive substances, withdrawal state, uncomplicated",เท็จ
 F1931,จริง,"Multiple drug use and use of other psychoactive substances, withdrawal state with convulsions",เท็จ
