@@ -1139,7 +1139,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .text("BP")
                                 }),
@@ -1159,7 +1159,7 @@ impl IpdAdmissionNoteDrPage {
                                         ])
                                     }))
                                 }),
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM3_R)
                                     .text("E")
                                 }),
@@ -1180,7 +1180,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .text("T")
                                 }),
@@ -1200,7 +1200,7 @@ impl IpdAdmissionNoteDrPage {
                                         ])
                                     }))
                                 }),
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM3_R)
                                     .text("V")
                                 }),
@@ -1221,7 +1221,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .text("PR")
                                 }),
@@ -1240,7 +1240,7 @@ impl IpdAdmissionNoteDrPage {
                                         ])
                                     }))
                                 }),
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM3_R)
                                     .text("M")
                                 }),
@@ -1261,7 +1261,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .text("RR")
                                 }),
@@ -1280,7 +1280,7 @@ impl IpdAdmissionNoteDrPage {
                                         ])
                                     }))
                                 }),
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM3_R)
                                     .text("Neuro sign GCS")
                                 }),
@@ -1304,7 +1304,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .text("Braden Scale")
                                 }),
@@ -1357,7 +1357,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .text("น้ำหนัก")
                                 }),
@@ -1385,7 +1385,7 @@ impl IpdAdmissionNoteDrPage {
                                         ])
                                     }))
                                 }),
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM2_R)
                                     .text("ส่วนสูง")
                                 }),
@@ -1988,7 +1988,7 @@ impl IpdAdmissionNoteDrPage {
                                     }))
                                 }))
                             }),
-                            html!("label", {
+                            html!("span", {
                                 .text_signal(page.patient_signal().map(|pt_opt| {
                                     pt_opt.map(|pt| {
                                         [
@@ -2048,7 +2048,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {.class("col-sm-2")}),
                         html!("div", {
                             .class("col-sm-3")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .class("text-end")
                                 .child(html!("a", {
                                     .attr("href","#")
@@ -2064,14 +2064,14 @@ impl IpdAdmissionNoteDrPage {
                         }),
                         html!("div", {
                             .class("col-sm-3")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .class("text-end")
                                 .text("จำนวนปี")
                             }))
                         }),
                         html!("div", {
                             .class("col-sm-3")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .class("text-end")
                                 .text("สถานพยาบาลที่รักษา")
                             }))
@@ -2104,7 +2104,7 @@ impl IpdAdmissionNoteDrPage {
                                                 html!("div", {
                                                     .class(class::COLA_T)
                                                     .children([
-                                                        html!("label", {.text("เวลาที่กินยามื้อสุดท้าย")}),
+                                                        html!("span", {.text("เวลาที่กินยามื้อสุดท้าย")}),
                                                         doms::datetime_picker(
                                                             page.last_dose_taken_time.clone(),
                                                             page.changed.clone(), always(false),
@@ -2118,7 +2118,7 @@ impl IpdAdmissionNoteDrPage {
                                                 html!("div", {
                                                     .class(class::COLA_T)
                                                     .children([
-                                                        html!("label", {.text("จำนวนยาเหลือ/หมายเหตุ")}),
+                                                        html!("span", {.text("จำนวนยาเหลือ/หมายเหตุ")}),
                                                         html!("textarea" => HtmlTextAreaElement, {
                                                             .class(class::FORM_CTRL_SM)
                                                             .attr("cols", "50")
@@ -2178,7 +2178,7 @@ impl IpdAdmissionNoteDrPage {
                     .class(class::COL_SM7_OFSM2)
                     .children(page.raw.lock_ref().lock().map(|guard| {
                         guard.operation_list.iter().flat_map(|op| {[
-                            html!("label", {.text(op)}),
+                            html!("span", {.text(op)}),
                             html!("br"),
                         ]}).collect::<Vec<Dom>>()
                     }).unwrap_or_default())
@@ -2188,7 +2188,7 @@ impl IpdAdmissionNoteDrPage {
                     .children([
                         html!("div", {
                             .class(class::COL_SM2_OFS2)
-                            .child(html!("label", {.text("รายละเอียด")}))
+                            .child(html!("span", {.text("รายละเอียด")}))
                         }),
                         html!("div", {
                             .class("col-sm-8")
@@ -2358,14 +2358,14 @@ impl IpdAdmissionNoteDrPage {
                         }),
                         html!("div", {
                             .class("col-sm-3")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .class("text-end")
                                 .text("ชื่อ")
                             }))
                         }),
                         html!("div", {
                             .class("col-sm-2")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .class("text-end")
                                 .text("อาการที่แพ้")
                             }))
@@ -2504,7 +2504,7 @@ impl IpdAdmissionNoteDrPage {
                         }),
                         html!("div", {
                             .class("col-sm-3")
-                            .child(html!("label", {
+                            .child(html!("span", {
                                 .class("text-end")
                                 .text("เกี่ยวข้องเป็น")
                             }))
@@ -2545,7 +2545,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-5")
                             .child(html!("B", {.text("อาชีพ (จากแบบประเมินแบบแผนสุขภาพ)")}))
                         }),
@@ -2623,7 +2623,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_match_empty_disable(page.period_smoking.clone(), "N"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-1")
                             .text("ปี ปริมาณ")
                         }),
@@ -2637,7 +2637,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_match_empty_disable(page.period_smoking.clone(), "N"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-1")
                             .text("/วัน เลิกเมื่อ")
                         }),
@@ -2681,7 +2681,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_match_empty_disable(page.period_alcohol.clone(), "N"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-1")
                             .text("ปี ปริมาณ")
                         }),
@@ -2695,7 +2695,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_match_empty_disable(page.period_alcohol.clone(), "N"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-1")
                             .text("/วัน เลิกเมื่อ")
                         }),
@@ -2745,7 +2745,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM1_OFS2_R)
                             .text("ระยะเวลาที่ใช้")
                         }),
@@ -2759,7 +2759,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_match_empty_disable(page.period_medication_used.clone(), "N"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-1")
                             .text("ปริมาณ")
                         }),
@@ -2773,7 +2773,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_match_empty_disable(page.period_medication_used.clone(), "N"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-1")
                             .text("/วัน เลิกเมื่อ")
                         }),
@@ -2905,7 +2905,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class("row")
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM1_OFS2_R)
                             .text("LMP")
                         }),
@@ -2963,7 +2963,7 @@ impl IpdAdmissionNoteDrPage {
                         }),
                         html!("div", {
                             .class("col-sm-1")
-                            .child(html!("label", {.text("ปี")}))
+                            .child(html!("span", {.text("ปี")}))
                         }),
                     ])
                 }),
@@ -3079,7 +3079,7 @@ impl IpdAdmissionNoteDrPage {
             html!("div", {
                 .class(class::ROW)
                 .children([
-                    html!("label", {
+                    html!("span", {
                         .class(class::COL_SM3_R)
                         .text("G")
                     }),
@@ -3092,7 +3092,7 @@ impl IpdAdmissionNoteDrPage {
                             .apply(mixins::string_value(page.g.clone(), page.changed.clone()))
                         }))
                     }),
-                    html!("label", {
+                    html!("span", {
                         .class(class::COL_SM2_R)
                         .text("P/PAL/TPAL")
                     }),
@@ -3111,7 +3111,7 @@ impl IpdAdmissionNoteDrPage {
             html!("div", {
                 .class(class::ROW)
                 .children([
-                    html!("label", {
+                    html!("span", {
                         .class(class::COL_SM3_R)
                         .text("ANC ที่")
                     }),
@@ -3129,7 +3129,7 @@ impl IpdAdmissionNoteDrPage {
             html!("div", {
                 .class(class::ROW)
                 .children([
-                    html!("label", {
+                    html!("span", {
                         .class(class::COL_SM3_R)
                         .text("ได้ TT")
                     }),
@@ -3154,7 +3154,7 @@ impl IpdAdmissionNoteDrPage {
             html!("div", {
                 .class(class::ROW)
                 .children([
-                    html!("label", {
+                    html!("span", {
                         .class(class::COL_SM3_R)
                         .text("อายุครรภ์")
                     }),
@@ -3201,7 +3201,7 @@ impl IpdAdmissionNoteDrPage {
             .children([
                 html!("div", {
                     .class(class::ROW)
-                    .child(html!("label", {
+                    .child(html!("span", {
                         .class("col-sm-12")
                         .children([
                             html!("B", {.text("ประวัติด้านสูตินรีเวชกรรม ")}),
@@ -3233,7 +3233,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Last child")}))
+                                    .child(html!("span", {.text("Last child")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3259,7 +3259,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Last abort")}))
+                                    .child(html!("span", {.text("Last abort")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3281,7 +3281,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("ประวัติการขูดมดลูก")}))
+                                    .child(html!("span", {.text("ประวัติการขูดมดลูก")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3311,7 +3311,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("ประจําเดือนครั้งสุดท้าย")}))
+                                    .child(html!("span", {.text("ประจําเดือนครั้งสุดท้าย")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3331,7 +3331,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("กำหนดการคลอด")}))
+                                    .child(html!("span", {.text("กำหนดการคลอด")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3350,7 +3350,7 @@ impl IpdAdmissionNoteDrPage {
                             .class(class::ROW)
                             .child(html!("div", {
                                 .class(class::COL_SM3_R)
-                                .child(html!("label", {.text("มีน้ำเดินก่อนมา รพ.")}))
+                                .child(html!("span", {.text("มีน้ำเดินก่อนมา รพ.")}))
                             }))
                         }),
                         html!("div", {
@@ -3628,7 +3628,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text(" HIV ")}))
+                                    .child(html!("span", {.text(" HIV ")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3681,7 +3681,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text(" VDRL ")}))
+                                    .child(html!("span", {.text(" VDRL ")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3734,7 +3734,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text(" HBsAg ")}))
+                                    .child(html!("span", {.text(" HBsAg ")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3787,7 +3787,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text(" HCT")}))
+                                    .child(html!("span", {.text(" HCT")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3832,7 +3832,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text(" Blood group ")}))
+                                    .child(html!("span", {.text(" Blood group ")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-4")
@@ -3850,7 +3850,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text(" ผล thalassemia ตัวเอง ")}))
+                                    .child(html!("span", {.text(" ผล thalassemia ตัวเอง ")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-4")
@@ -3868,7 +3868,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text(" ผล thalassemia สามี ")}))
+                                    .child(html!("span", {.text(" ผล thalassemia สามี ")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-4")
@@ -3887,7 +3887,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Height of fundus")}))
+                                    .child(html!("span", {.text("Height of fundus")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3913,7 +3913,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Fetal position")}))
+                                    .child(html!("span", {.text("Fetal position")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -3932,7 +3932,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Back of fetus")}))
+                                    .child(html!("span", {.text("Back of fetus")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_back_fetus.clone(), page.changed.clone(), "lr_back_fetus1", "RUQ"),
@@ -3957,7 +3957,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Presentation")}))
+                                    .child(html!("span", {.text("Presentation")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_presentation.clone(), page.changed.clone(), "lr_presentation1", "Vertex"),
@@ -3978,7 +3978,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Engagement")}))
+                                    .child(html!("span", {.text("Engagement")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_engagement.clone(), page.changed.clone(), "lr_engagement1", "N"),
@@ -3995,7 +3995,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Cephalic prominence")}))
+                                    .child(html!("span", {.text("Cephalic prominence")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4014,7 +4014,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Fetal attitude")}))
+                                    .child(html!("span", {.text("Fetal attitude")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_attitude.clone(), page.changed.clone(), "lr_attitude1", "Flexion"),
@@ -4039,7 +4039,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Fetal heart rate")}))
+                                    .child(html!("span", {.text("Fetal heart rate")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4072,7 +4072,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Effective fetal weight")}))
+                                    .child(html!("span", {.text("Effective fetal weight")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4097,7 +4097,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Interval")}))
+                                    .child(html!("span", {.text("Interval")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-3")
@@ -4128,7 +4128,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Duration")}))
+                                    .child(html!("span", {.text("Duration")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4153,7 +4153,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Intensity")}))
+                                    .child(html!("span", {.text("Intensity")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4173,7 +4173,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Diagonal conjugate")}))
+                                    .child(html!("span", {.text("Diagonal conjugate")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4199,7 +4199,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Interspinous diameter")}))
+                                    .child(html!("span", {.text("Interspinous diameter")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4225,7 +4225,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Pelvic Sidewall")}))
+                                    .child(html!("span", {.text("Pelvic Sidewall")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_pelvic_sidewall.clone(), page.changed.clone(), "lr_pelvic_sidewall1", "Diverge"),
@@ -4246,7 +4246,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Ischeal spine")}))
+                                    .child(html!("span", {.text("Ischeal spine")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_ischeal_spine.clone(), page.changed.clone(), "lr_ischeal_spine1", "Blunt"),
@@ -4267,7 +4267,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Sacral curve")}))
+                                    .child(html!("span", {.text("Sacral curve")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_sacral_curve.clone(), page.changed.clone(), "lr_sacral_curve1", "Concave"),
@@ -4288,7 +4288,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Sub pubic angle")}))
+                                    .child(html!("span", {.text("Sub pubic angle")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4313,7 +4313,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Pelvic assessment")}))
+                                    .child(html!("span", {.text("Pelvic assessment")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_pelvic_ok.clone(), page.changed.clone(), "lr_pelvic_ok1", "Y"),
@@ -4331,7 +4331,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Dilatation")}))
+                                    .child(html!("span", {.text("Dilatation")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4356,7 +4356,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Effacement")}))
+                                    .child(html!("span", {.text("Effacement")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4381,7 +4381,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Station")}))
+                                    .child(html!("span", {.text("Station")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4400,7 +4400,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Cervix position")}))
+                                    .child(html!("span", {.text("Cervix position")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_cx_position.clone(), page.changed.clone(), "lr_cx_position1", "Anterior"),
@@ -4421,7 +4421,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Cervix consistency")}))
+                                    .child(html!("span", {.text("Cervix consistency")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_cx_consistency.clone(), page.changed.clone(), "lr_cx_consistency1", "Soft"),
@@ -4442,7 +4442,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Bishop score")}))
+                                    .child(html!("span", {.text("Bishop score")}))
                                 }),
                                 html!("div", {
                                     .class("col-sm-2")
@@ -4504,7 +4504,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Cervix assessment")}))
+                                    .child(html!("span", {.text("Cervix assessment")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_cx_ok.clone(), page.changed.clone(), "lr_cx_ok1", "Y"),
@@ -4521,7 +4521,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Membrane")}))
+                                    .child(html!("span", {.text("Membrane")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_membrane.clone(), page.changed.clone(), "lr_membrane1", "Intact"),
@@ -4538,7 +4538,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Amniotic fluid color")}))
+                                    .child(html!("span", {.text("Amniotic fluid color")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_amniotic_color.clone(), page.changed.clone(), "lr_amniotic_color1", "Clear"),
@@ -4559,7 +4559,7 @@ impl IpdAdmissionNoteDrPage {
                             .children([
                                 html!("div", {
                                     .class(class::COL_SM3_R)
-                                    .child(html!("label", {.text("Amniotic fluid odor")}))
+                                    .child(html!("span", {.text("Amniotic fluid odor")}))
                                 }),
                                 html!("div", {.class(class::FORM_CHK_COL_SM1_R).children([
                                     doms::radio_container(page.lr_amniotic_smell.clone(), page.changed.clone(), "lr_amniotic_smell1", "Normal"),
@@ -4629,7 +4629,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_match_none_disable(page.deliver_anomalies.clone(), "ปกติ"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .text("เนื่องจาก")
                         }),
@@ -4648,7 +4648,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .text("คลอดที่")
                         }),
@@ -4666,7 +4666,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .text("น้ำหนักแรกคลอด")
                         }),
@@ -4678,7 +4678,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::string_value(page.deliver_first_weight.clone(), page.changed.clone()))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-2")
                             .text("กรัม")
                         }),
@@ -4687,7 +4687,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .text("สุขภาพแรกเกิด")
                         }),
@@ -4729,7 +4729,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_none_disable(page.fant_breast_feeding_end_age_month.clone()))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-2")
                             .text("เดือน")
                         }),
@@ -4761,7 +4761,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_none_disable(page.fant_artificial_feeding_start_age_month.clone()))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-2")
                             .text("เดือน")
                         }),
@@ -4843,7 +4843,7 @@ impl IpdAdmissionNoteDrPage {
                                 .apply(mixins::other_not_match_disable(page.supplementary_feeding.clone(), "ได้รับ"))
                             }))
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("col-sm-2")
                             .text("เดือน")
                         }),
@@ -4861,7 +4861,7 @@ impl IpdAdmissionNoteDrPage {
             .children([
                 html!("div", {
                     .class(class::ROW)
-                    .child(html!("label", {
+                    .child(html!("span", {
                         .class("col-sm-12")
                         .children([
                             html!("B", {.text("ประวัติด้านสุขภาพจิตและสารเสพติด ")}),
@@ -4933,7 +4933,7 @@ impl IpdAdmissionNoteDrPage {
                                 html!("div", {.class("col-sm-2")}),
                                 html!("div", {
                                     .class("col-sm-3")
-                                    .child(html!("label", {
+                                    .child(html!("span", {
                                         .class("text-end")
                                         .child(html!("a", {
                                             .attr("href","#")
@@ -4949,7 +4949,7 @@ impl IpdAdmissionNoteDrPage {
                                 }),
                                 html!("div", {
                                     .class("col-sm-7")
-                                    .child(html!("label", {
+                                    .child(html!("span", {
                                         .class("text-end")
                                         .text("ประเมินผลกระทบจากการใช้สารเสพติด V2")
                                     }))
@@ -5043,7 +5043,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินอาการถอนพิษแอมเฟตามีน (AWQv2)")
                                 }),
@@ -5142,7 +5142,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินพฤติกรรมก้าวร้าวรุนแรง (OAS)")
                                 }),
@@ -5191,7 +5191,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("Motivation scale")
                                 }),
@@ -5212,7 +5212,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("Craving scale")
                                 }),
@@ -5233,7 +5233,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("Stage of change")
                                 }),
@@ -5254,7 +5254,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินปัญหาการดื่มสุรา (AUDIT)")
                                 }),
@@ -5303,7 +5303,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินอาการถอนพิษสุรา (CIWA-Ar)")
                                 }),
@@ -5352,7 +5352,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินอาการขาดสุรา (AWS)")
                                 }),
@@ -5401,7 +5401,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินระดับการติดนิโคติน (FTND)")
                                 }),
@@ -5448,7 +5448,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินภาวะซึมเศร้า 2 คำถาม (2Q)")
                                 }),
@@ -5495,7 +5495,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินภาวะซึมเศร้า 9 คำถาม (9Q)")
                                 }),
@@ -5544,7 +5544,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("คัดกรองภาวะซึมเศร้าในเด็กอายุ 7-17 ปี (CDI)")
                                 }),
@@ -5589,7 +5589,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินภาวะซึมเศร้าในวัยรุ่น อายุ 15-18 ปี (CES-D)")
                                 }),
@@ -5634,7 +5634,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินภาวะซึมเศร้าในวัยรุ่น อายุ 11-20 ปี (PHQ-A)")
                                 }),
@@ -5701,7 +5701,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินแนวโน้มฆ่าตัวตาย 8 คำถาม (8Q)")
                                 }),
@@ -5750,7 +5750,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินภาวะเครียด (ST-5)")
                                 }),
@@ -5799,7 +5799,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("PTSD Screening Test")
                                 }),
@@ -5844,7 +5844,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินผลกระทบทางจิตใจหลังเกิดเหตุการณ์สะเทือนขวัญ (PISCES-10)")
                                 }),
@@ -5893,7 +5893,7 @@ impl IpdAdmissionNoteDrPage {
                         html!("div", {
                             .class(class::ROW)
                             .children([
-                                html!("label", {
+                                html!("span", {
                                     .class(class::COL_SM5_R)
                                     .text("ประเมินผลกระทบจากเหตุการณ์ภัยพิบัติสำหรับเด็ก (CRIES-13)")
                                 }),
@@ -6071,7 +6071,7 @@ impl IpdAdmissionNoteDrPage {
                                 doms::label_check_for("h2", "เคย"),
                             ])
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM2_R)
                             .text("ครั้งสุดท้ายเมื่อ")
                         }),
@@ -6091,7 +6091,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM5_R)
                             .text("รพ.")
                         }),
@@ -6109,7 +6109,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM5_R)
                             .text("เนื่องจาก")
                         }),
@@ -6407,7 +6407,7 @@ impl IpdAdmissionNoteDrPage {
                                                     html!("div", {
                                                         .class(class::ROW)
                                                         .children([
-                                                            html!("label", {
+                                                            html!("span", {
                                                                 .class(class::COL_SM3_R)
                                                                 .text("Impression")
                                                             }),
@@ -6425,7 +6425,7 @@ impl IpdAdmissionNoteDrPage {
                                                     html!("div", {
                                                         .class(class::ROW)
                                                         .children([
-                                                            html!("label", {
+                                                            html!("span", {
                                                                 .class(class::COL_SM3_R)
                                                                 .text("Diff. Dx")
                                                             }),
@@ -6443,7 +6443,7 @@ impl IpdAdmissionNoteDrPage {
                                                     html!("div", {
                                                         .class(class::ROW)
                                                         .children([
-                                                            html!("label", {
+                                                            html!("span", {
                                                                 .class(class::COL_SM3_R)
                                                                 .text("Plan Management")
                                                             }),
@@ -6546,7 +6546,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("General")
                         }),
@@ -6587,7 +6587,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Skin")
                         }),
@@ -6628,7 +6628,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("HEENT")
                         }),
@@ -6669,7 +6669,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Neck")
                         }),
@@ -6710,7 +6710,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Breast & Thorax")
                         }),
@@ -6751,7 +6751,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Heart")
                         }),
@@ -6792,7 +6792,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Lungs")
                         }),
@@ -6833,7 +6833,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Abdomen")
                         }),
@@ -6874,7 +6874,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Rectum & Genitalia")
                         }),
@@ -6915,7 +6915,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Extremities")
                         }),
@@ -6956,7 +6956,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Neuro")
                         }),
@@ -7000,7 +7000,7 @@ impl IpdAdmissionNoteDrPage {
                     html!("div", {
                         .class(class::ROW)
                         .children([
-                            html!("label", {
+                            html!("span", {
                                 .class(class::COL_SM3_R)
                                 .text("OB/Gyn exam")
                             }),
@@ -7033,7 +7033,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("Other")
                         }),
@@ -7051,7 +7051,7 @@ impl IpdAdmissionNoteDrPage {
                 html!("div", {
                     .class(class::ROW)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class(class::COL_SM3_R)
                             .text("PE Text")
                         }),
@@ -7077,8 +7077,7 @@ impl IpdAdmissionNoteDrPage {
                     .class("col-md-4")
                     .child(html!("div", {
                         .class("mb-3")
-                        .child(html!("label", {
-                            //.attr("for", "action-person-dr-admission")
+                        .child(html!("span", {
                             .class("my-3")
                             .text("ลงชื่อแพทย์")
                         }))
@@ -7121,9 +7120,8 @@ impl IpdAdmissionNoteDrPage {
                     .child(html!("div", {
                         .class("mb-3")
                         .children([
-                            html!("label", {
+                            html!("span", {
                                 .class("my-3")
-                                //.attr("for", "action-person-nurse")
                                 .text("ลงชื่อพยาบาล")
                             }),
                             html!("div", {
@@ -8093,7 +8091,7 @@ fn render_ros_item(label: &str, ros: Mutable<String>, changed: Mutable<bool>) ->
     html!("div", {
         .class(class::ROW)
         .children([
-            html!("label", {
+            html!("span", {
                 .class(class::COL_SM5_R)
                 .text(label)
             }),

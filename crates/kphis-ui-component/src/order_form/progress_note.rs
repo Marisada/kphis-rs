@@ -339,7 +339,7 @@ impl ProgressNoteForm {
                                                 .class(class::BOX_ROUND_P1_T)
                                                 .class("bg-info-subtle")
                                                 .children([
-                                                    html!("label", {.class("fw-bold").text("Problem")}),
+                                                    html!("span", {.class("fw-bold").text("Problem")}),
                                                     html!("div", {
                                                         .class(class::INPUT_GROUP_T)
                                                         .children([
@@ -361,7 +361,7 @@ impl ProgressNoteForm {
                                                             }),
                                                         ])
                                                     }),
-                                                    html!("label", {.text("Problem Note")}),
+                                                    html!("span", {.text("Problem Note")}),
                                                     html!("div", {
                                                         .child(html!("textarea" => HtmlTextAreaElement, {
                                                             .class(class::FORM_CTRL_SM)

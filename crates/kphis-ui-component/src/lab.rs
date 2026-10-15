@@ -469,29 +469,36 @@ impl LabCpn {
                 html!("div", {
                     .class(class::CARD_HEAD_CYANS)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("HN : ")}))
                             .text(&detail.hn.clone().unwrap_or_default())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
-                            .child(html!("b", {.text(&[
-                                if detail.department.as_ref().map(|d| d == "OPD").unwrap_or_default() {"VN"} else {"AN"}, " : "
-                            ].concat())}))
+                            .child(html!("b", {.text(match detail.vn.as_ref() {
+                                Some(vnan) => {
+                                    if vnan.len() == app.hosxp_an_len() {
+                                        "AN : "
+                                    } else {
+                                        "VN : "
+                                    }
+                                }
+                                None => "",
+                            })}))
                             .text(&detail.vn.clone().unwrap_or_default())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("Lab Order No. : ")}))
                             .text(&page.lab_order_number.get().to_string())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("ใบ Lab : ")}))
                             .text(&detail.form_name.clone().unwrap_or_default())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("Detail : ")}))
                             .text(&detail.lab_name_cc.clone().unwrap_or_default())
@@ -499,7 +506,7 @@ impl LabCpn {
                     ])
                     .apply(|dom| {
                         if let Some(specimen_name_cc) = &detail.specimen_name_cc {
-                            dom.child(html!("label", {
+                            dom.child(html!("span", {
                                 .class("me-2")
                                 .child(html!("b", {.text("Specimen : ")}))
                                 .text(specimen_name_cc)
@@ -509,21 +516,21 @@ impl LabCpn {
                         }
                     })
                     .apply_if(detail.order_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("เวลาที่สั่ง : ")}))
                             .text(&[date_th_opt(&detail.order_date), time_hm_opt(&detail.order_time)].join(" "))
                         }))
                     })
                     .apply_if(detail.receive_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("เวลาที่รับ : ")}))
                             .text(&[date_th_opt(&detail.receive_date), time_hm_opt(&detail.receive_time)].join(" "))
                         }))
                     })
                     .apply_if(detail.report_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .child(html!("b", {.text("เวลาที่รายงาน : ")}))
                             .text(&[date_th_opt(&detail.report_date), time_hm_opt(&detail.report_time)].join(" "))
                         }))
@@ -656,57 +663,66 @@ impl LabCpn {
                                                 }),
                                             ])
                                         }),
-                                        html!("div",{
-                                            .children(PdfButtons::buttons(
-                                                PdfButtons::new(
-                                                    TypstReport::from_system_with_coercion(SystemReport::Lab, &app.state().report_coercions()),
-                                                    page.vnan.clone(),
-                                                    Mutable::new(true),
-                                                    Mutable::new(false),
-                                                    clone!(page => move || {serde_json::json!({
-                                                        "id": page.vnan.get_cloned(),
-                                                        "lab": vec![page.lab_detail.get_cloned()],
-                                                    }).to_string()})
-                                                ), "PDF", None, app.clone()
-                                            ))
-                                        }),
-                                        html!("div",{
-                                            .children(PdfButtons::buttons(
-                                                PdfButtons::new(
-                                                    TypstReport::from_system_with_coercion(SystemReport::LabSummary, &app.state().report_coercions()),
-                                                    page.vnan.clone(),
-                                                    Mutable::new(true),
-                                                    Mutable::new(false),
-                                                    clone!(page => move || {
-                                                        let mut labs = match page.lab_detail.get_cloned() {
-                                                            Some(lab) => vec![lab],
-                                                            None => Vec::new(),
-                                                        };
-                                                        labs.extend(page.previous_detail.get_cloned());
-                                                        serde_json::json!({
-                                                            "id": page.vnan.get_cloned(),
-                                                            "lab": labs,
-                                                        }).to_string()
-                                                    })
-                                                ), "PDF SUMMARY", None, app.clone()
-                                            ))
-                                        }),
-                                        html!("div",{
-                                            .attr("type","button")
-                                            .class(class::BTN_R_BLUE)
-                                            .child(html!("i", {.class(class::FA_CLONE)}))
-                                            .attr("title","Copy to Clipboard")
-                                            .event(clone!(app, detail => move |_:events::Click| {
-                                                spawn_local(clone!(app, detail => async move {
-                                                    let result = match datetime_from_opt(detail.report_date.or(detail.order_date), detail.report_time.or(detail.order_time)) {
-                                                        Some(dt) => ["- [", &datetime_th(&dt), "] ", &full_text(&detail)].concat(),
-                                                        None => full_text(&detail),
-                                                    };
-                                                    app.set_clipboard(&result).await;
-                                                }));
-                                            }))
-                                        }),
                                     ])
+                                    .child_signal(page.lab_detail.signal_cloned().map(clone!(app, page => move |opt| {
+                                        opt.map(|lab_detail| {
+                                            let id = lab_detail.vn.clone().unwrap_or_default();
+                                            html!("div", {
+                                                .children(PdfButtons::buttons(
+                                                    PdfButtons::new(
+                                                        TypstReport::from_system_with_coercion(SystemReport::Lab, &app.state().report_coercions()),
+                                                        Mutable::new(id.clone()),
+                                                        Mutable::new(true),
+                                                        Mutable::new(false),
+                                                        move || {serde_json::json!({
+                                                            "id": id,
+                                                            "lab": vec![lab_detail.clone()],
+                                                        }).to_string()}
+                                                    ), "PDF", Some("ALL"), app.clone()
+                                                ))
+                                            })
+                                        })
+                                    })))
+                                    .child_signal(page.lab_detail.signal_cloned().map(clone!(app, page => move |opt| {
+                                        opt.and_then(|lab_detail| {
+                                            let id = lab_detail.vn.clone().unwrap_or_default();
+                                            (id.len() == app.hosxp_an_len()).then(|| {
+                                                html!("div",{
+                                                    .children(PdfButtons::buttons(
+                                                        PdfButtons::new(
+                                                            TypstReport::from_system_with_coercion(SystemReport::LabSummary, &app.state().report_coercions()),
+                                                            Mutable::new(id.clone()),
+                                                            Mutable::new(true),
+                                                            Mutable::new(false),
+                                                            clone!(page => move || {
+                                                                let mut labs = vec![lab_detail.clone()];
+                                                                labs.extend(page.previous_detail.get_cloned());
+                                                                serde_json::json!({
+                                                                    "id": id,
+                                                                    "lab": labs,
+                                                                }).to_string()
+                                                            })
+                                                        ), "PDF SUMMARY", None, app.clone()
+                                                    ))
+                                                })
+                                            })
+                                        })
+                                    })))
+                                    .child(html!("div",{
+                                        .attr("type","button")
+                                        .class(class::BTN_R_BLUE)
+                                        .child(html!("i", {.class(class::FA_CLONE)}))
+                                        .attr("title","Copy to Clipboard")
+                                        .event(clone!(app, detail => move |_:events::Click| {
+                                            spawn_local(clone!(app, detail => async move {
+                                                let result = match datetime_from_opt(detail.report_date.or(detail.order_date), detail.report_time.or(detail.order_time)) {
+                                                    Some(dt) => ["- [", &datetime_th(&dt), "] ", &full_text(&detail)].concat(),
+                                                    None => full_text(&detail),
+                                                };
+                                                app.set_clipboard(&result).await;
+                                            }));
+                                        }))
+                                    }))
                                 }))
                             }))
                         }))

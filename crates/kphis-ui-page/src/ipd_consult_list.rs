@@ -120,7 +120,7 @@ impl IpdConsultListPage {
             .class("container-fluid")
             .child(html!("div", {
                 .class(class::ROW_COL_MD12)
-                .child(html!("label", {
+                .child(html!("span", {
                     .class(class::FORM_COL_LBL_AUTO)
                     .child(html!("h3", {
                         .child(html!("i", {.class(class::FA_CLIPBOARD)}))
@@ -253,7 +253,7 @@ impl IpdConsultListPage {
                                         .apply(mixins::string_value_select(page.search_consult_status.clone(), page.changed.clone()))
                                         // .attr("onchange", "onchange_select_search_consult_status()")
                                     }),
-                                    html!("label", {
+                                    html!("span", {
                                         .class("input-group-text")
                                         .children([
                                             html!("i", {.class(class::FA_HOURGLASS_GOLD).class("me-2")}),
@@ -280,7 +280,7 @@ impl IpdConsultListPage {
                                         .apply(mixins::string_value_select(page.search_consult_emergency.clone(), page.changed.clone()))
                                         // .attr("onchange", "onchange_select_consult_emergency_search()")
                                     }),
-                                    html!("label", {
+                                    html!("span", {
                                         .class("input-group-text")
                                         .children([
                                             html!("i", {.class(class::FA_CIRCLE_GRAY).class("me-2")}),

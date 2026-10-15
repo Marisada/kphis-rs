@@ -346,12 +346,12 @@ impl XrayCpn {
                 html!("div", {
                     .class(class::CARD_HEAD_CYANS)
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("HN : ")}))
                             .text(&report.hn.clone().unwrap_or_default())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("VN : ")}))
                             .text(&report.vn.clone().unwrap_or_default())
@@ -359,7 +359,7 @@ impl XrayCpn {
                     ])
                     .apply(|dom| {
                         if let Some(an) = opt_empty_none(report.an.as_ref()) {
-                            dom.child(html!("label", {
+                            dom.child(html!("span", {
                                 .class("me-2")
                                 .child(html!("b", {.text("AN : ")}))
                                 .text(&an)
@@ -369,26 +369,26 @@ impl XrayCpn {
                         }
                     })
                     .children([
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("XN. : ")}))
                             .text(&report.xn.to_string())
                         }),
-                        html!("label", {
+                        html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("X-Ray : ")}))
                             .text(&report.xray_items_name.clone().unwrap_or_default())
                         }),
                     ])
                     .apply_if(report.request_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("เวลาที่สั่ง : ")}))
                             .text(&[date_th_opt(&report.request_date), time_hm_opt(&report.request_time)].join(" "))
                         }))
                     })
                     .apply_if(report.examined_date.is_some(), |dom| {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .class("me-2")
                             .child(html!("b", {.text("เวลาที่ X-Ray : ")}))
                             .text(&[date_th_opt(&report.examined_date), time_hm_opt(&report.examined_time)].join(" "))

@@ -56,7 +56,7 @@ pub fn render(i: usize, focus: Rc<FocusList>, edit_dom: Dom) -> Dom {
             html!("td", {
                 .apply(|dom| {
                     if focus.dchdate.is_some() && focus.fclist_status.as_str() == "1" {
-                        dom.child(html!("label", {
+                        dom.child(html!("span", {
                             .apply_if(focus.dchtype == Some(String::from("01")), |d| d.class("text-danger"))
                             .children([
                                 text(&date_th_opt(&focus.dchdate)),
@@ -82,7 +82,7 @@ pub fn render(i: usize, focus: Rc<FocusList>, edit_dom: Dom) -> Dom {
                     if status == "1" {
                         if focus.dchdate.is_some() {
                             if focus.dchtype == Some(String::from("01")) {
-                                dom.child(html!("label", {
+                                dom.child(html!("span", {
                                     .children([
                                         html!("h5", {
                                             .children([
@@ -101,7 +101,7 @@ pub fn render(i: usize, focus: Rc<FocusList>, edit_dom: Dom) -> Dom {
                                     ])
                                 }))
                             } else {
-                                dom.child(html!("label", {
+                                dom.child(html!("span", {
                                     .class("text-danger")
                                     .text(&focus.dchtype_name.clone().unwrap_or_default())
                                 }))

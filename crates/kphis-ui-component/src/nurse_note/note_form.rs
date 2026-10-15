@@ -701,7 +701,7 @@ impl NurseNoteFormCpn {
                                 html!("div", {
                                     .class(class::ROW)
                                     .children([
-                                        html!("label", {
+                                        html!("span", {
                                             .class(class::COL_SM3_R_P0)
                                             .text("Intervention")
                                         }),
@@ -803,7 +803,7 @@ impl NurseNoteFormCpn {
                                 html!("div", {
                                     .class(class::ROW)
                                     .children([
-                                        html!("label", {
+                                        html!("span", {
                                             .class(class::COL_SM3_R_P0)
                                             .text("Dailycare")
                                         }),

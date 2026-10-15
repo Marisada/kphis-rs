@@ -31392,21 +31392,21 @@ F1006 20A Alcohol, Acute intoxication, With convulsions
 F1007 20A Alcohol, Acute intoxication, Pathological
 intoxication
 F101 20C Alcohol, Harmful use
-F102 20C Alcohol, Dependence sydrome
-F1020 20C Alcohol, Dependence sydrome, Currently
+F102 20C Alcohol, Dependence syndrome
+F1020 20C Alcohol, Dependence syndrome, Currently
 abstinent
-F1021 20C Alcohol, Dependence sydrome, Currently
+F1021 20C Alcohol, Dependence syndrome, Currently
 abstinent, but in a protected environment
-F1022 20C Alcohol, Dependence sydrome, Currently on a
+F1022 20C Alcohol, Dependence syndrome, Currently on a
 clinically supervised maintenance or
 replacement regime (controlled dependence)
-F1023 20C Alcohol, Dependence sydrome, Currently
+F1023 20C Alcohol, Dependence syndrome, Currently
 abstinent, but receiving treatment with aversive
 or blocking drugs
-F1024 20C Alcohol, Dependence sydrome, Currently using
+F1024 20C Alcohol, Dependence syndrome, Currently using
 the substance (active dependence)
-F1025 20C Alcohol, Dependence sydrome, Continuous use
-F1026 20C Alcohol, Dependence sydrome, Episodic use
+F1025 20C Alcohol, Dependence syndrome, Continuous use
+F1026 20C Alcohol, Dependence syndrome, Episodic use
 (dipsomania)
 F103 20A Alcohol, Withdrawal state
 F1030 20A Alcohol, Withdrawal state, Uncomplicated
@@ -31460,22 +31460,22 @@ F1106 20D Opioids, Acute intoxication, With convulsions
 F1107 20D Opioids, Acute intoxication, Pathological
 intoxication
 F111 20D Opioids, Harmful use
-F112 20D Opioids, Dependence sydrome
-F1120 20D Opioids, Dependence sydrome, Currently
+F112 20D Opioids, Dependence syndrome
+F1120 20D Opioids, Dependence syndrome, Currently
 abstinent
-F1121 20D Opioids, Dependence sydrome, Currently
+F1121 20D Opioids, Dependence syndrome, Currently
 abstinent, but in a protected environment
-F1122 20D Opioids, Dependence sydrome, Currently on a
+F1122 20D Opioids, Dependence syndrome, Currently on a
 clinically supervised maintenance or
 replacement regime (controlled dependence)
-F1123 20D Opioids, Dependence sydrome, Currently
+F1123 20D Opioids, Dependence syndrome, Currently
 abstinent, but receiving treatment with aversive
 or blocking drugs
-F1124 20D Opioids, Dependence sydrome, Currently using
+F1124 20D Opioids, Dependence syndrome, Currently using
 the substance (active dependence)
-F1125 20D Opioids, Dependence sydrome, Continuous
+F1125 20D Opioids, Dependence syndrome, Continuous
 use
-F1126 20D Opioids, Dependence sydrome, Episodic use
+F1126 20D Opioids, Dependence syndrome, Episodic use
 (dipsomania)
 F113 20B Opioids, Withdrawal state
 F1130 20B Opioids, Withdrawal state, Uncomplicated
@@ -31536,22 +31536,22 @@ convulsions
 F1207 20E Cannabinoids, Acute intoxication, Pathological
 intoxication
 F121 20E Cannabinoids, Harmful use
-F122 20E Cannabinoids, Dependence sydrome
-F1220 20E Cannabinoids, Dependence sydrome, Currently
+F122 20E Cannabinoids, Dependence syndrome
+F1220 20E Cannabinoids, Dependence syndrome, Currently
 abstinent
-F1221 20E Cannabinoids, Dependence sydrome, Currently
+F1221 20E Cannabinoids, Dependence syndrome, Currently
 abstinent, but in a protected environment
-F1222 20E Cannabinoids, Dependence sydrome, Currently
+F1222 20E Cannabinoids, Dependence syndrome, Currently
 on a clinically supervised maintenance or
 replacement regime (controlled dependence)
-F1223 20E Cannabinoids, Dependence sydrome, Currently
+F1223 20E Cannabinoids, Dependence syndrome, Currently
 abstinent, but receiving treatment with aversive
 or blocking drugs
-F1224 20E Cannabinoids, Dependence sydrome, Currently
+F1224 20E Cannabinoids, Dependence syndrome, Currently
 using the substance (active dependence)
-F1225 20E Cannabinoids, Dependence sydrome,
+F1225 20E Cannabinoids, Dependence syndrome,
 Continuous use
-F1226 20E Cannabinoids, Dependence sydrome, Episodic
+F1226 20E Cannabinoids, Dependence syndrome, Episodic
 use (dipsomania)
 F123 20B Cannabinoids, Withdrawal state
 F1230 20B Cannabinoids, Withdrawal state,
@@ -31618,25 +31618,25 @@ convulsions
 F1307 20E Sedatives or hypnotics, Acute intoxication,
 Pathological intoxication
 F131 20E Sedatives or hypnotics, Harmful use
-F132 20E Sedatives or hypnotics, Dependence sydrome
-F1320 20E Sedatives or hypnotics, Dependence sydrome,
+F132 20E Sedatives or hypnotics, Dependence syndrome
+F1320 20E Sedatives or hypnotics, Dependence syndrome,
 Currently abstinent
-F1321 20E Sedatives or hypnotics, Dependence sydrome,
+F1321 20E Sedatives or hypnotics, Dependence syndrome,
 Currently abstinent, but in a protected
 environment
-F1322 20E Sedatives or hypnotics, Dependence sydrome,
+F1322 20E Sedatives or hypnotics, Dependence syndrome,
 Currently on a clinically supervised
 maintenance or replacement regime (controlled
 dependence)
-F1323 20E Sedatives or hypnotics, Dependence sydrome,
+F1323 20E Sedatives or hypnotics, Dependence syndrome,
 Currently abstinent, but receiving treatment
 with aversive or blocking drugs
-F1324 20E Sedatives or hypnotics, Dependence sydrome,
+F1324 20E Sedatives or hypnotics, Dependence syndrome,
 Currently using the substance (active
 dependence)
-F1325 20E Sedatives or hypnotics, Dependence sydrome,
+F1325 20E Sedatives or hypnotics, Dependence syndrome,
 Continuous use
-F1326 20E Sedatives or hypnotics, Dependence sydrome,
+F1326 20E Sedatives or hypnotics, Dependence syndrome,
 Episodic use (dipsomania)
 F133 20B Sedatives or hypnotics, Withdrawal state
 F1330 20B Sedatives or hypnotics, Withdrawal state,
@@ -31703,23 +31703,23 @@ F1406 20E Cocaine, Acute intoxication, With convulsions
 F1407 20E Cocaine, Acute intoxication, Pathological
 intoxication
 F141 20E Cocaine, Harmful use
-F142 20E Cocaine, Dependence sydrome
-F1420 20E Cocaine, Dependence sydrome, Currently
+F142 20E Cocaine, Dependence syndrome
+F1420 20E Cocaine, Dependence syndrome, Currently
 abstinent
-F1421 20E Cocaine, Dependence sydrome, Currently
+F1421 20E Cocaine, Dependence syndrome, Currently
 abstinent, but in a protected environment
 Code PDC Desc
-F1422 20E Cocaine, Dependence sydrome, Currently on a
+F1422 20E Cocaine, Dependence syndrome, Currently on a
 clinically supervised maintenance or
 replacement regime (controlled dependence)
-F1423 20E Cocaine, Dependence sydrome, Currently
+F1423 20E Cocaine, Dependence syndrome, Currently
 abstinent, but receiving treatment with aversive
 or blocking drugs
-F1424 20E Cocaine, Dependence sydrome, Currently
+F1424 20E Cocaine, Dependence syndrome, Currently
 using the substance (active dependence)
-F1425 20E Cocaine, Dependence sydrome, Continuous
+F1425 20E Cocaine, Dependence syndrome, Continuous
 use
-F1426 20E Cocaine, Dependence sydrome, Episodic use
+F1426 20E Cocaine, Dependence syndrome, Episodic use
 (dipsomania)
 F143 20B Cocaine, Withdrawal state
 F1430 20B Cocaine, Withdrawal state, Uncomplicated
@@ -31785,27 +31785,27 @@ intoxication, Pathological intoxication
 F151 20E Other stimulants including caffeine, Harmful
 use
 F152 20E Other stimulants including caffeine,
-Dependence sydrome
+Dependence syndrome
 F1520 20E Other stimulants including caffeine,
-Dependence sydrome, Currently abstinent
+Dependence syndrome, Currently abstinent
 F1521 20E Other stimulants including caffeine,
-Dependence sydrome, Currently abstinent, but
+Dependence syndrome, Currently abstinent, but
 in a protected environment
 F1522 20E Other stimulants including caffeine,
-Dependence sydrome, Currently on a clinically
+Dependence syndrome, Currently on a clinically
 supervised maintenance or replacement regime
 (controlled dependence)
 F1523 20E Other stimulants including caffeine,
-Dependence sydrome, Currently abstinent, but
+Dependence syndrome, Currently abstinent, but
 receiving treatment with aversive or blocking
 drugs
 F1524 20E Other stimulants including caffeine,
-Dependence sydrome, Currently using the
+Dependence syndrome, Currently using the
 substance (active dependence)
 F1525 20E Other stimulants including caffeine,
-Dependence sydrome, Continuous use
+Dependence syndrome, Continuous use
 F1526 20E Other stimulants including caffeine,
-Dependence sydrome, Episodic use
+Dependence syndrome, Episodic use
 (dipsomania)
 F153 20B Other stimulants including caffeine, Withdrawal
 state
@@ -31876,25 +31876,25 @@ convulsions
 F1607 20E Hallucinogens, Acute intoxication, Pathological
 intoxication
 F161 20E Hallucinogens, Harmful use
-F162 20E Hallucinogens, Dependence sydrome
-F1620 20E Hallucinogens, Dependence sydrome,
+F162 20E Hallucinogens, Dependence syndrome
+F1620 20E Hallucinogens, Dependence syndrome,
 Currently abstinent
-F1621 20E Hallucinogens, Dependence sydrome,
+F1621 20E Hallucinogens, Dependence syndrome,
 Currently abstinent, but in a protected
 environment
-F1622 20E Hallucinogens, Dependence sydrome,
+F1622 20E Hallucinogens, Dependence syndrome,
 Currently on a clinically supervised
 maintenance or replacement regime (controlled
 dependence)
-F1623 20E Hallucinogens, Dependence sydrome,
+F1623 20E Hallucinogens, Dependence syndrome,
 Currently abstinent, but receiving treatment
 with aversive or blocking drugs
-F1624 20E Hallucinogens, Dependence sydrome,
+F1624 20E Hallucinogens, Dependence syndrome,
 Currently using the substance (active
 dependence)
-F1625 20E Hallucinogens, Dependence sydrome,
+F1625 20E Hallucinogens, Dependence syndrome,
 Continuous use
-F1626 20E Hallucinogens, Dependence sydrome, Episodic
+F1626 20E Hallucinogens, Dependence syndrome, Episodic
 use (dipsomania)
 F163 20B Hallucinogens, Withdrawal state
 F1630 20B Hallucinogens, Withdrawal state,
@@ -31959,22 +31959,22 @@ F1706 20E Tobacco acute intoxicatio With convulsions
 F1707 20E Tobacco, Acute intoxication, Pathological
 intoxication
 F171 20E Tobacco harmful use
-F172 20E Tobacco, Dependence sydrome
-F1720 20E Tobacco, Dependence sydrome, Currently
+F172 20E Tobacco, Dependence syndrome
+F1720 20E Tobacco, Dependence syndrome, Currently
 abstinent
-F1721 20E Tobacco, Dependence sydrome, Currently
+F1721 20E Tobacco, Dependence syndrome, Currently
 abstinent, but in a protected environment
-F1722 20E Tobacco, Dependence sydrome, Currently on a
+F1722 20E Tobacco, Dependence syndrome, Currently on a
 clinically supervised maintenance or
 replacement regime (controlled dependence)
-F1723 20E Tobacco, Dependence sydrome, Currently
+F1723 20E Tobacco, Dependence syndrome, Currently
 abstinent, but receiving treatment with aversive
 or blocking drugs
-F1724 20E Tobacco, Dependence sydrome, Currently
+F1724 20E Tobacco, Dependence syndrome, Currently
 using the substance (active dependence)
-F1725 20E Tobacco, Dependence sydrome, Continuous
+F1725 20E Tobacco, Dependence syndrome, Continuous
 use
-F1726 20E Tobacco, Dependence sydrome, Episodic use
+F1726 20E Tobacco, Dependence syndrome, Episodic use
 (dipsomania)
 F173 20B Tobacco, Withdrawal state
 F1730 20B Tobacco, Withdrawal state, Uncomplicated
@@ -32034,28 +32034,28 @@ convulsions
 F1807 20E Volatile solvents, Acute intoxication,
 Pathological intoxication
 F181 20E Volatile solvents, Harmful use
-F182 20E Volatile solvents, Dependence sydrome
-F1820 20E Volatile solvents, Dependence sydrome,
+F182 20E Volatile solvents, Dependence syndrome
+F1820 20E Volatile solvents, Dependence syndrome,
 Currently abstinent
-F1821 20E Volatile solvents, Dependence sydrome,
+F1821 20E Volatile solvents, Dependence syndrome,
 Currently abstinent, but in a protected
 environment
-F1822 20E Volatile solvents, Dependence sydrome,
+F1822 20E Volatile solvents, Dependence syndrome,
 Currently on a clinically supervised
 maintenance or replacement regime (controlled
 dependence)
 Major Diagnostic Category 20
 321
 Code PDC Desc
-F1823 20E Volatile solvents, Dependence sydrome,
+F1823 20E Volatile solvents, Dependence syndrome,
 Currently abstinent, but receiving treatment
 with aversive or blocking drugs
-F1824 20E Volatile solvents, Dependence sydrome,
+F1824 20E Volatile solvents, Dependence syndrome,
 Currently using the substance (active
 dependence)
-F1825 20E Volatile solvents, Dependence sydrome,
+F1825 20E Volatile solvents, Dependence syndrome,
 Continuous use
-F1826 20E Volatile solvents, Dependence sydrome,
+F1826 20E Volatile solvents, Dependence syndrome,
 Episodic use (dipsomania)
 F183 20B Volatile solvents, Withdrawal state
 F1830 20B Volatile solvents, Withdrawal state,
@@ -32134,33 +32134,33 @@ F191 20E Multiple drug use and use of other
 psychoactive substances, Harmful use
 F192 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome
+syndrome
 F1920 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome, Currently abstinent
+syndrome, Currently abstinent
 F1921 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome, Currently abstinent, but in a protected
+syndrome, Currently abstinent, but in a protected
 environment
 F1922 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome, Currently on a clinically supervised
+syndrome, Currently on a clinically supervised
 maintenance or replacement regime (controlled
 dependence)
 F1923 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome, Currently abstinent, but receiving
+syndrome, Currently abstinent, but receiving
 treatment with aversive or blocking drugs
 F1924 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome, Currently using the substance (active
+syndrome, Currently using the substance (active
 dependence)
 F1925 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome, Continuous use
+syndrome, Continuous use
 F1926 20E Multiple drug use and use of other
 psychoactive substances, Dependence
-sydrome, Episodic use (dipsomania)
+syndrome, Episodic use (dipsomania)
 F193 20B Multiple drug use and use of other
 psychoactive substances, Withdrawal state
 F1930 20B Multiple drug use and use of other

@@ -860,7 +860,7 @@ LIMIT 50;"#;
                                             .class(class::INPUT_GROUP_SM)
                                             .style("min-width","350px")
                                             .children([
-                                                html!("label", {
+                                                html!("span", {
                                                     .class(class::INPUT_GROUP_TEXT_BG_GOLDS)
                                                     .text("Template")
                                                 }),
@@ -910,7 +910,7 @@ LIMIT 50;"#;
                                         .child(html!("div", {
                                             .class(class::INPUT_GROUP_SM)
                                             .style("min-width","350px")
-                                            .child(html!("label", {
+                                            .child(html!("span", {
                                                 .class("input-group-text")
                                                 .class_signal("bg-warning-subtle", not(page.is_new_custom.signal()))
                                                 .class_signal("bg-danger-subtle", map_ref!{
@@ -1033,7 +1033,7 @@ LIMIT 50;"#;
                                         .class(class::INPUT_GROUP_SM)
                                         .style("min-width","300px")
                                         .children([
-                                            html!("label", {
+                                            html!("span", {
                                                 .class("input-group-text")
                                                 .class_signal("bg-danger-subtle", page.custom_title.signal_ref(|s| s.is_empty()))
                                                 .text("Title")

@@ -135,7 +135,7 @@ impl IndexPage {
                                     .text(" Connecting ...")
                                 }))
                             } else if ready_state == 3 {
-                                Some(html!("label", {
+                                Some(html!("span", {
                                     .class(class::TXT_C_BX_RED)
                                     .style("cursor","pointer")
                                     .child(html!("h2", {

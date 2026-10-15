@@ -215,7 +215,7 @@ impl OpdErOrderPharmacyPage {
                                                         }))
                                                     })
                                                 }),
-                                                html!("label", {
+                                                html!("span", {
                                                     .class("input-group-text")
                                                     .child(doms::timer_svg(page.timer_second.clone()))
                                                 }),
