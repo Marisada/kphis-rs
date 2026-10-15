@@ -656,57 +656,66 @@ impl LabCpn {
                                                 }),
                                             ])
                                         }),
-                                        html!("div",{
-                                            .children(PdfButtons::buttons(
-                                                PdfButtons::new(
-                                                    TypstReport::from_system_with_coercion(SystemReport::Lab, &app.state().report_coercions()),
-                                                    page.vnan.clone(),
-                                                    Mutable::new(true),
-                                                    Mutable::new(false),
-                                                    clone!(page => move || {serde_json::json!({
-                                                        "id": page.vnan.get_cloned(),
-                                                        "lab": vec![page.lab_detail.get_cloned()],
-                                                    }).to_string()})
-                                                ), "PDF", None, app.clone()
-                                            ))
-                                        }),
-                                        html!("div",{
-                                            .children(PdfButtons::buttons(
-                                                PdfButtons::new(
-                                                    TypstReport::from_system_with_coercion(SystemReport::LabSummary, &app.state().report_coercions()),
-                                                    page.vnan.clone(),
-                                                    Mutable::new(true),
-                                                    Mutable::new(false),
-                                                    clone!(page => move || {
-                                                        let mut labs = match page.lab_detail.get_cloned() {
-                                                            Some(lab) => vec![lab],
-                                                            None => Vec::new(),
-                                                        };
-                                                        labs.extend(page.previous_detail.get_cloned());
-                                                        serde_json::json!({
-                                                            "id": page.vnan.get_cloned(),
-                                                            "lab": labs,
-                                                        }).to_string()
-                                                    })
-                                                ), "PDF SUMMARY", None, app.clone()
-                                            ))
-                                        }),
-                                        html!("div",{
-                                            .attr("type","button")
-                                            .class(class::BTN_R_BLUE)
-                                            .child(html!("i", {.class(class::FA_CLONE)}))
-                                            .attr("title","Copy to Clipboard")
-                                            .event(clone!(app, detail => move |_:events::Click| {
-                                                spawn_local(clone!(app, detail => async move {
-                                                    let result = match datetime_from_opt(detail.report_date.or(detail.order_date), detail.report_time.or(detail.order_time)) {
-                                                        Some(dt) => ["- [", &datetime_th(&dt), "] ", &full_text(&detail)].concat(),
-                                                        None => full_text(&detail),
-                                                    };
-                                                    app.set_clipboard(&result).await;
-                                                }));
-                                            }))
-                                        }),
                                     ])
+                                    .child_signal(page.lab_detail.signal_cloned().map(clone!(app, page => move |opt| {
+                                        opt.map(|lab_detail| {
+                                            let id = lab_detail.vn.clone().unwrap_or_default();
+                                            html!("div", {
+                                                .children(PdfButtons::buttons(
+                                                    PdfButtons::new(
+                                                        TypstReport::from_system_with_coercion(SystemReport::Lab, &app.state().report_coercions()),
+                                                        Mutable::new(id.clone()),
+                                                        Mutable::new(true),
+                                                        Mutable::new(false),
+                                                        move || {serde_json::json!({
+                                                            "id": id,
+                                                            "lab": vec![lab_detail.clone()],
+                                                        }).to_string()}
+                                                    ), "PDF", Some("ALL"), app.clone()
+                                                ))
+                                            })
+                                        })
+                                    })))
+                                    .child_signal(page.lab_detail.signal_cloned().map(clone!(app, page => move |opt| {
+                                        opt.and_then(|lab_detail| {
+                                            let id = lab_detail.vn.clone().unwrap_or_default();
+                                            (id.len() == app.hosxp_an_len()).then(|| {
+                                                html!("div",{
+                                                    .children(PdfButtons::buttons(
+                                                        PdfButtons::new(
+                                                            TypstReport::from_system_with_coercion(SystemReport::LabSummary, &app.state().report_coercions()),
+                                                            Mutable::new(id.clone()),
+                                                            Mutable::new(true),
+                                                            Mutable::new(false),
+                                                            clone!(page => move || {
+                                                                let mut labs = vec![lab_detail.clone()];
+                                                                labs.extend(page.previous_detail.get_cloned());
+                                                                serde_json::json!({
+                                                                    "id": id,
+                                                                    "lab": labs,
+                                                                }).to_string()
+                                                            })
+                                                        ), "PDF SUMMARY", None, app.clone()
+                                                    ))
+                                                })
+                                            })
+                                        })
+                                    })))
+                                    .child(html!("div",{
+                                        .attr("type","button")
+                                        .class(class::BTN_R_BLUE)
+                                        .child(html!("i", {.class(class::FA_CLONE)}))
+                                        .attr("title","Copy to Clipboard")
+                                        .event(clone!(app, detail => move |_:events::Click| {
+                                            spawn_local(clone!(app, detail => async move {
+                                                let result = match datetime_from_opt(detail.report_date.or(detail.order_date), detail.report_time.or(detail.order_time)) {
+                                                    Some(dt) => ["- [", &datetime_th(&dt), "] ", &full_text(&detail)].concat(),
+                                                    None => full_text(&detail),
+                                                };
+                                                app.set_clipboard(&result).await;
+                                            }));
+                                        }))
+                                    }))
                                 }))
                             }))
                         }))

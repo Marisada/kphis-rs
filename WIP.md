@@ -61,12 +61,12 @@
 - Add changed to `CHANGELOG.md`
 
 ## NOTE : Cargo Audit alert
-> - `quick-xml` (7.5 high): wait for `citationberg` of `typst` to update version
-> - `bincode` (unmaintained): wait for `syntect` to update dependency
-> - `paste` (unmaintained): wait for `rav1e`, `pulp`, `hayagriva` and `biblatex` to update dependency
-> - `rustybuzz` (unmaintained): wait for `usvg` and `typst` to update dependency
-> - `ttf-parser` (unmaintained): wait for `usvg`, `typst`, `rustybuzz` and `fontdb` to update dependency
-> - `yaml-rust` (unmaintained): wait for `syntect` to update dependency
+> - `bincode` (unmaintained): wait for [syntect](https://github.com/trishume/syntect) to update dependency
+> - `paste` (unmaintained): wait for [rav1e](https://github.com/xiph/rav1e), [pulp](https://github.com/sarah-quinones/pulp/), [hayagriva](https://github.com/typst/hayagriva) and [biblatex](https://github.com/typst/biblatex) to update dependency
+> - `rustybuzz` (unmaintained): wait for [usvg](https://github.com/linebender/resvg) and [typst](https://github.com/typst/typst) to update dependency
+> - `ttf-parser` (unmaintained): wait for [usvg](https://github.com/linebender/resvg), [typst](https://github.com/typst/typst), [rustybuzz](https://github.com/harfbuzz/rustybuzz) and [fontdb](https://github.com/RazrFalcon/fontdb) to update dependency
+> - `unsafe-libyaml` (unmaintained): wait for [typst](https://github.com/typst/typst) and [hayagriva](https://github.com/typst/hayagriva) to change `serde_yaml` out
+> - `yaml-rust` (unmaintained): wait for [syntect](https://github.com/trishume/syntect) to update dependency
 
 ## NOTE : getrandom used by rand and ulid crate
 > - v0.2 has a good supported for `wasm32-unknown-unknown` with `js` feature (has no effect on targets other than `wasm32-unknown-unknown`)

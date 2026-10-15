@@ -172,6 +172,12 @@ x509-certificate = { git = "https://codeberg.org/marisada/cryptography-rs" }
 utoipa = { git = "https://codeberg.org/Marisada/utoipa", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
 # utoipa = { path = "../utoipa/utoipa/", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
 
+[patch.crates-io]
+# citationberg 0.7.0 pins quick-xml 0.38, which carries RUSTSEC-2026-0194 and RUSTSEC-2026-0195.
+# Upstream main has quick-xml 0.41 since typst/citationberg#44 but no release yet (typst/citationberg#49).
+# Drop this patch once a citationberg release with quick-xml >= 0.41 is picked up by hayagriva/typst.
+citationberg = { git = "https://github.com/typst/citationberg", rev = "8966cf7c178b38b621d297c9eb6d0bb81e14be5e" }
+
 # read https://doc.rust-lang.org/cargo/reference/profiles.html for more informations
 [profile.dev]
 # prevent rust-lld linking error 0xc0000005
