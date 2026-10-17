@@ -1017,6 +1017,7 @@ impl IndexPlanActionForm {
                                     html!("option", {.attr("value", &action_id.to_string()).text(&label)})
                                 })
                             }))
+                            .attr("name","action_id")
                             .prop_signal("value", modal.action_id.signal().map(|opt| opt.map(|u| u.to_string()).unwrap_or_default()))
                             .with_node!(element => {
                                 .event(clone!(modal => move |_:events::Change| {
@@ -1032,8 +1033,10 @@ impl IndexPlanActionForm {
                     }
                 })
                 .child(html!("input", {
+                    .attr("type", "text")
                     .class("form-control")
                     .attr("disabled","")
+                    .attr("name","action_result")
                     .prop_signal("value", modal.action_result.signal_cloned())
                 }))
             }))
@@ -1170,7 +1173,13 @@ impl IndexPlanActionForm {
                         .class(class::INPUT_GROUP_T)
                         .children([
                             doms::span_group_text("รายละเอียดแผน"),
-                            html!("input", {.class("form-control").attr("disabled","").attr("value", &plan_detail)})
+                            html!("input", {
+                                .attr("type", "text")
+                                .class("form-control")
+                                .attr("disabled","")
+                                .attr("name","plan_detail")
+                                .attr("value", &plan_detail)
+                            })
                         ])
                     })
                 })

@@ -391,6 +391,7 @@ impl PrescriptionScreenPage {
                                         .focused(true)
                                         .attr("placeholder", "QN(0-9999)/HN/VN/CID")
                                         //.apply(|dom| mixins::string_value(dom, page.search_text.clone(), page.changed.clone()))
+                                        .attr("name","search_text")
                                         .prop_signal("value", page.search_text.signal_cloned())
                                         .with_node!(element => {
                                             .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyDown| {
@@ -1652,6 +1653,7 @@ impl PrescriptionScreenPage {
                         .class(class::FORM_CTRL_SM)
                         .attr("rows","1")
                         .apply_if(!allow_patch, |d| d.attr("disabled",""))
+                        .attr("name","pharmacy_care")
                         .apply(mixins::textarea_value_auto_expand(page.pharmacy_care.clone(), page.pharmacy_care_changed.clone()))
                     }))
                 }),

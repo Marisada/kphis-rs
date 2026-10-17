@@ -83,6 +83,7 @@ impl HospSearchboxCpn {
                                 .apply_if(!can_save, |d| d.attr("disabled",""))
                                 .focused(page.text.lock_ref().is_empty())
                                 .apply_if(not_empty, |d| d.class_signal("border-danger", page.selected_result.signal_ref(|opt| opt.is_none())))
+                                .attr("name","selected_result")
                                 .prop_signal("value", page.selected_result.signal_ref(|opt| opt.as_ref().map(|res| res.text()).unwrap_or_default()))
                                 .with_node!(element => {
                                     .apply(|dom| {

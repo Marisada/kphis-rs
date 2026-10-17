@@ -379,6 +379,7 @@ impl ImageCpn {
                                                 .attr("capture","environment")
                                                 .attr("multiple","")
                                                 .visible(false)
+                                                .attr("name","upload_file")
                                                 .apply(mixins::other_true_signal_disable(app.loader_is_loading()))
                                                 .apply(Self::file_action_mixin(page.clone(), app.clone()))
                                             }))
@@ -641,10 +642,10 @@ impl ImageCpn {
                             .children([
                                 // prevent implicit submission (https://www.w3.org/TR/html5/sec-forms.html#implicit-submission)
                                 // will happen when press `enter` key on single input, se we create hidden 2nd input
-                                html!("input", {.visible(false)}),
+                                html!("input", {.attr("type", "text").attr("name","not_use").visible(false)}),
                                 html!("input" => HtmlInputElement, {
-                                    .attr("id", &page.title_id())
                                     .attr("type", "text")
+                                    .attr("id", &page.title_id())
                                     .class(class::FORM_CTRL_SM)
                                     .class_signal("rounded-0", page.viewer_width.signal_cloned().map(|viewer_width| viewer_width <= 500))
                                     .prop_signal("value", page.edited.signal_ref(|opt| opt.as_ref().and_then(|image| image.title.clone()).unwrap_or_default()))

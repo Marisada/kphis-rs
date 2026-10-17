@@ -1406,8 +1406,9 @@ impl ReferOutCpn {
                                 html!("div", {
                                     .class("col-sm-9")
                                     .child(html!("input" => HtmlInputElement, {
-                                        .attr("type","text")
+                                        .attr("type", "text")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","docno")
                                         .apply(mixins::string_value(page.docno.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -1522,6 +1523,7 @@ impl ReferOutCpn {
                                             html!("option", {.attr("value", "OPD").text("OPD")}),
                                             html!("option", {.attr("value", "IPD").text("IPD")})
                                         ])
+                                        .attr("name","department")
                                         .apply(mixins::string_value_select(page.department.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -1540,6 +1542,7 @@ impl ReferOutCpn {
                                         .children(refer_point_select_option.iter().map(|option| {
                                             doms::select_option(option, "")
                                         }))
+                                        .attr("name","refer_point")
                                         .apply(mixins::string_value_select(page.refer_point.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -1610,6 +1613,7 @@ impl ReferOutCpn {
                                         .children(moph_refer_expire_type_select_option.iter().map(|option| {
                                             doms::select_option(option, "")
                                         }))
+                                        .attr("name","moph_refer_expire_type_id")
                                         .apply(mixins::string_value_select(page.moph_refer_expire_type_id.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -1704,6 +1708,7 @@ impl ReferOutCpn {
                                         .children(refer_cause_select_option.iter().map(|option| {
                                             doms::select_option(option, "")
                                         }))
+                                        .attr("name","refer_cause")
                                         .apply(mixins::string_value_select(page.refer_cause.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -1722,6 +1727,7 @@ impl ReferOutCpn {
                                         .children(refer_type_select_option.iter().map(|option| {
                                             doms::select_option(option, "")
                                         }))
+                                        .attr("name","refer_type")
                                         .apply(mixins::string_value_select(page.refer_type.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -1804,8 +1810,9 @@ impl ReferOutCpn {
                     html!("div", {
                         .class("mb-2")
                         .child(html!("input" => HtmlInputElement, {
-                            .attr("type","text")
+                            .attr("type", "text")
                             .class(class::FORM_CTRL_SM)
+                            .attr("name","cc")
                             .apply(mixins::string_value(page.cc.clone(), page.changed.clone()))
                         }))
                     }),
@@ -1820,6 +1827,7 @@ impl ReferOutCpn {
                         .class("mb-2")
                         .child(html!("textarea" => HtmlTextAreaElement, {
                             .class(class::FORM_CTRL_SM)
+                            .attr("name","pe")
                             .apply(mixins::textarea_value_auto_expand(page.pe.clone(), page.changed.clone()))
                         }))
                     }),
@@ -1834,6 +1842,7 @@ impl ReferOutCpn {
                         .class("mb-2")
                         .child(html!("textarea" => HtmlTextAreaElement, {
                             .class(class::FORM_CTRL_SM)
+                            .attr("name","pmh")
                             .apply(mixins::textarea_value_auto_expand(page.pmh.clone(), page.changed.clone()))
                         }))
                     }),
@@ -1887,6 +1896,7 @@ impl ReferOutCpn {
                         .class("mb-2")
                         .child(html!("textarea" => HtmlTextAreaElement, {
                             .class(class::FORM_CTRL_SM)
+                            .attr("name","hpi")
                             .apply(mixins::textarea_value_auto_expand(page.hpi.clone(), page.changed.clone()))
                         }))
                     }),
@@ -1947,6 +1957,7 @@ impl ReferOutCpn {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .attr("rows","5")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","lab_text")
                                 .apply(mixins::textarea_value_auto_expand(page.lab_text.clone(), page.changed.clone()))
                             }))
                         }),
@@ -1960,9 +1971,10 @@ impl ReferOutCpn {
                         html!("div", {
                             .class("mb-2")
                             .child(html!("input" => HtmlInputElement, {
-                                .attr("type","text")
+                                .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .class_signal("border-danger", page.pre_diagnosis.signal_ref(|s| s.is_empty()))
+                                .attr("name","pre_diagnosis")
                                 .apply(mixins::string_value(page.pre_diagnosis.clone(), page.changed.clone()))
                             }))
                         }),
@@ -1998,6 +2010,7 @@ impl ReferOutCpn {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .attr("rows","5")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","treatment_text")
                                 .apply(mixins::textarea_value_auto_expand(page.treatment_text.clone(), page.changed.clone()))
                             }))
                         }),
@@ -2011,8 +2024,9 @@ impl ReferOutCpn {
                         html!("div", {
                             .class("mb-2")
                             .child(html!("input" => HtmlInputElement, {
-                                .attr("type","text")
+                                .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","request_text")
                                 .apply(mixins::string_value(page.request_text.clone(), page.changed.clone()))
                             }))
                         }),
@@ -2028,6 +2042,7 @@ impl ReferOutCpn {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .attr("rows","5")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","other_text")
                                 .apply(mixins::textarea_value_auto_expand(page.other_text.clone(), page.changed.clone()))
                             }))
                         }),

@@ -80,6 +80,7 @@ impl LabSearchboxCpn {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("placeholder", "กรอกข้อความเพื่อค้นหา")
                                 .attr("autocomplete", "off")
+                                .attr("name","search_text")
                                 .focused(true)
                                 .with_node!(element => {
                                     .apply(|dom| {

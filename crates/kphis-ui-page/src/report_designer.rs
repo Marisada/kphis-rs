@@ -923,8 +923,10 @@ LIMIT 50;"#;
                                             .child_signal(page.is_new_custom.signal().map(clone!(app, page => move |is_new_custom| {
                                                 if is_new_custom {
                                                     Some(html!("input" => HtmlInputElement, {
+                                                        .attr("type", "text")
                                                         .class("form-control")
                                                         .attr("placeholder","ระบุ ชื่อ Template")
+                                                        .attr("name","custom_template_name")
                                                         .prop_signal("value", page.custom_template_name.signal_cloned())
                                                         .with_node!(element => {
                                                             .event(clone!(app, page => move |_: events::Change| {
@@ -1039,8 +1041,10 @@ LIMIT 50;"#;
                                                 .text("Title")
                                             }),
                                             html!("input" => HtmlInputElement, {
+                                                .attr("type", "text")
                                                 .class("form-control")
                                                 .attr("placeholder","ระบุ ชื่อรายงาน")
+                                                .attr("name","custom_title")
                                                 .apply(mixins::string_value(page.custom_title.clone(), page.changed.clone()))
                                             }),
                                         ])
@@ -1256,7 +1260,9 @@ LIMIT 50;"#;
                                         }))
                                     }),
                                     html!("input" => HtmlInputElement, {
+                                        .attr("type", "text")
                                         .class(class::FORM_CTRL_C)
+                                        .attr("name","report_width_percent")
                                         .prop_signal("value", page.report_width_percent.signal_cloned().map(|u| [&u.round().to_string(), "%"].concat()))
                                         .with_node!(element => {
                                             .event(clone!(app, page => move |_:events::Change| {
@@ -1501,6 +1507,7 @@ LIMIT 50;"#;
                         .style("font-family","Consolas, monospace, serif")
                         .style("color","var(--bs-body-bg)")
                         .style("background-color","var(--bs-body-color)")
+                        .attr("name","ids")
                         .prop_signal("value", page.ids.signal_cloned())
                         .with_node!(element => {
                             .style_signal("height", page.ids.signal_ref(clone!(element => move |_| {

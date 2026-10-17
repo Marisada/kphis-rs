@@ -521,6 +521,7 @@ impl IoCpn {
                                             // })
                                         })
                                     }))
+                                    .attr("name","current_date")
                                     .prop_signal("value", page.current_date.signal_cloned().map(|opt| opt.as_ref().map(|d| d.string())))
                                     .with_node!(element => {
                                         .event(clone!(page => move |_: events::Change| {
@@ -840,6 +841,7 @@ impl IoCpn {
                         html!("option", {.attr("value", "blood_component").text("Blood component")}),
                         html!("option", {.attr("value", "other").text("Other")}),
                     ])
+                    .attr("name","io_parenteral_type")
                     .apply(mixins::string_value_select(page.io_parenteral_type.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -850,6 +852,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .attr("maxlength", "200")
                     .style("min-width","150px")
+                    .attr("name","io_parenteral_name")
                     .apply(mixins::string_value(page.io_parenteral_name.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -861,6 +864,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .attr("step", "0.1")
                     .style("min-width","70px")
+                    .attr("name","io_parenteral_amount")
                     .apply(mixins::string_value(page.io_parenteral_amount.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -871,6 +875,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .attr("step", "0.1")
                     .style("min-width","70px")
+                    .attr("name","io_parenteral_absorb")
                     .apply(mixins::string_value(page.io_parenteral_absorb.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -882,6 +887,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .attr("step", "0.1")
                     .style("min-width","70px")
+                    .attr("name","io_parenteral_carry_forward")
                     .apply(mixins::string_value(page.io_parenteral_carry_forward.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -892,6 +898,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .attr("rows", "1")
                     .style("min-width","80px")
+                    .attr("name","io_parenteral_remark")
                     .apply(mixins::string_value(page.io_parenteral_remark.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -902,6 +909,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .attr("maxlength", "200")
                     .style("min-width","150px")
+                    .attr("name","io_oral_name")
                     .apply(mixins::string_value(page.io_oral_name.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -912,6 +920,7 @@ impl IoCpn {
                     .attr("type", "number")
                     .class(class::FORM_CTRL_SM_B0)
                     .style("min-width","70px")
+                    .attr("name","io_oral_amount")
                     .apply(mixins::string_value(page.io_oral_amount.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -921,6 +930,7 @@ impl IoCpn {
                     .attr("type", "number")
                     .class(class::FORM_CTRL_SM_B0)
                     .style("min-width","70px")
+                    .attr("name","io_oral_absorb")
                     .apply(mixins::string_value(page.io_oral_absorb.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -931,6 +941,7 @@ impl IoCpn {
                     .attr("type", "number")
                     .class(class::FORM_CTRL_SM_B0)
                     .style("min-width","70px")
+                    .attr("name","io_oral_carry_forward")
                     .apply(mixins::string_value(page.io_oral_carry_forward.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -941,6 +952,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .attr("rows", "1")
                     .style("min-width","80px")
+                    .attr("name","io_oral_remark")
                     .apply(mixins::string_value(page.io_oral_remark.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -959,6 +971,7 @@ impl IoCpn {
                         html!("option", {.attr("value", "dyalysis").text("Dialysis")}),
                         html!("option", {.attr("value", "other").text("Other")}),
                     ])
+                    .attr("name","io_output_type")
                     .apply(mixins::string_value_select(page.io_output_type.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -968,6 +981,7 @@ impl IoCpn {
                     .attr("type", "number")
                     .class(class::FORM_CTRL_SM_B0)
                     .style("min-width","70px")
+                    .attr("name","io_output_amount")
                     .apply(mixins::string_value(page.io_output_amount.clone(), page.form_changed.clone()))
                 }))
             }),
@@ -978,6 +992,7 @@ impl IoCpn {
                     .class(class::FORM_CTRL_SM_B0)
                     .style("min-width","80px")
                     .attr("rows", "1")
+                    .attr("name","io_output_remark")
                     .apply(mixins::string_value(page.io_output_remark.clone(), page.form_changed.clone()))
                 }))
             }),

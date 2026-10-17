@@ -2219,8 +2219,8 @@ fn radio_input(id: &str, mutable: Mutable<String>, changed: Mutable<bool>, value
         .class("form-check")
         .children([
             html!("input" => HtmlInputElement, {
-                .class("form-check-input")
                 .attr("type", "radio")
+                .class("form-check-input")
                 .attr("id", id)
                 .attr("value", value)
                 .apply(mixins::radio_match(mutable, changed, value))

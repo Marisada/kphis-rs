@@ -720,6 +720,7 @@ impl MedReconForm {
                                                                     .attr("maxlength", "255")
                                                                     .class(class::FORM_CTRL_SM)
                                                                     // .apply(mixins::other_true_signal_disable(not(page.can_pharm_edit())))
+                                                                    .attr("name","old_drugusage")
                                                                     .apply(mixins::textarea_value_auto_expand(item.old_drugusage.clone(), page.pharm_changed.clone()))
                                                                 }))
                                                             } else {
@@ -734,6 +735,7 @@ impl MedReconForm {
                                                         .child(html!("input" => HtmlInputElement, {
                                                             .attr("type", "number")
                                                             .class(class::FORM_CTRL_SM)
+                                                            .attr("name","receive_qty")
                                                             .apply(mixins::string_value(item.receive_qty.clone(), page.pharm_changed.clone()))
                                                         }))
                                                     }),
@@ -753,6 +755,7 @@ impl MedReconForm {
                                                             .attr("type", "text")
                                                             .class(class::FORM_CTRL_SM)
                                                             // .apply(mixins::other_true_signal_disable(not(page.can_pharm_edit())))
+                                                            .attr("name","receive_from")
                                                             .apply(mixins::string_value(item.receive_from.clone(), page.pharm_changed.clone()))
                                                         }))
                                                     }),
@@ -801,6 +804,7 @@ impl MedReconForm {
                                                                 Some(html!("textarea" => HtmlTextAreaElement, {
                                                                     .attr("placeholder","ปรับเปลี่ยนวิธีใช้ (ระบุ)")
                                                                     .class(class::FORM_CTRL_SM)
+                                                                    .attr("name","changed_drugusage")
                                                                     .apply(mixins::textarea_value_auto_expand(item.changed_drugusage.clone(), page.use_changed.clone()))
                                                                     .with_node!(element => {
                                                                         .future(item.used.signal_cloned().for_each(move |used| {
@@ -900,6 +904,7 @@ impl MedReconForm {
                                                         .child(html!("textarea" => HtmlTextAreaElement, {
                                                             .attr("maxlength", "255")
                                                             .class(class::FORM_CTRL_SM)
+                                                            .attr("name","last_dose_taken_remark")
                                                             .apply(mixins::textarea_value_auto_expand(item.last_dose_taken_remark.clone(), page.last_changed.clone()))
                                                         }))
                                                     }),
@@ -1395,6 +1400,7 @@ impl MedReconForm {
                                 .child(html!("textarea" => HtmlTextAreaElement, {
                                     .attr("type", "text")
                                     .class("form-control")
+                                    .attr("name","note")
                                     .apply(mixins::textarea_value_auto_expand(page.note.clone(), page.modal_note_changed.clone()))
                                 }))
                             }))

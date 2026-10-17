@@ -1332,8 +1332,8 @@ impl VitalSignFormCpn {
                             .class("form-check")
                             .children([
                                 html!("input" => HtmlInputElement, {
-                                    .class("form-check-input")
                                     .attr("type", "checkbox")
+                                    .class("form-check-input")
                                     .attr("id", "catheter")
                                     .apply(mixins::checkbox_toggle(page.catheter.clone(), page.changed.clone(), "Y", ""))
                                     // .future(page.catheter.signal_cloned().for_each(clone!(page => move |cat| {
@@ -2634,8 +2634,8 @@ fn input_number(id: &str, text: Mutable<String>, changed: Mutable<bool>, decimal
 
 fn checkbox_y(id: &str, text: Mutable<String>, changed: Mutable<bool>, with_scores_item: Option<(Mutable<Option<Scores>>, &'static str)>) -> Dom {
     html!("input" => HtmlInputElement, {
-        .class("form-check-input")
         .attr("type", "checkbox")
+        .class("form-check-input")
         .attr("id", id)
         .apply(mixins::checkbox_toggle(text, changed, "Y", ""))
         .with_node!(element => {

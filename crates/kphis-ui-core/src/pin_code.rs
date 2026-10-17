@@ -145,6 +145,7 @@ impl PinCode {
             .class("pin-input")
             .class_signal("filled", input_mutable.signal().map(|v| v.is_some()))
             .focused_signal(page.focus_at.signal().map(move |focus_id| focus_id == id))
+            .attr("name","pin_input")
             .prop_signal("value", input_mutable.signal().map(|opt| opt.map(|u| {
                 if u < 10 {
                     u.to_string()

@@ -83,6 +83,7 @@ impl ReportParamEditor {
                             .style("font-family","Consolas, monospace, serif")
                             .style("color","var(--bs-body-bg)")
                             .style("background-color","var(--bs-body-color)")
+                            .attr("name","parent_params")
                             .prop_signal("value", modal.parent_params.signal_cloned())
                             .with_node!(element => {
                                 .style_signal("height", modal.parent_params.signal_ref(clone!(element => move |_| {
@@ -210,14 +211,16 @@ impl ReportParamEditor {
                         .text_signal(i.signal().map(|opt| opt.map(|n| (n + 1).to_string()).unwrap_or_default()))
                         .text(" ID")}),
                     html!("input" => HtmlInputElement, {
-                        .attr("type","text")
+                        .attr("type", "text")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","id_value")
                         .apply(mixins::string_value(param_item.id.clone(), modal.changed.clone()))
                     }),
                     html!("span", {.class("input-group-text").apply_if(param_item.is_array, |dom| dom.class("bg-info")).text("Title")}),
                     html!("input" => HtmlInputElement, {
-                        .attr("type","text")
+                        .attr("type", "text")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","title")
                         .apply(mixins::string_value(param_item.title.clone(), modal.changed.clone()))
                     }),
                     html!("span", {.class("input-group-text").apply_if(param_item.is_array, |dom| dom.class("bg-info")).text("Type")}),
@@ -307,6 +310,7 @@ impl ReportParamEditor {
                                                     .text(slt.source_hint())
                                                 })
                                             }))
+                                            .attr("name","system_list_type")
                                             .prop_signal("value", param_item.system_list_type.signal_ref(|opt| opt.as_ref().map(|slt| slt.to_str()).unwrap_or_default()))
                                             .with_node!(element => {
                                                 .event(clone!(modal, param_item => move |_:events::Change| {
@@ -338,7 +342,7 @@ impl ReportParamEditor {
                 // ew use key as parameter value, so we label with "Value" here
                 html!("span", {.class("input-group-text").text("Value")}),
                 html!("input" => HtmlInputElement, {
-                    .attr("type","text")
+                    .attr("type", "text")
                     .class(class::FORM_CTRL_SM)
                     .class_signal("bg-warning", map_ref!{
                         let key = item.key.signal_cloned(),
@@ -346,13 +350,15 @@ impl ReportParamEditor {
                         !ty.is_value_parsable(&key)
                     })
                     .style("max-width","25%")
+                    .attr("name","key")
                     .prop_signal("value", item.key.signal_cloned())
                     .apply(mixins::string_value(item.key.clone(), modal.changed.clone()))
                 }),
                 html!("span", {.class("input-group-text").text("Label")}),
                 html!("input" => HtmlInputElement, {
-                    .attr("type","text")
+                    .attr("type", "text")
                     .class(class::FORM_CTRL_SM)
+                    .attr("name","label")
                     .apply(mixins::string_value(item.label.clone(), modal.changed.clone()))
                 }),
             ])
@@ -413,6 +419,7 @@ fn render_basic_type_list(is_disabled: bool, ty_mutable: Mutable<BasicType>, cha
                 .text(bt.to_label())
             })
         }))
+        .attr("name","basic_type")
         .prop_signal("value", ty_mutable.signal_ref(|ty| ty.to_str()))
         .with_node!(element => {
             .event(clone!(ty_mutable, changed => move |_: events::Change| {

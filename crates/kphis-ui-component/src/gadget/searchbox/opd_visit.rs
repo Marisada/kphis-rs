@@ -108,6 +108,7 @@ impl OpdVisitSearchboxCpn {
                                 .attr("placeholder", "HN")
                                 .attr("autocomplete", "off")
                                 .focused(true)
+                                .attr("name","text_hn")
                                 .prop_signal("value", page.text_hn.signal_cloned())
                                 .with_node!(element => {
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
@@ -148,6 +149,7 @@ impl OpdVisitSearchboxCpn {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("placeholder", "QN")
                                 .attr("autocomplete", "off")
+                                .attr("name","text_qn")
                                 .prop_signal("value", page.text_qn.signal_cloned())
                                 .with_node!(element => {
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
@@ -188,6 +190,7 @@ impl OpdVisitSearchboxCpn {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("placeholder", "VN")
                                 .attr("autocomplete", "off")
+                                .attr("name","text_vn")
                                 .prop_signal("value", page.text_vn.signal_cloned())
                                 .with_node!(element => {
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
@@ -228,6 +231,7 @@ impl OpdVisitSearchboxCpn {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("placeholder", "ชื่อ นามสกุล")
                                 .attr("autocomplete", "off")
+                                .attr("name","text_ptname")
                                 .prop_signal("value", page.text_ptname.signal_cloned())
                                 .with_node!(element => {
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
@@ -268,6 +272,7 @@ impl OpdVisitSearchboxCpn {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("placeholder", "เลขประจำตัวประชาชน")
                                 .attr("autocomplete", "off")
+                                .attr("name","text_cid")
                                 .prop_signal("value", page.text_cid.signal_cloned())
                                 .with_node!(element => {
                                     .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {

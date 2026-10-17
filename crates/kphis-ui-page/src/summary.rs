@@ -1290,6 +1290,7 @@ impl SummaryPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "50")
                                         .class("form-control")
+                                        .attr("name","coder_name")
                                         .apply(mixins::opt_string_value(page.coder_name.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1303,6 +1304,7 @@ impl SummaryPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "7")
                                         .class("form-control")
+                                        .attr("name","principal_diagnosis_code")
                                         .apply(mixins::opt_string_value(page.principal_diagnosis_code.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1314,6 +1316,7 @@ impl SummaryPage {
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
                                         .class("form-control")
+                                        .attr("name","pre_admission_comorbidity_codes")
                                         .apply(mixins::opt_string_value(page.pre_admission_comorbidity_codes.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1325,6 +1328,7 @@ impl SummaryPage {
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
                                         .class("form-control")
+                                        .attr("name","post_admission_comorbidity_codes")
                                         .apply(mixins::opt_string_value(page.post_admission_comorbidity_codes.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1336,6 +1340,7 @@ impl SummaryPage {
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
                                         .class("form-control")
+                                        .attr("name","other_diagnosis_codes")
                                         .apply(mixins::opt_string_value(page.other_diagnosis_codes.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1347,6 +1352,7 @@ impl SummaryPage {
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
                                         .class("form-control")
+                                        .attr("name","external_cause_codes")
                                         .apply(mixins::opt_string_value(page.external_cause_codes.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1360,6 +1366,7 @@ impl SummaryPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "7")
                                         .class("form-control")
+                                        .attr("name","main_procedure_code")
                                         .apply(mixins::opt_string_value(page.main_procedure_code.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1371,6 +1378,7 @@ impl SummaryPage {
                                     html!("input" => HtmlInputElement, {
                                         .attr("type", "text")
                                         .class("form-control")
+                                        .attr("name","other_procedure_codes")
                                         .apply(mixins::opt_string_value(page.other_procedure_codes.clone(), page.code_changed.clone()))
                                     }),
                                 ])
@@ -1537,6 +1545,7 @@ impl SummaryPage {
                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                         .class("form-control")
                                         .apply_if(!can_save_summary, |d| d.attr("disabled",""))
+                                        .attr("name","operating_room")
                                         .apply(mixins::textarea_value_auto_expand(page.operating_room.clone(), page.changed.clone()))
                                     }))
 
@@ -1554,6 +1563,7 @@ impl SummaryPage {
                                             html!("textarea", {
                                                 .class("form-control")
                                                 .attr("disabled", "")
+                                                .attr("name","hosxp_op")
                                                 .prop("value", &hosxp_op)
                                             }),
                                         ])
@@ -1646,8 +1656,8 @@ impl SummaryPage {
                                                     .class("form-check")
                                                     .children([
                                                         html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
                                                             .attr("type", "radio")
+                                                            .class("form-check-input")
                                                             .attr("id", "mechanical_ventilation0")
                                                             .apply_if(!can_save_summary, |d| d.attr("disabled",""))
                                                             .apply(mixins::radio_match(page.mechanical_ventilation.clone(), page.changed.clone(), ""))
@@ -1659,8 +1669,8 @@ impl SummaryPage {
                                                     .class("form-check")
                                                     .children([
                                                         html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
                                                             .attr("type", "radio")
+                                                            .class("form-check-input")
                                                             .attr("id", "mechanical_ventilation1")
                                                             .apply_if(!can_save_summary, |d| d.attr("disabled",""))
                                                             .apply(mixins::radio_match(page.mechanical_ventilation.clone(), page.changed.clone(), "1"))
@@ -1672,8 +1682,8 @@ impl SummaryPage {
                                                     .class("form-check")
                                                     .children([
                                                         html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
                                                             .attr("type", "radio")
+                                                            .class("form-check-input")
                                                             .attr("id", "mechanical_ventilation2")
                                                             .apply_if(!can_save_summary, |d| d.attr("disabled",""))
                                                             .apply(mixins::radio_match(page.mechanical_ventilation.clone(), page.changed.clone(), "2"))
@@ -1685,8 +1695,8 @@ impl SummaryPage {
                                                     .class("form-check")
                                                     .children([
                                                         html!("input" => HtmlInputElement, {
-                                                            .class("form-check-input")
                                                             .attr("type", "radio")
+                                                            .class("form-check-input")
                                                             .attr("id", "mechanical_ventilation3")
                                                             .apply_if(!can_save_summary, |d| d.attr("disabled",""))
                                                             .apply(mixins::radio_match(page.mechanical_ventilation.clone(), page.changed.clone(), "3"))
@@ -1708,6 +1718,7 @@ impl SummaryPage {
                                             html!("textarea" => HtmlTextAreaElement, {
                                                 .class("form-control")
                                                 .attr("rows", "2")
+                                                .attr("name","non_or_other_text")
                                                 .apply(mixins::textarea_value_auto_expand(page.non_or_other_text.clone(), page.changed.clone()))
                                                 .apply(mixins::other_not_match_disable_or_forced(page.non_or_other.clone(), "Y", !can_save_summary))
                                                 .future(page.non_or_other.signal_cloned().for_each(clone!(page => move |yes| {
@@ -1759,6 +1770,7 @@ impl SummaryPage {
                                                 .child(html!("textarea" => HtmlTextAreaElement, {
                                                     .class("form-control")
                                                     .attr("rows", "2")
+                                                    .attr("name","computer_tomography_text")
                                                     .apply(mixins::textarea_value_auto_expand(page.computer_tomography_text.clone(), page.changed.clone()))
                                                     .apply(mixins::other_not_match_disable_or_forced(page.computer_tomography.clone(), "Y", !can_save_summary))
                                                     .future(page.computer_tomography.signal_cloned().for_each(clone!(page => move |yes| {
@@ -1796,6 +1808,7 @@ impl SummaryPage {
                                                         html!("textarea", {
                                                             .class("form-control")
                                                             .attr("disabled", "")
+                                                            .attr("name","hosxp_ct")
                                                             .prop("value", &hosxp_ct)
                                                         }),
                                                     ])
@@ -1816,6 +1829,7 @@ impl SummaryPage {
                                                 .child(html!("textarea" => HtmlTextAreaElement, {
                                                     .class("form-control")
                                                     .attr("rows", "2")
+                                                    .attr("name","mri_text")
                                                     .apply(mixins::textarea_value_auto_expand(page.mri_text.clone(), page.changed.clone()))
                                                     .apply(mixins::other_not_match_disable_or_forced(page.mri.clone(), "Y", !can_save_summary))
                                                     .future(page.mri.signal_cloned().for_each(clone!(page => move |yes| {
@@ -1853,6 +1867,7 @@ impl SummaryPage {
                                                         html!("textarea", {
                                                             .class("form-control")
                                                             .attr("disabled", "")
+                                                            .attr("name","hosxp_mri")
                                                             .prop("value", &hosxp_mri)
                                                         }),
                                                     ])
@@ -1871,6 +1886,7 @@ impl SummaryPage {
                                             html!("textarea" => HtmlTextAreaElement, {
                                                 .class("form-control")
                                                 .attr("rows", "2")
+                                                .attr("name","special_other_text")
                                                 .apply(mixins::textarea_value_auto_expand(page.special_other_text.clone(), page.changed.clone()))
                                                 .apply(mixins::other_not_match_disable_or_forced(page.special_other.clone(), "Y", !can_save_summary))
                                                 .future(page.special_other.signal_cloned().for_each(clone!(page => move |yes| {
@@ -2069,6 +2085,7 @@ impl SummaryPage {
                                                 .class("form-control")
                                                 .attr("readonly","")
                                                 .apply_if(!can_save_summary, |d| d.attr("disabled",""))
+                                                .attr("name","doctor_name")
                                                 .attr("value", &dr.doctor_name.clone().unwrap_or_default())
                                             }))
                                         })
@@ -2144,6 +2161,7 @@ impl SummaryPage {
                                                 .class("form-control")
                                                 .attr("readonly","")
                                                 .apply_if(!can_save_summary, |d| d.attr("disabled",""))
+                                                .attr("name","doctor_name")
                                                 .attr("value", &dr.doctor_name.clone().unwrap_or_default())
                                             }))
                                         })

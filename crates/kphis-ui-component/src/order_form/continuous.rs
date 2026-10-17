@@ -663,6 +663,7 @@ impl ContinuousForm {
                                                             .attr("type", "text")
                                                             .class("form-control")
                                                             .attr("readonly", "readonly")
+                                                            .attr("name","med_name")
                                                             .prop_signal("value", med.med_name.signal_cloned().map(|name| name.unwrap_or_default()))
                                                         }),
                                                         html!("button", {

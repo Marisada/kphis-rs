@@ -652,6 +652,7 @@ pub fn nurse_assign_dropdown(nurse_assign_mutable: Mutable<String>, changed: Mut
                         .text(assign)
                     })
                 }))
+                .attr("name","nurse_assign")
                 .apply(mixins::string_value_select(nurse_assign_mutable.clone(), changed.clone()))
             }),
         ])
@@ -1206,6 +1207,7 @@ pub fn checkbox_not_empty_with_text_container(mutable: Mutable<String>, changed:
         html!("input" => HtmlInputElement, {
             .attr("type", "text")
             .class(class::FORM_CTRL_SM)
+            .attr("name","other")
             .apply(mixins::string_value(mutable.clone(), changed))
             .apply(mixins::other_empty_disable(mutable))
         }),
@@ -1237,6 +1239,7 @@ pub fn checkbox_not_empty_texts_with_text_container(mutable: Mutable<String>, te
         html!("input" => HtmlInputElement, {
             .attr("type", "text")
             .class(class::FORM_CTRL_SM)
+            .attr("name","other")
             .apply(mixins::string_value(mutable.clone(), changed))
             .apply(mixins::other_empty_disable(mutable))
         }),
@@ -1256,6 +1259,7 @@ pub fn texts_container(mutable: Mutable<String>, changed: Mutable<bool>, class: 
                     d
                 })
                 .class(class::FORM_CTRL_SM)
+                .attr("name","text_input")
                 .apply(mixins::string_value(mutable, changed))
             }))
         }))
@@ -1275,6 +1279,7 @@ pub fn text_disable_by_not_container(mutable: Mutable<String>, by_not: Mutable<S
                     d
                 })
                 .class(class::FORM_CTRL_SM)
+                .attr("name","text_input")
                 .apply(mixins::string_value(mutable, changed))
                 .apply(mixins::other_not_match_disable(by_not, by_not_value))
             }))
@@ -1295,6 +1300,7 @@ pub fn textarea_disable_by_not_container(mutable: Mutable<String>, by_not: Mutab
                     d
                 })
                 .class("form-control")
+                .attr("name","text_box")
                 .apply(mixins::string_value(mutable, changed))
                 .apply(mixins::other_not_match_disable(by_not, by_not_value))
             }))

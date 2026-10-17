@@ -248,6 +248,7 @@ fn render_basic_type(basic_type: &BasicType, mutable: Mutable<String>, changed: 
             html!("input" => HtmlInputElement, {
                 .attr("type", "text")
                 .class("form-control")
+                .attr("name","basic_type")
                 .apply(mixins::string_value(mutable, changed))
             })
         }

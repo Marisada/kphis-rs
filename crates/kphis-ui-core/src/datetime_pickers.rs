@@ -88,6 +88,7 @@ where
                     Picker::Date => "10",
                     Picker::Time => "5",
                 })
+                .attr("name","date_mutable")
                 .prop_signal("value", date_mutable.signal_cloned().map(clone!(picker => move |s| {
                     match picker {
                         Picker::DateTime => datetime_8601(&s).map(|dt| datetime_pat(&dt)).unwrap_or_default(),

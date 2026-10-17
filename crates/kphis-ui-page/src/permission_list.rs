@@ -1016,6 +1016,7 @@ impl PermissionListPage {
                                                                     .class("form-control")
                                                                     .attr("required", "")
                                                                     .attr("autocomplete", "off")
+                                                                    .attr("name","modal_confirm_text")
                                                                     .apply(mixins::string_value(page.modal_confirm_text.clone(), page.modal_confirm_changed.clone()))
                                                                 }),
                                                             ])

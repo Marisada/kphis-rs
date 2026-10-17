@@ -207,6 +207,7 @@ impl SummaryNoteCpn {
                                                     if is_edit && is_our_last_note {
                                                         Some(html!("textarea" => HtmlTextAreaElement, {
                                                             .class(class::FORM_CTRL_T)
+                                                            .attr("name","note_edit_text")
                                                             .apply(mixins::textarea_value_auto_expand(page.note_edit_text.clone(), page.note_edit_changed.clone()))
                                                         }))
                                                     } else {
@@ -280,6 +281,7 @@ impl SummaryNoteCpn {
                                     .children([
                                         html!("textarea" => HtmlTextAreaElement, {
                                             .class(class::FORM_CTRL_T)
+                                            .attr("name","note_text")
                                             .apply(mixins::textarea_value_auto_expand(page.note_text.clone(), page.note_changed.clone()))
                                         }),
                                         html!("div", {

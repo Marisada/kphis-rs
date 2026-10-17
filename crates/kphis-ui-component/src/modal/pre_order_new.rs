@@ -98,8 +98,8 @@ impl PreOrderNew {
                                         .class(class::FORM_CHK_R)
                                         .children([
                                             html!("input" => HtmlInputElement, {
-                                                .class("form-check-input")
                                                 .attr("type", "radio")
+                                                .class("form-check-input")
                                                 .attr("id", "modal_pre_order_type1")
                                                 .attr("value", "appointment")
                                                 .apply(mixins::radio_match(modal.pre_order_type.clone(), modal.changed.clone(), "appointment"))
@@ -112,8 +112,8 @@ impl PreOrderNew {
                                         .class(class::FORM_CHK_R)
                                         .children([
                                             html!("input" => HtmlInputElement, {
-                                                .class("form-check-input")
                                                 .attr("type", "radio")
+                                                .class("form-check-input")
                                                 .attr("id", "modal_pre_order_type2")
                                                 .attr("value", "opd")
                                                 .apply(mixins::radio_match(modal.pre_order_type.clone(), modal.changed.clone(), "opd"))
@@ -126,8 +126,8 @@ impl PreOrderNew {
                                         .class(class::FORM_CHK_R)
                                         .children([
                                             html!("input" => HtmlInputElement, {
-                                                .class("form-check-input")
                                                 .attr("type", "radio")
+                                                .class("form-check-input")
                                                 .attr("id", "modal_pre_order_type3")
                                                 .attr("value", "template")
                                                 .apply(mixins::radio_match(modal.pre_order_type.clone(), modal.changed.clone(), "template"))
