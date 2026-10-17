@@ -731,6 +731,7 @@ impl OneDayForm {
                                                         .attr("type", "text")
                                                         .class(class::FORM_CTRL_SM_T)
                                                         .attr("readonly", "readonly")
+                                                        .attr("name","med_name")
                                                         .prop_signal("value", ivfluid.med_name.signal_cloned().map(|name| name.unwrap_or_default()))
                                                     }),
                                                     html!("div", {
@@ -988,6 +989,7 @@ impl OneDayForm {
                                                             .attr("type", "text")
                                                             .class("form-control")
                                                             .attr("readonly", "readonly")
+                                                            .attr("name","med_name")
                                                             .prop_signal("value", med.med_name.signal_cloned().map(|name| name.unwrap_or_default()))
                                                         }),
                                                         html!("button", {
@@ -1510,6 +1512,7 @@ impl OneDayForm {
                                                                 .attr("type", "text")
                                                                 .class("form-control")
                                                                 .attr("readonly", "readonly")
+                                                                .attr("name","med_name")
                                                                 .prop_signal("value", home_medication.med_name.signal_cloned())
                                                             }),
                                                             html!("input" => HtmlInputElement, {
@@ -1518,6 +1521,7 @@ impl OneDayForm {
                                                                 .class_signal("bg-warning", home_medication.first_qty.signal_cloned().map(|s| s.is_empty()))
                                                                 .style("max-width", "72px")
                                                                 .attr("placeholder", "จำนวน")
+                                                                .attr("name","first_qty")
                                                                 .apply(mixins::string_value(home_medication.first_qty.clone(), page.changed.clone()))
                                                             }),
                                                             html!("button", {

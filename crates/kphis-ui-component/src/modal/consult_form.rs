@@ -326,7 +326,7 @@ impl ConsultForm {
                         .children([
                             html!("h4", {
                                 .class("modal-title")
-                                .child(html!("lable", {
+                                .child(html!("span", {
                                     .class("fw-bold")
                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                     .text(" Consultation")
@@ -606,6 +606,7 @@ impl ConsultForm {
                                                                                     .attr("type", "text")
                                                                                     .class("form-control")
                                                                                     .attr("readonly", "")
+                                                                                    .attr("name","doctorname")
                                                                                     .prop_signal("value", doctor.doctorname.signal_cloned())
                                                                                 }))
                                                                             }),
@@ -620,6 +621,7 @@ impl ConsultForm {
                                                                                     .children(all_doctor_select_option.iter().map(|option| {
                                                                                         doms::select_option(option, "")
                                                                                     }))
+                                                                                    .attr("name","doctorcode2")
                                                                                     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Edit)
                                                                                         || doctor.doctorcode.lock_ref().as_str() != &app.doctor_code().unwrap_or_default(),
                                                                                         |dom| dom.attr("disabled",""))
@@ -806,6 +808,7 @@ impl ConsultForm {
                                                                                     .attr("type", "text")
                                                                                     .class("form-control")
                                                                                     .attr("readonly", "")
+                                                                                    .attr("name","doctorname")
                                                                                     .prop_signal("value", doctor.doctorname.signal_cloned())
                                                                                 }))
                                                                             }),
@@ -821,6 +824,7 @@ impl ConsultForm {
                                                                                     .children(all_doctor_select_option.iter().map(|option| {
                                                                                         doms::select_option(option, "")
                                                                                     }))
+                                                                                    .attr("name","doctorcode2")
                                                                                     .apply_if(!matches!(modal.consult_mode, ConsultFormMode::Reply)
                                                                                         || doctor.doctorcode.lock_ref().as_str() != &app.doctor_code().unwrap_or_default(),
                                                                                         |dom| dom.attr("disabled",""))

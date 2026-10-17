@@ -81,6 +81,7 @@ impl XraySearchboxCpn {
                                 .attr("placeholder", "กรอกข้อความเพื่อค้นหา")
                                 .attr("autocomplete", "off")
                                 .focused(true)
+                                .attr("name","search_text")
                                 .with_node!(element => {
                                     .apply(|dom| {
                                         let load_mut = Mutable::new(false);

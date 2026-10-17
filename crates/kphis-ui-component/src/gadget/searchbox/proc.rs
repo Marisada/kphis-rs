@@ -84,6 +84,7 @@ impl ProcSearchboxCpn {
                         .class(class::FORM_CTRL_SM)
                         .attr("placeholder", "กรอกอย่างน้อย 3 ตัวอักษรเพื่อค้นหา")
                         .attr("autocomplete", "off")
+                        .attr("name","text")
                         .prop_signal("value", page.text.signal_cloned())
                         .with_node!(element => {
                             .event(clone!(app, page, element => move |_: events::Input| {

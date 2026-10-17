@@ -345,6 +345,7 @@ impl ProgressNoteForm {
                                                         .children([
                                                             html!("textarea" => HtmlTextAreaElement, {
                                                                 .class(class::FORM_CTRL_SM)
+                                                                .attr("name","order_item_detail")
                                                                 .apply(mixins::textarea_value_auto_expand(problem.order_item_detail.clone(), page.changed.clone()))
                                                                 .event(clone!(page, problem => move |_: events::Focus| {
                                                                     page.focused.set_neq(Some(problem.id));
@@ -365,6 +366,7 @@ impl ProgressNoteForm {
                                                     html!("div", {
                                                         .child(html!("textarea" => HtmlTextAreaElement, {
                                                             .class(class::FORM_CTRL_SM)
+                                                            .attr("name","order_item_detail_2")
                                                             .apply(mixins::textarea_value_auto_expand(problem.order_item_detail_2.clone(), page.changed.clone()))
                                                             .event(clone!(page => move |_: events::Focus| {
                                                                 page.focused.set_neq(Some(problem.id));

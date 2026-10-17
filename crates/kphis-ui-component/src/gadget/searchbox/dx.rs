@@ -414,6 +414,7 @@ impl DxSearchboxCpn {
                             .class(class::FORM_CTRL_SM)
                             .attr("placeholder", "ICD10")
                             .style("max-width","65px")
+                            .attr("name","icd10_raw")
                             .prop_signal("value", page.icd10_raw.signal_ref(|code| icd10_dot(code)))
                             .with_node!(element => {
                                 .event(clone!(page => move |_: events::Input| {
@@ -504,6 +505,7 @@ impl DxSearchboxCpn {
                     .attr("type", "text")
                     .class(class::FORM_CTRL_SM)
                     .attr("placeholder", "Diagnosis")
+                    .attr("name","diagnosis_raw")
                     .prop_signal("value", page.diagnosis_raw.signal_cloned())
                     .with_node!(element => {
                         .event(clone!(page => move |_: events::Input| {
@@ -810,6 +812,7 @@ impl DxSearchboxCpn {
                                             .style("max-width","65px")
                                             .attr("placeholder", "ICD10")
                                             .attr("autocomplete", "off")
+                                            .attr("name","icd10_raw")
                                             .prop_signal("value", page.icd10_raw.signal_ref(|code| icd10_dot(code)))
                                             .apply_if(!enabled, |dom| dom.attr("disabled",""))
                                             .with_node!(element => {
@@ -825,6 +828,7 @@ impl DxSearchboxCpn {
                                             .attr("placeholder", "กรอกอย่างน้อย 3 ตัวอักษรเพื่อค้นหา")
                                             .attr("autocomplete", "off")
                                             .focused(true)
+                                            .attr("name","search_text")
                                             .prop_signal("value", page.search_text.signal_cloned())
                                             .apply_if(!enabled, |dom| dom.attr("disabled",""))
                                             .with_node!(element => {
@@ -949,6 +953,7 @@ impl DxSearchboxCpn {
                                             .attr("placeholder", "กรอกอย่างน้อย 3 ตัวอักษรเพื่อค้นหา")
                                             .attr("autocomplete", "off")
                                             .focused(true)
+                                            .attr("name","index_text")
                                             .prop_signal("value", page.index_text.signal_cloned())
                                             .apply_if(!enabled, |dom| dom.attr("disabled",""))
                                             .with_node!(element => {
@@ -965,7 +970,7 @@ impl DxSearchboxCpn {
                                     .style("font-weight","300")
                                     .children([
                                         html!("input" => HtmlInputElement, {
-                                            .attr("type","checkbox")
+                                            .attr("type", "checkbox")
                                             .attr("role","switch")
                                             .attr("id","is-substance-checkbox")
                                             .class("form-check-input")

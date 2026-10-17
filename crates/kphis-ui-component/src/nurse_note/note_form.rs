@@ -815,6 +815,7 @@ impl NurseNoteFormCpn {
                                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                                         .class("form-control")
                                                         .attr("rows","2")
+                                                        .attr("name","dlc_text")
                                                         .apply(mixins::textarea_value_auto_expand(page.dlc_text.clone(), page.changed.clone()))
                                                     }))
                                                 }),

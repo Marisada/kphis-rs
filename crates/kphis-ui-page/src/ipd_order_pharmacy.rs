@@ -147,8 +147,8 @@ impl IpdOrderPharmacyPage {
                                 doms::form_inline_radio(clone!(app, page => move |check| { check
                                     .children([
                                         html!("input" => HtmlInputElement, {
-                                            .class("form-check-input")
                                             .attr("type", "radio")
+                                            .class("form-check-input")
                                             .attr("id", "inverse_ward_selection1")
                                             .attr("value", "N")
                                             .with_node!(element => {
@@ -174,8 +174,8 @@ impl IpdOrderPharmacyPage {
                                 doms::form_inline_radio(clone!(app, page => move |check| { check
                                     .children([
                                         html!("input" => HtmlInputElement, {
-                                            .class("form-check-input")
                                             .attr("type", "radio")
+                                            .class("form-check-input")
                                             .attr("id", "inverse_ward_selection2")
                                             .attr("value", "Y")
                                             .with_node!(element => {

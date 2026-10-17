@@ -309,6 +309,7 @@ impl IndexPlanCpn {
                                                         .apply_if(date.is_today, |dom| dom.attr("selected",""))
                                                     })
                                                 }))
+                                                .attr("name","current_date")
                                                 .prop_signal("value", page.current_date.signal_cloned().map(|opt| opt.as_ref().map(|d| d.string()).unwrap_or_default()))
                                                 .with_node!(element => {
                                                     .event(clone!(page => move |_: events::Change| {

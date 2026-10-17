@@ -1082,6 +1082,7 @@ impl IpdAdmissionNoteDrPage {
                                         .child(html!("textarea" => HtmlTextAreaElement, {
                                             .class(class::FORM_CTRL_SM)
                                             .attr("rows","4")
+                                            .attr("name","chief_complaints")
                                             .apply(mixins::textarea_value_auto_expand(page.chief_complaints.clone(), page.changed.clone()))
                                         }))
                                     }))
@@ -1107,6 +1108,7 @@ impl IpdAdmissionNoteDrPage {
                                         .child(html!("textarea" => HtmlTextAreaElement, {
                                             .class(class::FORM_CTRL_SM)
                                             .attr("rows","4")
+                                            .attr("name","medical_history")
                                             .apply(mixins::textarea_value_auto_expand(page.medical_history.clone(), page.changed.clone()))
                                         }))
                                     }))
@@ -1153,6 +1155,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("maxlength", "10")
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("aria-describedby","bp-span")
+                                                .attr("name","bp")
                                                 .apply(mixins::string_value(page.bp.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("bp-span","mmHg"),
@@ -1171,6 +1174,7 @@ impl IpdAdmissionNoteDrPage {
                                             .attr("type", "text")
                                             .attr("maxlength", "1")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","e")
                                             .apply(mixins::string_value(page.e.clone(), page.changed.clone()))
                                         }))
                                     }))
@@ -1194,6 +1198,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("step", "0.1")
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("aria-describedby","t-span")
+                                                .attr("name","t")
                                                 .apply(mixins::string_value(page.t.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("t-span","° C"),
@@ -1212,6 +1217,7 @@ impl IpdAdmissionNoteDrPage {
                                             .attr("type", "text")
                                             .attr("maxlength", "1")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","v")
                                             .apply(mixins::string_value(page.v.clone(), page.changed.clone()))
                                         }))
                                     }))
@@ -1234,6 +1240,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("type", "number")
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("aria-describedby","pr-span")
+                                                .attr("name","pr")
                                                 .apply(mixins::string_value(page.pr.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("pr-span","/min"),
@@ -1252,6 +1259,7 @@ impl IpdAdmissionNoteDrPage {
                                             .attr("type", "text")
                                             .attr("maxlength", "1")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","m")
                                             .apply(mixins::string_value(page.m.clone(), page.changed.clone()))
                                         }))
                                     }))
@@ -1274,6 +1282,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("type", "number")
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("aria-describedby","rr-span")
+                                                .attr("name","rr")
                                                 .apply(mixins::string_value(page.rr.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("rr-span","/min"),
@@ -1293,6 +1302,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("type", "number")
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("aria-describedby","gcs-span")
+                                                .attr("name","gcs")
                                                 .apply(mixins::string_value(page.gcs.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("gcs-span","คะแนน"),
@@ -1370,6 +1380,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("type", "text")
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("disabled","")
+                                                .attr("name","bw")
                                                 .prop_signal("value", map_ref!{
                                                     let pt_bw = page.patient_signal().map(|pt_opt| pt_opt.and_then(|pt| pt.latest_bw).map(|bw| {
                                                         decimal_rescale(bw, 3).to_string()
@@ -1398,6 +1409,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("type", "text")
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("disabled","")
+                                                .attr("name","ht")
                                                 .prop_signal("value", map_ref!{
                                                     let pt_ht = page.patient_signal().map(|pt_opt| pt_opt.and_then(|pt| pt.latest_height).map(|ht| ht.to_string()).unwrap_or_default()),
                                                     let pe_ht = page.pe_height.signal_cloned() =>
@@ -1529,6 +1541,7 @@ impl IpdAdmissionNoteDrPage {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","take_medication_by")
                                             .prop_signal("value", page.take_medication_by.signal_cloned().map(|by| {
                                                 if let TakeMedicationBy::ReferFrom(mean) = by.clone() {
                                                     mean
@@ -1625,6 +1638,7 @@ impl IpdAdmissionNoteDrPage {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","taken_by")
                                             .apply(mixins::string_value(page.taken_by.clone(), page.changed.clone()))
                                             .apply(mixins::other_not_match_disable(page.taken_by_etc.clone(), "Y"))
                                         }))
@@ -1697,6 +1711,7 @@ impl IpdAdmissionNoteDrPage {
                                             .attr("type", "text")
                                             .attr("maxlength", "40")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","informant_relatives")
                                             .apply(mixins::opt_string_value(page.informant_relatives.clone(), page.changed.clone()))
                                             .apply(mixins::other_none_disable(page.informant_relatives.clone()))
                                         }))
@@ -1724,6 +1739,7 @@ impl IpdAdmissionNoteDrPage {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","informant_deliverer")
                                             .apply(mixins::opt_string_value(page.informant_deliverer.clone(), page.changed.clone()))
                                             .apply(mixins::other_none_disable(page.informant_deliverer.clone()))
                                         }))
@@ -1751,6 +1767,7 @@ impl IpdAdmissionNoteDrPage {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","informant_etc")
                                             .apply(mixins::opt_string_value(page.informant_etc.clone(), page.changed.clone()))
                                             .apply(mixins::other_none_disable(page.informant_etc.clone()))
                                         }))
@@ -1891,6 +1908,7 @@ impl IpdAdmissionNoteDrPage {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class(class::FORM_CTRL_SM)
+                                            .attr("name","arrive_by")
                                             .prop_signal("value", page.arrive_by.signal_cloned().map(|by| {
                                                 if let ArriveBy::Others(mean) = by.clone() {
                                                     mean
@@ -2123,6 +2141,7 @@ impl IpdAdmissionNoteDrPage {
                                                             .class(class::FORM_CTRL_SM)
                                                             .attr("cols", "50")
                                                             .attr("rows", "3")
+                                                            .attr("name","last_dose_taken_remark")
                                                             .apply(mixins::opt_string_value(page.last_dose_taken_remark.clone(), page.changed.clone()))
                                                         }),
                                                     ])
@@ -2195,6 +2214,7 @@ impl IpdAdmissionNoteDrPage {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("rows", "3")
+                                .attr("name","operation_history")
                                 .apply(mixins::opt_string_match_show_empty(page.operation_history.clone(), page.changed.clone(), NOTHING))
                                 .apply(mixins::other_match_none_disable(page.operation_history.clone(), NOTHING))
                             }))
@@ -2293,6 +2313,7 @@ impl IpdAdmissionNoteDrPage {
                                 .class(class::FORM_CTRL_RED)
                                 .attr("rows", "3")
                                 .attr("readonly", "readonly")
+                                .attr("name","allergy_drug_history_hosxp")
                                 .prop_signal("value", page.allergy_drug_history_hosxp.signal_cloned())
                                 .with_node!(element => {
                                     .future(map_ref! {
@@ -2338,6 +2359,7 @@ impl IpdAdmissionNoteDrPage {
                                         .class(class::FORM_CTRL_RED)
                                         .attr("rows", "3")
                                         .attr("readonly", "readonly")
+                                        .attr("name","allergy_er")
                                         .text(ah)
                                     }))
                                 }),
@@ -2557,6 +2579,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
                                     .attr("disabled", "")
+                                    .attr("name","period_occupation")
                                     .apply(mixins::string_value(page.period_occupation.clone(), page.changed.clone()))
                                 }))
                             }))
@@ -2619,6 +2642,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_smoke_year")
                                 .apply(mixins::string_value(page.period_smoke_year.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_smoking.clone(), "N"))
                             }))
@@ -2633,6 +2657,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_smoke_frequency")
                                 .apply(mixins::string_value(page.period_smoke_frequency.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_smoking.clone(), "N"))
                             }))
@@ -2647,6 +2672,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_smoke_stopped")
                                 .apply(mixins::string_value(page.period_smoke_stopped.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_smoking.clone(), "N"))
                             }))
@@ -2677,6 +2703,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_alc_year")
                                 .apply(mixins::string_value(page.period_alc_year.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_alcohol.clone(), "N"))
                             }))
@@ -2691,6 +2718,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_alc_frequency")
                                 .apply(mixins::string_value(page.period_alc_frequency.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_alcohol.clone(), "N"))
                             }))
@@ -2705,6 +2733,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_alc_stopped")
                                 .apply(mixins::string_value(page.period_alc_stopped.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_alcohol.clone(), "N"))
                             }))
@@ -2735,6 +2764,7 @@ impl IpdAdmissionNoteDrPage {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("rows", "3")
                                 .attr("disabled", "")
+                                .attr("name","period_med_name")
                                 .apply(mixins::string_value(page.period_med_name.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_medication_used.clone(), "N"))
                             }))
@@ -2755,6 +2785,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_med_year")
                                 .apply(mixins::string_value(page.period_med_year.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_medication_used.clone(), "N"))
                             }))
@@ -2769,6 +2800,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_med_frequency")
                                 .apply(mixins::string_value(page.period_med_frequency.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_medication_used.clone(), "N"))
                             }))
@@ -2783,6 +2815,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
                                 .attr("disabled", "")
+                                .attr("name","period_med_stopped")
                                 .apply(mixins::string_value(page.period_med_stopped.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_empty_disable(page.period_medication_used.clone(), "N"))
                             }))
@@ -2894,6 +2927,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
                                     .attr("disabled", "")
+                                    .attr("name","period_period_disorders")
                                     .apply(mixins::string_value(page.period_period_disorders.clone(), page.changed.clone()))
                                     .apply(mixins::other_match_empty_disable(page.period_period_normal.clone(), "ปกติ"))
                                 }))
@@ -2917,6 +2951,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
                                     .attr("disabled", "")
+                                    .attr("name","period_period_lmp")
                                     .apply(mixins::string_value(page.period_period_lmp.clone(), page.changed.clone()))
                                     .apply(mixins::other_not_match_disable(page.period_period.clone(), SOMETHING))
                                 }))
@@ -2956,6 +2991,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
                                     .attr("disabled", "")
+                                    .attr("name","period_period_menopause")
                                     .apply(mixins::string_value(page.period_period_menopause.clone(), page.changed.clone()))
                                     .apply(mixins::other_not_match_disable(page.period_period.clone(), "หมดประจำเดือน"))
                                 }))
@@ -3017,6 +3053,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "40")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","receives_immunisation_history_kid")
                                 .apply(mixins::opt_string_match_show_empty(page.receives_immunisation_history_kid.clone(), page.changed.clone(), "ครบตามวัย"))
                                 .apply(mixins::other_match_none_disable(page.receives_immunisation_history_kid.clone(), "ครบตามวัย"))
                             }))
@@ -3064,6 +3101,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "40")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","developmentally_kid")
                                 .apply(mixins::opt_string_match_show_empty(page.developmentally_kid.clone(), page.changed.clone(), "ปกติ"))
                                 .apply(mixins::other_match_none_disable(page.developmentally_kid.clone(), "ปกติ"))
                             }))
@@ -3089,6 +3127,7 @@ impl IpdAdmissionNoteDrPage {
                             .attr("type", "number")
                             .attr("min", "0")
                             .class(class::FORM_CTRL_SM)
+                            .attr("name","g")
                             .apply(mixins::string_value(page.g.clone(), page.changed.clone()))
                         }))
                     }),
@@ -3103,6 +3142,7 @@ impl IpdAdmissionNoteDrPage {
                             .attr("maxlength", "50")
                             .class(class::FORM_CTRL_SM)
                             .attr("placeholder","เช่น 1-0-1 หรือ 1A0L1 หรือ 1P0A0L1")
+                            .attr("name","p")
                             .apply(mixins::string_value(page.p.clone(), page.changed.clone()))
                         }))
                     }),
@@ -3121,6 +3161,7 @@ impl IpdAdmissionNoteDrPage {
                             .attr("type", "text")
                             .attr("maxlength", "20")
                             .class(class::FORM_CTRL_SM)
+                            .attr("name","anc")
                             .apply(mixins::string_value(page.anc.clone(), page.changed.clone()))
                         }))
                     }),
@@ -3143,6 +3184,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("min", "0")
                                     .class(class::FORM_CTRL_SM)
                                     .attr("aria-describedby", "tt-span")
+                                    .attr("name","tt")
                                     .apply(mixins::string_value(page.tt.clone(), page.changed.clone()))
                                 }),
                                 doms::span_group_id("tt-span","   เข็ม  "),
@@ -3168,6 +3210,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("maxlength", "10")
                                     .class(class::FORM_CTRL_SM)
                                     .attr("aria-describedby", "ga-span")
+                                    .attr("name","gestational_age")
                                     .apply(mixins::string_value(page.gestational_age.clone(), page.changed.clone()))
                                 }),
                                 doms::span_group_id("ga-span"," สัปดาห์  "),
@@ -3184,6 +3227,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("maxlength", "10")
                                     .class(class::FORM_CTRL_SM)
                                     .attr("aria-describedby", "g-day-span")
+                                    .attr("name","gestational_day")
                                     .apply(mixins::string_value(page.gestational_day.clone(), page.changed.clone()))
                                 }),
                                 doms::span_group_id("g-day-span"," วัน  "),
@@ -3246,6 +3290,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("maxlength", "2")
                                                 .attr("aria-describedby", "last-child-span")
+                                                .attr("name","last_child")
                                                 .apply(mixins::string_value(page.last_child.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("last-child-span"," ปี "),
@@ -3270,6 +3315,7 @@ impl IpdAdmissionNoteDrPage {
                                             .attr("maxlength", "50")
                                             .class(class::FORM_CTRL_SM)
                                             //.attr("aria-describedby", "inputGroup-sizing-sm")
+                                            .attr("name","last_abort")
                                             .apply(mixins::string_value(page.last_abort.clone(), page.changed.clone()))
                                         }))
                                     }))
@@ -3301,6 +3347,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .text("ไม่เคย")
                                             }),
                                         ])
+                                        .attr("name","curette")
                                         .apply(mixins::string_value_select(page.curette.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3398,6 +3445,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("maxlength", "4")
                                                 .attr("aria-describedby", "mem-ruptured-hours-span")
+                                                .attr("name","mem_ruptured_hours")
                                                 .apply(mixins::opt_string_match_show_empty(page.mem_ruptured_hours.clone(), page.changed.clone(), "0"))
                                                 .apply(mixins::other_match_none_disable(page.mem_ruptured_hours.clone(), "0"))
                                             }),
@@ -3512,6 +3560,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "200")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","extraction")
                                         .apply(mixins::opt_string_value(page.extraction.clone(), page.changed.clone().clone()))
                                         .apply(mixins::other_none_disable(page.extraction.clone()))
                                     }))
@@ -3570,6 +3619,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "200")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","pb_etc")
                                         .apply(mixins::opt_string_value(page.pb_etc.clone(), page.changed.clone()))
                                         .apply(mixins::other_none_disable(page.pb_etc.clone()))
                                     }))
@@ -3616,6 +3666,7 @@ impl IpdAdmissionNoteDrPage {
                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                         .class(class::FORM_CTRL_SM)
                                         .attr("rows", "3")
+                                        .attr("name","condition_pregnant")
                                         .apply(mixins::opt_string_match_show_empty(page.condition_pregnant.clone(), page.changed.clone(), "ปกติ"))
                                         .apply(mixins::other_match_none_disable(page.condition_pregnant.clone(), "ปกติ"))
                                     }))
@@ -3649,6 +3700,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .text("P")
                                             }),
                                         ])
+                                        .attr("name","hiv")
                                         .apply(mixins::string_value_select(page.hiv.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3671,6 +3723,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .text("P")
                                             }),
                                         ])
+                                        .attr("name","hiv2")
                                         .apply(mixins::string_value_select(page.hiv2.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3702,6 +3755,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .text("Non reactive")
                                             }),
                                         ])
+                                        .attr("name","vdrl")
                                         .apply(mixins::string_value_select(page.vdrl.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3724,6 +3778,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .text("Non reactive")
                                             }),
                                         ])
+                                        .attr("name","vdrl2")
                                         .apply(mixins::string_value_select(page.vdrl2.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3755,6 +3810,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .text("Positive")
                                             }),
                                         ])
+                                        .attr("name","hbs_ag")
                                         .apply(mixins::string_value_select(page.hbs_ag.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3777,6 +3833,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .text("Positive")
                                             }),
                                         ])
+                                        .attr("name","hbs_ag2")
                                         .apply(mixins::string_value_select(page.hbs_ag2.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3801,6 +3858,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("maxlength", "4")
                                                 .attr("aria-describedby", "hct-span")
+                                                .attr("name","hct")
                                                 .apply(mixins::string_value(page.hct.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("hct-span","%"),
@@ -3819,6 +3877,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("maxlength", "4")
                                                 .attr("aria-describedby", "hct2-span")
+                                                .attr("name","hct2")
                                                 .apply(mixins::string_value(page.hct2.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("hct2-span","%"),
@@ -3840,6 +3899,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "200")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","gr")
                                         .apply(mixins::string_value(page.gr.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3858,6 +3918,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "200")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","thalassemia")
                                         .apply(mixins::string_value(page.thalassemia.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3876,6 +3937,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("type", "text")
                                         .attr("maxlength", "200")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","husband")
                                         .apply(mixins::string_value(page.husband.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -3900,6 +3962,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .class(class::FORM_CTRL_SM)
                                                 .attr("maxlength", "2")
                                                 .attr("aria-describedby", "hf-span")
+                                                .attr("name","hf")
                                                 .apply(mixins::string_value(page.hf.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_id("hf-span","cm."),
@@ -3922,6 +3985,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("maxlength", "200")
                                         .attr("placeholder","เช่น ROA")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","hf_position")
                                         .apply(mixins::string_value(page.hf_position.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -4004,6 +4068,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("maxlength", "20")
                                         .attr("placeholder", "เช่น Right, Left")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","lr_prominence")
                                         .apply(mixins::string_value(page.lr_prominence.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -4051,6 +4116,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("min", "0")
                                                 .attr("max", "999")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_fhr")
                                                 .apply(mixins::string_value(page.lr_fhr.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("/min"),
@@ -4084,6 +4150,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("min", "0")
                                                 .attr("max", "99999")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_efw")
                                                 .apply(mixins::string_value(page.lr_efw.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("gm."),
@@ -4140,6 +4207,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("min", "0")
                                                 .attr("max", "99")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_duration")
                                                 .apply(mixins::string_value(page.lr_duration.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("sec"),
@@ -4162,6 +4230,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("maxlength", "20")
                                         .attr("placeholder","เช่น 2+")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","lr_intensity")
                                         .apply(mixins::string_value(page.lr_intensity.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -4186,6 +4255,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("max", "99.9")
                                                 .attr("step","0.1")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_pelvic_diagonal")
                                                 .apply(mixins::string_value(page.lr_pelvic_diagonal.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("cm."),
@@ -4212,6 +4282,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("max", "99.9")
                                                 .attr("step","0.1")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_pelvic_interspinous")
                                                 .apply(mixins::string_value(page.lr_pelvic_interspinous.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("cm."),
@@ -4300,6 +4371,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("min", "0")
                                                 .attr("max", "180")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_pubic_angle")
                                                 .apply(mixins::string_value(page.lr_pubic_angle.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("degree"),
@@ -4343,6 +4415,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("min", "0")
                                                 .attr("max", "10")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_cx_dilate")
                                                 .apply(mixins::string_value(page.lr_cx_dilate.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("cm."),
@@ -4368,6 +4441,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("min", "0")
                                                 .attr("max", "100")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_cx_efface")
                                                 .apply(mixins::string_value(page.lr_cx_efface.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("%"),
@@ -4390,6 +4464,7 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("min", "-4")
                                         .attr("max", "4")
                                         .class(class::FORM_CTRL_SM)
+                                        .attr("name","lr_cx_station")
                                         .apply(mixins::string_value(page.lr_cx_station.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -4454,6 +4529,7 @@ impl IpdAdmissionNoteDrPage {
                                                 .attr("min", "0")
                                                 .attr("max", "13")
                                                 .class(class::FORM_CTRL_SM)
+                                                .attr("name","lr_cx_bishop")
                                                 .apply(mixins::string_value(page.lr_cx_bishop.clone(), page.changed.clone()))
                                             }),
                                             doms::span_group_text("คะแนน"),
@@ -4625,6 +4701,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "40")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","deliver_anomalies")
                                 .apply(mixins::opt_string_match_show_empty(page.deliver_anomalies.clone(), page.changed.clone(), "ปกติ"))
                                 .apply(mixins::other_match_none_disable(page.deliver_anomalies.clone(), "ปกติ"))
                             }))
@@ -4639,6 +4716,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "50")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","deliver_anomalies_means")
                                 .apply(mixins::string_value(page.deliver_anomalies_means.clone(), page.changed.clone()))
                                 .apply(mixins::other_match_none_disable(page.deliver_anomalies.clone(), "ปกติ"))
                             }))
@@ -4658,6 +4736,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "50")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","deliver_location")
                                 .apply(mixins::string_value(page.deliver_location.clone(), page.changed.clone()))
                             }))
                         }),
@@ -4675,6 +4754,7 @@ impl IpdAdmissionNoteDrPage {
                             .child(html!("input" => HtmlInputElement, {
                                 .attr("type", "number")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","deliver_first_weight")
                                 .apply(mixins::string_value(page.deliver_first_weight.clone(), page.changed.clone()))
                             }))
                         }),
@@ -4697,6 +4777,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "40")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","deliver_first_health")
                                 .apply(mixins::string_value(page.deliver_first_health.clone(), page.changed.clone()))
                             }))
                         }),
@@ -4725,6 +4806,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "number")
                                 .attr("min", "0")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","fant_breast_feeding_end_age_month")
                                 .apply(mixins::opt_string_value(page.fant_breast_feeding_end_age_month.clone(), page.changed.clone()))
                                 .apply(mixins::other_none_disable(page.fant_breast_feeding_end_age_month.clone()))
                             }))
@@ -4757,6 +4839,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "number")
                                 .attr("min", "0")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","fant_artificial_feeding_start_age_month")
                                 .apply(mixins::opt_string_value(page.fant_artificial_feeding_start_age_month.clone(), page.changed.clone()))
                                 .apply(mixins::other_none_disable(page.fant_artificial_feeding_start_age_month.clone()))
                             }))
@@ -4789,6 +4872,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "40")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","fant_feeding_etc")
                                 .apply(mixins::opt_string_value(page.fant_feeding_etc.clone(), page.changed.clone()))
                                 .apply(mixins::other_none_disable(page.fant_feeding_etc.clone()))
                             }))
@@ -4839,6 +4923,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "number")
                                 .attr("min", "0")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","supplementary_feeding_start_age_month")
                                 .apply(mixins::string_value(page.supplementary_feeding_start_age_month.clone(), page.changed.clone()))
                                 .apply(mixins::other_not_match_disable(page.supplementary_feeding.clone(), "ได้รับ"))
                             }))
@@ -5204,6 +5289,7 @@ impl IpdAdmissionNoteDrPage {
                                         .children(["0","1","2","3","4","5","6","7","8","9","10"].into_iter().map(|s| {
                                             html!("option", {.attr("value", s).text(s)})
                                         }))
+                                        .attr("name","motivation_scale")
                                         .apply(mixins::string_value_select(page.motivation_scale.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -5225,6 +5311,7 @@ impl IpdAdmissionNoteDrPage {
                                         .children(["0","1","2","3","4","5","6","7","8","9","10"].into_iter().map(|s| {
                                             html!("option", {.attr("value", s).text(s)})
                                         }))
+                                        .attr("name","craving_scale")
                                         .apply(mixins::string_value_select(page.craving_scale.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -5246,6 +5333,7 @@ impl IpdAdmissionNoteDrPage {
                                         .children(stage_of_change_select_option.iter().map(|option| {
                                             html!("option", {.attr("value", &option.key).text(&option.value)})
                                         }))
+                                        .attr("name","stage_of_change_id")
                                         .apply(mixins::string_value_select(page.stage_of_change_id.clone(), page.changed.clone()))
                                     }))
                                 }),
@@ -6101,6 +6189,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","inpatient_location")
                                 .apply(mixins::string_value(page.inpatient_location.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6119,6 +6208,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","inpatient_because")
                                 .apply(mixins::string_value(page.inpatient_because.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6322,6 +6412,7 @@ impl IpdAdmissionNoteDrPage {
                                                             .attr("type", "color")
                                                             .class("me-1")
                                                             .attr("list","color-list")
+                                                            .attr("name","pen_color")
                                                             .prop_signal("value", page.pen_color.signal_cloned())
                                                             .with_node!(element => {
                                                                 .event(clone!(page => move |_: events::Change| {
@@ -6339,6 +6430,7 @@ impl IpdAdmissionNoteDrPage {
                                                             .attr("max", "10")
                                                             .attr("step", "1")
                                                             .style("width","100px")
+                                                            .attr("name","pen_width")
                                                             .prop_signal("value", page.pen_width.signal_cloned())
                                                             .with_node!(element => {
                                                                 .event(clone!(page => move |_: events::Change| {
@@ -6417,6 +6509,7 @@ impl IpdAdmissionNoteDrPage {
                                                                     .attr("type", "text")
                                                                     .attr("maxlength", "150")
                                                                     .class(class::FORM_CTRL_SM)
+                                                                    .attr("name","impression")
                                                                     .apply(mixins::string_value(page.impression.clone(), page.changed.clone()))
                                                                 }))
                                                             }),
@@ -6435,6 +6528,7 @@ impl IpdAdmissionNoteDrPage {
                                                                     .attr("type", "text")
                                                                     .attr("maxlength", "150")
                                                                     .class(class::FORM_CTRL_SM)
+                                                                    .attr("name","diff_dx")
                                                                     .apply(mixins::string_value(page.diff_dx.clone(), page.changed.clone()))
                                                                 }))
                                                             }),
@@ -6453,6 +6547,7 @@ impl IpdAdmissionNoteDrPage {
                                                                     .attr("type", "text")
                                                                     .attr("maxlength", "150")
                                                                     .class(class::FORM_CTRL_SM)
+                                                                    .attr("name","plan_management")
                                                                     .apply(mixins::string_value(page.plan_management.clone(), page.changed.clone()))
                                                                 }))
                                                             }),
@@ -6556,6 +6651,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_general")
                                 .apply(mixins::string_value(page.pe_general.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6597,6 +6693,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_skin")
                                 .apply(mixins::string_value(page.pe_skin.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6638,6 +6735,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_heent")
                                 .apply(mixins::string_value(page.pe_heent.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6679,6 +6777,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_neck")
                                 .apply(mixins::string_value(page.pe_neck.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6720,6 +6819,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_breastthorax")
                                 .apply(mixins::string_value(page.pe_breastthorax.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6761,6 +6861,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_heart")
                                 .apply(mixins::string_value(page.pe_heart.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6802,6 +6903,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_lungs")
                                 .apply(mixins::string_value(page.pe_lungs.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6843,6 +6945,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_abdomen")
                                 .apply(mixins::string_value(page.pe_abdomen.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6884,6 +6987,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_rectalgenitalia")
                                 .apply(mixins::string_value(page.pe_rectalgenitalia.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6925,6 +7029,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_extremities")
                                 .apply(mixins::string_value(page.pe_extremities.clone(), page.changed.clone()))
                             }))
                         }),
@@ -6966,6 +7071,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_neurological")
                                 .apply(mixins::string_value(page.pe_neurological.clone(), page.changed.clone()))
                             }))
                         }),
@@ -7010,6 +7116,7 @@ impl IpdAdmissionNoteDrPage {
                                     .attr("type", "text")
                                     .attr("maxlength", "200")
                                     .class(class::FORM_CTRL_SM)
+                                    .attr("name","pe_ob_gynexam")
                                     .apply(mixins::string_value(page.pe_ob_gynexam.clone(), page.changed.clone()))
                                 }))
                             }),
@@ -7043,6 +7150,7 @@ impl IpdAdmissionNoteDrPage {
                                 .attr("type", "text")
                                 .attr("maxlength", "200")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","pe_other")
                                 .apply(mixins::string_value(page.pe_other.clone(), page.changed.clone()))
                             }))
                         }),
@@ -7060,6 +7168,7 @@ impl IpdAdmissionNoteDrPage {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .class(class::FORM_CTRL_SM)
                                 .attr("rows", "6")
+                                .attr("name","pe_text")
                                 .apply(mixins::string_value(page.pe_text.clone(), page.changed.clone()))
                             }))
                         }),
@@ -7131,18 +7240,21 @@ impl IpdAdmissionNoteDrPage {
                                         .attr("type", "text")
                                         .class("form-control")
                                         .attr("readonly", "")
+                                        .attr("name","nurse_name")
                                         .prop_signal("value", page.nurse_name.signal_cloned())
                                     }),
                                     html!("input", {
                                         .attr("type", "text")
                                         .class("form-control")
                                         .attr("readonly", "")
+                                        .attr("name","nurse_pos")
                                         .prop_signal("value", page.nurse_pos.signal_cloned())
                                     }),
                                     html!("input", {
                                         .attr("type", "text")
                                         .class("form-control")
                                         .attr("readonly", "")
+                                        .attr("name","nurse_licenseno")
                                         .prop_signal("value", page.nurse_licenseno.signal_cloned())
                                     }),
                                 ])
@@ -7605,16 +7717,18 @@ impl DiseaseDetail {
                 html!("div", {
                     .class("col-sm-3")
                     .child(html!("input" => HtmlInputElement, {
-                        .class(class::FORM_CTRL_SM)
                         .attr("type", "text")
+                        .class(class::FORM_CTRL_SM)
+                        .attr("name","disease_name")
                         .apply(mixins::string_value(dd.name.clone(), page.changed.clone()))
                     }))
                 }),
                 html!("div", {
                     .class("col-sm-3")
                     .child(html!("input" => HtmlInputElement, {
-                        .class(class::FORM_CTRL_SM)
                         .attr("type", "text")
+                        .class(class::FORM_CTRL_SM)
+                        .attr("name","disease_year")
                         .apply(mixins::string_value(dd.year.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7624,8 +7738,9 @@ impl DiseaseDetail {
                         .class(class::INPUT_GROUP)
                         .children([
                             html!("input" => HtmlInputElement, {
-                                .class(class::FORM_CTRL_SM)
                                 .attr("type", "text")
+                                .class(class::FORM_CTRL_SM)
+                                .attr("name","disease_hos")
                                 .apply(mixins::string_value(dd.hospital.clone(), page.changed.clone()))
                             }),
                             html!("button", {
@@ -7718,6 +7833,7 @@ impl DrugAllergy {
                         .attr("type", "text")
                         .style("color","#E60000")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","agent")
                         .apply(mixins::string_value(da.agent.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7727,6 +7843,7 @@ impl DrugAllergy {
                         .attr("type", "text")
                         .style("color","#E60000")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","symptom")
                         .apply(mixins::string_value(da.symptom.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7796,6 +7913,7 @@ impl FoodAllergy {
                         .attr("type", "text")
                         .style("color","#E60000")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","agent")
                         .apply(mixins::string_value(fa.agent.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7805,6 +7923,7 @@ impl FoodAllergy {
                         .attr("type", "text")
                         .style("color","#E60000")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","symptom")
                         .apply(mixins::string_value(fa.symptom.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7874,6 +7993,7 @@ impl EtcAllergy {
                         .attr("type", "text")
                         .style("color","#E60000")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","agent")
                         .apply(mixins::string_value(ea.agent.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7883,6 +8003,7 @@ impl EtcAllergy {
                         .attr("type", "text")
                         .style("color","#E60000")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","symptom")
                         .apply(mixins::string_value(ea.symptom.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7951,6 +8072,7 @@ impl FamilyMedical {
                     .child(html!("input" => HtmlInputElement, {
                         .attr("type", "text")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","disease")
                         .apply(mixins::string_value(fm.disease.clone(), page.changed.clone()))
                     }))
                 }),
@@ -7959,6 +8081,7 @@ impl FamilyMedical {
                     .child(html!("input" => HtmlInputElement, {
                         .attr("type", "text")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","relation")
                         .apply(mixins::string_value(fm.relation.clone(), page.changed.clone()))
                     }))
                 }),
@@ -8027,6 +8150,7 @@ impl AddictAssist {
                     .child(html!("input" => HtmlInputElement, {
                         .attr("type", "text")
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","agent")
                         .apply(mixins::string_value(fa.agent.clone(), page.changed.clone()))
                     }))
                 }),
@@ -8101,6 +8225,7 @@ fn render_ros_item(label: &str, ros: Mutable<String>, changed: Mutable<bool>) ->
                     .attr("type", "text")
                     .attr("maxlength", "200")
                     .class(class::FORM_CTRL_SM)
+                    .attr("name","diseases")
                     .apply(mixins::string_value(ros.clone(), changed.clone()))
                 }))
             }),
@@ -8128,6 +8253,7 @@ pub fn render_doctor(doctor: Rc<AdmissionNoteDoctor>) -> Dom {
                 .attr("type", "text")
                 .attr("readonly", "")
                 .class("form-control")
+                .attr("name","admission_note_doctorname")
                 .attr("value", &doctor.admission_note_doctorname.clone().unwrap_or_default())
             }))
         }))

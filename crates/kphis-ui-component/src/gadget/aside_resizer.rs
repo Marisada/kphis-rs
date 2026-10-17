@@ -489,6 +489,7 @@ impl AsideResizerCpn {
                                                         .text(template.title())
                                                     })
                                                 }))
+                                                .attr("name","selected_template")
                                                 .prop_signal("value", page.selected_template.signal_cloned().map(|opt| opt.as_ref().map(|selected| selected.template_name().to_owned()).unwrap_or_default()))
                                                 .with_node!(element => {
                                                     .event(clone!(app, page => move |_: events::Change| {
@@ -532,6 +533,7 @@ impl AsideResizerCpn {
                                                         .text(doc.label())
                                                     })
                                                 }))
+                                                .attr("name","selected_document")
                                                 .prop_signal("value", page.selected_document.signal_cloned().map(|opt| opt.as_ref().map(|selected| selected.as_str()).unwrap_or_default()))
                                                 .with_node!(element => {
                                                     .event(clone!(app, page => move |_: events::Change| {

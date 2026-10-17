@@ -407,6 +407,7 @@ impl DrugDetailModal {
                                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                                         .class("form-control")
                                                         .attr("rows", "4")
+                                                        .attr("name","info")
                                                         .apply(mixins::textarea_value_auto_expand(modal.info.clone(), modal.changed.clone()))
                                                     }))
                                                 } else { dom
@@ -470,7 +471,7 @@ impl DrugDetailModal {
                                                         .children([
                                                             doms::label_group_for("modal_duration1", "ขั้นต่ำ เกิน"),
                                                             html!("input" => HtmlInputElement, {
-                                                                .attr("type","number")
+                                                                .attr("type", "number")
                                                                 .class("form-control")
                                                                 .attr("id","modal_duration1")
                                                                 .attr("min","0")
@@ -498,7 +499,7 @@ impl DrugDetailModal {
                                                         .children([
                                                             doms::label_group_for("modal_duration2", "ขั้นกลาง เกิน"),
                                                             html!("input" => HtmlInputElement, {
-                                                                .attr("type","number")
+                                                                .attr("type", "number")
                                                                 .class("form-control")
                                                                 .attr("id","modal_duration2")
                                                                 .attr("min","0")
@@ -526,7 +527,7 @@ impl DrugDetailModal {
                                                         .children([
                                                             doms::label_group_for("modal_duration3", "ขั้นสูง เกิน"),
                                                             html!("input" => HtmlInputElement, {
-                                                                .attr("type","number")
+                                                                .attr("type", "number")
                                                                 .class("form-control")
                                                                 .attr("id","modal_duration3")
                                                                 .attr("min","0")
@@ -569,6 +570,7 @@ impl DrugDetailModal {
                                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                                         .class("form-control")
                                                         .attr("rows", "4")
+                                                        .attr("name","usage")
                                                         .apply(mixins::textarea_value_auto_expand(modal.usage.clone(), modal.changed.clone()))
                                                     }))
                                                 } else { dom
@@ -634,6 +636,7 @@ impl DrugDetailModal {
                                                     .child(html!("textarea" => HtmlTextAreaElement, {
                                                         .class("form-control")
                                                         .attr("rows", "4")
+                                                        .attr("name","monitor")
                                                         .apply(mixins::textarea_value_auto_expand(modal.monitor.clone(), modal.changed.clone()))
                                                     }))
                                                 } else { dom
@@ -662,9 +665,9 @@ impl DrugDetailModal {
                                                         .children([
                                                             doms::label_group_for("modal_monitor_count", "จำนวนการติดตามอาการหลังได้รับยา อย่างน้อย"),
                                                             html!("input" => HtmlInputElement, {
+                                                                .attr("type", "number")
                                                                 .class("form-control")
                                                                 .attr("id","modal_monitor_count")
-                                                                .attr("type","number")
                                                                 .attr("min","0")
                                                                 .attr("max","255")
                                                                 .apply(mixins::string_value(modal.monitor_count.clone(), modal.changed.clone()))
@@ -683,9 +686,9 @@ impl DrugDetailModal {
                                                         .children([
                                                             doms::label_group_for("modal_monitor_duration", "ควรได้รับการติดตามเป็นเวลา อย่างน้อย"),
                                                             html!("input" => HtmlInputElement, {
+                                                                .attr("type", "number")
                                                                 .class("form-control")
                                                                 .attr("id","modal_monitor_duration")
-                                                                .attr("type","number")
                                                                 .attr("min","0")
                                                                 .attr("max","65535")
                                                                 .apply(mixins::string_value(modal.monitor_duration.clone(), modal.changed.clone()))
@@ -778,6 +781,7 @@ impl DrugDetailModal {
                                 .attr("placeholder", "กรอกข้อความเพื่อค้นหา")
                                 .attr("autocomplete", "off")
                                 .focused(true)
+                                .attr("name","search_text")
                                 .with_node!(element => {
                                     .apply(|dom| {
                                         let load_mut = Mutable::new(false);

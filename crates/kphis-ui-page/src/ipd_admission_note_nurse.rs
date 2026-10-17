@@ -581,18 +581,21 @@ impl IpdAdmissionNoteNursePage {
                                                         .attr("type", "text")
                                                         .class("form-control")
                                                         .attr("readonly", "")
+                                                        .attr("name","nurse_name")
                                                         .prop_signal("value", page.nurse_name.signal_cloned())
                                                     }),
                                                     html!("input", {
                                                         .attr("type", "text")
                                                         .class("form-control")
                                                         .attr("readonly", "")
+                                                        .attr("name","nurse_pos")
                                                         .prop_signal("value", page.nurse_pos.signal_cloned())
                                                     }),
                                                     html!("input", {
                                                         .attr("type", "text")
                                                         .class("form-control")
                                                         .attr("readonly", "")
+                                                        .attr("name","nurse_licenseno")
                                                         .prop_signal("value", page.nurse_licenseno.signal_cloned())
                                                     }),
                                                 ])
@@ -730,6 +733,7 @@ impl IpdAdmissionNoteNursePage {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .class("form-control")
                                 .attr("rows","3")
+                                .attr("name","chief_complaints")
                                 .apply(mixins::textarea_value_auto_expand(page.chief_complaints.clone(), page.changed.clone()))
                             }))
                         }),
@@ -742,6 +746,7 @@ impl IpdAdmissionNoteNursePage {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .class("form-control")
                                 .attr("rows","3")
+                                .attr("name","medical_history")
                                 .apply(mixins::textarea_value_auto_expand(page.medical_history.clone(), page.changed.clone()))
                             }))
                         }),
@@ -776,6 +781,7 @@ impl IpdAdmissionNoteNursePage {
                             .child(html!("textarea" => HtmlTextAreaElement, {
                                 .class("form-control")
                                 .attr("rows","2")
+                                .attr("name","vs_admit")
                                 .apply(mixins::textarea_value_auto_expand(page.vs_admit.clone(), page.changed.clone()))
                             }))
                         }),

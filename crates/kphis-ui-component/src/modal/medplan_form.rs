@@ -287,6 +287,7 @@ impl MedPlanForm {
                                                                 .child(html!("input" => HtmlInputElement, {
                                                                     .attr("type", "number")
                                                                     .class(class::FORM_CTRL_SM)
+                                                                    .attr("name","first_qty")
                                                                     .apply(mixins::string_value(mpm.first_qty.clone(), modal.changed.clone()))
                                                                 }))
                                                             }),
@@ -294,6 +295,7 @@ impl MedPlanForm {
                                                                 .child(html!("input" => HtmlInputElement, {
                                                                     .attr("type", "number")
                                                                     .class(class::FORM_CTRL_SM)
+                                                                    .attr("name","qty")
                                                                     .apply(mixins::string_value(mpm.qty.clone(), modal.changed.clone()))
                                                                 }))
                                                             }),
@@ -580,6 +582,7 @@ impl MedPlanForm {
                                 .attr("placeholder", "กรอกข้อความเพื่อค้นหา")
                                 .attr("autocomplete", "off")
                                 .focused(true)
+                                .attr("name","search_text")
                                 .with_node!(element => {
                                     .apply(|dom| {
                                         let load_mut = Mutable::new(false);

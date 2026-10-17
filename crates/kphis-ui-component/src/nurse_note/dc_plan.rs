@@ -1134,6 +1134,7 @@ impl DcPlanCpn {
                     .class("col-12")
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","dx_text")
                         .apply(mixins::textarea_value_auto_expand(page.dx_text.clone(), page.changed.clone()))
                     }))
                 }),
@@ -1166,6 +1167,7 @@ impl DcPlanCpn {
                     .class("col-12")
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","med_text")
                         .apply(mixins::textarea_value_auto_expand(page.med_text.clone(), page.changed.clone()))
                     }))
                 }),
@@ -1198,6 +1200,7 @@ impl DcPlanCpn {
                     .class("col-12")
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","env_text")
                         .apply(mixins::textarea_value_auto_expand(page.env_text.clone(), page.changed.clone()))
                     }))
                 }),
@@ -1242,6 +1245,7 @@ impl DcPlanCpn {
                     .class("col-12")
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","tx_text")
                         .apply(mixins::textarea_value_auto_expand(page.tx_text.clone(), page.changed.clone()))
                     }))
                 }),
@@ -1274,6 +1278,7 @@ impl DcPlanCpn {
                     .class("col-12")
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","health_text")
                         .apply(mixins::textarea_value_auto_expand(page.health_text.clone(), page.changed.clone()))
                     }))
                 }),
@@ -1332,6 +1337,7 @@ impl DcPlanCpn {
                             .child(html!("input" => HtmlInputElement, {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","appoint_place")
                                 .apply(mixins::string_value(page.appoint_place.clone(), page.changed.clone()))
                             }))
                         }),
@@ -1344,6 +1350,7 @@ impl DcPlanCpn {
                             .child(html!("input" => HtmlInputElement, {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","appoint_for")
                                 .apply(mixins::string_value(page.appoint_for.clone(), page.changed.clone()))
                             }))
                         }),
@@ -1361,6 +1368,7 @@ impl DcPlanCpn {
                             .child(html!("input" => HtmlInputElement, {
                                 .attr("type", "text")
                                 .class(class::FORM_CTRL_SM)
+                                .attr("name","refer_to")
                                 .apply(mixins::string_value(page.refer_to.clone(), page.changed.clone()))
                             }))
                         }),
@@ -1374,6 +1382,7 @@ impl DcPlanCpn {
                     .class("col-12")
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","out_text")
                         .apply(mixins::textarea_value_auto_expand(page.out_text.clone(), page.changed.clone()))
                     }))
                 }),
@@ -1410,6 +1419,7 @@ impl DcPlanCpn {
                     .class("col-12")
                     .child(html!("textarea" => HtmlTextAreaElement, {
                         .class(class::FORM_CTRL_SM)
+                        .attr("name","diet_text")
                         .apply(mixins::textarea_value_auto_expand(page.diet_text.clone(), page.changed.clone()))
                     }))
                 }),

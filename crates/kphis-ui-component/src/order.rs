@@ -1298,6 +1298,7 @@ impl OrderCpn {
                                                         .apply_if(date_8601(&page.date_path.lock_ref()).map(|dp| dp == od.order_date).unwrap_or_default(), |dom| dom.attr("selected",""))
                                                     })
                                                 })))
+                                                .attr("name","current_date")
                                                 .prop_signal("value", page.current_date.signal_cloned().map(|opt| opt.as_ref().map(|d| d.string())))
                                                 .with_node!(element => {
                                                     .event(clone!(page => move |_: events::Change| {
@@ -3267,6 +3268,7 @@ impl OrderCpn {
                                                                 }),
                                                                 html!("textarea" => HtmlTextAreaElement, {
                                                                     .class("w-100")
+                                                                    .attr("name","due_doctor_note_temp")
                                                                     .apply(mixins::textarea_value_auto_expand(due.due_doctor_note_temp.clone(), due.due_doctor_note_changed.clone()))
                                                                 }),
                                                                 html!("div", {
@@ -3364,6 +3366,7 @@ impl OrderCpn {
                                                                 }),
                                                                 html!("textarea" => HtmlTextAreaElement, {
                                                                     .class("w-100")
+                                                                    .attr("name","due_pharm_note_temp")
                                                                     .apply(mixins::textarea_value_auto_expand(due.due_pharm_note_temp.clone(), due.due_pharm_note_changed.clone()))
                                                                 }),
                                                                 html!("div", {

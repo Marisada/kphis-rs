@@ -1024,7 +1024,7 @@ impl OpdErEmergencyCpn {
                         .child(html!("div", {
                             .class("col-md-12")
                             .children([
-                                html!("lable", {
+                                html!("span", {
                                     .class(class::BOLD_L2)
                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                     .text(" Trauma")
@@ -1055,7 +1055,7 @@ impl OpdErEmergencyCpn {
                                 .class(class::ROW)
                                 .child(html!("div", {
                                     .class("col-md-12")
-                                    .child(html!("lable", {
+                                    .child(html!("span", {
                                         .text("A: Airway & restriction c-spine")
                                     }))
                                 }))
@@ -1069,8 +1069,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "radio")
+                                                    .class("form-check-input")
                                                     .attr("id", "arc_patent")
                                                     .attr("value", "1")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
@@ -1086,8 +1086,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "radio")
+                                                    .class("form-check-input")
                                                     .attr("id", "arc_csp")
                                                     .attr("value", "2")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
@@ -1108,8 +1108,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "radio")
+                                                    .class("form-check-input")
                                                     .attr("id", "arc_npc")
                                                     .attr("value", "3")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
@@ -1129,6 +1129,7 @@ impl OpdErEmergencyCpn {
                                                 let arc = page.arc.signal_cloned() =>
                                                 !is_doctor || arc.as_str() != "3"
                                             }))
+                                            .attr("name","arc_npc_text")
                                             .apply(mixins::string_value(page.arc_npc_text.clone(), page.trauma_changed.clone()))
                                             .future(page.arc.signal_cloned().for_each(clone!(page => move |arc| {
                                                 if arc.as_str() != "3" {
@@ -1144,7 +1145,7 @@ impl OpdErEmergencyCpn {
                                 .class(class::ROW)
                                 .child(html!("div", {
                                     .class("col-md-12")
-                                    .child(html!("lable", {
+                                    .child(html!("span", {
                                         .text("B: Breathing")
                                     }))
                                 }))
@@ -1154,7 +1155,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("Chest wall")
                                         }))
                                     }),
@@ -1163,6 +1164,7 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","breathing_chest_wall")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.breathing_chest_wall.clone(), page.trauma_changed.clone()))
                                         }))
@@ -1174,7 +1176,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("Lung")
                                         }))
                                     }),
@@ -1183,6 +1185,7 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","breathing_lung")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.breathing_lung.clone(), page.trauma_changed.clone()))
                                         }))
@@ -1193,7 +1196,7 @@ impl OpdErEmergencyCpn {
                                 .class(class::ROW)
                                 .child(html!("div", {
                                     .class("col-md-4")
-                                    .child(html!("lable", {
+                                    .child(html!("span", {
                                         .text("C: Circulation")
                                     }))
                                 }))
@@ -1207,8 +1210,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "radio")
+                                                    .class("form-check-input")
                                                     .attr("id", "circulation_stable")
                                                     .attr("value", "1")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
@@ -1224,8 +1227,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "radio")
+                                                    .class("form-check-input")
                                                     .attr("id", "circulation_shock")
                                                     .attr("value", "2")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
@@ -1245,6 +1248,7 @@ impl OpdErEmergencyCpn {
                                                 let circulation_shock = page.circulation_shock.signal_cloned() =>
                                                 !is_doctor || circulation_shock.as_str() != "2"
                                             }))
+                                            .attr("name","circulation_shock_text")
                                             .apply(mixins::string_value(page.circulation_shock_text.clone(), page.trauma_changed.clone()))
                                             .future(page.circulation_shock.signal_cloned().for_each(clone!(page => move |circulation_shock| {
                                                 if circulation_shock.as_str() != "2" {
@@ -1265,8 +1269,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "checkbox")
+                                                    .class("form-check-input")
                                                     .attr("id", "circulation_other")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                                     .apply(mixins::checkbox_toggle(page.circulation_other.clone(), page.trauma_changed.clone(), "Y", ""))
@@ -1285,6 +1289,7 @@ impl OpdErEmergencyCpn {
                                                 let circulation_other = page.circulation_other.signal_cloned() =>
                                                 !is_doctor || circulation_other.as_str() != "Y"
                                             }))
+                                            .attr("name","circulation_other_text")
                                             .apply(mixins::string_value(page.circulation_other_text.clone(), page.trauma_changed.clone()))
                                             .future(page.circulation_other.signal_cloned().for_each(clone!(page => move |circulation_other| {
                                                 if circulation_other.as_str() != "Y" {
@@ -1301,7 +1306,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("eFAST Time")
                                         }))
                                     }),
@@ -1349,7 +1354,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("eFAST Doctor")
                                         }))
                                     }),
@@ -1363,6 +1368,7 @@ impl OpdErEmergencyCpn {
                                                 .children(doctor_select_option.iter().map(|option| {
                                                     doms::select_option(option, "")
                                                 }))
+                                                .attr("name","circulation_doctor")
                                                 .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                                 .apply(mixins::string_value_select(page.circulation_doctor.clone(), page.trauma_changed.clone()))
                                             }))
@@ -1379,8 +1385,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "radio")
+                                                    .class("form-check-input")
                                                     .attr("id", "circulation_negative")
                                                     .attr("value", "N")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
@@ -1396,8 +1402,8 @@ impl OpdErEmergencyCpn {
                                             .class("form-check")
                                             .children([
                                                 html!("input" => HtmlInputElement, {
-                                                    .class("form-check-input")
                                                     .attr("type", "radio")
+                                                    .class("form-check-input")
                                                     .attr("id", "circulation_positive")
                                                     .attr("value", "P")
                                                     .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
@@ -1418,6 +1424,7 @@ impl OpdErEmergencyCpn {
                                                 let circulation = page.circulation.signal_cloned() =>
                                                 !is_doctor || circulation.as_str() != "P"
                                             }))
+                                            .attr("name","circulation_positive_text")
                                             .apply(mixins::string_value(page.circulation_positive_text.clone(), page.trauma_changed.clone()))
                                             .future(page.circulation.signal_cloned().for_each(clone!(page => move |circulation| {
                                                 if circulation.as_str() != "P" {
@@ -1433,7 +1440,7 @@ impl OpdErEmergencyCpn {
                                 .class(class::ROW)
                                 .child(html!("div", {
                                     .class("col-md-3")
-                                    .child(html!("lable", {
+                                    .child(html!("span", {
                                         .text("D: Disability")
                                     }))
                                 }))
@@ -1443,7 +1450,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("E")
                                         }))
                                     }),
@@ -1452,13 +1459,14 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","disability_e")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.disability_e.clone(), page.trauma_changed.clone()))
                                         }))
                                     }),
                                     html!("div", {
                                         .class(class::COL_MD1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("V")
                                         }))
                                     }),
@@ -1467,13 +1475,14 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","disability_v")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.disability_v.clone(), page.trauma_changed.clone()))
                                         }))
                                     }),
                                     html!("div", {
                                         .class(class::COL_MD1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("M")
                                         }))
                                     }),
@@ -1482,6 +1491,7 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","disability_m")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.disability_m.clone(), page.trauma_changed.clone()))
                                         }))
@@ -1493,7 +1503,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("Pupil Rt")
                                         }))
                                     }),
@@ -1502,13 +1512,14 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","disability_pupil_rt")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.disability_pupil_rt.clone(), page.trauma_changed.clone()))
                                         }))
                                     }),
                                     html!("div", {
                                         .class(class::COL_MD2_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("mm")
                                         }))
                                     }),
@@ -1519,7 +1530,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("Pupil Lt")
                                         }))
                                     }),
@@ -1528,13 +1539,14 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","disability_pupil_lt")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.disability_pupil_lt.clone(), page.trauma_changed.clone()))
                                         }))
                                     }),
                                     html!("div", {
                                         .class(class::COLA_MY1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("mm")
                                         }))
                                     }),
@@ -1545,7 +1557,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class(class::COL_MD2_OFSM1_Y1)
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("อื่นๆ")
                                         }))
                                     }),
@@ -1554,6 +1566,7 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","disability_other")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.disability_other.clone(), page.trauma_changed.clone()))
                                         }))
@@ -1565,7 +1578,7 @@ impl OpdErEmergencyCpn {
                                 .children([
                                     html!("div", {
                                         .class("col-md-3")
-                                        .child(html!("lable", {
+                                        .child(html!("span", {
                                             .text("E: Exposure")
                                         }))
                                     }),
@@ -1574,6 +1587,7 @@ impl OpdErEmergencyCpn {
                                         .child(html!("input" => HtmlInputElement, {
                                             .attr("type", "text")
                                             .class("form-control")
+                                            .attr("name","exposure")
                                             .apply(mixins::other_true_signal_disable(not(page.is_doctor())))
                                             .apply(mixins::string_value(page.exposure.clone(), page.trauma_changed.clone()))
                                         }))
@@ -1716,7 +1730,7 @@ impl OpdErEmergencyCpn {
                             .child(html!("div", {
                                 .class("col-md-12")
                                 .children([
-                                    html!("lable", {
+                                    html!("span", {
                                         .class(class::BOLD_L2)
                                         .child(html!("i", {.class(class::FA_CAPSULE)}))
                                         .text(" ประวัติการแพ้ยา")
@@ -1749,7 +1763,7 @@ impl OpdErEmergencyCpn {
                                     .child(html!("div", {
                                         .class("col-md-12")
                                         .children([
-                                            html!("lable", {.class("me-2").text("เพิ่มประวัติการแพ้ยา")}),
+                                            html!("span", {.class("me-2").text("เพิ่มประวัติการแพ้ยา")}),
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_R_BLUE)
@@ -2312,7 +2326,7 @@ impl OpdErEmergencyCpn {
                             .child(html!("div", {
                                 .class("col-md-12")
                                 .children([
-                                    html!("lable", {
+                                    html!("span", {
                                         .class(class::BOLD_L2)
                                         .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                         .text(" Consult")
@@ -2345,7 +2359,7 @@ impl OpdErEmergencyCpn {
                                     .child(html!("div", {
                                         .class("col-md-12")
                                         .children([
-                                            html!("lable", {.class("me-2").text("เพิ่มฟอร์ม Consult")}),
+                                            html!("span", {.class("me-2").text("เพิ่มฟอร์ม Consult")}),
                                             html!("button", {
                                                 .attr("type", "button")
                                                 .class(class::BTN_R_BLUE)
@@ -2468,7 +2482,7 @@ impl OpdErEmergencyCpn {
                         .child(html!("div", {
                             .class("col-md-12")
                             .children([
-                                html!("lable", {
+                                html!("span", {
                                     .class(class::BOLD_L2)
                                     .child(html!("i", {.class(class::FA_CLIPBOARD)}))
                                     .text(" ประสานงาน Set Fast Track")
@@ -2671,6 +2685,7 @@ impl DrugAllergy {
                                 .attr("type", "text")
                                 .style("color","#E60000")
                                 .class(class::FORM_CTRL_COL_MD12)
+                                .attr("name","agent")
                                 .apply(mixins::string_value(da.agent.clone(), page.allergy_changed.clone()))
                             }))
                         }))
@@ -2683,6 +2698,7 @@ impl DrugAllergy {
                                 .attr("type", "text")
                                 .style("color","#E60000")
                                 .class(class::FORM_CTRL_COL_MD12)
+                                .attr("name","symptom")
                                 .apply(mixins::string_value(da.symptom.clone(), page.allergy_changed.clone()))
                             }))
                         }))
@@ -2779,6 +2795,7 @@ impl ConsultItem {
                                         .children(spclty_kphis_select_option.iter().map(|option| {
                                             doms::select_option(option, "")
                                         }))
+                                        .attr("name","er_consult_ward")
                                         .apply(mixins::string_value_select(ci.er_consult_ward.clone(), page.consult_changed.clone()))
                                     }))
                                 }),
@@ -2850,6 +2867,7 @@ impl ConsultItem {
                                         .children(doctor_select_option.iter().map(|option| {
                                             doms::select_option(option, "")
                                         }))
+                                        .attr("name","er_consult_doctor_reply")
                                         .apply(mixins::string_value_select(ci.er_consult_doctor_reply.clone(), page.consult_changed.clone()))
                                     }))
                                 }),

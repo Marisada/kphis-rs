@@ -1951,20 +1951,23 @@ impl IpdSummaryAuditMutable {
                             .children([
                                 html!("span", {.class("input-group-text").text("DRG")}),
                                 html!("input" => HtmlInputElement, {
-                                    .attr("type","text")
+                                    .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
+                                    .attr("name","com_drg")
                                     .apply(mixins::string_value(audit.com_drg.clone(), audit.changed.clone()))
                                 }),
                                 html!("span", {.class("input-group-text").text("RW")}),
                                 html!("input" => HtmlInputElement, {
-                                    .attr("type","text")
+                                    .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
+                                    .attr("name","com_rw")
                                     .apply(mixins::string_value(audit.com_rw.clone(), audit.changed.clone()))
                                 }),
                                 html!("span", {.class("input-group-text").text("AdjRW")}),
                                 html!("input" => HtmlInputElement, {
-                                    .attr("type","text")
+                                    .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
+                                    .attr("name","com_adjrw")
                                     .apply(mixins::string_value(audit.com_adjrw.clone(), audit.changed.clone()))
                                 }),
                             ])
@@ -1973,6 +1976,7 @@ impl IpdSummaryAuditMutable {
                             .attr("rows", "13")
                             .class(class::FORM_CTRL_SM)
                             .class(&*class::MONO_PRE_WRAP)
+                            .attr("name","com_drg_panel")
                             .text_signal(audit.com_drg_panel.signal_cloned())
                         })
                     ])
@@ -2015,20 +2019,23 @@ impl IpdSummaryAuditMutable {
                             .children([
                                 html!("span", {.class("input-group-text").text("DRG")}),
                                 html!("input" => HtmlInputElement, {
-                                    .attr("type","text")
+                                    .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
+                                    .attr("name","rev_drg")
                                     .apply(mixins::string_value(audit.rev_drg.clone(), audit.changed.clone()))
                                 }),
                                 html!("span", {.class("input-group-text").text("RW")}),
                                 html!("input" => HtmlInputElement, {
-                                    .attr("type","text")
+                                    .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
+                                    .attr("name","rev_rw")
                                     .apply(mixins::string_value(audit.rev_rw.clone(), audit.changed.clone()))
                                 }),
                                 html!("span", {.class("input-group-text").text("AdjRW")}),
                                 html!("input" => HtmlInputElement, {
-                                    .attr("type","text")
+                                    .attr("type", "text")
                                     .class(class::FORM_CTRL_SM)
+                                    .attr("name","rev_adjdrg")
                                     .apply(mixins::string_value(audit.rev_adjrw.clone(), audit.changed.clone()))
                                 }),
                             ])
@@ -2037,6 +2044,7 @@ impl IpdSummaryAuditMutable {
                             .attr("rows", "13")
                             .class(class::FORM_CTRL_SM)
                             .class(&*class::MONO_PRE_WRAP)
+                            .attr("name","rev_drg_panel")
                             .text_signal(audit.rev_drg_panel.signal_cloned())
                         })
                     ])
@@ -2194,7 +2202,7 @@ impl SummaryAuditItemMutable {
                             .text(" in Summary")
                         }),
                         html!("input" => HtmlInputElement, {
-                            .attr("type","text")
+                            .attr("type", "text")
                             .attr("id", &["sum-dx-", &item.auto_id.to_string()].concat())
                             .attr("draggable","true")
                             .class(class::FORM_CTRL_SM)
@@ -2220,7 +2228,7 @@ impl SummaryAuditItemMutable {
                     .children([
                         html!("span", {.class("input-group-text").text("S ICD")}),
                         html!("input" => HtmlInputElement, {
-                            .attr("type","text")
+                            .attr("type", "text")
                             .attr("id", &["sum-icd-", &item.auto_id.to_string()].concat())
                             .attr("draggable","true")
                             .class(class::FORM_CTRL_SM)
@@ -2230,7 +2238,7 @@ impl SummaryAuditItemMutable {
                         }),
                         html!("span", {.class("input-group-text").text("C ICD")}),
                         html!("input" => HtmlInputElement, {
-                            .attr("type","text")
+                            .attr("type", "text")
                             .attr("id", &["com-icd-", &item.auto_id.to_string()].concat())
                             .attr("draggable","true")
                             .class(class::FORM_CTRL_SM)
@@ -2240,7 +2248,7 @@ impl SummaryAuditItemMutable {
                         }),
                         html!("span", {.class("input-group-text").text("R ICD")}),
                         html!("input" => HtmlInputElement, {
-                            .attr("type","text")
+                            .attr("type", "text")
                             .attr("id", &["rev-icd-", &item.auto_id.to_string()].concat())
                             .attr("draggable","true")
                             .class(class::FORM_CTRL_SM_GOLD)
@@ -2281,8 +2289,9 @@ impl SummaryAuditItemMutable {
                         }),
                         html!("span", {.class("input-group-text").text("Remark")}),
                         html!("input" => HtmlInputElement, {
-                            .attr("type","text")
+                            .attr("type", "text")
                             .class(class::FORM_CTRL_SM_GOLD)
+                            .attr("name","remark")
                             .apply(mixins::string_value(item.remark.clone(), changed.clone()))
                         }),
                     ])
@@ -2296,7 +2305,7 @@ impl SummaryAuditItemMutable {
                             .text(" from Review")
                         }),
                         html!("input" => HtmlInputElement, {
-                            .attr("type","text")
+                            .attr("type", "text")
                             .attr("id", &["rev-dx-", &item.auto_id.to_string()].concat())
                             .attr("draggable","true")
                             .class(class::FORM_CTRL_SM_GOLD)
@@ -2338,6 +2347,7 @@ fn td_input_text(mutable: Mutable<String>, changed: Mutable<bool>, max_length: &
             .attr("type", "text")
             .class(class::FORM_CTRL_B0)
             .attr("maxlength", max_length)
+            .attr("name","text_input")
             .apply(mixins::string_value(mutable, changed))
         }))
     })
@@ -2350,6 +2360,7 @@ fn td_input_number(mutable: Mutable<String>, changed: Mutable<bool>, step: &str)
             .attr("type", "number")
             .class(class::FORM_CTRL_B0)
             .attr("step", step)
+            .attr("name","num_input")
             .apply(mixins::string_value(mutable, changed))
         }))
     })
@@ -2362,6 +2373,7 @@ fn td_input_kg_to_gram(mutable: Mutable<String>, changed: Mutable<bool>) -> Dom 
             .attr("type", "number")
             .class(class::FORM_CTRL_B0)
             .attr("step", "0.001")
+            .attr("name","gram_input")
             .prop_signal("value", mutable.signal_ref(|v| v.parse::<f64>().map(|f| f64_rescale(f / 1000.0, 3).to_string()).unwrap_or_default()))
             .with_node!(element => {
                 .event(move |_:events::Change| {
@@ -2391,6 +2403,7 @@ fn td_input_select(items: &[(&str, &str)], mutable: Mutable<String>, changed: Mu
             .children(items.iter().map(|(k,v)| {
                 html!("option", {.attr("value", k).text(v)})
             }))
+            .attr("name","selectable")
             .apply(mixins::string_value_select(mutable, changed))
         }))
     })
@@ -2494,6 +2507,7 @@ fn select_sa(ty: &str, mutable: Mutable<String>, changed: Mutable<bool>) -> Dom 
         .children(items.iter().map(|(k,v)| {
             html!("option", {.attr("value", k).text(v)})
         }))
+        .attr("name","sa")
         .apply(mixins::string_value_select(mutable, changed))
     })
 }
@@ -2531,6 +2545,7 @@ fn select_ca(ty: &str, mutable: Mutable<String>, changed: Mutable<bool>) -> Dom 
         .children(items.iter().map(|(k,v)| {
             html!("option", {.attr("value", k).text(v)})
         }))
+        .attr("name","ca")
         .apply(mixins::string_value_select(mutable, changed))
     })
 }

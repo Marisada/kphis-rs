@@ -391,7 +391,9 @@ impl ReportPreview {
                                                     }))
                                                 }),
                                                 html!("input" => HtmlInputElement, {
+                                                    .attr("type", "text")
                                                     .class(class::FORM_CTRL_C)
+                                                    .attr("name","report_width_percent")
                                                     .prop_signal("value", modal.report_width_percent.signal_cloned().map(|u| [&u.round().to_string(), "%"].concat()))
                                                     .with_node!(element => {
                                                         .event(clone!(app, modal => move |_:events::Change| {

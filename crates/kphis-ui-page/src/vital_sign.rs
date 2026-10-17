@@ -236,6 +236,7 @@ impl VitalSignPage {
                                             .class("form-control")
                                             .focused(true)
                                             .attr("placeholder", "HN/AN/ชื่อ-สกุล")
+                                            .attr("name","search_text")
                                             .prop_signal("value", page.search.signal_cloned())
                                             .with_node!(element => {
                                                 .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyUp| {

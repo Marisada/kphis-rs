@@ -664,6 +664,7 @@ impl ReportViewerPage {
                                                     .class("form-control")
                                                     .focused(true)
                                                     .attr("placeholder", "HN/AN/ชื่อ-สกุล")
+                                                    .attr("name","search_text")
                                                     .prop_signal("value", page.search.signal_cloned())
                                                     .with_node!(element => {
                                                         .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyUp| {
@@ -777,7 +778,9 @@ impl ReportViewerPage {
                                     }))
                                 }),
                                 html!("input" => HtmlInputElement, {
+                                    .attr("type", "text")
                                     .class(class::FORM_CTRL_C)
+                                    .attr("name","report_width_percent")
                                     .prop_signal("value", page.report_width_percent.signal_cloned().map(|u| [&u.round().to_string(), "%"].concat()))
                                     .with_node!(element => {
                                         .event(clone!(app, page => move |_:events::Change| {

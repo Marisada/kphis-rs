@@ -346,7 +346,7 @@ impl VitalSignDataCpn {
                 .style("max-height", "calc(32vh - 120px)")
                 .style("overflow-y", "auto")
                 .children([
-                    html!("lable", {
+                    html!("span", {
                         .class("fw-bold")
                         .text("ประวัติการผ่าตัด")
                     }),

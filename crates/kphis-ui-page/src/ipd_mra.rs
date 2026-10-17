@@ -1804,8 +1804,8 @@ impl IpdMraMutable {
                                         .class(class::FORM_CHK_SW_PT1)
                                         .children([
                                             html!("input" => HtmlInputElement, {
-                                                .class("form-check-input")
                                                 .attr("type", "checkbox")
+                                                .class("form-check-input")
                                                 .attr("role","switch")
                                                 .attr("id", "is-psychiatry-toggle")
                                                 .apply(mixins::checkbox_bool(mra.is_psychiatry.clone(), mra.changed.clone()))
@@ -1867,6 +1867,7 @@ impl IpdMraMutable {
                                                     .class(class::FORM_CTRL_SM)
                                                     .attr("placeholder","ชื่อ-สกุล")
                                                     .attr("aria-label","Auditor")
+                                                    .attr("name","auditor")
                                                     .apply(mixins::opt_string_value(mra.auditor.clone(), mra.changed.clone()))
                                                 }),
                                             ])
@@ -2236,8 +2237,8 @@ impl IpdMraMutable {
                                                 .class(class::FORM_CHK_SW)
                                                 .children([
                                                     html!("input" => HtmlInputElement, {
-                                                        .class("form-check-input")
                                                         .attr("type", "checkbox")
+                                                        .class("form-check-input")
                                                         .attr("role","switch")
                                                         .attr("id", "is-not-sorted-toggle")
                                                         .apply(mixins::checkbox_bool(mra.is_not_sorted.clone(), mra.changed.clone()))
@@ -2249,8 +2250,8 @@ impl IpdMraMutable {
                                                 .class(class::FORM_CHK_SW)
                                                 .children([
                                                     html!("input" => HtmlInputElement, {
-                                                        .class("form-check-input")
                                                         .attr("type", "checkbox")
+                                                        .class("form-check-input")
                                                         .attr("role","switch")
                                                         .attr("id", "is-unknown-toggle")
                                                         .apply(mixins::checkbox_bool(mra.is_unknown.clone(), mra.changed.clone()))
@@ -2268,8 +2269,8 @@ impl IpdMraMutable {
                                                         html!("div", {
                                                             .children([
                                                                 html!("input" => HtmlInputElement, {
-                                                                    .class("form-check-input")
                                                                     .attr("type", "radio")
+                                                                    .class("form-check-input")
                                                                     .attr("id", "overall-inadequate-radio")
                                                                     .apply(mixins::radio_opt_match(mra.overall.clone(), mra.changed.clone(), "I"))
                                                                 }),
@@ -2284,8 +2285,8 @@ impl IpdMraMutable {
                                                         html!("div", {
                                                             .children([
                                                                 html!("input" => HtmlInputElement, {
-                                                                    .class("form-check-input")
                                                                     .attr("type", "radio")
+                                                                    .class("form-check-input")
                                                                     .attr("id", "overall-no-problem-radio")
                                                                     .apply(mixins::radio_opt_match(mra.overall.clone(), mra.changed.clone(), "N"))
                                                                 }),
@@ -2300,8 +2301,8 @@ impl IpdMraMutable {
                                                         html!("div", {
                                                             .children([
                                                                 html!("input" => HtmlInputElement, {
-                                                                    .class("form-check-input")
                                                                     .attr("type", "radio")
+                                                                    .class("form-check-input")
                                                                     .attr("id", "overall-problem-radio")
                                                                     .apply(mixins::radio_opt_match(mra.overall.clone(), mra.changed.clone(), "P"))
                                                                 }),
@@ -2320,6 +2321,7 @@ impl IpdMraMutable {
                                                         html!("textarea" => HtmlTextAreaElement, {
                                                             .class("form-control")
                                                             .attr("placeholder","ปัญหาจากการทบทวน")
+                                                            .attr("name","overall_text")
                                                             .apply(mixins::textarea_opt_value_auto_expand(mra.overall_text.clone(), mra.changed.clone()))
                                                         })
                                                     }))
@@ -2662,9 +2664,11 @@ fn text_input(mutable: Mutable<Option<String>>, changed: Mutable<bool>) -> Dom {
         .class(class::BORDER_RB)
         .style("height","40px")
         .child(html!("input" => HtmlInputElement, {
+            .attr("type", "text")
             .style("width","199px")
             .style("height","38px")
             .style("border-style","none")
+            .attr("name","text_input")
             .apply(mixins::opt_string_value(mutable, changed))
         }))
     })
