@@ -13,18 +13,25 @@
     "orientation": "landscape",
     "screenshots": [
         {
-            "src": "/statics/screenshots/patient-list-wide.png",
+            "src": "/statics/screenshots/patient-list-wide.webp",
             "sizes": "1337x795",
-            "type": "image/png",
+            "type": "image/webp",
             "form_factor": "wide",
-            "label": "Application"
+            "label": "Patient list"
         },
         {
-            "src": "/statics/screenshots/report.png",
+            "src": "/statics/screenshots/report.webp",
             "sizes": "1337x795",
-            "type": "image/png",
+            "type": "image/webp",
             "form_factor": "wide",
-            "label": "Application"
+            "label": "T.P.R. chart preview"
+        },
+        {
+            "src": "/statics/screenshots/patient-list-mobile.webp",
+            "sizes": "544x1224",
+            "type": "image/webp",
+            "form_factor": "narrow",
+            "label": "Patient list"
         }
     ],
     "icons": [
