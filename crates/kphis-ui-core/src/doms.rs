@@ -1382,6 +1382,7 @@ pub fn render_avatar(row: Rc<AvatarEnum>, search_selected: Mutable<Option<VisitT
                     }),
                     html!("div", {
                         .class(class::TRUNC_BOLD)
+                        .style("max-width","200px")
                         .text(&avatar.pname.clone().unwrap_or_default())
                     }),
                 ])
