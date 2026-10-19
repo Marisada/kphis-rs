@@ -73,3 +73,21 @@
 > - v0.3 need `rustflags = ['--cfg', 'getrandom_backend="wasm_js"']` for WASM and need crate `wasm_js` feature, can bloat Cargo.lock and is known to cause build issues on some non-web WASM platforms, even when a different backend is selected via getrandom_backend
 > - v0.4 NOT support `wasm32-unknown-unknown`, read [getrandom](https://docs.rs/getrandom/latest/getrandom/) for more information
 > - NOW we use only v0.2 and `Any crate included in frontend that use getrandom v0.4` will error on compile/runtime, ex. `rand`, `ulid`, `totp`, `orion` crate
+
+## Horizontal scaling note (TODO)
+* Value generate at starting a service
+    - paseto
+    - paseto_public
+* Shared in `ApiState`
+    - online_user
+    - sse_users
+    - sse_wards
+    - sse_spcltys
+    - sse_anonymous_senders
+    - roles
+    - roles_permissions
+    - paseto
+    - paseto_public
+* Authorize checking
+    - state_id from online_user 
+    - real ip address from online_user

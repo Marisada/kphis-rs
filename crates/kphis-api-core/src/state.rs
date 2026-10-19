@@ -118,8 +118,8 @@ impl ApiState {
         let pdf_signer = if can_sign_pdf {
             let pdf_cert_path = config.get_string("pdf-cert-path").expect("'pdf-cert-path' not found in config file");
             let pdf_key_path = config.get_string("pdf-key-path").expect("'pdf-key-path' not found in config file");
-            let public_key = std::fs::read_to_string(&pdf_cert_path).unwrap_or_else(|_| panic!("{}", [&pdf_cert_path, " not found"].concat()));
-            let private_key = std::fs::read_to_string(&pdf_key_path).unwrap_or_else(|_| panic!("{}", [&pdf_key_path, " not found"].concat()));
+            let public_key = std::fs::read_to_string(&pdf_cert_path).unwrap_or_else(|_| panic!("{} not found", pdf_cert_path));
+            let private_key = std::fs::read_to_string(&pdf_key_path).unwrap_or_else(|_| panic!("{} not found", pdf_key_path));
             let signing_certificate = CapturedX509Certificate::from_pem(public_key).expect("Error parsing x509 Certificate");
             let signing_key = Arc::new(InMemorySigningKeyPair::from_pkcs8_pem(private_key).expect("Error parsing pkcs#8 key"));
             let tsa = config.get_string("pdf-time-stamp-authority-url").ok();
@@ -899,8 +899,11 @@ where
         let matched_path = MatchedPath::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "MatchedPath Not Found", "Extract MatchedPath"))?;
         let State(api_state): State<ApiState> = State::from_request_parts(parts, state).await.map_err(|_| Source::App.to_error(500, "ApiState Not Found", "Extract State"))?;
         // let path_query = parts.uri.path_and_query().cloned();
+
+        // from real_ip_middleware()
         let Extension(real_addr) = parts.extract::<Extension<SocketAddr>>().await.map_err(|_| Source::App.to_error(500, "RealAddr Not Found", "Extract SocketAddr"))?;
 
+        // from token_id_middleware()
         let state_id_opt = parts.extract::<Extension<u128>>().await.ok().map(|Extension(state_id)| state_id);
         let user_state = match state_id_opt {
             Some(state_id) => {
