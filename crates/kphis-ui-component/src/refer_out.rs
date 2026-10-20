@@ -265,7 +265,7 @@ impl ReferOutCpn {
                                     pe.push_str(&bw);
                                     pe.push_str(" Kg");
                                 }
-                                if let Some(ht) = pt_ht.or(response.opdscreen_pe.as_ref().and_then(|ope| ope.height)).map(|h| h.to_string()) {
+                                if let Some(ht) = pt_ht.map(|n| n as f64).or(response.opdscreen_pe.as_ref().and_then(|ope| ope.height)).map(|h| h.to_string()) {
                                     if !pe.is_empty() {pe.push(',')};
                                     pe.push_str(" HT: ");
                                     pe.push_str(&ht);

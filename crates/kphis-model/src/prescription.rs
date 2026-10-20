@@ -234,8 +234,8 @@ pub struct PrescriptionVn {
     pub bpd: Option<f64>,
     #[Demo(value = "Some(50.0)")]
     pub bw: Option<f64>,
-    #[Demo(value = "Some(170)")]
-    pub height: Option<i32>,
+    #[Demo(value = "Some(170.0)")]
+    pub height: Option<f64>,
     #[Demo(value = "Some(17.3)")]
     pub bmi: Option<f64>,
     #[Demo(value = "Some(88.8)")]

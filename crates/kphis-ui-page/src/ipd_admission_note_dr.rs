@@ -464,7 +464,7 @@ impl IpdAdmissionNoteDrPage {
                             page.rr_opdscreen.set_neq(pe.rr.map(|f| f.to_string()).unwrap_or_default());
                             page.bp_opdscreen.set_neq([&pe.bps.map(|f| f.to_string()).unwrap_or(String::from("-")), "/", &pe.bpd.map(|f| f.to_string()).unwrap_or(String::from("-"))].concat());
                             page.pe_bw.set_neq(pe.bw.map(|f| f.to_string()).unwrap_or_default());
-                            page.pe_height.set_neq(pe.height.map(|i| i.to_string()).unwrap_or_default());
+                            page.pe_height.set_neq(pe.height.map(|f| f.to_string()).unwrap_or_default());
                         } else {
                             page.pe_bw.set_neq(String::new());
                             page.pe_height.set_neq(String::new());

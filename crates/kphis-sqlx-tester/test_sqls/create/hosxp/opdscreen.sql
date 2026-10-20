@@ -31,7 +31,7 @@ CREATE TABLE `hos`.`opdscreen` (
 	`his_cause_increase` VARCHAR(250) NULL DEFAULT NULL,
 	`his_cause_decrease` VARCHAR(250) NULL DEFAULT NULL,
 	`his_related_sign` VARCHAR(250) NULL DEFAULT NULL,
-	`height` INT(11) NULL DEFAULT NULL,
+	`height` DOUBLE(15,3) NULL DEFAULT NULL,
 	`screen_dep` CHAR(3) NULL DEFAULT NULL,
 	`waiting` CHAR(1) NULL DEFAULT NULL,
 	`fbs` DOUBLE(15,3) NULL DEFAULT NULL,

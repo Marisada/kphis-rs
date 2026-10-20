@@ -627,7 +627,7 @@ impl VitalSignFormCpn {
                                     page.sbp.set_neq(sbp);
                                     page.dbp.set_neq(opdscreen.bpd.and_then(zero_none).map(|f| f.to_string()).unwrap_or_default());
                                     page.bw.set_neq(opdscreen.bw.and_then(zero_none).map(|f| f.to_string()).unwrap_or_default());
-                                    page.height.set_neq(opdscreen.height.and_then(zero_none).map(|i| i.to_string()).unwrap_or_default());
+                                    page.height.set_neq(opdscreen.height.and_then(zero_none).map(|f| f.to_string()).unwrap_or_default());
                                     page.pain.set_neq(opdscreen.pain_score.and_then(zero_none).map(|i| i.to_string()).unwrap_or_default());
 
                                     page.eye.set_neq(eye);

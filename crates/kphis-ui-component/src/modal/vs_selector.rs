@@ -168,7 +168,7 @@ impl VsSelector {
                                     if let Some(bw) = opdscreen.bw.and_then(zero_none).map(|f| f.to_string()) {
                                         buf.push(["BW: ", &bw, " Kg"].concat());
                                     }
-                                    if let Some(ht) = opdscreen.height.and_then(zero_none).map(|i| i.to_string()) {
+                                    if let Some(ht) = opdscreen.height.and_then(zero_none).map(|f| f.to_string()) {
                                         buf.push(["HT: ", &ht, " cm"].concat());
                                     }
                                     let vs_text = buf.join(", ");
