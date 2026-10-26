@@ -75,6 +75,7 @@ web-sys = { workspace = true, features = [
     "Url",
     "Window",
 ]}
+zeroize = { workspace = true }
 
 # OpenApi
 utoipa = { workspace = true }

@@ -84,15 +84,6 @@ pub async fn check_login(Extension(real_addr): Extension<SocketAddr>, State(app)
             return Err(AppError::app_401("Check Login").with_title(ErrorTitle::Security));
         }
     } else {
-        // let real_addr = app
-        //     .app_config
-        //     .real_ip_header
-        //     .as_ref()
-        //     .and_then(|real_ip_header| headers.get(real_ip_header))
-        //     .and_then(|v| v.to_str().ok())
-        //     .and_then(|v| v.parse::<IpAddr>().ok())
-        //     .map(|ip| SocketAddr::new(ip, socket_addr.port()))
-        //     .unwrap_or(socket_addr);
         let tuple = login_response(real_addr, &user, &cookies, &app).await?;
         tracing::info!("User {} ({}) Log-in from {}", &user.name, &user.loginname, real_addr.to_string());
 
@@ -180,15 +171,6 @@ pub async fn check_totp(Extension(real_addr): Extension<SocketAddr>, State(app):
     let response_tuple_opt = if payload.is_sub {
         None
     } else {
-        // let real_addr = app
-        //     .app_config
-        //     .real_ip_header
-        //     .as_ref()
-        //     .and_then(|real_ip_header| headers.get(real_ip_header))
-        //     .and_then(|v| v.to_str().ok())
-        //     .and_then(|v| v.parse::<IpAddr>().ok())
-        //     .map(|ip| SocketAddr::new(ip, socket_addr.port()))
-        //     .unwrap_or(socket_addr);
         let tuple = login_response(real_addr, &user, &cookies, &app).await?;
         tracing::info!("User {} ({}) Log-in from {}", &user.name, &user.loginname, real_addr.to_string());
 
@@ -222,28 +204,21 @@ pub async fn refresh_token(Extension(real_addr): Extension<SocketAddr>, State(ap
     let state_id = get_state_id(&claims)?;
     match app.online_get(state_id).await {
         Some(UserState { user, roles, permissions, addr, .. }) => {
-            let user_db = login::get_user(&user.loginname, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
-                .await?
-                .ok_or(AppError::app_401("Unexpected").with_title(ErrorTitle::Security))?;
             // check expiration after check online-user
             let now_ts = get_timestamp_server()?;
             if claims.iat > now_ts || claims.exp < now_ts {
                 return Err(Source::App.to_error(409, "Expired", "Get Token").with_title(ErrorTitle::Security));
             }
             // check IP address
-            // let real_addr = app
-            //     .app_config
-            //     .real_ip_header
-            //     .as_ref()
-            //     .and_then(|real_ip_header| headers.get(real_ip_header))
-            //     .and_then(|v| v.to_str().ok())
-            //     .and_then(|v| v.parse::<IpAddr>().ok())
-            //     .unwrap_or(socket_addr.ip());
             if addr.ip() != real_addr.ip() {
-                tracing::warn!("User {} ({}) failed to refresh token because mismatched IP Address", &user_db.name, &user_db.loginname);
+                tracing::warn!("User {} ({}) failed to refresh token because mismatched IP Address", &user.name, &user.loginname);
                 return Err(Source::App.to_error(401, "Mismatched IP Address", "Get Token"));
             }
 
+            // use latest user data
+            let user_db = login::get_user(&user.loginname, &app.db_pool, &app.hosxp(), &app.kphis(), &app.kphis_extra())
+                .await?
+                .ok_or(AppError::app_401("Unexpected").with_title(ErrorTitle::Security))?;
             let response = refresh_response(state_id, &user_db, roles, permissions, &cookies, &app)?;
             tracing::info!("User {} ({}) request a new access-token from {}", &user_db.name, &user_db.loginname, real_addr.to_string());
 
@@ -279,7 +254,7 @@ pub async fn refresh_cookie(Extension(real_addr): Extension<SocketAddr>, State(a
             let mut is_failed = None;
             // check password
             if let Err(e) = verify_password(&user_db.passweb, &payload.password) {
-                tracing::warn!("User {} ({}) failed to login with {}", &user_db.name, &user.loginname, e.message);
+                tracing::warn!("User {} ({}) failed to login with {}", &user_db.name, &user_db.loginname, e.message);
                 is_failed = Some(e);
             }
             // check TOTP
@@ -297,21 +272,12 @@ pub async fn refresh_cookie(Extension(real_addr): Extension<SocketAddr>, State(a
             // return with failed
             if let Some(e) = is_failed {
                 // bump failed +1
-                if config::insert_dup_failed(user.failed.unwrap_or_default() + 1, &user.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
+                if config::insert_dup_failed(user_db.failed.unwrap_or_default() + 1, &user_db.loginname, &app.db_pool, &app.kphis_extra()).await?.rows_affected() == 0 {
                     return Err(Source::App.to_error(500, "Unexpected Error", "Check TOTP").with_title(ErrorTitle::Security));
                 }
                 return Err(e);
             }
-
             // check IP address
-            // let real_addr = app
-            //     .app_config
-            //     .real_ip_header
-            //     .as_ref()
-            //     .and_then(|real_ip_header| headers.get(real_ip_header))
-            //     .and_then(|v| v.to_str().ok())
-            //     .and_then(|v| v.parse::<IpAddr>().ok())
-            //     .unwrap_or(socket_addr.ip());
             if addr.ip() != real_addr.ip() {
                 tracing::warn!("User {} ({}) failed to login because mismatched IP Address", &user_db.name, &user_db.loginname);
                 return Err(Source::App.to_error(401, "Mismatched IP Address", "Get Token"));

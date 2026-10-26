@@ -7,6 +7,7 @@ use serde_derive::{Deserialize, Serialize};
 use sqlx::FromRow;
 use std::rc::Rc;
 use utoipa::ToSchema;
+use zeroize::Zeroize;
 
 use kphis_util::{
     datetime::get_timestamp_wasm,
@@ -44,43 +45,6 @@ fn argon2_enc(data: &[u8]) -> argon2::password_hash::Result<String> {
 // Flow of user model //
 //====================//
 
-// 0. user request for authentication
-/// User Request for log-in
-#[derive(Debug, Demo, Serialize, Deserialize, ToSchema)]
-#[schema(example = json!(UserRequest::demo()))]
-pub struct UserRequest {
-    /// username (POST) or Ulid of state_id (PUT)
-    #[Demo(value = r#"String::from("user")"#)]
-    pub username: String,
-    #[Demo(value = r#"String::from("$argon2id$v=19$m=19456,t=2,p=1$/XFasj8WyfzzGzV2fnouWQ$OfHASwUrzgJmchn9LvM+T7IHtvI//W+BMgBe70jDnqU")"#)]
-    pub password: String,
-}
-
-/// User Request for checking 2FA
-#[derive(Debug, Demo, Serialize, Deserialize, ToSchema)]
-#[schema(example = json!(UserRequest2fa::demo()))]
-pub struct UserRequest2fa {
-    #[Demo(value = r#"String::from("user")"#)]
-    pub username: String,
-    #[Demo(value = r#"String::from("123456")"#)]
-    pub token_2fa: String,
-    /// if 'is_sub' is true, 'username' is token's sub
-    #[Demo(value = "true")]
-    pub is_sub: bool,
-}
-
-/// User Request for confirm
-#[derive(Debug, Demo, Serialize, Deserialize, ToSchema)]
-#[schema(example = json!(UserRequestFull::demo()))]
-pub struct UserRequestFull {
-    #[Demo(value = r#"String::from("01J15C32QJE9R3RPHT04QJB9AD")"#)]
-    pub username: String,
-    #[Demo(value = r#"String::from("$argon2id$v=19$m=19456,t=2,p=1$/XFasj8WyfzzGzV2fnouWQ$OfHASwUrzgJmchn9LvM+T7IHtvI//W+BMgBe70jDnqU")"#)]
-    pub password: String,
-    #[Demo(value = r#"String::from("123456")"#)]
-    pub token_2fa: String,
-}
-
 // 1. from database
 /// user from database
 #[derive(Clone, Default, Debug, Serialize, Deserialize)]
@@ -105,8 +69,39 @@ pub struct UserDb {
     pub spclty_ids: Vec<u32>,
 }
 
-// 2. backend usage without credentials
-// user without credentials
+// ensure that passweb is clear from memory
+// but UserDB MUST NOT move (stack to heap; ex: Box, drop heap, but stack remain)
+impl Drop for UserDb {
+    fn drop(&mut self) {
+        self.passweb.zeroize();
+    }
+}
+
+// 2. store in backend memory
+#[derive(Clone, Default)]
+pub struct UserInMemory {
+    pub loginname: String,
+    pub name: String,
+    pub doctorcode: Option<String>,
+    pub groupname: Option<String>,
+    pub wards: Vec<String>,
+    pub spclty_ids: Vec<u32>,
+}
+
+impl From<&UserDb> for UserInMemory {
+    fn from(item: &UserDb) -> Self {
+        Self {
+            loginname: item.loginname.clone(),
+            name: item.name.clone(),
+            doctorcode: item.doctorcode.clone(),
+            groupname: item.groupname.clone(),
+            wards: item.wards.clone(),
+            spclty_ids: item.spclty_ids.clone(),
+        }
+    }
+}
+
+// 3. backend/frontend usage without credentials
 /// User data
 #[derive(Clone, Debug, Demo, Deserialize, Serialize, PartialEq, ToSchema)]
 #[schema(example = json!(User::demo()))]
@@ -139,26 +134,6 @@ pub struct User {
     pub spclty_ids: Vec<u32>,
 }
 
-impl From<UserDb> for User {
-    fn from(item: UserDb) -> Self {
-        Self {
-            name: item.name,
-            doctorcode: item.doctorcode.unwrap_or_default(),
-            groupname: item.groupname.unwrap_or_default(),
-            accessright: item.accessright,
-            entryposition: item.entryposition.unwrap_or_default(),
-            licenseno: item.licenseno.unwrap_or_default(),
-            image: item.image,
-            can_passcode: item.can_passcode,
-            theme: item.theme.unwrap_or(String::from("light")),
-            wide_screen: item.wide_screen.unwrap_or(String::from("table")),
-            totp_done: item.totp_done.map(|n| n > 0),
-            wards: item.wards,
-            spclty_ids: item.spclty_ids,
-        }
-    }
-}
-
 impl From<&UserDb> for User {
     fn from(item: &UserDb) -> Self {
         Self {
@@ -179,7 +154,65 @@ impl From<&UserDb> for User {
     }
 }
 
-// 3. send to wasm client
+// 4. Mutable in wasm 
+#[derive(Clone, Debug)]
+pub struct UserMutable {
+    pub name: Mutable<String>,
+    pub doctorcode: Mutable<String>,
+    pub groupname: Mutable<String>,
+    pub accessright: Mutable<String>,
+    pub entryposition: Mutable<String>,
+    pub licenseno: Mutable<String>,
+    pub image: Mutable<Rc<ImageBase64>>,
+    pub can_passcode: bool,
+    pub theme: Mutable<String>,
+    pub wide_screen: Mutable<String>,
+    pub totp_done: Mutable<Option<bool>>,
+    pub wards: Mutable<Vec<String>>,
+    pub spclty_ids: Mutable<Vec<u32>>,
+}
+
+impl From<User> for UserMutable {
+    fn from(item: User) -> Self {
+        Self {
+            name: Mutable::new(item.name),
+            doctorcode: Mutable::new(item.doctorcode),
+            groupname: Mutable::new(item.groupname),
+            accessright: Mutable::new(item.accessright),
+            entryposition: Mutable::new(item.entryposition),
+            licenseno: Mutable::new(item.licenseno),
+            image: Mutable::new(Rc::new(item.image.unwrap_or(ImageBase64::new_user()))),
+            can_passcode: item.can_passcode,
+            theme: Mutable::new(item.theme),
+            wide_screen: Mutable::new(item.wide_screen),
+            totp_done: Mutable::new(item.totp_done),
+            wards: Mutable::new(item.wards),
+            spclty_ids: Mutable::new(item.spclty_ids),
+        }
+    }
+}
+
+impl From<UserMutable> for User {
+    fn from(item: UserMutable) -> Self {
+        Self {
+            name: item.name.get_cloned(),
+            doctorcode: item.doctorcode.get_cloned(),
+            groupname: item.groupname.get_cloned(),
+            accessright: item.accessright.get_cloned(),
+            entryposition: item.entryposition.get_cloned(),
+            licenseno: item.licenseno.get_cloned(),
+            image: Some(item.image.get_cloned().as_ref().to_owned()),
+            can_passcode: item.can_passcode,
+            theme: item.theme.get_cloned(),
+            wide_screen: item.wide_screen.get_cloned(),
+            totp_done: item.totp_done.get(),
+            wards: item.wards.get_cloned(),
+            spclty_ids: item.spclty_ids.get_cloned(),
+        }
+    }
+}
+
+// Wrapper of User
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
 pub struct UserClient {
     pub user: User,
@@ -199,7 +232,7 @@ impl UserClient {
     }
 }
 
-// 4. use in wasm
+// Wrapper of UserMutable
 #[derive(Clone, Debug)]
 pub struct UserClientMutable {
     pub user: UserMutable,
@@ -259,62 +292,78 @@ impl From<UserClientMutable> for UserClient {
     }
 }
 
-// 5. use in wasm UserClientMutable
+/// Current User Role
+#[derive(Clone, Debug, Demo, Deserialize, FromRow, Serialize, PartialEq, ToSchema)]
+#[schema(example = json!(CurrentUserRole::demo()))]
+pub struct CurrentUserRole {
+    #[Demo(value = r#"String::from("DOCTOR_STAFF")"#)]
+    pub role: String,
+    #[Demo(value = r#"String::from("แพทย์ STAFF")"#)]
+    pub role_desc: String,
+}
+
 #[derive(Clone, Debug)]
-pub struct UserMutable {
-    pub name: Mutable<String>,
-    pub doctorcode: Mutable<String>,
-    pub groupname: Mutable<String>,
-    pub accessright: Mutable<String>,
-    pub entryposition: Mutable<String>,
-    pub licenseno: Mutable<String>,
-    pub image: Mutable<Rc<ImageBase64>>,
-    pub can_passcode: bool,
-    pub theme: Mutable<String>,
-    pub wide_screen: Mutable<String>,
-    pub totp_done: Mutable<Option<bool>>,
-    pub wards: Mutable<Vec<String>>,
-    pub spclty_ids: Mutable<Vec<u32>>,
+pub struct CurrentUserRoleMutable {
+    pub role: Mutable<String>,
+    pub role_desc: Mutable<String>,
 }
 
-impl From<User> for UserMutable {
-    fn from(item: User) -> Self {
+impl From<CurrentUserRole> for CurrentUserRoleMutable {
+    fn from(item: CurrentUserRole) -> Self {
         Self {
-            name: Mutable::new(item.name),
-            doctorcode: Mutable::new(item.doctorcode),
-            groupname: Mutable::new(item.groupname),
-            accessright: Mutable::new(item.accessright),
-            entryposition: Mutable::new(item.entryposition),
-            licenseno: Mutable::new(item.licenseno),
-            image: Mutable::new(Rc::new(item.image.unwrap_or(ImageBase64::new_user()))),
-            can_passcode: item.can_passcode,
-            theme: Mutable::new(item.theme),
-            wide_screen: Mutable::new(item.wide_screen),
-            totp_done: Mutable::new(item.totp_done),
-            wards: Mutable::new(item.wards),
-            spclty_ids: Mutable::new(item.spclty_ids),
+            role: Mutable::new(item.role),
+            role_desc: Mutable::new(item.role_desc),
         }
     }
 }
 
-impl From<UserMutable> for User {
-    fn from(item: UserMutable) -> Self {
+impl From<CurrentUserRoleMutable> for CurrentUserRole {
+    fn from(item: CurrentUserRoleMutable) -> Self {
         Self {
-            name: item.name.get_cloned(),
-            doctorcode: item.doctorcode.get_cloned(),
-            groupname: item.groupname.get_cloned(),
-            accessright: item.accessright.get_cloned(),
-            entryposition: item.entryposition.get_cloned(),
-            licenseno: item.licenseno.get_cloned(),
-            image: Some(item.image.get_cloned().as_ref().to_owned()),
-            can_passcode: item.can_passcode,
-            theme: item.theme.get_cloned(),
-            wide_screen: item.wide_screen.get_cloned(),
-            totp_done: item.totp_done.get(),
-            wards: item.wards.get_cloned(),
-            spclty_ids: item.spclty_ids.get_cloned(),
+            role: item.role.get_cloned(),
+            role_desc: item.role_desc.get_cloned(),
         }
     }
+}
+
+//====================//
+// Request & Response //
+//====================//
+
+/// User Request for log-in
+#[derive(Debug, Demo, Serialize, Deserialize, ToSchema)]
+#[schema(example = json!(UserRequest::demo()))]
+pub struct UserRequest {
+    /// username (POST) or Ulid of state_id (PUT)
+    #[Demo(value = r#"String::from("user")"#)]
+    pub username: String,
+    #[Demo(value = r#"String::from("$argon2id$v=19$m=19456,t=2,p=1$/XFasj8WyfzzGzV2fnouWQ$OfHASwUrzgJmchn9LvM+T7IHtvI//W+BMgBe70jDnqU")"#)]
+    pub password: String,
+}
+
+/// User Request for checking 2FA
+#[derive(Debug, Demo, Serialize, Deserialize, ToSchema)]
+#[schema(example = json!(UserRequest2fa::demo()))]
+pub struct UserRequest2fa {
+    #[Demo(value = r#"String::from("user")"#)]
+    pub username: String,
+    #[Demo(value = r#"String::from("123456")"#)]
+    pub token_2fa: String,
+    /// if 'is_sub' is true, 'username' is token's sub
+    #[Demo(value = "true")]
+    pub is_sub: bool,
+}
+
+/// User Request for confirm
+#[derive(Debug, Demo, Serialize, Deserialize, ToSchema)]
+#[schema(example = json!(UserRequestFull::demo()))]
+pub struct UserRequestFull {
+    #[Demo(value = r#"String::from("01J15C32QJE9R3RPHT04QJB9AD")"#)]
+    pub username: String,
+    #[Demo(value = r#"String::from("$argon2id$v=19$m=19456,t=2,p=1$/XFasj8WyfzzGzV2fnouWQ$OfHASwUrzgJmchn9LvM+T7IHtvI//W+BMgBe70jDnqU")"#)]
+    pub password: String,
+    #[Demo(value = r#"String::from("123456")"#)]
+    pub token_2fa: String,
 }
 
 /// Login Response
@@ -440,41 +489,6 @@ impl LoginResponse {
                 }
             }
             None => Err(Source::App.to_teapot_error("Token sub not found", "Renew Refresh")),
-        }
-    }
-}
-
-// general usage
-/// Current User Role
-#[derive(Clone, Debug, Demo, Deserialize, FromRow, Serialize, PartialEq, ToSchema)]
-#[schema(example = json!(CurrentUserRole::demo()))]
-pub struct CurrentUserRole {
-    #[Demo(value = r#"String::from("DOCTOR_STAFF")"#)]
-    pub role: String,
-    #[Demo(value = r#"String::from("แพทย์ STAFF")"#)]
-    pub role_desc: String,
-}
-
-#[derive(Clone, Debug)]
-pub struct CurrentUserRoleMutable {
-    pub role: Mutable<String>,
-    pub role_desc: Mutable<String>,
-}
-
-impl From<CurrentUserRole> for CurrentUserRoleMutable {
-    fn from(item: CurrentUserRole) -> Self {
-        Self {
-            role: Mutable::new(item.role),
-            role_desc: Mutable::new(item.role_desc),
-        }
-    }
-}
-
-impl From<CurrentUserRoleMutable> for CurrentUserRole {
-    fn from(item: CurrentUserRoleMutable) -> Self {
-        Self {
-            role: item.role.get_cloned(),
-            role_desc: item.role_desc.get_cloned(),
         }
     }
 }

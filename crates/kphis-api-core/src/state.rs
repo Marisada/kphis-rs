@@ -35,19 +35,8 @@ use kphis_api_query::{
     user::role::{get_all_role, get_role_permission_list},
 };
 use kphis_model::{
-    API_PREFIX,
-    app::AppAsset,
-    claim::Claims,
-    endpoint::EndPoint,
-    pacs::PacsConfig,
-    prescription::{MessageDrugGroup, MessageDrugLabGroup},
-    score::SupportedScore,
-    select_utils::ColorSelectOption,
-    sse::{SseData, SseGroup, SseMessage},
-    user::{
-        his::{CurrentUserRole, UserDb},
-        permission::Permission,
-        role::{Role, RolePermissionList, UserRoleParams},
+    API_PREFIX, app::AppAsset, claim::Claims, endpoint::EndPoint, pacs::PacsConfig, prescription::{MessageDrugGroup, MessageDrugLabGroup}, score::SupportedScore, select_utils::ColorSelectOption, sse::{SseData, SseGroup, SseMessage}, user::{
+        his::{CurrentUserRole, UserDb, UserInMemory}, permission::Permission, role::{Role, RolePermissionList, UserRoleParams},
     },
 };
 use kphis_util::{
@@ -506,7 +495,7 @@ impl ApiState {
             state_id,
             UserState {
                 state_id,
-                user: user.to_owned(),
+                user: user.into(),
                 roles: roles.to_vec(),
                 permissions: permissions.to_vec(),
                 addr,
@@ -931,7 +920,7 @@ where
 #[derive(Clone)]
 pub struct UserState {
     pub state_id: u128,
-    pub user: UserDb,
+    pub user: UserInMemory,
     pub roles: Vec<CurrentUserRole>,
     pub permissions: Vec<Permission>,
     pub addr: SocketAddr,

@@ -5,7 +5,7 @@ use kphis_api_core::{
     open_api::{DocOne, DocVec},
     state::RequestState,
 };
-use kphis_api_query::ipd::passcode;
+use kphis_api_query::{ipd::passcode, user::login};
 use kphis_model::ipd::passcode::{ConfigIpdWardPasscode, PasscodeGenRequest, PasscodeGenRequestMode, PasscodeGenResponse};
 use kphis_util::error::AppError;
 
@@ -41,13 +41,16 @@ pub async fn get_ipd_ward_passcode(ctx: RequestState) -> Result<Json<Vec<ConfigI
 pub async fn post_ipd_ward_passcode(ctx: RequestState, Json(payload): Json<PasscodeGenRequest>) -> Result<Json<PasscodeGenResponse>, AppError> {
     ctx.authorize(false).await?;
 
+    let user_db = login::get_user(&ctx.user_state.user.loginname, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis(), &ctx.api_state.kphis_extra())
+        .await?
+        .ok_or(AppError::app_404("Unexpected"))?;
     // Check privilege
-    if !ctx.user_state.user.can_passcode {
+    if !user_db.can_passcode {
         tracing::warn!("user {} cannot change ward passcode", &ctx.user_state.user.name);
         return Err(AppError::app_401("Post WardPasscode"));
     }
     // Check password
-    if let Err(e) = verify_password(&ctx.user_state.user.passweb, &payload.password) {
+    if let Err(e) = verify_password(&user_db.passweb, &payload.password) {
         tracing::warn!("user {} failed to verify with {}", &ctx.user_state.user.name, e.message);
         return Err(e);
     }
