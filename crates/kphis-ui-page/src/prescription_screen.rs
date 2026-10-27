@@ -574,7 +574,7 @@ impl PrescriptionScreenPage {
                                     html!("span", {.text(&info.homeaddr.clone().unwrap_or(String::from("ไม่ระบุ")))}),
                                 ])
                                 .apply(|dom| {
-                                    if let Some(hometel) = &info.hometel {
+                                    if let Some(hometel) = &info.hometel && !hometel.is_empty() {
                                         dom.children([
                                             html!("span", {.class("fw-bold").text(" โทร : ")}),
                                             html!("span", {.text(&hometel)}),
@@ -670,17 +670,17 @@ impl PrescriptionScreenPage {
                 html!("div", {
                     .children([
                         html!("span", {.class("fw-bold").text("BW : ")}),
-                        html!("span", {.text(&visit.bw.map(|f| f.to_string()).unwrap_or(String::from("ไม่ระบุ"))).text(" Kg.")}),
+                        html!("span", {.text(&visit.bw.map(|f| f.to_string()).unwrap_or(String::from("-"))).text(" Kg.")}),
                         html!("span", {.class("fw-bold").text(" HT : ")}),
-                        html!("span", {.text(&visit.height.map(|f| f.to_string()).unwrap_or(String::from("ไม่ระบุ"))).text(" Cm.")}),
+                        html!("span", {.text(&visit.height.map(|f| f.to_string()).unwrap_or(String::from("-"))).text(" Cm.")}),
                         html!("span", {.class("fw-bold").text(" BMI : ")}),
-                        html!("span", {.text(&visit.bmi.map(|f| f64_rescale(f, 2).to_string()).unwrap_or(String::from("ไม่ระบุ")))}),
+                        html!("span", {.text(&visit.bmi.map(|f| f64_rescale(f, 2).to_string()).unwrap_or(String::from("-")))}),
                     ])
                 }),
                 html!("div", {
                     .children([
                         html!("span", {.class("fw-bold").text("BT : ")}),
-                        html!("span", {.text(&visit.temperature.map(|f| f.to_string()).unwrap_or(String::from("ไม่ระบุ"))).text("\u{00b0}C")}),
+                        html!("span", {.text(&visit.temperature.map(|f| f.to_string()).unwrap_or(String::from("-"))).text("\u{00b0}C")}),
                         html!("span", {.class("fw-bold").text(" BP : ")}),
                         html!("span", {.text(&[visit.bps.map(|f| f.to_string()).unwrap_or(String::from("-")), visit.bpd.map(|f| f.to_string()).unwrap_or(String::from("-"))].join("/")).text(" mmHg.")}),
                     ])
@@ -738,34 +738,36 @@ impl PrescriptionScreenPage {
                     dom
                 }
             })
-            .child(html!("div", {
-                .class("col")
+            .apply_if(!visit.next_app.is_empty(), |visit_dom| { visit_dom
                 .child(html!("div", {
-                    .children([
-                        html!("div", {.class("fw-bold").text("นัดหมาย :")}),
-                        html!("ul", {
-                            .children(visit.next_app.iter().map(clone!(page => move |next_app| {
-                                let appointment_date = next_app.nextdate.and_then(|nextdate| {
-                                    page.info.lock_ref().as_ref().and_then(|info| {
-                                        info.dates.iter().find(|date| date.vstdate.map(|d| d == nextdate).unwrap_or_default()).cloned()
+                    .class("col")
+                    .child(html!("div", {
+                        .children([
+                            html!("div", {.class("fw-bold").text("นัดหมาย :")}),
+                            html!("ul", {
+                                .children(visit.next_app.iter().map(clone!(page => move |next_app| {
+                                    let appointment_date = next_app.nextdate.and_then(|nextdate| {
+                                        page.info.lock_ref().as_ref().and_then(|info| {
+                                            info.dates.iter().find(|date| date.vstdate.map(|d| d == nextdate).unwrap_or_default()).cloned()
+                                        })
+                                    });
+                                    html!("li", {
+                                        .text(&next_app.string())
+                                        .apply_if(appointment_date.is_some(), |dom| { dom
+                                            .style("cursor","pointer")
+                                            .child(html!("i", {.class(class::FA_REPLY).class("ms-1")}))
+                                            .event(clone!(page => move |_:events::Click| {
+                                                page.current_date.set(appointment_date.clone());
+                                                page.reload_visit.set_neq(true);
+                                            }))
+                                        })
                                     })
-                                });
-                                html!("li", {
-                                    .text(&next_app.string())
-                                    .apply_if(appointment_date.is_some(), |dom| { dom
-                                        .style("cursor","pointer")
-                                        .child(html!("i", {.class(class::FA_REPLY).class("ms-1")}))
-                                        .event(clone!(page => move |_:events::Click| {
-                                            page.current_date.set(appointment_date.clone());
-                                            page.reload_visit.set_neq(true);
-                                        }))
-                                    })
-                                })
-                            })))
-                        }),
-                    ])
+                                })))
+                            }),
+                        ])
+                    }))
                 }))
-            }))
+            })
         })
     }
 
