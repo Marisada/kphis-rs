@@ -21,7 +21,7 @@ use kphis_ui_component::{
 };
 use kphis_ui_core::{class, doms, mixins};
 use kphis_util::{
-    datetime::{date_and_time_th_opt_relative, date_th_relative, datetime_from_opt, datetime_th_relative},
+    datetime::{date_and_time_th_opt_relative, date_th, date_th_relative, datetime_from_opt, datetime_th_relative},
     util::{f64_rescale, opt_zero_none, sanity_dot_space, str_some},
 };
 
@@ -546,14 +546,26 @@ impl PrescriptionScreenPage {
                                     .class("me-1")
                                     .text(&info.sex_name.clone().unwrap_or_default())
                                 }))
-                                .apply_if(age_y > 0, |dom| {
-                                    dom.text(&[&age_y.to_string(), " ปี"].concat())
+                                .apply(|dom| {
+                                    if age_y > 0 {
+                                        dom.text(&[&age_y.to_string(), " ปี"].concat())
+                                    } else if age_m > 0 {
+                                        dom.text(&[&age_m.to_string(), " เดือน ", &age_d.to_string(), " วัน"].concat())
+                                    } else {
+                                        dom.text(&[&age_d.to_string(), " วัน"].concat())
+                                    }
                                 })
-                                .apply_if(age_y == 0 && age_m > 0, |dom| {
-                                    dom.text(&[&age_m.to_string(), " เดือน ", &age_d.to_string(), " วัน"].concat())
-                                })
-                                .apply_if(age_y == 0 && age_m == 0, |dom| {
-                                    dom.text(&[&age_d.to_string(), " วัน"].concat())
+                                .apply(|dom| {
+                                    if let Some(birthday) = &info.birthday {
+                                        dom.child(html!("span", {
+                                            .class("ms-1")
+                                            .text("(เกิด ")
+                                            .text(&date_th(&birthday))
+                                            .text(")")
+                                        }))
+                                    } else {
+                                        dom
+                                    }
                                 })
                             }),
                             html!("div", {
