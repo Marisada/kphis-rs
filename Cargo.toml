@@ -128,6 +128,7 @@ web-sys = "0.3"
 winauth = { git = "https://codeberg.org/marisada/winauth-rs" }
 # winauth = { path = "../winauth-rs/winauth" }
 xml = "1"
+zeroize = "1"
 
 # Typst related
 codespan-reporting = "0.13"

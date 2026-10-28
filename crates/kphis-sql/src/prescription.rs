@@ -4,7 +4,7 @@ use time::Date;
 use crate::{TABLE_CREATE_COLUMNS, TABLE_CREATE_PREPARED, TABLE_UPDATE_SET};
 
 // // pharmacy-prescription-screen-utils.php
-// SELECT ovst.vstdate,ovst.oqueue,ovst.hn,ovst.vn,p.cid,RTRIM(CONCAT(patient.pname,patient.fname,' ',patient.lname)) AS fullname,vn_stat.age_y,
+// SELECT ovst.vstdate,ovst.oqueue,ovst.hn,ovst.vn,p.cid,p.birthday,RTRIM(CONCAT(patient.pname,patient.fname,' ',patient.lname)) AS fullname,vn_stat.age_y,
 //    CONCAT_WS(' ',p.addrpart,'หมู่',p.moopart,tambol.full_address_name) AS homeaddr,p.hometel
 // FROM hos.ovst
 //     LEFT JOIN hos.patient ON patient.hn=ovst.hn
@@ -19,7 +19,7 @@ pub fn select_info_qn(
 ) -> String {
     let patient = or_opd_patient_or_qn(search_text, hlen, vlen, hosxp).unwrap_or_default();
     [
-        "SELECT ovst.vstdate,ovst.oqueue,ovst.hn,ovst.vn,p.cid,RTRIM(CONCAT(p.pname,p.fname,' ',p.lname)) AS fullname,\
+        "SELECT ovst.vstdate,ovst.oqueue,ovst.hn,ovst.vn,p.cid,p.birthday,RTRIM(CONCAT(p.pname,p.fname,' ',p.lname)) AS fullname,\
             vn_stat.age_y,vn_stat.age_m,vn_stat.age_d,sex.`name` AS sex_name,CONCAT_WS(' ',p.addrpart,'หมู่',p.moopart,tambol.full_address_name) AS homeaddr,p.hometel \
         FROM ",hosxp,".ovst \
             LEFT JOIN ",hosxp,".patient p ON p.hn=ovst.hn \

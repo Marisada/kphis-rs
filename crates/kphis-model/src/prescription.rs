@@ -102,6 +102,8 @@ pub struct PrescriptionInfo {
     pub vn: Option<String>,
     #[Demo(value = r#"Some(String::from("1111111111111"))"#)]
     pub cid: Option<String>,
+    #[Demo(value = "Some(date!(1993-12-31))")]
+    pub birthday: Option<Date>,
     #[Demo(value = r#"Some(String::from("Mr.Patient Sicker"))"#)]
     pub fullname: Option<String>,
     #[Demo(value = "Some(33)")]

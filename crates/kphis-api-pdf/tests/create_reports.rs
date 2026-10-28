@@ -15,9 +15,8 @@ use kphis_api_core::{
 use kphis_api_pdf::{bundle_data::pdf_data, handler, test_state::new_test_state};
 use kphis_api_query::transform::trigger::{add_update_all_an_procedure, call_update_all_an_procedure};
 use kphis_model::{
-    image::ImageBase64,
     report::{SystemReport, TypstReport},
-    user::his::{CurrentUserRole, UserDb},
+    user::his::{CurrentUserRole, UserInMemory},
 };
 use kphis_sqlx_tester::MySqlMocker;
 use kphis_util::error::{AppError, Source};
@@ -71,21 +70,16 @@ async fn pdf_create_by_api_pre_admit() {
 
 /// Test all reports excepts `pre_admit` will test only IPD reports with id: `661231235959`
 async fn pdf_creator(state: &ApiState, world: &mut SystemWorld, is_pre_admit: bool, using_bundle: bool) {
-    let user_db = UserDb {
+    let user = UserInMemory {
         loginname: String::from("tester"),
-        passweb: String::from("abcdef"),
         name: String::from("TesterMan"),
         doctorcode: Some(String::from("007")),
         groupname: Some(String::from("ER")),
-        accessright: String::from("[]"),
-        entryposition: Some(String::from("admin")),
-        licenseno: Some(String::from("11111")),
-        image: Some(ImageBase64::new_user()),
         ..Default::default()
     };
     let user = UserState {
         state_id: 1,
-        user: user_db,
+        user,
         roles: vec![CurrentUserRole::demo()],
         permissions: Vec::new(),
         addr: "127.0.0.1:12345".parse::<SocketAddr>().unwrap(),
@@ -126,21 +120,16 @@ async fn pdf_creator(state: &ApiState, world: &mut SystemWorld, is_pre_admit: bo
 
 /// Test all reports to single pdf file (excepts `pre_admit` will test only IPD reports with id: `661231235959`)
 async fn pdf_all(state: &ApiState, world: &mut SystemWorld, is_pre_admit: bool, using_bundle: bool) {
-    let user_db = UserDb {
+    let user = UserInMemory {
         loginname: String::from("tester"),
-        passweb: String::from("abcdef"),
         name: String::from("TesterMan"),
         doctorcode: Some(String::from("007")),
         groupname: Some(String::from("ER")),
-        accessright: String::from("[]"),
-        entryposition: Some(String::from("admin")),
-        licenseno: Some(String::from("11111")),
-        image: Some(ImageBase64::new_user()),
         ..Default::default()
     };
     let user = UserState {
         state_id: 1,
-        user: user_db,
+        user,
         roles: vec![CurrentUserRole::demo()],
         permissions: Vec::new(),
         addr: "127.0.0.1:12345".parse::<SocketAddr>().unwrap(),
