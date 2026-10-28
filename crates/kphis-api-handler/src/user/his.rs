@@ -375,7 +375,7 @@ async fn login_response(socket_addr: SocketAddr, user: &UserDb, cookies: &Cookie
     )?;
 
     // create cookie of refresh token
-    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
+    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).path("/").http_only(true).same_site(SameSite::Strict).secure(true);
     cookies.add(cookie.into());
 
     // app_status
@@ -457,8 +457,7 @@ fn refresh_response(state_id: u128, user: &UserDb, roles: Vec<CurrentUserRole>, 
         &app.paseto.secret,
     )?;
     // create cookie of refresh token
-    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
-    // cookies.add() says "If a Cookie with the same name already exists, it is replaced with provided cookie."
+    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).path("/").http_only(true).same_site(SameSite::Strict).secure(true);
     cookies.add(cookie.into());
 
     let response = LoginResponse {

@@ -66,6 +66,7 @@ pub const PATH_PREFIX_API_XRAY_THUMBNAIL: &str = "/img/xray/thumbnail";
 pub const PATH_PREFIX_API_XRAY_IMAGE: &str = "/img/xray/image";
 
 pub const ASSETS_PREFIX: &str = "/assets";
+pub const PROVIDER_PREFIX: &str = "/provider";
 
 pub const DEFAULT_USER_IMAGE: &str = "statics/picture/user.svg";
 pub const DEFAULT_WARN_IMAGE: &str = "statics/picture/warn.svg";

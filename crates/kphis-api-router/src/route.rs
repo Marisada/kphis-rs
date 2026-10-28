@@ -512,6 +512,29 @@ pub fn api_router(state: ApiState) -> Router {
 }
 
 #[rustfmt::skip]
+pub fn provider_router(state: ApiState) -> Router {
+    Router::new()
+        .route("/oauth", get(kphis_api_handler::provider::get_oauth_uri))
+        .route("/redirect", get(kphis_api_handler::provider::get_redirect))
+        .with_state(state.clone())
+        .layer(CookieManagerLayer::new())
+        .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(30)))
+        .layer(middleware::from_fn_with_state(state.clone(), log_middleware))
+        .layer(middleware::from_fn_with_state(state, real_ip_middleware))
+        .layer(TraceLayer::new_for_http().make_span_with(|request: &Request<Body>| {
+            let path = request.extensions().get::<OriginalUri>().map(|uri| uri.path()).unwrap_or(request.uri().path());
+            // use span at ERROR (lowest) level to always show `request` on any filter level
+            tracing::span!(
+                Level::ERROR,
+                "request",
+                method = tracing::field::display(request.method()),
+                path = tracing::field::display(path),
+                id = tracing::field::display(ulid::Ulid::generate()),
+            )
+        }).on_failure(()))
+}
+
+#[rustfmt::skip]
 pub fn sse_get_router(state: ApiState) -> Router {
     Router::new()
         .route("/any", get(kphis_api_handler::sse::get_sse))

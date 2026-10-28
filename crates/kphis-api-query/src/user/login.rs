@@ -12,6 +12,13 @@ pub async fn get_user(username: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &s
 
     query1_opt(username, &sql, pool, "Select User").await?.as_ref().map(user_row).transpose()
 }
+
+pub async fn get_user_from_hash_cid(hash_cid: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &str, kphis_extra: &str) -> Result<Option<UserDb>, AppError> {
+    let sql = login::select_user_from_hash_cid(hosxp, kphis, kphis_extra);
+
+    query1_opt(hash_cid, &sql, pool, "Select User").await?.as_ref().map(user_row).transpose()
+}
+
 fn user_row(row: &MySqlRow) -> Result<UserDb, AppError> {
     let wards_str: Option<String> = row.try_get("wards").map_err(|e| Source::SQLx.to_error(500, e, "Select User"))?;
     let spcltys_str: Option<String> = row.try_get("spcltys").map_err(|e| Source::SQLx.to_error(500, e, "Select User"))?;
@@ -77,6 +84,32 @@ mod tests {
         let disable_y = get_user("rayman", &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
         assert!(disable_y.is_none());
         let not_found = get_user("unknown", &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
+        assert!(not_found.is_none());
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn sqlx_get_user_from_hash_cid() {
+        let tester = MySqlTester::new_hosxp_and_kphis_and_kphis_extra().await;
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/opduser.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/officer.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/hosxp/doctor.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/kphis/ipd_ward_passcode_user.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/create/kphis_extra/user_config.sql")).execute(&tester.db_pool).await.unwrap();
+
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/opduser.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/officer.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/hosxp/doctor.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_ward_passcode_user.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../../kphis-sqlx-tester/test_sqls/insert/kphis_extra/user_config.sql")).execute(&tester.db_pool).await.unwrap();
+
+        let disable_null = get_user_from_hash_cid("A71005368AACD8E57FE7745A2A3B010B0DF50A662EA3B58205F32326FFCFB3F3", &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
+        assert!(disable_null.is_some());
+        let disable_n = get_user_from_hash_cid("D94EAD0C8BCDBF2042FF8CC1D0B56FF0A6831B48286E770FAF0A309F23060FFF", &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
+        assert!(disable_n.is_some());
+        let disable_y = get_user_from_hash_cid("3BAAB3435B083C000C6EFC1891BB1B9A547168AC5B20AFBD0F8EFFA47236DFF9F", &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
+        assert!(disable_y.is_none());
+        let not_found = get_user_from_hash_cid("1234567890ABCDEF", &tester.db_pool, &tester.hosxp, &tester.kphis, &tester.kphis_extra).await.unwrap();
         assert!(not_found.is_none());
     }
 

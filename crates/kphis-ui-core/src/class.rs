@@ -203,6 +203,8 @@ pub const BTN_T_BLUE: [&str; 3] = ["btn","btn-primary","mb-2"];
 pub const BTN_T_BLUEO: [&str; 3] = ["btn","btn-outline-primary","mb-1"];
 pub const BTN_T_REDO: [&str; 3] = ["btn","btn-outline-danger","mb-1"];
 
+pub const BTN_T_CTRL_LIGHT_P0: [&str; 5] = ["btn","btn-light","mb-3","form-control","p-0"];
+
 pub const BTN_LG_CTRL_BLUE: [&str; 4] = ["btn","btn-primary","btn-lg","form-control"];
 pub const BTN_LG_CTRL_GOLD: [&str; 4] = ["btn","btn-warning","btn-lg","form-control"];
 
