@@ -83,7 +83,7 @@ pub struct ApiState {
 
     pub pacs_client: reqwest::Client,
     pub provider_client: Option<Arc<MophProviderIdClient>>,
-    pub provider_nonce_set: Arc<Mutex<HashSet<String>>>,
+    pub provider_nonce_set: Arc<Mutex<HashSet<u128>>>,
 }
 
 impl ApiState {
