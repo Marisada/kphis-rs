@@ -33,7 +33,9 @@ pub async fn get_redirect(
     tracing::debug!("params = {:?}", &params);
     if let Some(code) = params.code.as_ref() {
         if let Some(param_state) = params.state.as_ref() {
-            if app.provider_nonce_set.lock().await.take(param_state).is_some() {
+            let nonce_opt = app.provider_nonce_set.lock().await.take(param_state);
+            tracing::debug!("nonce = {:?}", &nonce_opt);
+            if nonce_opt.is_some() {
                 match app.provider_client.as_ref() {
                     Some(client) => {
                         match client.get_hash_cid_uppercase_from_code(&code).await {
@@ -42,7 +44,7 @@ pub async fn get_redirect(
                                     Ok(user_opt) => {
                                         if let Some(user) = user_opt {
                                             // reset failed tp 0
-                                            if user.failed.unwrap_or_default() > 0 && user.totp_done.unwrap_or_default() == 0 {
+                                            if user.failed.unwrap_or_default() > 0 {
                                                 if let Err(e) = config::insert_dup_failed(0, &user.loginname, &app.db_pool, &app.kphis_extra()).await {
                                                     tracing::error!("Error insert_dup_failed: {}", e.message);
                                                 }

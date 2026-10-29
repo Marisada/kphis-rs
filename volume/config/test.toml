@@ -27,7 +27,7 @@ http-to-https = false
 https-cert-path = "./volume/cert/fullchain.pem"
 https-key-path = "./volume/cert/privkey.pem"
 
-host-name = "https://localhost"
+host-name = "http://localhost"
 health-id-client = ""
 health-id-secret = ""
 provider-id-client = ""

@@ -513,6 +513,14 @@ pub fn api_router(state: ApiState) -> Router {
 
 #[rustfmt::skip]
 pub fn provider_router(state: ApiState) -> Router {
+    // Create rate-limiting layer
+    let governor_config = GovernorConfigBuilder::default()
+        .burst_size(state.app_config.rate_limit_burst_size) // quota of xxx per IP address
+        .per_millisecond(state.app_config.rate_limit_replenish_every_millisecond) // replenish 1 every xxx millisecond
+        .finish()
+        .expect("Cannot create Rate Limit Config");
+    let governor_layer = GovernorLayer::new(governor_config);
+
     Router::new()
         .route("/oauth", get(kphis_api_handler::provider::get_oauth_uri))
         .route("/redirect", get(kphis_api_handler::provider::get_redirect))
@@ -521,6 +529,7 @@ pub fn provider_router(state: ApiState) -> Router {
         .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(30)))
         .layer(middleware::from_fn_with_state(state.clone(), log_middleware))
         .layer(middleware::from_fn_with_state(state, real_ip_middleware))
+        .layer(governor_layer)
         .layer(TraceLayer::new_for_http().make_span_with(|request: &Request<Body>| {
             let path = request.extensions().get::<OriginalUri>().map(|uri| uri.path()).unwrap_or(request.uri().path());
             // use span at ERROR (lowest) level to always show `request` on any filter level
