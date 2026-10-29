@@ -36,8 +36,19 @@ use kphis_api_query::{
     user::role::{get_all_role, get_role_permission_list},
 };
 use kphis_model::{
-    API_PREFIX, app::AppAsset, claim::Claims, endpoint::EndPoint, pacs::PacsConfig, prescription::{MessageDrugGroup, MessageDrugLabGroup}, score::SupportedScore, select_utils::ColorSelectOption, sse::{SseData, SseGroup, SseMessage}, user::{
-        his::{CurrentUserRole, UserDb, UserInMemory}, permission::Permission, role::{Role, RolePermissionList, UserRoleParams},
+    API_PREFIX,
+    app::AppAsset,
+    claim::Claims,
+    endpoint::EndPoint,
+    pacs::PacsConfig,
+    prescription::{MessageDrugGroup, MessageDrugLabGroup},
+    score::SupportedScore,
+    select_utils::ColorSelectOption,
+    sse::{SseData, SseGroup, SseMessage},
+    user::{
+        his::{CurrentUserRole, UserDb, UserInMemory},
+        permission::Permission,
+        role::{Role, RolePermissionList, UserRoleParams},
     },
 };
 use kphis_util::{
@@ -448,23 +459,19 @@ impl ApiState {
         let health_id_secret = config.get_string("health-id-secret").unwrap_or_default();
         let provider_id_client = config.get_string("provider-id-client").unwrap_or_default();
         let provider_id_secret = config.get_string("provider-id-secret").unwrap_or_default();
-        let provider_client = if host_name.is_empty()
-            || health_id_client.is_empty()
-            || health_id_secret.is_empty()
-            || provider_id_client.is_empty()
-            || provider_id_secret.is_empty()
-        {
+        let provider_client = if host_name.is_empty() || health_id_client.is_empty() || health_id_secret.is_empty() || provider_id_client.is_empty() || provider_id_secret.is_empty() {
             None
         } else {
-            Some(Arc::new(MophProviderIdClient::builder()
-                .redirect_uri(&[&host_name, kphis_model::PROVIDER_PREFIX, "/redirect"].concat())
-                .health_id_client(&health_id_client)
-                .health_id_key(&health_id_secret)
-                .provider_id_client(&provider_id_client)
-                .provider_id_key(&provider_id_secret)
-                .build()
-                .await
-                .unwrap()
+            Some(Arc::new(
+                MophProviderIdClient::builder()
+                    .redirect_uri(&[&host_name, kphis_model::PROVIDER_PREFIX, "/redirect"].concat())
+                    .health_id_client(&health_id_client)
+                    .health_id_key(&health_id_secret)
+                    .provider_id_client(&provider_id_client)
+                    .provider_id_key(&provider_id_secret)
+                    .build()
+                    .await
+                    .unwrap(),
             ))
         };
 

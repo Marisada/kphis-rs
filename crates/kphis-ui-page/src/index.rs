@@ -200,6 +200,7 @@ impl IndexPage {
                                                     html!("img", {
                                                         .attr("src","statics/picture/logo-provider-id.webp")
                                                         .style("height","40px")
+                                                        .style("margin-bottom","3px")
                                                     }),
                                                 ])
                                                 .event(clone!(app, page => move |_:events::Click| {

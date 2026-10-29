@@ -11,7 +11,7 @@ use kphis_ui_page::{
     ipd_consult_list::IpdConsultListPage, ipd_main::IpdMainPage, ipd_mra::IpdMraPage, ipd_order_pharmacy::IpdOrderPharmacyPage, ipd_post_admit_list::IpdPostAdmitListPage, ipd_pre_admit_list::IpdPreAdmitListPage,
     ipd_pre_order_list::IpdPreOrderListPage, ipd_pre_order_main::IpdPreOrderPage, ipd_search_patient_dr::IpdSearchPatientDrPage, ipd_search_patient_nurse::IpdSearchPatientNursePage, ipd_search_patient_other::IpdSearchPatientOtherPage,
     ipd_search_patient_pharmacist::IpdSearchPatientPharmacistPage, ipd_summary_audit::IpdSummaryAuditPage, not_found::NotFoundPage, opd_er_main::OpdErMainPage, opd_er_order_list::OpdErOrderListPage,
-    opd_er_order_pharmacy::OpdErOrderPharmacyPage, permission_list::PermissionListPage, prescription_screen::PrescriptionScreenPage, report_designer::ReportDesignerPage, report_viewer::ReportViewerPage,
+    opd_er_order_pharmacy::OpdErOrderPharmacyPage, permission_list::PermissionListPage, prescription_screen::PrescriptionScreenPage, provider_error::ProviderErrorPage, report_designer::ReportDesignerPage, report_viewer::ReportViewerPage,
     setting_template_dc_plan::SettingTemplateDcPlanPage, setting_template_nurse_note::SettingTemplateNurseNotePage, summary::SummaryPage, unauthorized::UnAuthorizedPage, user_list::UserListPage, vital_sign::VitalSignPage,
 };
 
@@ -60,6 +60,9 @@ async fn render_inner(route: Route, app: Rc<App>) -> Dom {
         // app.sse_end(true);
         app.route.set_neq(route.clone());
         return UnAuthorizedPage { hash: hash.to_owned() }.render();
+    } else if let Route::ProviderError { error } = &route {
+        app.route.set_neq(route.clone());
+        return ProviderErrorPage { code: error.to_owned() }.render();
     // may has user, update user token or get user from refresh token
     } else if token::update_token(app.state()).await {
         let has_user = app.user.lock_ref().is_some();
@@ -251,6 +254,7 @@ fn render_content(route: Route, is_fixed_height: &mut bool, app: Rc<App>) -> Dom
         }
         Route::UserList => UserListPage::render(UserListPage::new(), app.clone()),
         Route::PermissionList => PermissionListPage::render(PermissionListPage::new(), app.clone()),
-        Route::Root | Route::NotFound { .. } | Route::UnAuthorized { .. } | Route::Index | Route::External { .. } => NotFoundPage { path: route.string() }.render(),
+        // The rest MUST render at render_inner(), so we use NotFoundPage here
+        Route::Root | Route::NotFound { .. } | Route::UnAuthorized { .. } | Route::ProviderError { .. } | Route::Index | Route::External { .. } => NotFoundPage { path: route.string() }.render(),
     }
 }

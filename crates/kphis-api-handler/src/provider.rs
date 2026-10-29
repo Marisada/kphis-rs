@@ -1,7 +1,11 @@
-use axum::{extract::{Extension, Query, State}, response::Redirect};
+use axum::{
+    extract::{Extension, Query, State},
+    response::Redirect,
+};
+use kphis_util::error::ProviderError;
 use moph_provider_client::response::OauthRedirectParams;
-use tower_cookies::{Cookie, Cookies, cookie::SameSite};
 use std::{collections::HashSet, net::SocketAddr};
+use tower_cookies::{Cookie, Cookies, cookie::SameSite};
 use ulid::Ulid;
 
 use kphis_api_core::{
@@ -9,7 +13,7 @@ use kphis_api_core::{
     token::{TokenType, gen_token_public},
 };
 use kphis_api_query::user::{config, login};
-use kphis_model::user::permission::Permission;
+use kphis_model::{API_PREFIX, user::permission::Permission};
 
 use crate::user::his::COOKIE_TOKEN_NAME;
 
@@ -32,12 +36,7 @@ pub async fn get_oauth_uri(State(app): State<ApiState>) -> String {
     }
 }
 
-pub async fn get_redirect(
-    Extension(real_addr): Extension<SocketAddr>,
-    Query(params): Query<OauthRedirectParams>,
-    State(app): State<ApiState>,
-    cookies: Cookies,
-) -> Redirect {
+pub async fn get_redirect(Extension(real_addr): Extension<SocketAddr>, Query(params): Query<OauthRedirectParams>, State(app): State<ApiState>, cookies: Cookies) -> Redirect {
     tracing::debug!("params = {:?}", &params);
     if let Some(code) = params.code.as_ref() {
         if let Some(param_state) = params.state.as_ref() {
@@ -70,7 +69,7 @@ pub async fn get_redirect(
                                                     ) {
                                                         Ok(refresh_token) => {
                                                             // create cookie of refresh token
-                                                            let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).path("/").http_only(true).same_site(SameSite::Strict).secure(true);
+                                                            let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).path(API_PREFIX).http_only(true).same_site(SameSite::Strict).secure(true);
                                                             cookies.add(cookie.into());
 
                                                             // roles
@@ -103,51 +102,51 @@ pub async fn get_redirect(
                                                         }
                                                         Err(e) => {
                                                             tracing::error!("{}", e.message);
-                                                            Redirect::to("/#/index")
+                                                            Redirect::to(ProviderError::TokenError.redirect_uri())
                                                         }
                                                     }
                                                 } else {
                                                     tracing::warn!("User not found");
-                                                    Redirect::to("/#/index")
+                                                    Redirect::to(ProviderError::NoUser.redirect_uri())
                                                 }
                                             }
                                             Err(e) => {
                                                 tracing::error!("{}", e.message);
-                                                Redirect::to("/#/index")
+                                                Redirect::to(ProviderError::QueryError.redirect_uri())
                                             }
                                         }
                                     }
                                     Ok(None) => {
-                                        tracing::warn!("Nothing returned");
-                                        Redirect::to("/#/index")
+                                        tracing::warn!("No hash_cid returned");
+                                        Redirect::to(ProviderError::NoHash.redirect_uri())
                                     }
                                     Err(e) => {
                                         tracing::error!("{e}");
-                                        Redirect::to("/#/index")
+                                        Redirect::to(ProviderError::RequestRrror.redirect_uri())
                                     }
                                 }
                             }
                             None => {
                                 tracing::debug!("Provider ID is not enable");
-                                Redirect::to("/#/index")
+                                Redirect::to(ProviderError::Disabled.redirect_uri())
                             }
                         }
                     } else {
-                        tracing::warn!("Nonce has been used / Not found");
-                        Redirect::to("/#/index")
+                        tracing::warn!("Nonce has been used");
+                        Redirect::to(ProviderError::UsedState.redirect_uri())
                     }
                 }
                 Err(e) => {
                     tracing::error!("{e}");
-                    Redirect::to("/#/index")
+                    Redirect::to(ProviderError::DecodeError.redirect_uri())
                 }
             }
         } else {
             tracing::warn!("No state");
-            Redirect::to("/#/index")
+            Redirect::to(ProviderError::NoState.redirect_uri())
         }
     } else {
         tracing::warn!("No Code returned");
-        Redirect::to("/#/index")
+        Redirect::to(ProviderError::NoCode.redirect_uri())
     }
 }

@@ -30,6 +30,8 @@ pub mod permission_list;
 
 pub mod prescription_screen;
 
+pub mod provider_error;
+
 pub mod report_designer;
 pub mod report_viewer;
 pub mod setting_template_dc_plan;

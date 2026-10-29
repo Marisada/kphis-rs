@@ -154,7 +154,7 @@ impl From<&UserDb> for User {
     }
 }
 
-// 4. Mutable in wasm 
+// 4. Mutable in wasm
 #[derive(Clone, Debug)]
 pub struct UserMutable {
     pub name: Mutable<String>,

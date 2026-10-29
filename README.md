@@ -471,7 +471,8 @@ Pre-Admit trigger system consists of 3 triggers and 2 procedures
 We use cron-job to make sure HOSxP triggers always exists (HOSxP will clear trigger after update version). You can set cron-job's timer at `app-cron-trigger` in config.
 
 ### Database Notes
-- Login need `hos.opduser` that `doctorcode IS NOT NULL AND (account_disable IS NULL OR account_disable <> 'Y')` 
+- Login need `hos.opduser` that `doctorcode IS NOT NULL AND (account_disable IS NULL OR account_disable <> 'Y')`
+- Login with Provider ID need `hos.opduser` as above and `hos.officer` that `officer_cid_hash256 IS NOT NULL`
 - Doctors-selector dropdown box will includes only doctor that in `hos.doctor` table that has
     * `active` = 'Y'
     * `provider_type_code` is '01' or '02'

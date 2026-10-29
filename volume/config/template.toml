@@ -29,6 +29,7 @@ http-to-https = false
 https-cert-path = "./volume/cert/fullchain.pem"
 https-key-path = "./volume/cert/privkey.pem"
 
+# fill all items to enable log-in with Provider ID
 host-name = "http://localhost"
 health-id-client = ""
 health-id-secret = ""
