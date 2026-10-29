@@ -35,6 +35,7 @@ pub fn new_router(state: &ApiState) -> Router {
     Router::new()
         // `/api/..`
         .nest(kphis_model::API_PREFIX, route::api_router(state.clone()))
+        .nest(kphis_model::PROVIDER_PREFIX, route::provider_router(state.clone()))
         // `/sse` GET only
         .nest(kphis_model::SSE_GET_PREFIX, route::sse_get_router(state.clone()))
         // '/assets/..'

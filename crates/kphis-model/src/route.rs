@@ -23,6 +23,9 @@ pub enum Route {
     UnAuthorized {
         hash: String,
     },
+    ProviderError {
+        error: String,
+    },
     Image,
     Index,
     Info,
@@ -115,6 +118,7 @@ impl Route {
             Self::Root => "#".to_owned(),
             Self::NotFound { path } => ["#/notfound/", path].concat(),
             Self::UnAuthorized { hash } => ["#/unauthorized/", hash].concat(),
+            Self::ProviderError { error } => ["#/provider/", error].concat(),
             Self::Image => "#/image".to_owned(),
             Self::Index => "#/index".to_owned(),
             Self::Info => "#/info".to_owned(),
@@ -254,6 +258,7 @@ impl Route {
                 "ipd-summary-audit" => Self::IpdSummaryAudit { an: url_parts[2].to_owned() },
                 "opd-er-order-list" => Self::OpdErOrderList { view_by: url_parts[2].to_owned() },
                 "prescription-screen" => Self::PrescriptionScreen { hn: url_parts[2].to_owned() },
+                "provider" => Self::ProviderError { error: url_parts[2].to_owned() },
                 _ => Self::NotFound { path: hash.to_owned() },
             },
             4 => match url_parts[1] {
@@ -442,7 +447,7 @@ impl Route {
                     && check_permission_view_by(&view_by, app.clone())
             }
             Self::UserList => app.endpoint_is_allow_inner(&Method::GET, &EndPoint::UserRolePrelude, false) && app.endpoint_is_allow_inner(&Method::GET, &EndPoint::UserRoleUser, false),
-            Self::Image | Self::Index | Self::Info | Self::Root | Self::NotFound { .. } | Self::UnAuthorized { .. } | Self::External { .. } => true,
+            Self::Image | Self::Index | Self::Info | Self::Root | Self::NotFound { .. } | Self::UnAuthorized { .. } | Self::ProviderError { .. } | Self::External { .. } => true,
         }
     }
 }

@@ -1,3 +1,10 @@
+## 0.4.22 (2026-10-30)
+> - Fixed wrong AN/VN in lab report when selecting the report that not in current admission
+> - Added birthday to prescription-screen page
+> - Added Log-in via Provider ID
+> - *(Config)* Added `host-name`, `health-id-client`, `health-id-secret`, `provider-id-client` and `provider-id-secret` for Provider ID integration
+> - *(API)* Added GET `/provider/oauth`, GET `/provider/redirect`
+
 ## 0.4.21 (2026-09-25)
 > - *(Config)* Added `log-centralize-host` for remote UDP syslog
 > - Fixed menu responsiveness

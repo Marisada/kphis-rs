@@ -12,6 +12,7 @@ pub mod post_admit;
 pub mod pre_admit;
 pub mod pre_order;
 pub mod prescription;
+pub mod provider;
 pub mod refer_note;
 pub mod refer_out;
 pub mod report;

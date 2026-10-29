@@ -29,6 +29,13 @@ http-to-https = false
 https-cert-path = "./volume/cert/fullchain.pem"
 https-key-path = "./volume/cert/privkey.pem"
 
+# fill all items to enable log-in with Provider ID
+host-name = "http://localhost"
+health-id-client = ""
+health-id-secret = ""
+provider-id-client = ""
+provider-id-secret = ""
+
 # if HTTP request body over this limit(in MB) will return with status 413:Content Too Large
 # default is 2, max is 255
 request-body-limited-mb = 10

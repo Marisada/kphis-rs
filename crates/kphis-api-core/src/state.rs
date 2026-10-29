@@ -7,6 +7,7 @@ use axum::{
 use base64::{Engine, engine::general_purpose};
 use config::Config;
 use cryptographic_message_syntax::Oid;
+use moph_provider_client::MophProviderIdClient;
 use pasetors::{
     keys::{AsymmetricKeyPair, Generate},
     version4::V4,
@@ -35,14 +36,24 @@ use kphis_api_query::{
     user::role::{get_all_role, get_role_permission_list},
 };
 use kphis_model::{
-    API_PREFIX, app::AppAsset, claim::Claims, endpoint::EndPoint, pacs::PacsConfig, prescription::{MessageDrugGroup, MessageDrugLabGroup}, score::SupportedScore, select_utils::ColorSelectOption, sse::{SseData, SseGroup, SseMessage}, user::{
-        his::{CurrentUserRole, UserDb, UserInMemory}, permission::Permission, role::{Role, RolePermissionList, UserRoleParams},
+    API_PREFIX,
+    app::AppAsset,
+    claim::Claims,
+    endpoint::EndPoint,
+    pacs::PacsConfig,
+    prescription::{MessageDrugGroup, MessageDrugLabGroup},
+    score::SupportedScore,
+    select_utils::ColorSelectOption,
+    sse::{SseData, SseGroup, SseMessage},
+    user::{
+        his::{CurrentUserRole, UserDb, UserInMemory},
+        permission::Permission,
+        role::{Role, RolePermissionList, UserRoleParams},
     },
 };
 use kphis_util::{
     datetime::{get_timestamp_server, now},
     error::{AppError, ErrorTitle, Source},
-    // util::hash_to_base64_string,
 };
 
 use crate::pdf::{core::JsonActorHandle, signer::PdfSigner};
@@ -78,9 +89,12 @@ pub struct ApiState {
     pub json_handle: Arc<RwLock<JsonActorHandle>>,
     pub pdf_signer: Option<Arc<PdfSigner>>,
     pub db_pool: Pool<MySql>,
-    pub pacs_client: reqwest::Client,
     pub shutdown_sender: broadcast::Sender<()>,
     pub sw_datetime: Arc<RwLock<PrimitiveDateTime>>,
+
+    pub pacs_client: reqwest::Client,
+    pub provider_client: Option<Arc<MophProviderIdClient>>,
+    pub provider_nonce_set: Arc<Mutex<HashSet<u128>>>,
 }
 
 impl ApiState {
@@ -440,6 +454,27 @@ impl ApiState {
             .build()
             .expect("Cannot create PACs client");
 
+        let host_name = config.get_string("host-name").unwrap_or_default();
+        let health_id_client = config.get_string("health-id-client").unwrap_or_default();
+        let health_id_secret = config.get_string("health-id-secret").unwrap_or_default();
+        let provider_id_client = config.get_string("provider-id-client").unwrap_or_default();
+        let provider_id_secret = config.get_string("provider-id-secret").unwrap_or_default();
+        let provider_client = if host_name.is_empty() || health_id_client.is_empty() || health_id_secret.is_empty() || provider_id_client.is_empty() || provider_id_secret.is_empty() {
+            None
+        } else {
+            Some(Arc::new(
+                MophProviderIdClient::builder()
+                    .redirect_uri(&[&host_name, kphis_model::PROVIDER_PREFIX, "/redirect"].concat())
+                    .health_id_client(&health_id_client)
+                    .health_id_key(&health_id_secret)
+                    .provider_id_client(&provider_id_client)
+                    .provider_id_key(&provider_id_secret)
+                    .build()
+                    .await
+                    .unwrap(),
+            ))
+        };
+
         Self {
             app_config,
             online_users: Arc::new(Mutex::new(HashMap::new())),
@@ -458,9 +493,11 @@ impl ApiState {
             json_handle,
             pdf_signer,
             db_pool,
-            pacs_client,
             shutdown_sender,
             sw_datetime: Arc::new(RwLock::new(BUILD_TIME.clone())),
+            pacs_client,
+            provider_client,
+            provider_nonce_set: Arc::new(Mutex::new(HashSet::new())),
         }
     }
 

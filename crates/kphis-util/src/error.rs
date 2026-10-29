@@ -316,6 +316,70 @@ fn new_eror_id() -> String {
     js_now().to_string()
 }
 
+pub enum ProviderError {
+    NoCode,
+    NoState,
+    DecodeError,
+    UsedState,
+    Disabled,
+    RequestRrror,
+    NoHash,
+    QueryError,
+    NoUser,
+    TokenError,
+    Unknown,
+}
+
+impl ProviderError {
+    pub fn new(code: &str) -> Self {
+        match code {
+            "no-code" => Self::NoCode,
+            "no-state" => Self::NoState,
+            "decode-error" => Self::DecodeError,
+            "used-state" => Self::UsedState,
+            "disabled" => Self::Disabled,
+            "request-error" => Self::RequestRrror,
+            "no-hash" => Self::NoHash,
+            "query-error" => Self::QueryError,
+            "no-user" => Self::NoUser,
+            "token-error" => Self::TokenError,
+            _ => Self::Unknown,
+        }
+    }
+
+    pub fn redirect_uri(&self) -> &'static str {
+        match self {
+            Self::NoCode => "/#/provider/no-code",
+            Self::NoState => "/#/provider/no-state",
+            Self::DecodeError => "/#/provider/decode-error",
+            Self::UsedState => "/#/provider/used-state",
+            Self::Disabled => "/#/provider/disabled",
+            Self::RequestRrror => "/#/provider/request-error",
+            Self::NoHash => "/#/provider/no-hash",
+            Self::QueryError => "/#/provider/query-error",
+            Self::NoUser => "/#/provider/no-user",
+            Self::TokenError => "/#/provider/token-error",
+            Self::Unknown => "/#/provider/unknown",
+        }
+    }
+
+    pub fn label(&self) -> &'static str {
+        match self {
+            Self::NoCode => "ไม่ได้รับ code จากระบบ Health ID",
+            Self::NoState => "ไม่ได้รับ state จากระบบ Health ID",
+            Self::DecodeError => "state ที่ได้รับ ไม่ถูกต้อง",
+            Self::UsedState => "ส่ง code เดิมเข้าสู่ระบบ (ห้ามใช้ซ้ำ)",
+            Self::Disabled => "ระบบยังไม่เปิดการใช้งาน Provider ID",
+            Self::RequestRrror => "การติดต่อกับระบบ Health ID หรือ Provider ID ผิดพลาด",
+            Self::NoHash => "ไม่พบข้อมูลส่วนบุคคล",
+            Self::QueryError => "การค้นหาข้อมูลผู้ใช้งานจากฐานข้อมูลผิดพลาด",
+            Self::NoUser => "ไม่พบผู้ใช้งาน หรือผู้ใช้งานยังไม่ได้รับการตั้งค่าสำหรับ Provider ID",
+            Self::TokenError => "การสร้าง token ผิดพลาด",
+            Self::Unknown => "ปัญหาที่ไม่ได้ระบุไว้",
+        }
+    }
+}
+
 #[cfg(test)]
 #[rustfmt::skip]
 pub mod tests {

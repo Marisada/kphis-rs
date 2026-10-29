@@ -5,7 +5,7 @@ use futures_signals::{
 };
 use std::rc::Rc;
 
-use kphis_model::{route::Route, timer::Timeout};
+use kphis_model::{fetch::get_text_from_url, route::Route, timer::Timeout};
 use kphis_ui_app::App;
 use kphis_ui_component::login::LoginCpn;
 use kphis_ui_core::class;
@@ -16,6 +16,9 @@ use kphis_ui_core::class;
 pub struct IndexPage {
     is_success: Mutable<bool>,
     reconnecting: Mutable<Option<i32>>,
+
+    load_oauth_uri: Mutable<bool>,
+    oauth_uri: Mutable<String>,
 }
 
 impl IndexPage {
@@ -44,6 +47,22 @@ impl IndexPage {
             reconnecting.set(Some(handle));
             // log::debug!("Wait for reconnecting in 9 seconds..");
         }
+    }
+
+    fn load_oauth_uri(page: Rc<Self>, app: Rc<App>) {
+        app.async_load(
+            false,
+            clone!(app, page => async move {
+                match get_text_from_url("provider/oauth", app.state()).await {
+                    Ok(uri_opt) => {
+                        page.oauth_uri.set(uri_opt.unwrap_or_default());
+                    }
+                    Err(e) => {
+                        app.alert_app_error(&e).await;
+                    }
+                }
+            }),
+        );
     }
 
     pub fn render(page: Rc<Self>, app: Rc<App>) -> Dom {
@@ -96,6 +115,17 @@ impl IndexPage {
                     app.update_sw();
                     app.sse_end(0);
                     App::start_sse_by_renew_token(app.clone());
+                }
+                async{}
+            })))
+            .future(map_ref!{
+                let busy = app.loader_is_loading(),
+                let load_oauth = page.load_oauth_uri.signal() =>
+                !busy && *load_oauth
+            }.for_each(clone!(app, page => move |ready| {
+                if ready {
+                    Self::load_oauth_uri(page.clone(), app.clone());
+                    page.load_oauth_uri.set(false);
                 }
                 async{}
             })))
@@ -152,20 +182,45 @@ impl IndexPage {
                                 // - POST `EndPoint::User`
                                 // - PATCH `EndPoint::User`
                                 let login = LoginCpn::new(page.is_success.clone(), page.reconnecting.clone());
+                                // load OAUTH uri + stage
+                                page.load_oauth_uri.set(true);
                                 Some(html!("div", {
-                                    .children([
-                                        LoginCpn::render(login, app.clone()),
-                                        html!("div", {
-                                            .class("text-center")
-                                            .child(html!("a", {
-                                                .attr("href","/book/")
-                                                .attr("target","_blank")
-                                                .attr("title","Go to tutorial")
-                                                .attr("rel","noopener noreferrer")
-                                                .text("คู่มือการใช้งาน")
-                                            }))
-                                        }),
-                                    ])
+                                    .child(LoginCpn::render(login, app.clone()))
+                                    .child_signal(page.oauth_uri.signal_cloned().map(clone!(app, page => move |oauth_uri| {
+                                        (!oauth_uri.is_empty()).then(|| {
+                                            html!("button", {
+                                                .attr("type", "button")
+                                                .class(class::BTN_T_CTRL_LIGHT_P0)
+                                                .children([
+                                                    html!("span", {
+                                                        .class("me-1")
+                                                        .style("vertical-align","sub")
+                                                        .text("เข้าใช้งานด้วย")
+                                                    }),
+                                                    html!("img", {
+                                                        .attr("src","statics/picture/logo-provider-id.webp")
+                                                        .style("height","40px")
+                                                        .style("margin-bottom","3px")
+                                                    }),
+                                                ])
+                                                .event(clone!(app, page => move |_:events::Click| {
+                                                    app.window.with(|w| {
+                                                        w.location().set_href(&page.oauth_uri.lock_ref()).unwrap();
+                                                    })
+                                                }))
+                                            })
+                                        })
+                                    })))
+                                    .child(html!("div", {
+                                        .class("text-center")
+                                        .child(html!("a", {
+                                            .attr("href","/book/")
+                                            .attr("target","_blank")
+                                            .attr("title","Go to tutorial")
+                                            .attr("rel","noopener noreferrer")
+                                            .text("คู่มือการใช้งาน")
+                                        }))
+                                    }))
                                 }))
                             }
                         })))

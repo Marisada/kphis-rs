@@ -14,7 +14,7 @@ use kphis_api_core::{
 };
 use kphis_api_query::user::{config, login, totp};
 use kphis_model::{
-    FAILURE_LIMIT,
+    API_PREFIX, FAILURE_LIMIT,
     app::AppStatus,
     user::{
         his::{CurrentUserRole, LoginResponse, UserDb, UserRequest, UserRequest2fa, UserRequestFull},
@@ -375,7 +375,7 @@ async fn login_response(socket_addr: SocketAddr, user: &UserDb, cookies: &Cookie
     )?;
 
     // create cookie of refresh token
-    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
+    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).path(API_PREFIX).http_only(true).same_site(SameSite::Strict).secure(true);
     cookies.add(cookie.into());
 
     // app_status
@@ -457,8 +457,7 @@ fn refresh_response(state_id: u128, user: &UserDb, roles: Vec<CurrentUserRole>, 
         &app.paseto.secret,
     )?;
     // create cookie of refresh token
-    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).http_only(true).same_site(SameSite::Strict).secure(true);
-    // cookies.add() says "If a Cookie with the same name already exists, it is replaced with provided cookie."
+    let cookie = Cookie::build((COOKIE_TOKEN_NAME, refresh_token)).path(API_PREFIX).http_only(true).same_site(SameSite::Strict).secure(true);
     cookies.add(cookie.into());
 
     let response = LoginResponse {

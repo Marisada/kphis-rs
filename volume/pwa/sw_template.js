@@ -83,7 +83,7 @@ self.addEventListener('fetch', event => {
 
 async function handleFetch(request) {
   const urls = request.url.split('/')
-  if (urls.includes('api')) {
+  if (urls.includes('api') || urls.includes('provider')) {
     // NO CACHE
     let fetch_fn = fetch(request).then(resp => {
       if (resp.status === 429) {
