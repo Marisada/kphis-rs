@@ -2269,7 +2269,7 @@ impl SummaryAuditItemMutable {
                                         changed.set_neq(true);
                                     }
                                 }))
-                                .event_with_options(&EventOptions::preventable(), clone!(app, item, changed => move |event: events::KeyUp| {
+                                .event_with_options(&EventOptions::preventable(), clone!(item, changed => move |event: events::KeyDown| {
                                     if event.key() == "Enter" {
                                         event.prevent_default();
                                         let value = element.value().to_ascii_uppercase();

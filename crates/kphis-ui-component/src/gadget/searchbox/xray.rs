@@ -107,7 +107,7 @@ impl XraySearchboxCpn {
                                             async {}
                                         })))
                                         // let timer_handle = Mutable::new(None);
-                                        // dom.event(clone!(page, element, timer_handle, load_mut => move |_: events::KeyUp| {
+                                        // dom.event(clone!(page, element, timer_handle, load_mut => move |_: events::KeyEp| {
                                         //     let wait = Timeout::new(1000, clone!(page, element, load_mut => move || {
                                         //         let search_text = element.value();
                                         //         if search_text.is_empty() {

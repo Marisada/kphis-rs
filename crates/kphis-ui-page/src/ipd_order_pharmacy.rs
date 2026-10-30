@@ -246,7 +246,11 @@ impl IpdOrderPharmacyPage {
                                             .attr("autocomplete","off")
                                             .prop_signal("value", page.patient.signal_cloned())
                                             .with_node!(element => {
-                                                .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
+                                                .event(clone!(page, element => move |_: events::Change| {
+                                                    page.patient.set_neq(element.value());
+                                                    page.changed.set_neq(true);
+                                                }))
+                                                .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                                     if event.key() == "Enter" {
                                                         event.prevent_default();
                                                         page.patient.set_neq(element.value());

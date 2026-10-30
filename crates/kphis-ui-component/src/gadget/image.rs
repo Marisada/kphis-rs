@@ -650,7 +650,7 @@ impl ImageCpn {
                                     .class_signal("rounded-0", page.viewer_width.signal_cloned().map(|viewer_width| viewer_width <= 500))
                                     .prop_signal("value", page.edited.signal_ref(|opt| opt.as_ref().and_then(|image| image.title.clone()).unwrap_or_default()))
                                     .with_node!(element => {
-                                        .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::KeyUp| {
+                                        .event_with_options(&EventOptions::preventable(), clone!(page => move |e: events::KeyDown| {
                                             if e.key() == "Enter" {
                                                 e.prevent_default();
                                                 if page.edited_title.lock_ref().as_str() != page.old_title.lock_ref().as_str() {
