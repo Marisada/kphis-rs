@@ -244,7 +244,7 @@ impl LoginCpn {
                                         page.password.set(element.value());
                                     }))
                                 })
-                                .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
+                                .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                     if event.key() == "Enter" {
                                         event.prevent_default();
                                         page.changed.set_neq(true);

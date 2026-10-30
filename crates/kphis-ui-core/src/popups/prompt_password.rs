@@ -133,17 +133,16 @@ impl PromptPasswordPopup {
                                         .prop_signal("value", page.password.signal_cloned())
                                         .focused_signal(page.focus_password.signal())
                                         .with_node!(element => {
-                                            .event(clone!(page, element => move |_: events::Input| {
+                                            .event(clone!(page => move |_: events::Input| {
                                                 page.password.set(element.value());
                                             }))
-                                            .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
-                                                if event.key() == "Enter" {
-                                                    event.prevent_default();
-                                                    page.password.set(element.value());
-                                                    page.save();
-                                                }
-                                            }))
                                         })
+                                        .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
+                                            if event.key() == "Enter" {
+                                                event.prevent_default();
+                                                page.save();
+                                            }
+                                        }))
                                     }),
                                 ])
                             }))

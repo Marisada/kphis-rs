@@ -111,7 +111,7 @@ impl OpdVisitSearchboxCpn {
                                 .attr("name","text_hn")
                                 .prop_signal("value", page.text_hn.signal_cloned())
                                 .with_node!(element => {
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -129,7 +129,7 @@ impl OpdVisitSearchboxCpn {
                                                 page.status_text.set_neq(Some(String::from("กรอกข้อความอย่างน้อย 5 ตัวอักษรเพื่อค้นหา")));
                                             }
                                         }));
-                                        // prevent multiple keyup
+                                        // prevent multiple keydown
                                         if let Some(handle) = page.timer_handle.get() {
                                             Timeout::manual_drop(handle);
                                         }
@@ -152,7 +152,7 @@ impl OpdVisitSearchboxCpn {
                                 .attr("name","text_qn")
                                 .prop_signal("value", page.text_qn.signal_cloned())
                                 .with_node!(element => {
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -170,7 +170,7 @@ impl OpdVisitSearchboxCpn {
                                                 page.status_text.set_neq(Some(String::from("กรอกข้อความเพื่อค้นหา")));
                                             }
                                         }));
-                                        // prevent multiple keyup
+                                        // prevent multiple keydown
                                         if let Some(handle) = page.timer_handle.get() {
                                             Timeout::manual_drop(handle);
                                         }
@@ -193,7 +193,7 @@ impl OpdVisitSearchboxCpn {
                                 .attr("name","text_vn")
                                 .prop_signal("value", page.text_vn.signal_cloned())
                                 .with_node!(element => {
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -211,7 +211,7 @@ impl OpdVisitSearchboxCpn {
                                                 page.status_text.set_neq(Some(String::from("กรอกข้อความอย่างน้อย 5 ตัวอักษรเพื่อค้นหา")));
                                             }
                                         }));
-                                        // prevent multiple keyup
+                                        // prevent multiple keydown
                                         if let Some(handle) = page.timer_handle.get() {
                                             Timeout::manual_drop(handle);
                                         }
@@ -234,7 +234,7 @@ impl OpdVisitSearchboxCpn {
                                 .attr("name","text_ptname")
                                 .prop_signal("value", page.text_ptname.signal_cloned())
                                 .with_node!(element => {
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -252,7 +252,7 @@ impl OpdVisitSearchboxCpn {
                                                 page.status_text.set_neq(Some(String::from("กรอกข้อความอย่างน้อย 5 ตัวอักษรเพื่อค้นหา")));
                                             }
                                         }));
-                                        // prevent multiple keyup
+                                        // prevent multiple keydown
                                         if let Some(handle) = page.timer_handle.get() {
                                             Timeout::manual_drop(handle);
                                         }
@@ -275,7 +275,7 @@ impl OpdVisitSearchboxCpn {
                                 .attr("name","text_cid")
                                 .prop_signal("value", page.text_cid.signal_cloned())
                                 .with_node!(element => {
-                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyUp| {
+                                    .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                         let wait = Timeout::new(500, clone!(page, element => move || {
                                             let search_text = element.value();
 
@@ -293,7 +293,7 @@ impl OpdVisitSearchboxCpn {
                                                 page.status_text.set_neq(Some(String::from("กรอกข้อความอย่างน้อย 5 ตัวอักษรเพื่อค้นหา")));
                                             }
                                         }));
-                                        // prevent multiple keyup
+                                        // prevent multiple keydown
                                         if let Some(handle) = page.timer_handle.get() {
                                             Timeout::manual_drop(handle);
                                         }

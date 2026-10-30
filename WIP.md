@@ -49,6 +49,7 @@
 - USE `check_an_can_execute()` or `check_an_opt_can_execute()` on every execute query that involve `AN` (`Admited` or `PreAdmit`/`Revoked`)
 - CREATE TEST for every query, `kphis-api-router::tests::all_and_not_login` for ALL API and `kphis-api-router::tests::all_query_params` for every API that can 400
 - GUARDING UI element with `Route::has_permission()` and `App::endpoint_is_allow()` and comment every associated Function/Struct with `Method` and `Endpoint`
+- NOT `prevent_default` on `KeyUp` event, many default action fire on `KeyDown` event
 
 ## CHECK BEFORE RELEASE
 - Call `cargo generate-lockfile` to check any upgradable crate version

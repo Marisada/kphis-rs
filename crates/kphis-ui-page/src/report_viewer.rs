@@ -667,15 +667,16 @@ impl ReportViewerPage {
                                                     .attr("name","search_text")
                                                     .prop_signal("value", page.search.signal_cloned())
                                                     .with_node!(element => {
-                                                        .event_with_options(&EventOptions::preventable(), clone!(page, element => move |event: events::KeyUp| {
+                                                        .event(clone!(page, element => move |_: events::Change| {
+                                                            page.search.set_neq(element.value());
+                                                            page.search_changed.set_neq(true);
+                                                        }))
+                                                        .event_with_options(&EventOptions::preventable(), clone!(page => move |event: events::KeyDown| {
                                                             if event.key() == "Enter" {
                                                                 event.prevent_default();
                                                                 page.search.set_neq(element.value());
                                                                 page.search_changed.set_neq(true);
                                                             }
-                                                        }))
-                                                        .event(clone!(page => move |_: events::Change| {
-                                                            page.search.set_neq(element.value());
                                                         }))
                                                     })
                                                 }),

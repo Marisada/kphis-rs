@@ -1654,7 +1654,7 @@ where
                                 state.search_result.lock_mut().replace_cloned(results);
                             }))
                         })
-                        .event_with_options(&EventOptions::preventable(), clone!(state => move |e: events::KeyUp| {
+                        .event_with_options(&EventOptions::preventable(), clone!(state => move |e: events::KeyDown| {
                             match e.key().as_str() {
                                 "Enter" => {
                                     if state.is_opened.get() {
