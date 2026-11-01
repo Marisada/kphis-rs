@@ -1,12 +1,14 @@
 CREATE TABLE `hos`.`er_pt_type` (
-	`er_pt_type` TINYINT(4) NOT NULL DEFAULT 0,
-	`name` VARCHAR(50) NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	`hos_guid_ext` VARCHAR(64) NULL DEFAULT NULL,
-	`accident_code` CHAR(1) NULL DEFAULT NULL,
-	`ucae` VARCHAR(1) NULL DEFAULT NULL,
-	PRIMARY KEY (`er_pt_type`),
-	INDEX `ix_name` (`name`),
-	INDEX `ix_hos_guid` (`hos_guid`),
-	INDEX `ix_hos_guid_ext` (`hos_guid_ext`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `er_pt_type` tinyint(4) NOT NULL DEFAULT 0,
+  `name` varchar(50) DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  `hos_guid_ext` varchar(64) DEFAULT NULL,
+  `accident_code` char(1) DEFAULT NULL,
+  `ucae` varchar(1) DEFAULT NULL,
+  `is_active` char(1) DEFAULT NULL,
+  PRIMARY KEY (`er_pt_type`),
+  KEY `er_pttype` (`er_pt_type`),
+  KEY `ix_name` (`name`),
+  KEY `ix_hos_guid` (`hos_guid`),
+  KEY `ix_hos_guid_ext` (`hos_guid_ext`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

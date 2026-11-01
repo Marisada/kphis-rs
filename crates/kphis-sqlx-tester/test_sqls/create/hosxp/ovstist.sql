@@ -1,11 +1,11 @@
 CREATE TABLE `hos`.`ovstist` (
-	`name` VARCHAR(50) NOT NULL DEFAULT '',
-	`ovstist` CHAR(2) NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	`export_code` VARCHAR(5) NULL DEFAULT NULL,
-	`opbkk_code` CHAR(1) NULL DEFAULT NULL,
-	`csmbs_code` VARCHAR(1) NULL DEFAULT NULL,
-	PRIMARY KEY (`name`),
-	UNIQUE INDEX `ovstist_unique` (`ovstist`),
-	INDEX `ix_hos_guid` (`hos_guid`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `name` varchar(50) NOT NULL,
+  `ovstist` char(2) DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  `export_code` varchar(5) DEFAULT NULL,
+  `opbkk_code` char(1) DEFAULT NULL,
+  `csmbs_code` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`name`),
+  UNIQUE KEY `ovstist_unique` (`ovstist`),
+  KEY `ix_hos_guid` (`hos_guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

@@ -1,3 +1,5 @@
+mod create;
+
 use sqlx::{AssertSqlSafe, Connection, Executor, MySql, MySqlConnection, Pool};
 use std::thread;
 use tokio::runtime::Runtime;
@@ -28,6 +30,7 @@ impl MySqlMocker {
         let has_kphis_log = true;
         let has_kphis_extra = true;
         let db_pool = create_pool(has_hosxp, has_kphis, has_kphis_log, has_kphis_extra).await;
+        db_pool.execute("SET SESSION innodb_strict_mode=OFF;").await.expect("Error SET SESSION");
 
         let create_hosxp = include_dir::include_dir!("$CARGO_MANIFEST_DIR/test_sqls/create/hosxp");
         for file in create_hosxp.files() {
@@ -117,6 +120,7 @@ impl MySqlMocker {
         let has_kphis_log = false;
         let has_kphis_extra = false;
         let db_pool = create_pool(has_hosxp, has_kphis, has_kphis_log, has_kphis_extra).await;
+        db_pool.execute("SET SESSION innodb_strict_mode=OFF;").await.expect("Error SET SESSION");
 
         let create_hosxp = include_dir::include_dir!("$CARGO_MANIFEST_DIR/test_sqls/create/hosxp");
         for file in create_hosxp.files() {
@@ -557,6 +561,8 @@ impl Drop for MySqlTester {
 async fn create_pool(has_hosxp: bool, has_kphis: bool, has_kphis_log: bool, has_kphis_extra: bool) -> Pool<MySql> {
     // let pool = PoolOptions::new().test_before_acquire(false).connect(TEST_URL).await.expect("Error while connecting to database");
     let pool = Pool::connect(TEST_URL).await.expect("Error while connecting to database");
+    pool.execute("SET SESSION innodb_strict_mode=OFF;").await.expect("Error SET SESSION");
+
     if has_kphis {
         pool.execute(AssertSqlSafe(["CREATE DATABASE ", KPHIS_TEST, ";"].concat())).await.expect("Error while querying the create database");
     }

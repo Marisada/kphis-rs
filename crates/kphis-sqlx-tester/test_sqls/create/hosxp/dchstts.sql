@@ -1,10 +1,10 @@
 CREATE TABLE `hos`.`dchstts` (
-	`dchstts` CHAR(2) NOT NULL DEFAULT '',
-	`name` VARCHAR(150) NULL DEFAULT NULL,
-	`nhso_dchstts` VARCHAR(2) NULL DEFAULT NULL,
-	`oldcode` VARCHAR(5) NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	PRIMARY KEY (`dchstts`),
-	INDEX `ix_oldcode` (`oldcode`),
-	INDEX `ix_hos_guid` (`hos_guid`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `dchstts` char(2) NOT NULL,
+  `name` varchar(150) DEFAULT NULL,
+  `nhso_dchstts` varchar(2) DEFAULT NULL,
+  `oldcode` varchar(5) DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  PRIMARY KEY (`dchstts`),
+  KEY `ix_oldcode` (`oldcode`),
+  KEY `ix_hos_guid` (`hos_guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

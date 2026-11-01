@@ -405,6 +405,9 @@ impl ReportViewerPage {
                 !busy && *changed
             ).for_each(clone!(app, page => move |ready| {
                 if ready {
+                    page.report_svg.lock_mut().clear();
+                    page.vnan.set_neq(String::new());
+
                     Self::submit_search(page.clone(), app.clone());
                     page.search_changed.set(false);
                 }

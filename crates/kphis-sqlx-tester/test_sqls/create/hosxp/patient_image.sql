@@ -1,15 +1,15 @@
 CREATE TABLE `hos`.`patient_image` (
-	`hn` VARCHAR(9) NOT NULL DEFAULT '',
-	`image_name` VARCHAR(150) NOT NULL DEFAULT '',
-	`image` LONGBLOB NULL DEFAULT NULL,
-	`width` INT(11) NULL DEFAULT NULL,
-	`height` INT(11) NULL DEFAULT NULL,
-	`capture_date` DATETIME NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	`hos_guid_ext` VARCHAR(64) NULL DEFAULT NULL,
-	PRIMARY KEY (`hn`, `image_name`),
-	INDEX `hn` (`hn`),
-	INDEX `image_name` (`image_name`),
-	INDEX `ix_hos_guid` (`hos_guid`),
-	INDEX `ix_hos_guid_ext` (`hos_guid_ext`)
-) COLLATE='tis620_thai_ci' ENGINE=MyISAM;
+  `hn` varchar(9) NOT NULL,
+  `image_name` varchar(150) NOT NULL,
+  `image` longblob DEFAULT NULL,
+  `width` int(11) DEFAULT NULL,
+  `height` int(11) DEFAULT NULL,
+  `capture_date` datetime DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  `hos_guid_ext` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`hn`,`image_name`),
+  KEY `hn` (`hn`),
+  KEY `image_name` (`image_name`),
+  KEY `ix_hos_guid` (`hos_guid`),
+  KEY `ix_hos_guid_ext` (`hos_guid_ext`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

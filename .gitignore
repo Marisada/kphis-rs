@@ -5,6 +5,7 @@ crates/kphis-api-pdf/test_output/
 crates/kphis-api-router/volume/images/
 crates/kphis-api-router/volume/thumbs/
 crates/kphis-api-router/volume/app_assets.bin
+crates/kphis-sqlx-tester/hosxp
 docker/volume/
 tutorial/kphis-book/
 tutorial/book/

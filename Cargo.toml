@@ -3,7 +3,7 @@ members = [ "crates/*"]
 resolver = "3"
 
 [workspace.package]
-version = "0.4.22"
+version = "0.5.0"
 rust-version = "1.98"
 edition = "2024"
 authors = ["Marisada Pitakthum <p.marisada@gmail.com>"]
@@ -181,9 +181,8 @@ utoipa = { git = "https://codeberg.org/Marisada/utoipa", features = ["axum_extra
 citationberg = { git = "https://github.com/typst/citationberg", rev = "8966cf7c178b38b621d297c9eb6d0bb81e14be5e" }
 
 # read https://doc.rust-lang.org/cargo/reference/profiles.html for more informations
-[profile.dev]
-# prevent rust-lld linking error 0xc0000005
-strip = true
+# [profile.dev]
+# strip = true # prevent rust-lld linking error 0xc0000005
 # debug-assertions = false
 
 [profile.release]

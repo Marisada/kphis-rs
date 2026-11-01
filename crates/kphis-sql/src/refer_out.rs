@@ -50,11 +50,11 @@ pub fn update_his_referout(hosxp: &str) -> String {
     ].concat()
 }
 
-// INSERT INTO hos.refer_vital_sign (refer_vital_sign_id,referout_id,cc,pe,pre_diagnosis) VALUES (?,?,?,?,?);
+// INSERT INTO hos.refer_vital_sign (refer_vital_sign_id,referout_id,cc,pe,pre_diagnosis,refer_queue_id) VALUES (?,?,?,?,?,0);
 /// refer_vital_sign_id, referout_id, cc, pe, pre_diagnosis
 pub fn insert_his_refer_vital_sign(hosxp: &str) -> String {
     [
-        "INSERT INTO ",hosxp,".refer_vital_sign (refer_vital_sign_id,referout_id,cc,pe,pre_diagnosis) VALUES (?,?,?,?,?);"
+        "INSERT INTO ",hosxp,".refer_vital_sign (refer_vital_sign_id,referout_id,cc,pe,pre_diagnosis,refer_queue_id) VALUES (?,?,?,?,?,0);"
     ].concat()
 }
 

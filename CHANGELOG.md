@@ -1,3 +1,7 @@
+## 0.5.xx (2026-11-xx)
+> - *(Breaking)* HOSxP updated `opdscreen.height` from `INT(11)` to `DOUBLE(15,3)`
+> - *(Breaking)* HOSxP updated `refer_vital_sign.refer_queue_id` from `DEFAULT NULL` to `NOT NULL`
+
 ## 0.4.22 (2026-10-30)
 > - Fixed wrong AN/VN in lab report when selecting the report that not in current admission
 > - Added birthday to prescription-screen page

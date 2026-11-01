@@ -528,8 +528,8 @@ pub struct OpdscreenPe {
     pub vstdatetime: Option<PrimitiveDateTime>,
     #[Demo(value = "Some(50.0)")]
     pub bw: Option<f64>,
-    #[Demo(value = "Some(170)")]
-    pub height: Option<i32>,
+    #[Demo(value = "Some(170.0)")]
+    pub height: Option<f64>,
     #[Demo(value = "Some(7)")]
     pub pain_score: Option<i32>,
     #[Demo(value = "Some(80.0)")]

@@ -1,16 +1,16 @@
 CREATE TABLE `hos`.`medication_reconciliation_detail` (
-	`medication_reconciliation_detail_id` INT(11) NOT NULL DEFAULT 0,
-	`medication_reconciliation_id` INT(11) NULL DEFAULT NULL,
-	`medication_name` VARCHAR(150) NULL DEFAULT NULL,
-	`receive_location` VARCHAR(150) NULL DEFAULT NULL,
-	`last_receive_date` DATE NULL DEFAULT NULL,
-	`doctor_reconciliation_command_id` INT(11) NULL DEFAULT NULL,
-	`medication_reconciliation_manage_id` INT(11) NULL DEFAULT NULL,
-	`medication_change_cause` VARCHAR(250) NULL DEFAULT NULL,
-	`usage_name` VARCHAR(250) NULL DEFAULT NULL,
-	`hos_guid` CHAR(38) NULL DEFAULT NULL,
-	`qty` INT(11) NULL DEFAULT NULL,
-	`first_entry_date` DATETIME NULL DEFAULT NULL,
-	PRIMARY KEY (`medication_reconciliation_detail_id`),
-	INDEX `ix_hos_guid` (`hos_guid`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `medication_reconciliation_detail_id` int(11) NOT NULL,
+  `medication_reconciliation_id` int(11) NOT NULL,
+  `medication_name` varchar(150) NOT NULL,
+  `receive_location` varchar(150) DEFAULT NULL,
+  `last_receive_date` date DEFAULT NULL,
+  `doctor_reconciliation_command_id` int(11) DEFAULT NULL,
+  `medication_reconciliation_manage_id` int(11) DEFAULT NULL,
+  `medication_change_cause` varchar(250) DEFAULT NULL,
+  `usage_name` varchar(250) DEFAULT NULL,
+  `hos_guid` char(38) DEFAULT NULL,
+  `qty` int(11) DEFAULT NULL,
+  `first_entry_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`medication_reconciliation_detail_id`),
+  KEY `ix_hos_guid` (`hos_guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci
