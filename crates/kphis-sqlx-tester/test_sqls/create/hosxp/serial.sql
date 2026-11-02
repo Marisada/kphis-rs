@@ -1,10 +1,10 @@
 CREATE TABLE `hos`.`serial` (
-	`name` VARCHAR(50) NOT NULL DEFAULT '',
-	`serial_no` INT(11) NULL DEFAULT NULL,
-	`node_id` CHAR(1) NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	`hos_guid_ext` VARCHAR(64) NULL DEFAULT NULL,
-	PRIMARY KEY (`name`),
-	INDEX `ix_hos_guid` (`hos_guid`),
-	INDEX `ix_hos_guid_ext` (`hos_guid_ext`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `name` varchar(50) NOT NULL DEFAULT '',
+  `serial_no` int(11) DEFAULT NULL,
+  `node_id` char(1) DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  `hos_guid_ext` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`name`),
+  KEY `ix_hos_guid` (`hos_guid`),
+  KEY `ix_hos_guid_ext` (`hos_guid_ext`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

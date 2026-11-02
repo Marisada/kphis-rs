@@ -250,7 +250,7 @@ impl AdmissionNoteCpn {
                                                     html!("span", {.class("text-primary").text("BW: ")}),
                                                     html!("span", {.class("me-2").text(&pe.bw.map(|f| f.to_string()).unwrap_or_default()).text(" Kg.")}),
                                                     html!("span", {.class("text-primary").text("Height: ")}),
-                                                    html!("span", {.class("me-2").text(&pe.height.map(|i| i.to_string()).unwrap_or_default()).text(" cm.")}),
+                                                    html!("span", {.class("me-2").text(&pe.height.map(|f| f.to_string()).unwrap_or_default()).text(" cm.")}),
                                                 ])
                                                 .apply(|d| {
                                                     if let Some(dt) = pe.vstdatetime.as_ref() {

@@ -1,7 +1,7 @@
 CREATE TABLE `hos`.`sex` (
-	`code` CHAR(1) NOT NULL DEFAULT '',
-	`name` VARCHAR(10) NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	PRIMARY KEY (`code`),
-	INDEX `ix_hos_guid` (`hos_guid`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `code` char(1) NOT NULL,
+  `name` varchar(10) DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  PRIMARY KEY (`code`),
+  KEY `ix_hos_guid` (`hos_guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

@@ -1,8 +1,8 @@
 CREATE TABLE `hos`.`dchtype` (
-	`dchtype` CHAR(2) NOT NULL DEFAULT '',
-	`name` VARCHAR(150) NULL DEFAULT NULL,
-	`nhso_dchtype` VARCHAR(2) NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	PRIMARY KEY (`dchtype`),
-	INDEX `ix_hos_guid` (`hos_guid`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `dchtype` char(2) NOT NULL,
+  `name` varchar(150) DEFAULT NULL,
+  `nhso_dchtype` varchar(2) DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  PRIMARY KEY (`dchtype`),
+  KEY `ix_hos_guid` (`hos_guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

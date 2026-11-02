@@ -1,12 +1,12 @@
 CREATE TABLE `hos`.`opdgroup` (
-	`groupname` VARCHAR(250) NOT NULL DEFAULT '',
-	`accessright` TEXT NULL DEFAULT NULL,
-	`drug_access_level` TINYINT(4) NULL DEFAULT NULL,
-	`visible_menu` TEXT NULL DEFAULT NULL,
-	`viewallmenu` CHAR(1) NULL DEFAULT NULL,
-	`hos_guid` CHAR(38) NULL DEFAULT NULL,
-	`hos_guid_ext` VARCHAR(64) NULL DEFAULT NULL,
-	PRIMARY KEY (`groupname`),
-	INDEX `ix_hos_guid` (`hos_guid`),
-	INDEX `ix_hos_guid_ext` (`hos_guid_ext`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `groupname` varchar(250) NOT NULL DEFAULT '',
+  `accessright` text DEFAULT NULL,
+  `drug_access_level` tinyint(4) DEFAULT NULL,
+  `visible_menu` text DEFAULT NULL,
+  `viewallmenu` char(1) DEFAULT NULL,
+  `hos_guid` char(38) DEFAULT NULL,
+  `hos_guid_ext` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`groupname`),
+  KEY `ix_hos_guid` (`hos_guid`),
+  KEY `ix_hos_guid_ext` (`hos_guid_ext`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci

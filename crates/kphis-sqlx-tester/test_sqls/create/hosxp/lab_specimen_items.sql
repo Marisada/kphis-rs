@@ -1,11 +1,11 @@
 CREATE TABLE `hos`.`lab_specimen_items` (
-	`specimen_code` INT(11) NOT NULL DEFAULT 0,
-	`specimen_name` VARCHAR(150) NULL DEFAULT NULL,
-	`specimen_note` VARCHAR(250) NULL DEFAULT NULL,
-	`ecode` VARCHAR(10) NULL DEFAULT NULL,
-	`hos_guid` VARCHAR(38) NULL DEFAULT NULL,
-	`colab_specimen_name` VARCHAR(100) NULL DEFAULT NULL,
-	`colab_specimen_id` INT(11) NULL DEFAULT NULL,
-	PRIMARY KEY (`specimen_code`),
-	INDEX `ix_hos_guid` (`hos_guid`)
-) COLLATE='tis620_thai_ci' ENGINE=InnoDB;
+  `specimen_code` int(11) NOT NULL,
+  `specimen_name` varchar(150) DEFAULT NULL,
+  `specimen_note` varchar(250) DEFAULT NULL,
+  `ecode` varchar(10) DEFAULT NULL,
+  `hos_guid` varchar(38) DEFAULT NULL,
+  `colab_specimen_name` varchar(100) DEFAULT NULL,
+  `colab_specimen_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`specimen_code`),
+  KEY `ix_hos_guid` (`hos_guid`)
+) ENGINE=InnoDB DEFAULT CHARSET=tis620 COLLATE=tis620_thai_ci
