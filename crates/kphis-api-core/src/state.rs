@@ -40,7 +40,6 @@ use kphis_model::{
     app::AppAsset,
     claim::Claims,
     endpoint::EndPoint,
-    pacs::PacsConfig,
     prescription::{MessageDrugGroup, MessageDrugLabGroup},
     score::SupportedScore,
     select_utils::ColorSelectOption,
@@ -195,13 +194,6 @@ impl ApiState {
         if hosxp_vn_length == hosxp_an_length {
             panic!("VN length must not equal to AN length");
         }
-        let pacs_config = config.get_string("pacs-host").ok().map(|pacs_host| PacsConfig {
-            pacs_host,
-            pacs_host_is_kphis_broker: config.get_bool("pacs-host-is-kphis-broker").expect("'pacs-host-is-kphis-broker' not found in config file"),
-            pacs_user: config.get_string("pacs-user").expect("'pacs-user' not found in config file"),
-            pacs_password: config.get_string("pacs-password").expect("'pacs-password' not found in config file"),
-            pacs_data_source: config.get_string("pacs-data-source").expect("'pacs-data-source' not found in config file"),
-        });
 
         let app_config = Arc::new(ApiConfig {
             access_token_expire_minutes: config.get_int("access-token-expire-minutes").ok().and_then(|max| u64::try_from(max).ok()).unwrap_or(60),
@@ -229,7 +221,7 @@ impl ApiState {
             allow_insert_his,
             can_sign_pdf,
 
-            pacs_config,
+            pacs_host: config.get_string("pacs-host").ok(),
 
             hospcode: config.get_string("hospcode").expect("'hospcode' not found in config file"),
             code_name: config.get_string("code-name").unwrap_or_default(),
@@ -996,7 +988,7 @@ pub struct ApiConfig {
     pub hosxp_vn_length: usize,
     pub hosxp_an_length: usize,
 
-    pub pacs_config: Option<PacsConfig>,
+    pub pacs_host: Option<String>,
 
     pub hospcode: String,
     pub code_name: String,

@@ -52,11 +52,7 @@ pdf-key-path = "../../volume/cert/pkcs8.pem"
 pdf-time-stamp-authority-url = "https://freetsa.org/tsr"
 
 # Please comment 'pacs-host' if disabled PACs integration
-# pacs-host = "172.18.0.3"
-pacs-host-is-kphis-broker = true
-pacs-user = "ward"
-pacs-password = "1234"
-pacs-data-source = "SYNAPSE"
+# pacs-host = "http://172.18.0.4:8888"
 
 # Cron Job Scheduler for Clearing expired Log and Message / check HTTPS cert file and restart if needed
 # UTC time (not your local timezone). Note that the year may be omitted.

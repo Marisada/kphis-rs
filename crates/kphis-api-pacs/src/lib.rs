@@ -1,31 +1,75 @@
-pub mod agent_api;
-pub mod synapse;
+use axum::{
+    body::Bytes,
+    http::{Method, header},
+};
+use serde_json::Value;
 
-use axum::body::Bytes;
+use kphis_model::pacs::PacsXnData;
+use kphis_util::error::{AppError, Source};
 
-use kphis_model::pacs::{PacsConfig, PacsXnData};
-use kphis_util::error::AppError;
+pub async fn get_xn_data(xn: i32, pacs_client: &reqwest::Client, pacs_host: &str) -> Result<PacsXnData, AppError> {
+    let res = pacs_client
+        .request(Method::GET, &[pacs_host, "/xn/", &xn.to_string()].concat())
+        .header(header::CONTENT_TYPE, "application/json;charset=utf-8")
+        .send()
+        .await
+        .map_err(|e| Source::PacsClient.to_error(500, e, "GetXnData"))?;
 
-pub async fn get_xn_data(xn: i32, pacs_client: &reqwest::Client, pacs_config: &PacsConfig) -> Result<PacsXnData, AppError> {
-    if pacs_config.pacs_host_is_kphis_broker {
-        agent_api::get_xn_data_inner(xn, pacs_client, pacs_config).await
+    let status = res.status().as_u16();
+    if status == 200 {
+        res.json::<PacsXnData>().await.map_err(|e| Source::PacsClient.to_error(500, e, "GetXnData"))
     } else {
-        synapse::api::get_xn_data_inner(xn, pacs_client, pacs_config).await
+        let body = res.json::<Value>().await.map_err(|e| Source::PacsClient.to_error(500, e, "GetXnData"))?;
+        Err(Source::PacsClient.to_error(500, ["PACsBroker return status:", &status.to_string(), ", message: ", &body.to_string()].concat(), "GetXnData"))
     }
 }
 
-pub async fn get_thumbnail(file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_client: &reqwest::Client, pacs_config: &PacsConfig) -> Result<Bytes, AppError> {
-    if pacs_config.pacs_host_is_kphis_broker {
-        agent_api::get_thumbnail_inner(file_path, study_uid, series_uid, object_uid, pacs_client, pacs_config).await
+pub async fn get_thumbnail(file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_client: &reqwest::Client, pacs_host: &str) -> Result<Bytes, AppError> {
+    let res = pacs_client
+        .request(
+            Method::GET,
+            &[pacs_host, "/thumbnail?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
+        )
+        .header(header::CONTENT_TYPE, "image/jpeg")
+        .send()
+        .await
+        .map_err(|e| Source::PacsClient.to_error(500, e, "GetPACsThumbnail"))?;
+
+    let status = res.status().as_u16();
+    if status == 200 {
+        let body = res.bytes().await.unwrap_or(Bytes::new());
+        if body.is_empty() {
+            Err(Source::PacsClient.to_error(500, "PACsBroker cannot read all body", "GetPACsThumbnail"))
+        } else {
+            Ok(body)
+        }
     } else {
-        synapse::api::get_thumbnail_inner(file_path, study_uid, pacs_client, pacs_config).await
+        let body = res.json::<Value>().await.map_err(|e| Source::PacsClient.to_error(500, e, "GetPACsThumbnail"))?;
+        Err(Source::PacsClient.to_error(500, ["PACsBroker return status:", &status.to_string(), ", message: ", &body.to_string()].concat(), "GetPACsThumbnail"))
     }
 }
 
-pub async fn get_image(file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_client: &reqwest::Client, pacs_config: &PacsConfig) -> Result<Bytes, AppError> {
-    if pacs_config.pacs_host_is_kphis_broker {
-        agent_api::get_image_inner(file_path, study_uid, series_uid, object_uid, pacs_client, pacs_config).await
+pub async fn get_image(file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_client: &reqwest::Client, pacs_host: &str) -> Result<Bytes, AppError> {
+    let res = pacs_client
+        .request(
+            Method::GET,
+            &[pacs_host, "/image?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
+        )
+        .header(header::CONTENT_TYPE, "image/jpeg")
+        .send()
+        .await
+        .map_err(|e| Source::PacsClient.to_error(500, e, "GetPACsImage"))?;
+
+    let status = res.status().as_u16();
+    if status == 200 {
+        let body = res.bytes().await.unwrap_or(Bytes::new());
+        if body.is_empty() {
+            Err(Source::PacsClient.to_error(500, "PACsBroker cannot read all body", "GetPACsImage"))
+        } else {
+            Ok(body)
+        }
     } else {
-        synapse::api::get_image_inner(study_uid, series_uid, object_uid, pacs_client, pacs_config).await
+        let body = res.json::<Value>().await.map_err(|e| Source::PacsClient.to_error(500, e, "GetPACsImage"))?;
+        Err(Source::PacsClient.to_error(500, ["PACsBroker return status:", &status.to_string(), ", message: ", &body.to_string()].concat(), "GetPACsImage"))
     }
 }

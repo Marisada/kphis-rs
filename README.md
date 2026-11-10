@@ -56,7 +56,11 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
 - Web browser with [WebAssembly SIMD](https://caniuse.com/wasm-simd) supported
 
 ### How to set development tools
-- Install [Git](https://git-scm.com/) for `Git shell` or [GitHub Desktop](https://github.com/apps/desktop) for desktop experience (without `Git shell`) or install both
+- *(Linux only)* Add ubuntu/debian build-essential
+    ```bash
+    sudo apt install build-essential
+    ```
+- *(MacOS only)* Install Xcode for development library
 - Install Rust from [www.rust-lang.org](https://www.rust-lang.org/tools/install) or
     ```bash
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -65,11 +69,6 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
     ```bash
     rustup target add wasm32-unknown-unknown
     ```
-- *(Linux only)* Add ubuntu/debian build-essential
-    ```bash
-    sudo apt install build-essential
-    ```
-- *(MacOS only)* Install Xcode for development library
 - Install [wasm-bindgen-cli](https://github.com/wasm-bindgen/wasm-bindgen) WASM and JS binding tool (needed to update to match Cargo.lock's wasm-bindgen version)
     ```bash
     cargo install wasm-bindgen-cli
@@ -90,7 +89,8 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
     ```bash
     cargo install mdbook
     ```
-- Git clone this repository
+- *(Clone with Git only)* Install [Git](https://git-scm.com/) for `Git shell` or [GitHub Desktop](https://github.com/apps/desktop) for desktop experience (without `Git shell`) or install both
+- Git clone or download this repository from GitHub
     ```bash
     git clone https://github.com/Marisada/kphis.git
     ```
@@ -251,7 +251,6 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
 - Open browser to `localhost/swagger-ui/` for API document by [Swagger UI](https://swagger.io/tools/swagger-ui/)
 
 ## How to test
-> NOTE: We cannot test PACs API due to mock server implementation
 
 ### Unit test
 > NOTE: There error on calling `cargo test` on Windows
@@ -718,8 +717,22 @@ You can build tutorial inside KPHIS by
 
 ## How to Docker
 This project's Dockerfile is Multi-Platform, so you can build and run on `x86_64` or `aarch64` CPU architecture.
+> NOTE: please run `docker-build-bundle.sh` in pc/laptop with the same CPU architecture as your public docker host
 
-### Allocator in docker
+### docker network
+```sh
+docker network create --subnet=172.18.0.0/24 paperless-net
+```
+- kphis-rs: `172.18.0.2`
+    ```sh
+    docker run -d --name kphis -p 80:80 --restart=always \
+        --network=paperless-net --ip 172.18.0.2 \
+        -v kphis/volume:/volume \
+        --init kphis public
+    ```
+- pacs-agent: `172.18.0.4`
+
+### Allocator and MUSL docker image
 We use `musl` instead of `glibc` because Rust always build static executable and `musl` is highly proficient at creating portable static Linux executables.
 But default `musl` allocator caused 7-20x slowdown compared to another allocator, so our alternatives are..
 * [jemalloc](https://github.com/jemalloc/jemalloc) ([rust binding](https://github.com/tikv/jemallocator)) **NOT SUPPORT aarch64** and use [~3%](https://github.com/rust-lang/rust-analyzer/issues/1441#issuecomment-509506279) more memory than `glibc`
@@ -727,33 +740,11 @@ But default `musl` allocator caused 7-20x slowdown compared to another allocator
 
 So now we use `jemalloc` for `x86_64` and use `mimalloc` for `aarch64` when build and run on `musl` target.
 
-### Git pull between Windows and WSL
-- Clone the `active` Windows repository "in WSL" from windows's path with setting `origin` name as `windows`
-```bash
-git clone -o windows /mnt/d/github/kphis/
-```
-- Configure the remote name `wsl` "in Windows"
-```bat
-git remote add wsl \\wsl$\Debian\home\username\github\kphis
-```
-- Pull changes "into WSL" from Windows
-```bash
-git pull
-```
-or
-```bash
-git pull windows
-```
-- Pull changes "into Windows" from WSL (Note: The remote and branch name are typically required in this case)
-```bat
-git pull wsl some-branch
-```
-
-### Install Docker
+### How to deploy with docker
 - Install [docker-desktop](https://www.docker.com/products/docker-desktop/) or install [Docker](https://docs.docker.com/engine/install/) manually
 - Build docker image and bundle to `/docker/kphis.tar.gz`
     > `docker-build-bundle` script will rebuild WASM, CSS, precompress, build docker image and zip to `kphis.tar.gz`
-    > or use `docker-build` script for build docker alone
+    > or use `docker-build` script for build only a docker image
     - Windows with Docker Desktop
         ```bat
         docker-desktop-build-bundle
@@ -838,6 +829,28 @@ ex: "This is \[RED\] text" will be "This is <span style="color:red;font-weight:7
 - [js-cookie](https://github.com/js-cookie/js-cookie) -> vanilla js in WASM
 - [jspdf](https://github.com/parallax/jsPDF) -> [Typst](https://typst.app)
 - rtf.js -> removed
+
+### Git pull between Windows and WSL
+- Clone the `active` Windows repository "in WSL" from windows's path with setting `origin` name as `windows`
+```bash
+git clone -o windows /mnt/d/github/kphis/
+```
+- Configure the remote name `wsl` "in Windows"
+```bat
+git remote add wsl \\wsl$\Debian\home\username\github\kphis
+```
+- Pull changes "into WSL" from Windows
+```bash
+git pull
+```
+or
+```bash
+git pull windows
+```
+- Pull changes "into Windows" from WSL (Note: The remote and branch name are typically required in this case)
+```bat
+git pull wsl some-branch
+```
 
 ### Create a Self signed Cert for Document Signing
 - Create a PDF signing certificate
