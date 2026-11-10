@@ -55,14 +55,17 @@ Deploy phase by root
     )
     sudo chmod +x *.sh
 
-6. docker load
+6. create docker network (if not exists)
+    docker network create --subnet=172.18.0.0/24 paperless-net
+
+7. docker load
     sudo docker load -i docker/kphis.tar
 
-7. test
-    docker run -t -i --name kphis -p 80:80 -p 443:443 -v /home/dockeruser/kphis/volume:/volume --init kphis debug
+8. (optional) test
+    docker run -t -i --name kphis -p 80:80 -p 443:443 --network=paperless-net --ip 172.18.0.2 -v /home/dockeruser/kphis/volume:/volume --init kphis debug
 
-8. detach run
-    docker run -d --name kphis -p 80:80 -p 443:443 --restart=always -v /home/dockeruser/kphis/volume:/volume --init kphis public
+9. detach run
+    docker run -d --name kphis -p 80:80 -p 443:443 --restart=always --network=paperless-net --ip 172.18.0.2 -v /home/dockeruser/kphis/volume:/volume --init kphis public
 
 ======================================================================
 Update phase

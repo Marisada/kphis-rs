@@ -4,6 +4,7 @@ DIR=$(pwd)
 docker stop kphis
 docker rm kphis
 docker run -d --name kphis -p 80:80 -p 443:443 --restart=always \
+    --network=paperless-net --ip 172.18.0.2 \
     -v ${DIR}/volume:/volume \
     --init kphis public
 

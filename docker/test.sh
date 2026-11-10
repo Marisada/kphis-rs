@@ -2,6 +2,7 @@
 DIR=$(pwd)
 
 docker run -i -t -p 80:80 -p 443:443 --rm \
+    --network=paperless-net --ip 172.18.0.2 \
     -v ${DIR}/volume:/volume \
     --init kphis debug
 
