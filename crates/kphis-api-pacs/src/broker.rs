@@ -2,34 +2,22 @@ use axum::body::Bytes;
 use reqwest::{Method, header};
 use serde_json::Value;
 
-use kphis_model::pacs::{PacsConfig, PacsXnData};
+use kphis_model::pacs::PacsXnData;
 use kphis_util::error::{AppError, Source};
-
-pub async fn get_xn_data_inner(xn: i32, pacs_client: &reqwest::Client, pacs_config: &PacsConfig) -> Result<PacsXnData, AppError> {
-    BrokerClient::new(pacs_client).get_xn_data(xn, pacs_config).await
-}
-
-pub async fn get_thumbnail_inner(file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_client: &reqwest::Client, pacs_config: &PacsConfig) -> Result<Bytes, AppError> {
-    BrokerClient::new(pacs_client).get_thumbnail(file_path, study_uid, series_uid, object_uid, pacs_config).await
-}
-
-pub async fn get_image_inner(file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_client: &reqwest::Client, pacs_config: &PacsConfig) -> Result<Bytes, AppError> {
-    BrokerClient::new(pacs_client).get_image(file_path, study_uid, series_uid, object_uid, pacs_config).await
-}
 
 pub struct BrokerClient {
     pub client: reqwest::Client,
 }
 
 impl BrokerClient {
-    fn new(pacs_client: &reqwest::Client) -> Self {
+    pub fn new(pacs_client: &reqwest::Client) -> Self {
         Self { client: pacs_client.clone() }
     }
 
-    async fn get_xn_data(&self, xn: i32, config: &PacsConfig) -> Result<PacsXnData, AppError> {
+    pub async fn get_xn_data(&self, xn: i32, pacs_host: &str) -> Result<PacsXnData, AppError> {
         let res = self
             .client
-            .request(Method::GET, &[&config.pacs_host, "/xn/", &xn.to_string()].concat())
+            .request(Method::GET, &[pacs_host, "/xn/", &xn.to_string()].concat())
             .header(header::CONTENT_TYPE, "application/json;charset=utf-8")
             .send()
             .await
@@ -44,12 +32,12 @@ impl BrokerClient {
         }
     }
 
-    async fn get_thumbnail(&self, file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, config: &PacsConfig) -> Result<Bytes, AppError> {
+    pub async fn get_thumbnail(&self, file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_host: &str) -> Result<Bytes, AppError> {
         let res = self
             .client
             .request(
                 Method::GET,
-                &[&config.pacs_host, "/thumbnail?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
+                &[pacs_host, "/thumbnail?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
             )
             .header(header::CONTENT_TYPE, "image/jpeg")
             .send()
@@ -70,12 +58,12 @@ impl BrokerClient {
         }
     }
 
-    async fn get_image(&self, file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, config: &PacsConfig) -> Result<Bytes, AppError> {
+    pub async fn get_image(&self, file_path: &str, study_uid: &str, series_uid: &str, object_uid: &str, pacs_host: &str) -> Result<Bytes, AppError> {
         let res = self
             .client
             .request(
                 Method::GET,
-                &[&config.pacs_host, "/image?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
+                &[pacs_host, "/image?file_path=", file_path, "&study_uid=", study_uid, "&series_uid=", series_uid, "&object_uid=", object_uid].concat(),
             )
             .header(header::CONTENT_TYPE, "image/jpeg")
             .send()

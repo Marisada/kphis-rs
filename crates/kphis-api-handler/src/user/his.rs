@@ -337,7 +337,7 @@ pub fn app_status_from_api_state(app: &ApiState) -> AppStatus {
         message_dup_icodes: app.app_config.message_dup_icodes.clone(),
         message_egfr_icodes: app.app_config.message_egfr_icodes.clone(),
         message_crcl_icodes: app.app_config.message_crcl_icodes.clone(),
-        has_pacs_host: app.app_config.pacs_config.is_some(),
+        has_pacs_host: app.app_config.pacs_host.is_some(),
         pacs_hn_url: app.app_config.pacs_hn_url.clone(),
         ekg_hn_url: app.app_config.ekg_hn_url.clone(),
         scan_hn_url: app.app_config.scan_hn_url.clone(),

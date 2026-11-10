@@ -138,6 +138,19 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
 - *(Optional)* change ENTITY file content  
     File `ENTITY` store the text used by client and server at compile time for implicit assertion between them
 
+### docker network
+```sh
+docker network create --subnet=172.18.0.0/24 paperless-net
+```
+- user: `172.18.0.2`
+    ```sh
+    docker run -d --name kphis -p 80:80 --restart=always \
+        --network=paperless-net --ip 172.18.0.2 \
+        -v kphis/volume:/volume \
+        --init kphis public
+    ```
+- pacs broker: `172.18.0.4`
+
 ### How to run
 - Copy `/volume/config/template.toml` to `/volume/config/public.toml`
 - Edit `/volume/config/public.toml` to match your database and http setting

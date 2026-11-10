@@ -28,8 +28,8 @@ use kphis_util::error::{AppError, Source};
 pub async fn get_pacs_xn(Path(xn): Path<i32>, ctx: RequestState) -> Result<Json<PacsXnData>, AppError> {
     ctx.authorize(false).await?;
 
-    if let Some(pacs_config) = &ctx.api_state.app_config.pacs_config {
-        let result = get_xn_data(xn, &ctx.api_state.pacs_client, pacs_config).await?;
+    if let Some(pacs_host) = &ctx.api_state.app_config.pacs_host {
+        let result = get_xn_data(xn, &ctx.api_state.pacs_client, pacs_host).await?;
 
         Ok(Json(result))
     } else {
@@ -43,9 +43,9 @@ pub async fn get_pacs_xn(Path(xn): Path<i32>, ctx: RequestState) -> Result<Json<
 /// Get X-Ray thumbnail file by PARAMS, return jpeg file
 #[utoipa::path(get, path = "/xray/pacs/thumbnail", responses(DocImage), params(PacsParams))]
 pub async fn get_pacs_thumbnail(Query(params): Query<PacsParams>, State(app): State<ApiState>) -> Result<Response<Full<Bytes>>, AppError> {
-    if let Some(pacs_config) = &app.app_config.pacs_config {
+    if let Some(pacs_host) = &app.app_config.pacs_host {
         if let (Some(file_path), Some(study_uid), Some(series_uid), Some(object_uid)) = (&params.file_path, &params.study_uid, &params.series_uid, &params.object_uid) {
-            let data = get_thumbnail(file_path, study_uid, series_uid, object_uid, &app.pacs_client, pacs_config).await?;
+            let data = get_thumbnail(file_path, study_uid, series_uid, object_uid, &app.pacs_client, pacs_host).await?;
             let body = Full::new(data);
             Response::builder().header(header::CONTENT_TYPE, "image/jpeg").body(body).map_err(|e| Source::App.to_error(500, e, "Get PacsThumbnail"))
         } else {
@@ -62,9 +62,9 @@ pub async fn get_pacs_thumbnail(Query(params): Query<PacsParams>, State(app): St
 /// Get X-Ray full file by PARAMS, return jpeg file
 #[utoipa::path(get, path = "/xray/pacs/image", responses(DocImage), params(PacsParams))]
 pub async fn get_pacs_image(Query(params): Query<PacsParams>, State(app): State<ApiState>) -> Result<Response<Full<Bytes>>, AppError> {
-    if let Some(pacs_config) = &app.app_config.pacs_config {
+    if let Some(pacs_host) = &app.app_config.pacs_host {
         if let (Some(file_path), Some(study_uid), Some(series_uid), Some(object_uid)) = (&params.file_path, &params.study_uid, &params.series_uid, &params.object_uid) {
-            let data = get_image(file_path, study_uid, series_uid, object_uid, &app.pacs_client, pacs_config).await?;
+            let data = get_image(file_path, study_uid, series_uid, object_uid, &app.pacs_client, pacs_host).await?;
             let body = Full::new(data);
             Response::builder().header(header::CONTENT_TYPE, "image/jpeg").body(body).map_err(|e| Source::App.to_error(500, e, "Get PacsImage"))
         } else {

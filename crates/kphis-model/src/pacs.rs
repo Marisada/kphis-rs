@@ -12,14 +12,6 @@ use crate::{
     fetch::{ExecuteResponse, execute_fetch, fetch_json_api},
 };
 
-pub struct PacsConfig {
-    pub pacs_host: String,
-    pub pacs_host_is_kphis_broker: bool,
-    pub pacs_user: String,
-    pub pacs_password: String,
-    pub pacs_data_source: String,
-}
-
 #[derive(Clone, Debug, Default, Deserialize, Serialize, IntoParams)]
 pub struct PacsParams {
     pub file_path: Option<String>,
