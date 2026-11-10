@@ -56,7 +56,11 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
 - Web browser with [WebAssembly SIMD](https://caniuse.com/wasm-simd) supported
 
 ### How to set development tools
-- Install [Git](https://git-scm.com/) for `Git shell` or [GitHub Desktop](https://github.com/apps/desktop) for desktop experience (without `Git shell`) or install both
+- *(Linux only)* Add ubuntu/debian build-essential
+    ```bash
+    sudo apt install build-essential
+    ```
+- *(MacOS only)* Install Xcode for development library
 - Install Rust from [www.rust-lang.org](https://www.rust-lang.org/tools/install) or
     ```bash
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -65,11 +69,6 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
     ```bash
     rustup target add wasm32-unknown-unknown
     ```
-- *(Linux only)* Add ubuntu/debian build-essential
-    ```bash
-    sudo apt install build-essential
-    ```
-- *(MacOS only)* Install Xcode for development library
 - Install [wasm-bindgen-cli](https://github.com/wasm-bindgen/wasm-bindgen) WASM and JS binding tool (needed to update to match Cargo.lock's wasm-bindgen version)
     ```bash
     cargo install wasm-bindgen-cli
@@ -90,7 +89,8 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
     ```bash
     cargo install mdbook
     ```
-- Git clone this repository
+- *(Clone with Git only)* Install [Git](https://git-scm.com/) for `Git shell` or [GitHub Desktop](https://github.com/apps/desktop) for desktop experience (without `Git shell`) or install both
+- Git clone or download this repository from GitHub
     ```bash
     git clone https://github.com/Marisada/kphis.git
     ```

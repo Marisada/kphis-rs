@@ -1,4 +1,7 @@
-use axum::{body::Bytes, http::{header, Method}};
+use axum::{
+    body::Bytes,
+    http::{Method, header},
+};
 use serde_json::Value;
 
 use kphis_model::pacs::PacsXnData;
