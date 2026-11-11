@@ -64,7 +64,10 @@ impl SystemWorld {
 
         Self {
             main: None,
-            library: LazyHash::new(Library::builder().build()),
+            library: LazyHash::new(Library::builder([
+                typst_pdf::FORMAT,
+                typst_svg::FORMAT,
+            ]).build()),
             book: LazyHash::new(book),
             fonts,
             slots: Arc::new(Mutex::new(HashMap::new())),

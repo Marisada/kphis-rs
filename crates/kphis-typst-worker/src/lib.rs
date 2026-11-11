@@ -54,19 +54,15 @@ kphis_worker::api! {
                 info.title = kphis_util::util::str_some(&title).map(|t| t.into());
                 info.author = vec![author.into(), user.into()];
                 let pdf_option = typst_pdf::PdfOptions {
-                    ident: typst_library::foundations::Smart::Auto,
-                    creator: typst_library::foundations::Smart::Auto,
                     timestamp,
-                    page_ranges: None,
-                    standards: typst_pdf::PdfStandards::default(),
-                    tagged: false,
-                    pretty: false,
-                    signer: None,
+                    ..Default::default()
                 };
-                match typst_pdf::pdf(&document, &pdf_option) {
+                let result = typst_pdf::pdf(&document, &pdf_option);
+
+                match result.output {
                     Ok(result) => result,
                     Err(errors) => {
-                        let message = errors.iter().map(|e| e.message.as_str()).collect::<Vec<&str>>().join(", ");
+                        let message = errors.iter().chain(result.warnings.iter()).map(|e| e.message.as_str()).collect::<Vec<&str>>().join(", ");
                         console_log(&message);
                         Vec::new()
                     }

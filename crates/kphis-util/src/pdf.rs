@@ -53,7 +53,7 @@ pub fn create_source(id: FileId, bytes: &[u8], prev: Option<Source>) -> FileResu
             prev.replace(text);
             Ok(prev)
         }
-        None => Ok(Source::new(id, text.into())),
+        None => Ok(Source::new(id, text)),
     }
 }
 

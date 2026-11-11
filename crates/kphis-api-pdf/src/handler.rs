@@ -7,8 +7,8 @@ use axum::{
 use http_body_util::Full;
 use time::OffsetDateTime;
 use typst_layout::PagedDocument;
-use typst_library::foundations::{Datetime, Smart};
-use typst_pdf::{PdfOptions, PdfStandards, Timestamp, merge, pdf};
+use typst_library::foundations::Datetime;
+use typst_pdf::{PdfOptions, Timestamp, merge, pdf};
 
 use kphis_api_core::{
     open_api::{DocOne, DocPdf},
@@ -334,8 +334,9 @@ pub fn generate_pdf_file(document: &mut PagedDocument, title: &str, app: &ApiSta
 
     let (pdf_option, need_signing) = generate_pdf_option(app);
 
-    let pdf_unsign_buf = pdf(&document, &pdf_option).map_err(|errors| {
-        let message = errors.iter().map(|e| e.message.to_string()).collect::<Vec<String>>().join(", ");
+    let result = pdf(&document, &pdf_option);
+    let pdf_unsign_buf = result.output.map_err(|errors| {
+        let message = errors.iter().chain(result.warnings.iter()).map(|e| e.message.to_string()).collect::<Vec<String>>().join(", ");
         Source::App.to_error(500, message, "Create PDF")
     })?;
 
@@ -353,14 +354,9 @@ pub fn generate_pdf_option(app: &ApiState) -> (PdfOptions, bool) {
     let need_signing = signer.is_some();
 
     let pdf_option = PdfOptions {
-        ident: Smart::Auto,
-        creator: Smart::Auto,
         timestamp,
-        page_ranges: None,
-        standards: PdfStandards::default(),
-        tagged: false,
-        pretty: false,
         signer,
+        ..Default::default()
     };
 
     (pdf_option, need_signing)

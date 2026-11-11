@@ -5,7 +5,7 @@
 - Allow highlight Error tag
 - Added merge
 
-> last check date = 2026-07-28
+> last check date = 2026-11-11
 > cargo fmt --all
 > cargo generate-lockfile
 admin
@@ -27,63 +27,66 @@ edit krilla
 
 ## typst/crates/typst-pdf/src/lib.rs
 add PdfSig public
-: 17
+: 22
 ```diff
     pub use self::metadata::{Timestamp, Timezone};
 +   pub use krilla::metadata::PdfSig;
 ```
 
 add merge function
-: 36
+: 49
 ```diff
     /// Export a document into a PDF file.
     ///
     /// Returns the raw bytes making up the PDF file.
     #[typst_macros::time(name = "pdf")]
-    pub fn pdf(document: &PagedDocument, options: &PdfOptions) -> SourceResult<Vec<u8>> {
-        convert::convert(document, options, &[], None)
+    pub fn pdf(
+        document: &PagedDocument,
+        options: &PdfOptions,
+    ) -> Warned<SourceResult<Vec<u8>>> {
+        let mut warnings = EcoVec::new();
+        let output = convert::convert(document, options, &[], None, &mut warnings);
+        Warned { output, warnings }
     }
 
-+    /// Merge documents into a PDF file.
-+    ///
-+    /// Returns the raw bytes making up the PDF file.
-+    #[typst_macros::time(name = "merge")]
-+    pub fn merge(documents: &[PagedDocument], options: &PdfOptions) -> SourceResult<Vec<u8>> {
-+        convert::merge(documents, options)
-+    }
++   /// Merge documents into a PDF file.
++   ///
++   /// Returns the raw bytes making up the PDF file.
++   #[typst_macros::time(name = "merge")]
++   pub fn merge(documents: &[PagedDocument], options: &PdfOptions) -> SourceResult<Vec<u8>> {
++       let mut warnings = EcoVec::new();
++       convert::merge(documents, options, &mut warnings)
++   }
 ```
 
 add signer to PDfOptions
-:99
+:100
 ```diff
-    pub tagged: bool,
-    /// Whether to format the PDF in a human-readable way.
-    pub pretty: bool,
+    /// If not `None`, shall be the creation timestamp of the document. It will
+    /// only be used if `set document(date: ..)` is `auto`.
+    pub timestamp: Option<Timestamp>,
+    /// Format options that override the defaults set by the document.
+    pub format: PdfFormatOptions<F>,
 +   pub signer: Option<PdfSig>,
 }
 ```
 
-add signer to PDfOptions's Default impl
-:119
+add signer to PDfOptions's resolve()
+:160
 ```diff
-impl Default for PdfOptions<'_> {
-    fn default() -> Self {
-        Self {
-            ident: Smart::Auto,
-            creator: Smart::Auto,
-            timestamp: None,
-            page_ranges: None,
-            standards: PdfStandards::default(),
-            tagged: true,
-            pretty: false,
-+           signer: None,
-        }
+        Ok(PdfOptions {
+            ident: self.ident.clone(),
+            creator: self.creator.clone(),
+            timestamp: self.timestamp,
+            format,
++           signer: self.signer.clone(),
+        })
     }
 }
 ```
 
 ## typst/crates/typst-pdf/src/convert.rs
-: 88
+: 96
 inject PdfSig to krilla at pub fn convert()
 ```diff
     convert_pages(&mut gc, &mut document)?;
@@ -100,7 +103,7 @@ inject PdfSig to krilla at pub fn convert()
     finish(document, gc, options.standards.config)
 ```
 
-: 177
+: 180
 add merge() and add_page()
 ```rust
 // #[typst_macros::time(name = "merge document")]
@@ -108,28 +111,37 @@ pub fn merge(
     typst_documents: &[PagedDocument],
     options: &PdfOptions,
 ) -> SourceResult<Vec<u8>> {
+    let options = match typst_documents.first() {
+        Some(typst_document) => {
+            options.resolve(typst_document.options().get::<PdfFormat>(), warnings)?
+        }
+        None => {
+            return Ok(Vec::new());
+        }
+    };
+
     let settings = SerializeSettings {
-        compress_content_streams: true,
+        compress_content_streams: !options.format.pretty.v,
         no_device_cs: true,
-        ascii_compatible: false,
+        ascii_compatible: options.format.pretty.v,
         xmp_metadata: true,
         cmyk_profile: None,
-        configuration: options.standards.config,
-        enable_tagging: options.tagged,
+        configuration: options.format.standard.v.config,
+        enable_tagging: options.tagged(),
         render_svg_glyph_fn: render_svg_glyph,
-        pretty: false,
+        pretty: options.format.pretty.v,
     };
 
     let mut document = Document::new_with(settings);
     for typst_document in typst_documents {
-        let page_index_converter = PageIndexConverter::new(typst_document, options);
+        let page_index_converter = PageIndexConverter::new(typst_document, &options);
         let named_destinations =
             collect_named_destinations(&mut document, typst_document, &[], &page_index_converter);
-        let tags = tags::init(typst_document, options)?;
+        let tags = tags::init(typst_document, &options)?;
 
         let mut gc = GlobalContext::new(
             typst_document,
-            options,
+            &options,
             None,
             named_destinations,
             page_index_converter,
@@ -148,7 +160,7 @@ pub fn merge(
         document.set_signer(sig.clone());
     }
 
-    finish_without_gc(document, options.standards.config)
+    finish_without_gc(document)
 }
 
 fn add_page(gc: &mut GlobalContext, document: &mut Document) -> SourceResult<()> {
@@ -227,18 +239,33 @@ fn add_page(gc: &mut GlobalContext, document: &mut Document) -> SourceResult<()>
 }
 ```
 
+edit finish()
+:660
+```rust
+            KrillaError::Limit(LimitError::TooLargeFloat) => bail!(
+                Span::detached(),
+                "a PDF floating point number is larger than the allowed limit";
+                hint: "set the PDF version to PDF 1.5 or later";
+            ),
++           KrillaError::StandardFont(_) => bail!(
++               Span::detached(),
++               "standard font error";
++               hint: "please check standard font";
++           ),
+        },
+    }
+```
+
 add finish_without_gc()
-```rust 660
+: 669
+```rust
 /// Finish a krilla document and handle export errors.
 // #[typst_macros::time(name = "finish export without gc")]
-fn finish_without_gc(
-    document: Document,
-    configuration: Configuration,
-) -> SourceResult<Vec<u8>> {
+fn finish_without_gc(document: Document) -> SourceResult<Vec<u8>> {
     match document.finish() {
-        Ok(r) => Ok(r),
-        Err(e) => match e {
-            KrillaError::Font(_f, err) => {
+        Ok(bytes) => Ok(bytes),
+        Err(err) => match err {
+            KrillaError::Font(_, err) => {
                 bail!(
                     Span::detached(),
                     "failed to process font ({err})";
@@ -250,27 +277,23 @@ fn finish_without_gc(
             KrillaError::Validation(ve) => {
                 let ve_len = ve.len();
                 bail!(
-                    // *span,
                     Span::detached(),
                     "Validation error";
                     hint: "{ve_len} errors occur";
                 );
-                // let errors = ve
+                // Err(ve
                 //     .iter()
-                //     .map(|(e, validators)| {
-                //         convert_error(&gc, *validators, e, configuration.version())
-                //     })
-                //     .collect::<EcoVec<_>>();
-                // Err(errors)
+                //     .map(|(e, validators)| convert_validation_error(&gc, e, *validators))
+                //     .collect())
+                // }
             }
             KrillaError::Image(_, loc, err) => {
                 let span = to_span(loc);
                 bail!(span, "failed to process image ({err})");
             }
-            KrillaError::SixteenBitImage(_image, _) => {
-                // let span = gc.image_to_spans.get(&image).unwrap();
+            KrillaError::SixteenBitImage(_, _) => {
+                // let span = &gc.image_to_spans[&image];
                 bail!(
-                    // *span,
                     Span::detached(),
                     "16 bit images are not supported in this export mode";
                     hint: "convert the image to 8 bit instead";
@@ -285,15 +308,14 @@ fn finish_without_gc(
                         "invalid page number for PDF file";
                         hint: "please report this as a bug";
                     ),
-                    PdfError::VersionMismatch(v) => {
-                        let pdf_ver = v.as_str();
-                        let config_ver = configuration.version();
-                        let cur_ver = config_ver.as_str();
+                    PdfError::VersionMismatch(embedded) => {
+                        let embedded = embedded.as_str();
+                        // let target = gc.options.version().as_str();
                         bail!(span,
                             "the version of the PDF is too high";
-                            hint: "the current export target is {cur_ver}, while the PDF \
-                                   has version {pdf_ver}";
-                            hint: "raise the export target to {pdf_ver} or higher";
+                            hint: "the current export target is ??, while the PDF \
+                                   has version {embedded}";
+                            hint: "raise the export target to {embedded} or higher";
                             hint: "or preprocess the PDF to convert it to a lower version";
                         );
                     }
@@ -336,13 +358,18 @@ fn finish_without_gc(
                 "a PDF floating point number is larger than the allowed limit";
                 hint: "set the PDF version to PDF 1.5 or later";
             ),
+            KrillaError::StandardFont(_) => bail!(
+                Span::detached(),
+                "standard font error";
+                hint: "please check standard font";
+            ),
         },
     }
 }
 ```
 
 ## typst/crates/typst-svg/src/lib.rs
-:448
+:473
 fix fn svg_header_with_custom_attrs()
 ```diff
     write_custom_attrs(&mut svg);
@@ -370,16 +397,18 @@ fix fn pdf_options()
         ident: Smart::Auto,
         creator: Smart::Auto,
         timestamp,
-        page_ranges: config.pages.clone(),
-        standards: config.pdf_standards.clone(),
-        tagged: config.tagged,
-        pretty: config.pretty,
+        format: PdfFormatOptions {
+            pages: config.pages.clone().map(Some),
+            standard: config.pdf_standards.clone(),
+            tagged: config.tagged.map(Smart::Custom),
+            pretty: config.pretty,
+        },
 +       signer: None,
     }
 ```
 
 ## typst/crates/typst-syntax/src/highlight.rs
-:398
+406
 ```diff
 /// Highlight one source node, emitting HTML.
 fn highlight_html_impl(html: &mut String, node: &LinkedNode) {

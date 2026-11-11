@@ -42,7 +42,7 @@ axum = { version = "0.8", features = [ "multipart", "macros" ] }
 axum-extra = { version = "0.12", features = [ "typed-header" ] }
 axum-macros = "0.5"
 axum-prometheus = "0.10"
-axum-server = { version = "0.8", features = [ "tls-rustls" ] }
+axum-server = { version = "0.9", features = [ "tls-rustls" ] }
 base64 = "0.23"
 bitcode = { version = "0.6", features = [ "time" ] }
 chart-js-rs = { git = "https://codeberg.org/marisada/chart-js-rs" }
@@ -67,9 +67,9 @@ futures-util = "0.3"
 # hayro-syntax = { version = "0.7.2", default-features = false }
 # hayro-interpret = { version = "0.7", default-features = false }
 # pin as Typst
-hayro = { git = "https://github.com/LaurenzV/hayro", rev = "d8e24e29eda62581e1ea15497effb2a884fb1608", default-features = false }
-hayro-syntax = { git = "https://github.com/LaurenzV/hayro", rev = "d8e24e29eda62581e1ea15497effb2a884fb1608", default-features = false }
-hayro-interpret = { git = "https://github.com/LaurenzV/hayro", rev = "d8e24e29eda62581e1ea15497effb2a884fb1608", default-features = false }
+hayro = { git = "https://github.com/LaurenzV/hayro", rev = "a728f7cb6826c1e167973b8fd71867ebb4cf39af", default-features = false }
+hayro-syntax = { git = "https://github.com/LaurenzV/hayro", rev = "a728f7cb6826c1e167973b8fd71867ebb4cf39af", default-features = false }
+hayro-interpret = { git = "https://github.com/LaurenzV/hayro", rev = "a728f7cb6826c1e167973b8fd71867ebb4cf39af", default-features = false }
 gloo-events = "0.3"
 hex = "0.4"
 http = "1"
@@ -134,7 +134,7 @@ zeroize = "1"
 # Typst related
 codespan-reporting = "0.13"
 ecow = "0.2.6" # pin as typst
-pdf-writer = "0.15.0" # pin as krilla
+pdf-writer = { git = "https://github.com/typst/pdf-writer", rev = "fdf090125f1e7209fa630c4ca1f5f29910c87c93" } # pin as krilla
 
 # typst = "0.14"
 # typst-library = "0.14"
