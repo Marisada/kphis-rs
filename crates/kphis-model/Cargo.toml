@@ -81,4 +81,4 @@ zeroize = { workspace = true }
 utoipa = { workspace = true }
 
 # this crate only
-sqlx = { version = "0.9", default-features = false, features = [ "mysql", "time", "rust_decimal", "macros" ] }
+sqlx = { version = "0.9", default-features = false, features = [ "derive", "mysql", "rust_decimal", "time" ] }
