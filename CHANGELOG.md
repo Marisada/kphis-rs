@@ -1,8 +1,9 @@
-## 0.5.1 (2026-11-11)
+## 0.5.1 (2026-11-12)
 > - *(Breaking)* HOSxP updated `opdscreen.height` from `INT(11)` to `DOUBLE(15,3)`
 > - *(Breaking)* HOSxP updated `refer_vital_sign.refer_queue_id` from `DEFAULT NULL` to `NOT NULL`
 > - *(Breaking)* Use docker network for PACs agent connection
 > - *(Breaking)* Remove Synapse PACs integration
+> - Added AuditStatus (Null + Approve + Review) item to match menu's summary button action
 
 ## 0.4.22 (2026-10-30)
 > - Fixed wrong AN/VN in lab report when selecting the report that not in current admission

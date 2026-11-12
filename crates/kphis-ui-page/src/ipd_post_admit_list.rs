@@ -405,30 +405,37 @@ impl IpdPostAdmitListPage {
                                         .attr("autocomplete","off")
                                         .apply(mixins::string_value_end(page.patient.clone(), page.changed.clone()))
                                     }),
-                                    html!("button", {
+                                ])
+                            })),
+                            html!("div", {
+                                // container for narrow screen
+                                .class("d-flex")
+                                .child(html!("div", {
+                                    .class("me-2")
+                                    .child(html!("button", {
                                         .attr("type", "button")
                                         .class(class::BTN_GRAY)
                                         .child(html!("i", {.class(class::FA_SEARCH)}))
-                                        .text(" ค้นหา")
+                                        .text("ค้นหา")
                                         .event(clone!(page => move |_: events::Click| {
                                             page.changed.set_neq(true);
                                         }))
-                                    }),
-                                ])
-                            })),
+                                    }))
+                                }))
+                                .child_signal(page.search_result.signal_vec_cloned().to_signal_cloned().map(clone!(app => move |rows| {
+                                    Some(static_pdf_btn_with_modal(
+                                        class::BTN_BLUE,
+                                        "Print",
+                                        "รายงานจำหน่ายผู้ป่วยใน",
+                                        include_str!("../../../volume/pwa/templates/statics/ipd-post-admit-from-screen.typ"),
+                                        serde_json::json!({
+                                            "rows": rows,
+                                        }).to_string(),
+                                        app.clone(),
+                                    ))
+                                })))
+                            }),
                         ])
-                        .child_signal(page.search_result.signal_vec_cloned().to_signal_cloned().map(clone!(app => move |rows| {
-                            Some(static_pdf_btn_with_modal(
-                                class::BTN_BLUE,
-                                "Print",
-                                "รายงานจำหน่ายผู้ป่วยใน",
-                                include_str!("../../../volume/pwa/templates/statics/ipd-post-admit-from-screen.typ"),
-                                serde_json::json!({
-                                    "rows": rows,
-                                }).to_string(),
-                                app.clone(),
-                            ))
-                        })))
                     })),
                     html!("div", {
                         .class("col-sm")

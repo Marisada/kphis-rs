@@ -12,6 +12,7 @@ use kphis_model::{
     app::{AppState, VisitTypeId},
     endpoint::EndPoint,
     fetch::Method,
+    ipd::summary::AuditStatus,
     order::{Order, OrderItem, OrderPatch, OrderPatchAction, OrderTypeName},
     route::Route,
     select_utils::SelectOption,
@@ -484,9 +485,17 @@ impl MenuCpn {
                                             .class(class::RESP_XL_SM)
                                             .text(" สรุป")
                                         }))
-                                        .event(|_:events::Click| {
+                                        .event(clone!(app => move |_:events::Click| {
+                                            // set ipd-post-admit-list page parameters
+                                            app.summary_status_select.set_neq(AuditStatus::NulAprRev.as_ref().to_string());
+                                            app.inscl_select.set_neq(String::new());
+                                            app.ward_multiple_select.set_neq(String::new());
+                                            app.adm_doctor_select.set_neq(String::new());
+                                            app.dch_doctor_select.set_neq(app.doctor_code().unwrap_or_default());
+                                            app.use_date_limit.set_neq(false);
+                                            // redirect
                                             Route::IpdPostAdmitList { view_by: String::from("doctor") }.hard_redirect();
-                                        })
+                                        }))
                                     }))
                                     .child_signal(app.post_admit_count.signal().map(|count| doms::badge_count_red(count as usize)))
                                     .child(html!("span", {

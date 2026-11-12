@@ -353,11 +353,7 @@ pub fn generate_pdf_option(app: &ApiState) -> (PdfOptions, bool) {
     let signer = app.pdf_signer.as_ref().map(|s| s.sig.clone());
     let need_signing = signer.is_some();
 
-    let pdf_option = PdfOptions {
-        timestamp,
-        signer,
-        ..Default::default()
-    };
+    let pdf_option = PdfOptions { timestamp, signer, ..Default::default() };
 
     (pdf_option, need_signing)
 }

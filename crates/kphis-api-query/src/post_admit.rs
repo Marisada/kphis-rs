@@ -168,6 +168,8 @@ mod tests {
         assert!(found_status_approve.is_empty());
         let found_status_review = get_post_admit_list(&PostAdmitParams {summary_status: Some(String::from("review")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
         assert_eq!(found_status_review.len(), 1);
+        let found_status_nul_apr_rev = get_post_admit_list(&PostAdmitParams {summary_status: Some(String::from("nul_apr_rev")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
+        assert_eq!(found_status_nul_apr_rev.len(), 1);
         let found_status_code = get_post_admit_list(&PostAdmitParams {summary_status: Some(String::from("code")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();
         assert!(found_status_code.is_empty());
         let found_status_audit = get_post_admit_list(&PostAdmitParams {summary_status: Some(String::from("audit")),..Default::default()},7,9,&tester.db_pool,&tester.hosxp,&tester.kphis,&tester.kphis_extra).await.unwrap();

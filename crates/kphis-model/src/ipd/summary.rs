@@ -465,6 +465,7 @@ pub enum AuditStatus {
     Null,
     Approve,
     Review,
+    NulAprRev,
     Code,
     Audit,
     Claim,
@@ -488,11 +489,13 @@ impl AuditStatus {
         }
     }
 
+    // to summary status
     pub fn as_data(&self) -> Option<String> {
         match self {
             Self::Null => None,
             Self::Approve => None,
             Self::Review => Some(String::from("review")),
+            Self::NulAprRev => Some(String::from("review")),
             Self::Code => Some(String::from("code")),
             Self::Audit => Some(String::from("audit")),
             Self::Claim => Some(String::from("claim")),
@@ -507,6 +510,7 @@ impl AuditStatus {
             Self::Null => (" AND summary_2.status IS NULL", " AND NOT attending_doctor_exists"),
             Self::Approve => (" AND summary_2.status IS NULL", " AND attending_doctor_exists AND NOT approve_doctor_exists"),
             Self::Review => (" AND summary_2.status='review'", ""),
+            Self::NulAprRev => (" AND (summary_2.status IS NULL OR summary_2.status='review')", ""),
             // support original KPHIS
             Self::Code => (" AND (summary_2.status IS NULL OR summary_2.status='code')", " AND attending_doctor_exists AND approve_doctor_exists"),
             Self::Audit => (" AND summary_2.status='audit'", ""),
@@ -521,6 +525,7 @@ impl AuditStatus {
             Self::Null => "ยังไม่สรุป",
             Self::Approve => "รอ Approve",
             Self::Review => "รอ Review",
+            Self::NulAprRev => "รอ แพทย์",
             Self::Code => "รอ Coder",
             Self::Audit => "รอ Audit",
             Self::Claim => "รอ Claim",
@@ -534,6 +539,7 @@ impl AuditStatus {
             Self::Null => "text-bg-secondary",
             Self::Approve => "text-bg-secondary",
             Self::Review => "text-bg-danger",
+            Self::NulAprRev => "text-bg-danger",
             Self::Code => "text-bg-info",
             Self::Audit => "text-bg-warning",
             Self::Claim => "text-bg-success",
@@ -547,6 +553,7 @@ impl AuditStatus {
             Self::Null => "btn-outline-secondary",
             Self::Approve => "btn-outline-secondary",
             Self::Review => "btn-outline-danger",
+            Self::NulAprRev => "btn-outline-danger",
             Self::Code => "btn-outline-info",
             Self::Audit => "btn-outline-warning",
             Self::Claim => "btn-outline-success",
@@ -560,7 +567,7 @@ impl AuditStatus {
     }
 
     pub fn is_list_with_date_limit(&self) -> bool {
-        matches!(self, Self::Null | Self::Done)
+        matches!(self, Self::Done)
     }
 }
 
