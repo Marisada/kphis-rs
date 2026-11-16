@@ -298,6 +298,10 @@ impl XrayCpn {
                                                 &date_and_time_th_opt_relative(&report.examined_date, &report.examined_time),
                                             ].concat())
                                             .event(clone!(page => move |_:events::Click| {
+                                                // clear old data
+                                                page.xn_data.set(None);
+                                                page.selected_image_data.set(None);
+                                                // load new data
                                                 page.xn.set_neq(report.xn);
                                                 page.selected_xray_report.set(Some(report.clone()));
                                             }))
