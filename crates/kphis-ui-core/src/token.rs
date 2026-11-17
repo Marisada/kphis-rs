@@ -238,7 +238,7 @@ fn get_claim_and_verify(token: &str, key: &str, earlier_second: i64) -> Result<C
     Ok(claims)
 }
 
-// CANNOT share in kphis-model due to getrandom version
+// CANNOT share in kphis-model due to getrandom in WASM
 // integration test at tests/src/token.rs
 pub fn get_claim_encoded_key_public(token: &str, key: &str) -> Result<Claims, AppError> {
     let key_vec = general_purpose::URL_SAFE_NO_PAD.decode(key).map_err(|e| Source::Base64.to_error(401, e, "Verify Token"))?;

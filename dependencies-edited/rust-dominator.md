@@ -27,6 +27,11 @@ wasm-bindgen-test = "0.3"
 +   gloo-events = "0.3"
 ```
 
+```diff
+-   futures-signals = "0.3"
++   futures-signals = { git = "https://github.com/Pauan/rust-signals" }
+```
+
 ## src/dom.rs::234
 - edit
 ```diff

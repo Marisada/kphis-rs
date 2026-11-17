@@ -4,8 +4,47 @@
 - Add zoom plugin
 - Add destroy method
 - Fix `pointercancel`, `pointermove` and `pointerup` event-listeners not destroy (stacking infinity every render)
+- Remove uuid
 
 ## delete `rust-toolchain.toml`
+
+## src/Cargo.toml
+fix warning: `package.homepage` is redundant with `package.repository`
+```diff
+    repository = "https://github.com/Billy-Sheppard/chart-js-rs"
+-   homepage = "https://github.com/Billy-Sheppard/chart-js-rs"
+```
+
+```diff
+    wasm-bindgen = { version = "0.2.127", features = ["serde-serialize"] }
+-   uuid = { version = "1.26.0", features = ["v4", "js"] }
+```
+
+```diff
+-   worxide = { version = "0.0.8", optional = true }
++   worxide = { version = "0.0.9", optional = true }
+    wasm-bindgen-futures = { version = "0.4.77", optional = true }
+```
+
+## src/objects/helper_objects.rs
+:10
+```diff
+-   std::fmt::{Debug, Display},
++   std::{
++       fmt::{Debug, Display},
++       sync::atomic::{AtomicU32, Ordering},
++   },
+```
+:17
+```diff
++   static ID_COUNTER: AtomicU32 = AtomicU32::new(0);
+```
+:all matches
+```diff
+-   let id = uuid::Uuid::new_v4().to_string();
++   let id = ["chartjs_rs_closure_", &ID_COUNTER.fetch_add(1, Ordering::SeqCst).to_string()].concat();
+```
+
 
 ## src/objects/chart_objects.rs
 

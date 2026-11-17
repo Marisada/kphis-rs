@@ -69,11 +69,11 @@
 > - `unsafe-libyaml` (unmaintained): wait for [typst](https://github.com/typst/typst) and [hayagriva](https://github.com/typst/hayagriva) to change `serde_yaml` out
 > - `yaml-rust` (unmaintained): wait for [syntect](https://github.com/trishume/syntect) to update dependency
 
-## NOTE : getrandom used by rand and ulid crate
+## NOTE : getrandom used by rand and uuid/ulid crate
 > - v0.2 has a good supported for `wasm32-unknown-unknown` with `js` feature (has no effect on targets other than `wasm32-unknown-unknown`)
 > - v0.3 need `rustflags = ['--cfg', 'getrandom_backend="wasm_js"']` for WASM and need crate `wasm_js` feature, can bloat Cargo.lock and is known to cause build issues on some non-web WASM platforms, even when a different backend is selected via getrandom_backend
 > - v0.4 NOT support `wasm32-unknown-unknown`, read [getrandom](https://docs.rs/getrandom/latest/getrandom/) for more information
-> - NOW we use only v0.2 and `Any crate included in frontend that use getrandom v0.4` will error on compile/runtime, ex. `rand`, `ulid`, `totp`, `orion` crate
+> - NOW we remove getrandom associated in all WASM (`kphis-drg-worker`, `kphis-typst-worker` and `kphis-frontend`)
 
 ## Horizontal scaling note (TODO)
 * Value generate at starting a service

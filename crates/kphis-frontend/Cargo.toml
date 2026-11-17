@@ -36,7 +36,3 @@ web-sys = { workspace = true, features = [
     "HtmlButtonElement",
     "HtmlDivElement",
 ]}
-
-[target.'cfg(all(target_arch = "wasm32", any(target_os = "unknown", target_os = "none")))'.dependencies]
-# This js feature should only be enabled for binary, test, or benchmark crates.
-getrandom = { version = "0.2", features = ["js"] }

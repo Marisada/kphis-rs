@@ -1,7 +1,7 @@
 # Integration tests
 
 ## WASM
-We collected all `WASM` tests here to prevent dev-dependencies conflicts (from [getrandom](https://docs.rs/getrandom/latest/getrandom/#webassembly-support)).
+We collected all `WASM` tests here to prevent dev-dependencies conflicts
 
 - Using headless `Edge`, `Chrome` or `Firefox` 
     * Install FireFox geckodriver via cargo

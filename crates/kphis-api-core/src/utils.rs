@@ -242,6 +242,11 @@ mod tests {
     use super::*;
     use kphis_sqlx_tester::MySqlTester;
 
+    #[test]
+    fn test_get_config() {
+        assert!(Config::builder().add_source(config::File::with_name("../../volume/config/template.toml")).build().is_ok());
+    }
+
     #[tokio::test]
     #[ignore]
     async fn sqlx_check_permissions() {
