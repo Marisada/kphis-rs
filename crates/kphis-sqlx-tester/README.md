@@ -12,4 +12,4 @@ This library implements tests for `kphis-backend`'s SQLx database.
 ---
 This crate is part of the [KPHIS](https://github.com/Marisada/kphis) project.
 
-> Inspired by [sqlx-db-tester](https://github.com/tyrchen/sqlx-db-tester)  
+> Inspired by [sqlx-db-tester](https://github.com/tyrchen/sqlx-db-tester)

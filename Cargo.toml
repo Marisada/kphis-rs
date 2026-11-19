@@ -4,7 +4,7 @@ resolver = "3"
 
 [workspace.package]
 version = "0.5.1"
-rust-version = "1.99"
+rust-version = "1.100"
 edition = "2024"
 authors = ["Marisada Pitakthum <p.marisada@gmail.com>"]
 description = "KPHIS ported to Rust"
@@ -21,10 +21,7 @@ kphis-api-pacs = { path = "crates/kphis-api-pacs" }
 kphis-api-pdf = { path = "crates/kphis-api-pdf" }
 kphis-api-query = { path = "crates/kphis-api-query" }
 kphis-api-router = { path = "crates/kphis-api-router" }
-kphis-backend = { path = "crates/kphis-backend" }
-kphis-db-util = { path = "crates/kphis-db-util" }
 kphis-drg-worker = { path = "crates/kphis-drg-worker" }
-kphis-frontend = { path = "crates/kphis-frontend" }
 kphis-model = { path = "crates/kphis-model" }
 kphis-sql = { path = "crates/kphis-sql" }
 kphis-sqlx-tester = { path = "crates/kphis-sqlx-tester" }
@@ -40,7 +37,6 @@ argon2 = "0.6"
 async-once-cell = "0.5"
 axum = { version = "0.8", features = [ "multipart", "macros" ] }
 axum-extra = { version = "0.12", features = [ "typed-header" ] }
-axum-macros = "0.5"
 axum-prometheus = "0.10"
 axum-server = { version = "0.9", features = [ "tls-rustls" ] }
 base64 = "0.23"
@@ -48,7 +44,7 @@ bitcode = { version = "0.6", features = [ "time" ] }
 chart-js-rs = { git = "https://codeberg.org/marisada/chart-js-rs" }
 # chart-js-rs = { path = "../chart-js-rs/" }
 clap = { version = "4", features = [ "derive" ] }
-config = "0.15"
+config = { version = "0.15", default-features = false, features = ["toml"] }
 console_error_panic_hook = "0.1"
 console_log = { version = "1", features = ["color"] }
 csv = "1"
@@ -61,7 +57,8 @@ enum_dispatch = "0.3"
 futures = { version = "0.3", features = ["async-await"] }
 futures-core = "0.3"
 futures-channel = "0.3"
-futures-signals = "0.3"
+# futures-signals = "0.3"
+futures-signals = { git = "https://github.com/Pauan/rust-signals" } # waiting to push git to crates.io, pin as dominator
 futures-util = "0.3"
 # hayro = { version = "0.7", default-features = false }
 # hayro-syntax = { version = "0.7.2", default-features = false }
@@ -77,16 +74,13 @@ http-body-util = "0.1"
 image = "0.25"
 include_dir = "0.7"
 js-sys = "0.3"
-locspan = "0.9"
 log = "0.4"
 md-5 = "0.11"
 moph-provider-client = { git = "https://codeberg.org/marisada/moph-provider-client" }
 num = "0.4"
-orion = "0.17"
 pasetors = "0.8"
 rand = "0.9"
 regex = "1"
-rstest = "0.26"
 rust_decimal = { version = "1", default-features = false, features = [ "serde", "serde_json" ] }
 rustls = { version = "0.23", default-features = false }
 serde = { version = "1", features = [ "rc" ] }
@@ -101,13 +95,11 @@ strum = { version = "0.27", features = [ "derive" ] } # pin as biblatex and cron
 syntect = { version = "5.3", default-features = false, features = [ "html" ] }
 time = { version = "0.3", features = [ "macros", "parsing", "serde-human-readable", "wasm-bindgen" ]}
 time-datepicker-core = { git = "https://codeberg.org/marisada/time-datepicker-core" }
-tl = "0.7"
 tokio = { version = "1", features = [ "full" ]}
 # tokio-cron-scheduler = "0.15"
 tokio-cron-scheduler = { git = "https://codeberg.org/Marisada/tokio-cron-scheduler" }
 # tokio-cron-scheduler = { path = "../tokio-cron-scheduler" }
 tokio-stream = "0.1"
-tokio-util = { version = "0.7", features = [ "io-util" ]}
 totp-rs = { version = "6", features = [ "gen_secret", "qr" ]}
 tower-cookies = "0.11"
 tower_governor = "0.8"
@@ -125,9 +117,6 @@ wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 wasm-bindgen-test = "0.3"
 web-sys = "0.3"
-# winauth = "0.0.5"
-winauth = { git = "https://codeberg.org/marisada/winauth-rs" }
-# winauth = { path = "../winauth-rs/winauth" }
 xml = "1"
 zeroize = "1"
 

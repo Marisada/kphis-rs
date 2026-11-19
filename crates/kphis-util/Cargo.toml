@@ -16,7 +16,6 @@ base64 = { workspace = true }
 encoding_rs = { workspace = true }
 futures = { workspace = true }
 futures-signals = { workspace = true }
-hex = { workspace = true }
 js-sys = { workspace = true }
 log = { workspace = true }
 num = { workspace = true }

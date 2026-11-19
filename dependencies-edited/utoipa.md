@@ -6,6 +6,13 @@
 
 ## remove rust-toolchain.toml
 
+## utoipa-gen/Cargo.toml
+:32
+```diff
+- ulid = { version = "1", optional = true, default-features = false }
++ ulid = { version = "3", optional = true, default-features = false }
+```
+
 ## utoipa-gen/src/schema_type.rs
 :116 edit is_primitive()
 ```diff

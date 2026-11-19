@@ -53,7 +53,6 @@ log = { workspace = true }
 strum = { workspace = true }
 time = { workspace = true }
 time-datepicker-core = { workspace = true }
-# ulid = { workspace = true }
 wasm-bindgen = { workspace = true }
 wasm-bindgen-futures = { workspace = true }
 wasm-bindgen-test = { workspace = true }
@@ -62,7 +61,3 @@ web-sys = { workspace = true, features = [
 ]}
 
 web-time = "1"
-
-# This js feature should only be enabled for binary, test, or benchmark crates.
-# This feature has no effect on targets other than wasm32-unknown-unknown.
-getrandom = { version = "0.2", features = ["js"] }
