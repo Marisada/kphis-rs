@@ -18,7 +18,6 @@ crate-type = ["cdylib", "rlib"]
 kphis-ui-core = { workspace = true }
 
 # from workspace
-console_error_panic_hook = { workspace = true }
 discard = { workspace = true }
 dominator = { workspace = true }
 futures-channel = { workspace = true }
