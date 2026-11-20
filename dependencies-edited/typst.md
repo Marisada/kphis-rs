@@ -21,8 +21,8 @@ edit krilla
 + # krilla = { path = "../krilla/crates/krilla/", default-features = false, features = ["raster-images", "comemo", "rayon", "pdf"] }
 + # krilla-svg = { path = "../krilla/crates/krilla-svg/" }
 
-+ krilla = { git = "https://codeberg.org/Marisada/krilla", default-features = false, features = ["raster-images", "comemo", "rayon", "pdf"] }
-+ krilla-svg = { git = "https://codeberg.org/Marisada/krilla" }
++ krilla = { git = "https://codeberg.org/marisada/krilla", default-features = false, features = ["raster-images", "comemo", "rayon", "pdf"] }
++ krilla-svg = { git = "https://codeberg.org/marisada/krilla" }
 ```
 
 ## typst/crates/typst-pdf/src/lib.rs

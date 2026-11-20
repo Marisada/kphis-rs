@@ -96,7 +96,7 @@ echo -e "\\n${GOLD}Build tutorial pages..${NC}"
 rm -rf tutorial/kphis-book
 rm -rf tutorial/src
 rm -rf tutorial/theme
-git clone https://github.com/Marisada/kphis-book tutorial/kphis-book
+git clone https://github.com/marisada/kphis-book tutorial/kphis-book
 cp -r tutorial/kphis-book/src tutorial/src >/dev/null
 cp -r tutorial/kphis-book/theme tutorial/theme >/dev/null
 mdbook build tutorial

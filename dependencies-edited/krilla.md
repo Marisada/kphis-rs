@@ -6,7 +6,7 @@ open shell
 > sudo apt-get update && sudo apt-get install -y ghostscript libfontconfig1-dev
 
 > git clone https://github.com/LaurenzV/krilla.git
-> git clone https://github.com/Marisada/krilla.git
+> git clone https://github.com/marisada/krilla.git
 run on both git
 > cargo test --features visreg -- --nocapture
 expected the same failures on both git:

@@ -10,6 +10,6 @@ This library implements tests for `kphis-backend`'s SQLx database.
 - Run `cargo test -- --test-threads=1`
 
 ---
-This crate is part of the [KPHIS](https://github.com/Marisada/kphis) project.
+This crate is part of the [KPHIS](https://github.com/marisada/kphis) project.
 
 > Inspired by [sqlx-db-tester](https://github.com/tyrchen/sqlx-db-tester)

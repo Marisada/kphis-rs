@@ -548,13 +548,14 @@ impl LabCpn {
                                     .children(PdfButtons::buttons(
                                         PdfButtons::new(
                                             TypstReport::from_system_with_coercion(SystemReport::ScanImages, &app.state().report_coercions()),
-                                            page.vnan.clone(),
+                                            Mutable::new([&page.vnan.lock_ref(), "|lab|1"].concat()),
                                             Mutable::new(true),
                                             Mutable::new(false),
                                             clone!(page, detail => move || {
-                                                let id = [&page.vnan.lock_ref(), "|lab|1"].concat();
                                                 serde_json::json!({
-                                                    "id": id,
+                                                    "id": page.vnan.lock_ref().as_str(),
+                                                    "key": "lab",
+                                                    "per_page": 1,
                                                     "patient": page.patient.lock_ref().as_ref(),
                                                     "images": &detail.scan_images,
                                                 }).to_string()

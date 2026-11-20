@@ -97,7 +97,7 @@ time = { version = "0.3", features = [ "macros", "parsing", "serde-human-readabl
 time-datepicker-core = { git = "https://codeberg.org/marisada/time-datepicker-core" }
 tokio = { version = "1", features = [ "full" ]}
 # tokio-cron-scheduler = "0.15"
-tokio-cron-scheduler = { git = "https://codeberg.org/Marisada/tokio-cron-scheduler" }
+tokio-cron-scheduler = { git = "https://codeberg.org/marisada/tokio-cron-scheduler" }
 # tokio-cron-scheduler = { path = "../tokio-cron-scheduler" }
 tokio-stream = "0.1"
 totp-rs = { version = "6", features = [ "gen_secret", "qr" ]}
@@ -107,7 +107,7 @@ tower-http = { version = "0.7", features = [ "fs", "compression-br", "compressio
 tracing = "0.1"
 tracing-appender = "0.2"
 # tracing-rfc-5424 = "0.2"
-tracing-rfc-5424 = { git = "https://codeberg.org/Marisada/syslog-tracing" }
+tracing-rfc-5424 = { git = "https://codeberg.org/marisada/syslog-tracing" }
 # tracing-rfc-5424 = { path = "../syslog-tracing/tracing-rfc-5424/" }
 tracing-subscriber = { version = "0.3", features = [ "time", "env-filter" ] }
 ulid = { version = "3", features = ["serde"] } # MUST not use in WASM (only version ~1.1 compat with WASM )
@@ -160,7 +160,7 @@ x509-certificate = { git = "https://codeberg.org/marisada/cryptography-rs" }
 # x509-certificate = { path = "../cryptography-rs/x509-certificate/" }
 
 # OpenApi
-utoipa = { git = "https://codeberg.org/Marisada/utoipa", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
+utoipa = { git = "https://codeberg.org/marisada/utoipa", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
 # utoipa = { path = "../utoipa/utoipa/", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
 
 [patch.crates-io]
