@@ -148,11 +148,12 @@ impl IpdMainPage {
     fn loaded_lab_unreport_exists(page: Rc<Self>, app: Rc<App>) {
         let an_opt = str_some(&page.an.lock_ref());
         if let Some(an) = an_opt {
+            let vnan = if let Some(vn) = page.patient.lock_ref().vn.get_cloned() { [an, vn].join("-") } else { an };
             app.async_load(
                 true,
                 clone!(app, page => async move {
                     // GET `EndPoint::ExistsKeyId`
-                    match call_api_get_exists_key_id("lab-unreport/", &an, app.state()).await {
+                    match call_api_get_exists_key_id("lab-unreport/", &vnan, app.state()).await {
                         Ok(exists) => {
                             page.show_lab_unreport_has_data.set_neq(exists);
                         }
@@ -168,11 +169,12 @@ impl IpdMainPage {
     fn loaded_lab_unread_exists(page: Rc<Self>, app: Rc<App>) {
         let an_opt = str_some(&page.an.lock_ref());
         if let Some(an) = an_opt {
+            let vnan = if let Some(vn) = page.patient.lock_ref().vn.get_cloned() { [an, vn].join("-") } else { an };
             app.async_load(
                 true,
                 clone!(app, page => async move {
                     // GET `EndPoint::ExistsKeyId`
-                    match call_api_get_exists_key_id("lab-unread/", &an, app.state()).await {
+                    match call_api_get_exists_key_id("lab-unread/", &vnan, app.state()).await {
                         Ok(exs) => {
                             page.show_lab_unread_exists_spinner.set_neq(exs);
                         }
@@ -188,11 +190,12 @@ impl IpdMainPage {
     fn loaded_xray_unread_exists(page: Rc<Self>, app: Rc<App>) {
         let an_opt = str_some(&page.an.lock_ref());
         if let Some(an) = an_opt {
+            let vnan = if let Some(vn) = page.patient.lock_ref().vn.get_cloned() { [an, vn].join("-") } else { an };
             app.async_load(
                 true,
                 clone!(app, page => async move {
                     // GET `EndPoint::ExistsKeyId`
-                    match call_api_get_exists_key_id("ipd-xray-unread/", &an, app.state()).await {
+                    match call_api_get_exists_key_id("ipd-xray-unread/", &vnan, app.state()).await {
                         Ok(exs) => {
                             page.show_xray_unread_exists_spinner.set_neq(exs);
                         }
@@ -775,6 +778,7 @@ impl IpdMainPage {
                                     patient.clone(),
                                     patient_lock.hn.clone(),
                                     page.an.clone(),
+                                    patient_lock.vn.clone(),
                                     Some(page.loaded_lab_unread_exists_spinner.clone()),
                                 );
                                 LabCpn::render("ipd-main", lab, app.clone())
@@ -783,6 +787,7 @@ impl IpdMainPage {
                                 let xray = XrayCpn::new_ipd(
                                     patient_lock.hn.clone(),
                                     page.an.clone(),
+                                    patient_lock.vn.clone(),
                                     Some(page.loaded_xray_unread_exists_spinner.clone()),
                                 );
                                 XrayCpn::render("ipd-main", xray, app.clone())

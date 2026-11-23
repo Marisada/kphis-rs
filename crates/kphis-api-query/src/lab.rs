@@ -26,8 +26,8 @@ pub async fn get_wbc_band(key: &str, value: &str, wbc_code: i64, band_code: i64,
     Ok(result)
 }
 
-pub async fn get_lab_head(params: &LabHeadParams, doctorcode: &Option<String>, groupname: &Option<String>, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<LabHead>, AppError> {
-    let mut heads = get_lab_head_inner(params, pool, hosxp, kphis).await?;
+pub async fn get_lab_head(params: &LabHeadParams, doctorcode: &Option<String>, groupname: &Option<String>, alen: usize, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<LabHead>, AppError> {
+    let mut heads = get_lab_head_inner(params, alen, pool, hosxp, kphis).await?;
     for head in heads.iter_mut() {
         head.lab_items_group = get_lab_item_group(head.lab_order_number, params.only_head.unwrap_or_default(), doctorcode, groupname, pool, hosxp).await?;
         if params.with_scan.unwrap_or_default() {
@@ -38,17 +38,17 @@ pub async fn get_lab_head(params: &LabHeadParams, doctorcode: &Option<String>, g
     Ok(heads)
 }
 
-pub async fn get_lab_head_inner(params: &LabHeadParams, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<LabHead>, AppError> {
+pub async fn get_lab_head_inner(params: &LabHeadParams, alen: usize, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<Vec<LabHead>, AppError> {
     let result = if let (Some(hn), Some(lab_order_number)) = (&params.hn, params.id) {
         let ids = get_lab_ids_with_previous(hn, lab_order_number, params.prev.unwrap_or(1), pool, hosxp).await?;
         if !ids.is_empty() {
-            let sql = lab::get_lab_head("lab_order_number", &ids, params.start_date.is_some(), params.end_date.is_some(), hosxp, kphis);
+            let sql = lab::get_lab_head("lab_order_number", false, &ids, params.start_date.is_some(), params.end_date.is_some(), hosxp, kphis);
             sqlx::query(AssertSqlSafe(sql)).fetch_all(pool).await
         } else {
             Ok(Vec::new())
         }
     } else if let Some(hn) = &params.hn {
-        let sql = lab::get_lab_head("hn", &[], params.start_date.is_some(), params.end_date.is_some(), hosxp, kphis);
+        let sql = lab::get_lab_head("hn", false, &[], params.start_date.is_some(), params.end_date.is_some(), hosxp, kphis);
         let mut query = sqlx::query(AssertSqlSafe(sql)).bind(hn);
         if let Some(start_date) = &params.start_date {
             query = query.bind(start_date);
@@ -58,8 +58,19 @@ pub async fn get_lab_head_inner(params: &LabHeadParams, pool: &Pool<MySql>, hosx
         }
         query.fetch_all(pool).await
     } else if let Some(vn) = &params.vn {
-        let sql = lab::get_lab_head("vn", &[], params.start_date.is_some(), params.end_date.is_some(), hosxp, kphis);
-        sqlx::query(AssertSqlSafe(sql)).bind(vn).fetch_all(pool).await
+        let true_vn_opt = if vn.len() == alen {
+            // vn is AN here
+            crate::query_utils::get_vn_by_an(vn, pool, hosxp).await?
+        } else {
+            None
+        };
+        // include lab of VN and AN if possible
+        let sql = lab::get_lab_head("vn", true_vn_opt.is_some(), &[], params.start_date.is_some(), params.end_date.is_some(), hosxp, kphis);
+        let mut query = sqlx::query(AssertSqlSafe(sql)).bind(vn);
+        if let Some(true_vn) = true_vn_opt {
+            query = query.bind(true_vn);
+        }
+        query.fetch_all(pool).await
     } else {
         Ok(Vec::new())
     };
@@ -238,6 +249,7 @@ mod tests {
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/lab_specimen_items.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/doctor.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/opduser.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/create/kphis/ipd_lab_read.sql")).execute(&tester.db_pool).await.unwrap();
 
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/lab_head.sql")).execute(&tester.db_pool).await.unwrap();
@@ -248,42 +260,46 @@ mod tests {
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/lab_specimen_items.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/doctor.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/opduser.sql")).execute(&tester.db_pool).await.unwrap();
+        sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/hosxp/ipt.sql")).execute(&tester.db_pool).await.unwrap();
         sqlx::query(include_str!("../../kphis-sqlx-tester/test_sqls/insert/kphis/ipd_lab_read.sql")).execute(&tester.db_pool).await.unwrap();
 
-        let default = get_lab_head_inner(&LabHeadParams::default(),&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let default = get_lab_head_inner(&LabHeadParams::default(),9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(default.is_empty());
 
-        let hn_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let hn_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(hn_found.len(), 4);
 
-        let hn_found_before = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),end_date: Some(date!(2023-01-01)),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let hn_found_before = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),end_date: Some(date!(2023-01-01)),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(hn_found_before.len(), 2);
 
-        let hn_found_after = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),start_date: Some(date!(2024-01-01)),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let hn_found_after = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),start_date: Some(date!(2024-01-01)),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(hn_found_after.len(), 2);
 
-        let hn_found_between = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),start_date: Some(date!(2024-01-01)),end_date: Some(date!(2024-01-01)),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let hn_found_between = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),start_date: Some(date!(2024-01-01)),end_date: Some(date!(2024-01-01)),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(hn_found_between.len(), 2);
 
-        let hn_not_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0006666")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let hn_not_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0006666")),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(hn_not_found.is_empty());
 
-        let vn_found_vn = get_lab_head_inner(&LabHeadParams {vn: Some(String::from("661231235959")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let vn_found_vn = get_lab_head_inner(&LabHeadParams {vn: Some(String::from("661231235959")),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(vn_found_vn.len(), 1);
 
-        let vn_found_an = get_lab_head_inner(&LabHeadParams {vn: Some(String::from("660001234")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let vn_found_an = get_lab_head_inner(&LabHeadParams {vn: Some(String::from("650001234")),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(vn_found_an.len(), 1);
 
-        let vn_not_found = get_lab_head_inner(&LabHeadParams {vn: Some(String::from("6666")),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let vn_found_an_with_vn = get_lab_head_inner(&LabHeadParams {vn: Some(String::from("660001234")),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        assert_eq!(vn_found_an_with_vn.len(), 2);
+
+        let vn_not_found = get_lab_head_inner(&LabHeadParams {vn: Some(String::from("6666")),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(vn_not_found.is_empty());
 
-        let id_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),id: Some(3),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let id_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),id: Some(3),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(id_found.len(), 1);
 
-        let id_found_with_limit = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),id: Some(3),prev: Some(2),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let id_found_with_limit = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),id: Some(3),prev: Some(2),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert_eq!(id_found_with_limit.len(), 2);
 
-        let id_not_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),id: Some(999),..Default::default()},&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        let id_not_found = get_lab_head_inner(&LabHeadParams {hn: Some(String::from("0001234")),id: Some(999),..Default::default()},9,&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(id_not_found.is_empty());
     }
 

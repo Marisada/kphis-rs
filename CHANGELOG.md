@@ -1,5 +1,6 @@
 ## 0.5.2 (2026-11-23)
 > - Fix template-nurse-note non-increment index sql insertion
+> - Include VN of AN in lab and xray
 
 ## 0.5.1 (2026-11-12)
 > - *(Breaking)* HOSxP updated `opdscreen.height` from `INT(11)` to `DOUBLE(15,3)`

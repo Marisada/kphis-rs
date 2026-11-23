@@ -6,6 +6,8 @@ use kphis_util::{
 };
 
 pub async fn get_exists(keyword: &str, id: &str, pool: &Pool<MySql>, hosxp: &str, kphis: &str) -> Result<bool, AppError> {
+    // support lab/xray to includes AN and VN
+    let an_with_vn = id.split("-").collect::<Vec<&str>>();
     // (query string, count column name, where type)
     if let Some((sql, key, value_type)) = match keyword {
         "pre-order" => Some((kphis_sql::pre_order::master::select_pre_order_exists(kphis), "exs", "string")),
@@ -15,9 +17,9 @@ pub async fn get_exists(keyword: &str, id: &str, pool: &Pool<MySql>, hosxp: &str
         "opd-er-med-reconcile" => Some((kphis_sql::opd_er::med_reconcile::get_med_reconcile_exists(kphis), "exs", "u32")),
         "ipd-med-reconcile-dr-unconfirm" => Some((kphis_sql::ipd::med_reconcile::get_med_reconcile_doctor_unconfirm_exists(kphis), "exs", "string")),
         "opd-er-med-reconcile-dr-unconfirm" => Some((kphis_sql::opd_er::med_reconcile::get_med_reconcile_doctor_unconfirm_exists(kphis), "exs", "u32")),
-        "lab-unread" => Some((kphis_sql::lab::get_lab_unread_exists(hosxp, kphis), "exs", "string")),
-        "lab-unreport" => Some((kphis_sql::lab::get_lab_unreport_exists(hosxp), "exs", "string")),
-        "ipd-xray-unread" => Some((kphis_sql::xray::get_xray_unread_an_exists(hosxp, kphis), "exs", "string")),
+        "lab-unread" => Some((kphis_sql::lab::get_lab_unread_exists(an_with_vn.len() == 2, hosxp, kphis), "exs", "string")),
+        "lab-unreport" => Some((kphis_sql::lab::get_lab_unreport_exists(an_with_vn.len() == 2, hosxp), "exs", "string")),
+        "ipd-xray-unread" => Some((kphis_sql::xray::get_xray_unread_an_exists(an_with_vn.len() == 2, hosxp, kphis), "exs", "string")),
         "opd-er-xray-unread" => Some((kphis_sql::xray::get_xray_unread_vn_exists(hosxp, kphis), "exs", "string")),
         _ => None,
     } {
@@ -38,7 +40,12 @@ pub async fn get_exists(keyword: &str, id: &str, pool: &Pool<MySql>, hosxp: &str
                 }
             }
             _ => {
-                query = query.bind(id);
+                if an_with_vn.len() == 2 {
+                    // AN and VN
+                    query = query.bind(an_with_vn[0]).bind(an_with_vn[1]);
+                } else {
+                    query = query.bind(id);
+                }
             }
         }
         query
@@ -241,6 +248,8 @@ mod tests {
         assert!(found);
         let not_found = get_exists("lab-unread","651231235959",&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(!not_found);
+        let not_found_with_vn = get_exists("lab-unread","660001234-651231235959",&tester.db_pool,&tester.hosxp, &tester.kphis).await.unwrap();
+        assert!(!not_found_with_vn);
     }
 
     #[tokio::test]
@@ -253,6 +262,8 @@ mod tests {
         assert!(found);
         let not_found = get_exists("lab-unreport","650001234",&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(!not_found);
+        let not_found_with_vn = get_exists("lab-unreport","650001234-651231235959",&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        assert!(!not_found_with_vn);
     }
 
     #[tokio::test]
@@ -270,6 +281,8 @@ mod tests {
         assert!(found_vn);
         let not_found = get_exists("ipd-xray-unread","660006666",&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
         assert!(!not_found);
+        let not_found_with_vn = get_exists("ipd-xray-unread","660006666-651231235959",&tester.db_pool,&tester.hosxp,&tester.kphis).await.unwrap();
+        assert!(!not_found_with_vn);
     }
 
     #[tokio::test]

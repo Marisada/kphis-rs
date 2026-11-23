@@ -48,16 +48,17 @@ pub fn delete_xray_read(kphis: &str) -> String {
 
 // // GET /exists-key-id/ipd-xray-unread/{an}
 // SELECT EXISTS(SELECT * FROM hos.xray_report xr LEFT JOIN kphis.ipd_xray_read r ON r.xn=xr.xn WHERE xr.an=? AND xr.confirm='Y' AND r.xn IS NULL) AS exs;
-/// an
-pub fn get_xray_unread_an_exists(hosxp: &str, kphis: &str) -> String {
+/// an, (vn)
+pub fn get_xray_unread_an_exists(an_with_vn: bool, hosxp: &str, kphis: &str) -> String {
+    let vnan = if an_with_vn {"(xr.an=? OR xr.vn=?)"} else {"xr.an=?"};
     [
-        "SELECT EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE xr.an=? AND xr.confirm='Y' AND r.xn IS NULL) AS exs;"
+        "SELECT EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE ",vnan," AND xr.confirm='Y' AND r.xn IS NULL) AS exs;"
     ].concat()
 }
 
 // // GET /exists-key-id/opd-er-xray-unread/{vn}
 // SELECT EXISTS(SELECT * FROM hos.xray_report xr LEFT JOIN kphis.ipd_xray_read r ON r.xn=xr.xn WHERE xr.vn=? AND xr.confirm='Y' AND r.xn IS NULL) AS exs;
-/// an
+/// vn
 pub fn get_xray_unread_vn_exists(hosxp: &str, kphis: &str) -> String {
     [
         "SELECT EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE xr.vn=? AND xr.confirm='Y' AND r.xn IS NULL) AS exs;"

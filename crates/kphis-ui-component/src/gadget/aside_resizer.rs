@@ -393,10 +393,16 @@ impl AsideResizerCpn {
                                         })
                                     }
                                     "lab" => {
+                                        let patient_vn = if let Some((_, patient)) = with_order.as_ref() {
+                                            patient.lock_ref().as_ref().and_then(|pt| pt.vn.clone())
+                                        } else {
+                                            None
+                                        };
                                         let lab = LabCpn::new(
                                             Mutable::new(None),
                                             page.hn.clone(),
                                             page.vnan.clone(),
+                                            Mutable::new(patient_vn),
                                             page.loaded_lab_unread_exists_spinner.clone(),
                                         );
                                         html!("div", {
@@ -406,9 +412,15 @@ impl AsideResizerCpn {
                                     }
                                     "xray" => {
                                         let xray = if page.vnan.lock_ref().len() == app.hosxp_an_len() {
+                                            let patient_vn = if let Some((_, patient)) = with_order.as_ref() {
+                                                patient.lock_ref().as_ref().and_then(|pt| pt.vn.clone())
+                                            } else {
+                                                None
+                                            };
                                             XrayCpn::new_ipd(
                                                 page.hn.clone(),
                                                 page.vnan.clone(),
+                                                Mutable::new(patient_vn),
                                                 page.loaded_xray_unread_exists_spinner.clone(),
                                             )
                                         } else {

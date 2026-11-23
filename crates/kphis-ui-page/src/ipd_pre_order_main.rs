@@ -612,6 +612,7 @@ impl IpdPreOrderPage {
                                     Mutable::new(None),
                                     page.hn.clone(),
                                     Mutable::new(String::new()),
+                                    Mutable::new(None),
                                     None,
                                 );
                                 LabCpn::render("ipd-pre-order-main", lab, app.clone())

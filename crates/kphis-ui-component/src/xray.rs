@@ -32,6 +32,8 @@ pub struct XrayCpn {
     is_ipd: bool,
     hn: Mutable<String>,
     an: Mutable<String>,
+    // for including VN in IPD setting
+    patient_vn: Mutable<Option<String>>,
     vn: Mutable<String>,
     loaded_xray_unread_exists_spinner: Option<Mutable<bool>>,
 
@@ -52,11 +54,12 @@ pub struct XrayCpn {
 }
 
 impl XrayCpn {
-    pub fn new_ipd(hn: Mutable<String>, an: Mutable<String>, loaded_xray_unread_exists_spinner: Option<Mutable<bool>>) -> Rc<Self> {
+    pub fn new_ipd(hn: Mutable<String>, an: Mutable<String>, patient_vn: Mutable<Option<String>>, loaded_xray_unread_exists_spinner: Option<Mutable<bool>>) -> Rc<Self> {
         Rc::new(Self {
             is_ipd: true,
             hn,
             an,
+            patient_vn,
             loaded_xray_unread_exists_spinner,
             loaded_xn_data: Mutable::new(true),
             ..Default::default()
@@ -280,6 +283,7 @@ impl XrayCpn {
                                                         })
                                                         .apply_if(if page.is_ipd {
                                                             report.an.as_ref().map(|an| an == page.an.lock_ref().as_str()).unwrap_or_default()
+                                                            || report.vn.as_ref().and_then(|vn| page.patient_vn.lock_ref().as_ref().map(|patient_vn| patient_vn == vn)).unwrap_or_default()
                                                         } else {
                                                             report.vn.as_ref().map(|vn| vn == page.vn.lock_ref().as_str()).unwrap_or_default()
                                                         } && report.xray_read_status.as_str() != "Y",
@@ -406,6 +410,7 @@ impl XrayCpn {
                         .style("min-height","30px")
                         .apply_if(if page.is_ipd {
                             report.an.as_ref().map(|an| an == page.an.lock_ref().as_str()).unwrap_or_default()
+                            || report.vn.as_ref().and_then(|vn| page.patient_vn.lock_ref().as_ref().map(|patient_vn| patient_vn == vn)).unwrap_or_default()
                         } else {
                             report.vn.as_ref().map(|vn| vn == page.vn.lock_ref().as_str()).unwrap_or_default()
                         }, |dom| {
