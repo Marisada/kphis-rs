@@ -1154,6 +1154,7 @@ impl OpdErMainPage {
                                     patient.clone(),
                                     patient_lock.hn.clone(),
                                     page.vn.clone(),
+                                    Mutable::new(None),
                                     Some(page.loaded_lab_unread_exists_spinner.clone()),
                                 );
                                 LabCpn::render("opd-er-main", lab, app.clone())

@@ -55,15 +55,15 @@ pub fn get_lab_wbc_band(key: &str, hosxp: &str) -> String {
 /// key = ["hn", "vn", "lab_order_number"]<br>
 /// if key = "lab_order_number" then ids MUST NOT empty<br>
 /// NOTE: lab_head.vn is an/vn in the same column<br>
-/// (hn|vn), (?hn: start_date), (?hn: end_date)
-pub fn get_lab_head(key: &str, ids: &[i32], with_start_date: bool, with_end_date: bool, hosxp: &str, kphis: &str) -> String {
+/// (hn|vn,(an)), (?hn: start_date), (?hn: end_date)
+pub fn get_lab_head(key: &str, vn_with_an: bool, ids: &[i32], with_start_date: bool, with_end_date: bool, hosxp: &str, kphis: &str) -> String {
     let (where_key, start_date, end_date, order_by) = if key == "lab_order_number" {(
         [" IN (",&ids.iter().map(|i| i.to_string()).collect::<Vec<String>>().join(","),") "].concat(),
         "",
         "",
         " ORDER BY h.lab_order_number DESC;",
     )} else {(
-        String::from("=? "),
+        if vn_with_an {String::from(" IN (?,?) ")} else {String::from("=? ")},
         if key == "hn" && with_start_date {" AND h.order_date >= ? "} else {""},
         if key == "hn" && with_end_date {" AND h.order_date <= ? "} else {""},
         " ORDER BY IF(h.receive_date='1899-12-30',h.order_date,h.receive_date) DESC,\
@@ -289,18 +289,20 @@ pub fn delete_lab_read(kphis: &str) -> String {
 
 // // GET /exists-key-id/lab-unread/:vnan
 // SELECT EXISTS(SELECT * FROM hos.lab_head h LEFT JOIN kphis.ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=? AND h.confirm_report='Y' AND lr.lab_order_number IS NULL) AS exs;
-/// vnan
-pub fn get_lab_unread_exists(hosxp: &str, kphis: &str) -> String {
+/// vn, (an)
+pub fn get_lab_unread_exists(vn_with_an: bool, hosxp: &str, kphis: &str) -> String {
+    let vnan = if vn_with_an {" IN (?,?) "} else {"=? "}; 
     [
-        "SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head h LEFT JOIN ",kphis,".ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=? AND h.report_date IS NOT NULL AND h.confirm_report='Y' AND lr.lab_order_number IS NULL) AS exs;"
+        "SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head h LEFT JOIN ",kphis,".ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn",vnan," AND h.report_date IS NOT NULL AND h.confirm_report='Y' AND lr.lab_order_number IS NULL) AS exs;"
     ].concat()
 }
 
 // // GET /exists-key-id/lab-unreport/:vnan
 // SELECT EXISTS(SELECT * FROM hos.lab_head WHERE vn=? AND report_date IS NULL AND confirm_report<>'Y') AS exs;
-/// vnan
-pub fn get_lab_unreport_exists(hosxp: &str) -> String {
+/// vn, (an)
+pub fn get_lab_unreport_exists(vn_with_an: bool, hosxp: &str) -> String {
+    let vnan = if vn_with_an {" IN (?,?) "} else {"=? "}; 
     [
-        "SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head WHERE vn=? AND (report_date IS NULL OR confirm_report <> 'Y')) AS exs;"
+        "SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head WHERE vn",vnan," AND (report_date IS NULL OR confirm_report <> 'Y')) AS exs;"
     ].concat()
 }

@@ -54,7 +54,16 @@ pub async fn get_wbc_band(Path((key, value)): Path<(String, String)>, ctx: Reque
 pub async fn get_lab_head(Query(params): Query<LabHeadParams>, ctx: RequestState) -> Result<Json<Vec<LabHead>>, AppError> {
     ctx.authorize(false).await?;
 
-    let response = lab::get_lab_head(&params, &ctx.user_state.user.doctorcode, &ctx.user_state.user.groupname, &ctx.api_state.db_pool, &ctx.api_state.hosxp(), &ctx.api_state.kphis()).await?;
+    let response = lab::get_lab_head(
+        &params,
+        &ctx.user_state.user.doctorcode,
+        &ctx.user_state.user.groupname,
+        ctx.api_state.hosxp_an_len(),
+        &ctx.api_state.db_pool,
+        &ctx.api_state.hosxp(),
+        &ctx.api_state.kphis(),
+    )
+    .await?;
 
     Ok(Json(response))
 }

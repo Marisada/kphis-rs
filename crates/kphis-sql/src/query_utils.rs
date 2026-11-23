@@ -96,11 +96,11 @@ pub fn is_now_pass_24_hrs_from_opd_er_discharge(kphis: &str) -> String {
 // fn get_patient_passport_no(hosxp: &str) -> String {
 //     ["SELECT passport_no FROM ", hosxp, ".patient WHERE hn=?;"].concat()
 // }
-// // getVnByAn
-// // SELECT vn FROM hos.ipt WHERE an=?;
-// fn get_vn_by_an(hosxp: &str) -> String {
-//     ["SELECT vn FROM ", hosxp, ".ipt WHERE an=?;"].concat()
-// }
+// getVnByAn
+// SELECT vn FROM hos.ipt WHERE an=?;
+pub fn get_vn_by_an(hosxp: &str) -> String {
+    ["SELECT vn FROM ", hosxp, ".ipt WHERE an=?;"].concat()
+}
 // // getAnByVn
 // // SELECT an FROM hos.ovst WHERE vn=?;
 // fn get_an_by_vn(hosxp: &str) -> String {

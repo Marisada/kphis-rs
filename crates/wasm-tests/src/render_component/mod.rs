@@ -73,7 +73,7 @@ async fn test_doctor_in_charge_cpn() {
 #[wasm_bindgen_test]
 async fn test_document_cpn() {
     let app = new_app();
-    let cpn = kphis_ui_component::document::DocumentCpn::new(Mutable::new(Some(String::from("20221231235959"))), Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))));
+    let cpn = kphis_ui_component::document::DocumentCpn::new(Mutable::new(Some(String::from("661231235959"))), Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))));
     let dom = kphis_ui_component::document::DocumentCpn::render(cpn, app);
     replace_body(dom).await;
 }
@@ -245,6 +245,7 @@ async fn test_lab_cpn() {
         Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
         Mutable::new(String::from("0001234")),
         Mutable::new(String::from("660001234")),
+        Mutable::new(Some(String::from("661231235959"))),
         None,
     );
     let dom = kphis_ui_component::lab::LabCpn::render("1", cpn, app);
@@ -257,6 +258,7 @@ async fn test_lab_cpn_detail() {
         Mutable::new(Some(Rc::new(kphis_model::patient_info::PatientInfo::demo()))),
         Mutable::new(String::from("0001234")),
         Mutable::new(String::from("660001234")),
+        Mutable::new(Some(String::from("661231235959"))),
         None,
     );
     let dom = kphis_ui_component::lab::LabCpn::render_detail("1", Rc::new(kphis_model::lab::LabHead::demo()), cpn, app);
@@ -633,7 +635,7 @@ async fn test_show_patient_main_cpn_id() {
 #[wasm_bindgen_test]
 async fn test_show_patient_main_cpn_vn_compact() {
     let app = new_app();
-    let cpn = kphis_ui_component::show_patient_main::ShowPatientMainCpn::new_with_vn("20221231235959");
+    let cpn = kphis_ui_component::show_patient_main::ShowPatientMainCpn::new_with_vn("661231235959");
     let dom = kphis_ui_component::show_patient_main::ShowPatientMainCpn::render(true, cpn, app);
     replace_body(dom).await;
 }
@@ -700,21 +702,21 @@ async fn test_summary_note_cpn_problem() {
 #[wasm_bindgen_test]
 async fn test_xray_cpn_ipd() {
     let app = new_app();
-    let cpn = kphis_ui_component::xray::XrayCpn::new_ipd(Mutable::new(String::from("0001234")), Mutable::new(String::from("660001234")), None);
+    let cpn = kphis_ui_component::xray::XrayCpn::new_ipd(Mutable::new(String::from("0001234")), Mutable::new(String::from("660001234")), Mutable::new(Some(String::from("661231235959"))), None);
     let dom = kphis_ui_component::xray::XrayCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_xray_cpn_opd_er() {
     let app = new_app();
-    let cpn = kphis_ui_component::xray::XrayCpn::new_opd_er(Mutable::new(String::from("0001234")), Mutable::new(String::from("20221231235959")), None);
+    let cpn = kphis_ui_component::xray::XrayCpn::new_opd_er(Mutable::new(String::from("0001234")), Mutable::new(String::from("661231235959")), None);
     let dom = kphis_ui_component::xray::XrayCpn::render("1", cpn, app);
     replace_body(dom).await;
 }
 #[wasm_bindgen_test]
 async fn test_xray_cpn_ipd_report() {
     let app = new_app();
-    let cpn = kphis_ui_component::xray::XrayCpn::new_ipd(Mutable::new(String::from("0001234")), Mutable::new(String::from("660001234")), None);
+    let cpn = kphis_ui_component::xray::XrayCpn::new_ipd(Mutable::new(String::from("0001234")), Mutable::new(String::from("660001234")), Mutable::new(Some(String::from("661231235959"))), None);
     let dom = kphis_ui_component::xray::XrayCpn::render_report("1", Rc::new(kphis_model::xray::XrayReport::demo()), cpn, app);
     replace_body(dom).await;
 }

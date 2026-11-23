@@ -44,6 +44,8 @@ pub struct LabCpn {
     patient: Mutable<Option<Rc<PatientInfo>>>,
     hn: Mutable<String>,
     vnan: Mutable<String>,
+    // use when vnan is AN
+    patient_vn: Mutable<Option<String>>,
     loaded_lab_unread_exists_spinner: Option<Mutable<bool>>,
 
     prev: Mutable<String>,
@@ -67,11 +69,12 @@ pub struct LabCpn {
 }
 
 impl LabCpn {
-    pub fn new(patient: Mutable<Option<Rc<PatientInfo>>>, hn: Mutable<String>, vnan: Mutable<String>, loaded_lab_unread_exists_spinner: Option<Mutable<bool>>) -> Rc<Self> {
+    pub fn new(patient: Mutable<Option<Rc<PatientInfo>>>, hn: Mutable<String>, vnan: Mutable<String>, patient_vn: Mutable<Option<String>>, loaded_lab_unread_exists_spinner: Option<Mutable<bool>>) -> Rc<Self> {
         Rc::new(Self {
             patient,
             hn,
             vnan,
+            patient_vn,
             loaded_lab_unread_exists_spinner,
             prev: Mutable::new(String::from("1")),
             loaded_detail: Mutable::new(true),
@@ -419,7 +422,7 @@ impl LabCpn {
                                                                 _ => dom,
                                                             })
                                                             .apply_if(app.has_permission(Permission::IpdLabReadView)
-                                                                && head.vn.as_ref().map(|vn| vn == page.vnan.lock_ref().as_str()).unwrap_or_default()
+                                                                && head.vn.as_ref().map(|vn| vn == page.vnan.lock_ref().as_str() || page.patient_vn.lock_ref().as_ref().map(|patient_vn| patient_vn == vn).unwrap_or_default()).unwrap_or_default()
                                                                 && head.report_date.is_some()
                                                                 && head.confirm_report == Some(String::from("Y"))
                                                                 && head.lab_read_status.as_str() != "Y",
@@ -564,7 +567,7 @@ impl LabCpn {
                                     ))
                                 }))
                             )
-                            .apply_if(detail.vn.as_ref().map(|vn| vn == page.vnan.lock_ref().as_str()).unwrap_or_default()
+                            .apply_if(detail.vn.as_ref().map(|vn| vn == page.vnan.lock_ref().as_str() || page.patient_vn.lock_ref().as_ref().map(|patient_vn| patient_vn == vn).unwrap_or_default()).unwrap_or_default()
                                 && app.has_permission(Permission::IpdLabReadView)
                                 && detail.report_date.is_some()
                                 && detail.confirm_report == Some(String::from("Y")),

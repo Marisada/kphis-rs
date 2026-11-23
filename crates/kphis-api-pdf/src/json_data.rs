@@ -687,7 +687,7 @@ pub async fn get_json_inner(endpoint: &EndPoint, paths: &[&str], params: &[(Stri
         EndPoint::IpdVitalSignId => Err(forbidden),
         EndPoint::LabHead => {
             if let Some(query) = kphis_model::lab::LabHeadParams::from_tuples(params) {
-                kphis_api_query::lab::get_lab_head(&query, &user.user.doctorcode, &user.user.groupname, &app.db_pool, &app.hosxp(), &app.kphis())
+                kphis_api_query::lab::get_lab_head(&query, &user.user.doctorcode, &user.user.groupname, app.hosxp_an_len(), &app.db_pool, &app.hosxp(), &app.kphis())
                     .await
                     .map(|s| serde_json::json!(s).to_string())
             } else {
