@@ -57,4 +57,4 @@ wsl $HOME/.cargo/bin/cargo build --bin kphis-db-util --release
         kphis-db-util -t XXXX
         ```
 ---
-This crate is part of the [KPHIS](https://github.com/marisada/kphis) project.
+This crate is part of the [KPHIS](https://github.com/Marisada/kphis) project.
