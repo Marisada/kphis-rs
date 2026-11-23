@@ -3,13 +3,13 @@ members = [ "crates/*"]
 resolver = "3"
 
 [workspace.package]
-version = "0.5.1"
+version = "0.5.2"
 rust-version = "1.100"
 edition = "2024"
 authors = ["Marisada Pitakthum <p.marisada@gmail.com>"]
 description = "KPHIS ported to Rust"
 license = "MIT"
-repository = "https://github.com/marisada/kphis-rs"
+repository = "https://github.com/Marisada/kphis-rs"
 keywords = ["his"]
 
 [workspace.dependencies]
@@ -41,16 +41,16 @@ axum-prometheus = "0.10"
 axum-server = { version = "0.9", features = [ "tls-rustls" ] }
 base64 = "0.23"
 bitcode = { version = "0.6", features = [ "time" ] }
-chart-js-rs = { git = "https://codeberg.org/marisada/chart-js-rs" }
+chart-js-rs = { git = "https://codeberg.org/Marisada/chart-js-rs" }
 # chart-js-rs = { path = "../chart-js-rs/" }
 clap = { version = "4", features = [ "derive" ] }
 config = { version = "0.15", default-features = false, features = ["toml"] }
 console_error_panic_hook = "0.1"
 console_log = { version = "1", features = ["color"] }
 csv = "1"
-derive-demo = { git = "https://codeberg.org/marisada/derive-demo" }
+derive-demo = { git = "https://codeberg.org/Marisada/derive-demo" }
 discard = "1"
-dominator = { git = "https://codeberg.org/marisada/rust-dominator" }
+dominator = { git = "https://codeberg.org/Marisada/rust-dominator" }
 # dominator = { path = "../rust-dominator/" }
 encoding_rs = "0.8"
 enum_dispatch = "0.3"
@@ -76,7 +76,7 @@ include_dir = "0.7"
 js-sys = "0.3"
 log = "0.4"
 md-5 = "0.11"
-moph-provider-client = { git = "https://codeberg.org/marisada/moph-provider-client" }
+moph-provider-client = { git = "https://codeberg.org/Marisada/moph-provider-client" }
 num = "0.4"
 pasetors = "0.8"
 rand = "0.9"
@@ -89,15 +89,15 @@ serde_json = "1"
 serde_repr = "0.1"
 serde-wasm-bindgen = "0.6"
 sqlx = { version = "0.9", default-features = false, features = [ "derive", "mysql", "runtime-tokio", "rust_decimal", "time" ] }
-sqlx_binder = { git = "https://codeberg.org/marisada/sqlx_binder" }
+sqlx_binder = { git = "https://codeberg.org/Marisada/sqlx_binder" }
 # sqlx_binder = { path = "../sqlx_binder" }
 strum = { version = "0.27", features = [ "derive" ] } # pin as biblatex and croner
 syntect = { version = "5.3", default-features = false, features = [ "html" ] }
 time = { version = "0.3", features = [ "macros", "parsing", "serde-human-readable", "wasm-bindgen" ]}
-time-datepicker-core = { git = "https://codeberg.org/marisada/time-datepicker-core" }
+time-datepicker-core = { git = "https://codeberg.org/Marisada/time-datepicker-core" }
 tokio = { version = "1", features = [ "full" ]}
 # tokio-cron-scheduler = "0.15"
-tokio-cron-scheduler = { git = "https://codeberg.org/marisada/tokio-cron-scheduler" }
+tokio-cron-scheduler = { git = "https://codeberg.org/Marisada/tokio-cron-scheduler" }
 # tokio-cron-scheduler = { path = "../tokio-cron-scheduler" }
 tokio-stream = "0.1"
 totp-rs = { version = "6", features = [ "gen_secret", "qr" ]}
@@ -107,7 +107,7 @@ tower-http = { version = "0.7", features = [ "fs", "compression-br", "compressio
 tracing = "0.1"
 tracing-appender = "0.2"
 # tracing-rfc-5424 = "0.2"
-tracing-rfc-5424 = { git = "https://codeberg.org/marisada/syslog-tracing" }
+tracing-rfc-5424 = { git = "https://codeberg.org/Marisada/syslog-tracing" }
 # tracing-rfc-5424 = { path = "../syslog-tracing/tracing-rfc-5424/" }
 tracing-subscriber = { version = "0.3", features = [ "time", "env-filter" ] }
 ulid = { version = "3", features = ["serde"] } # MUST not use in WASM (only version ~1.1 compat with WASM )
@@ -133,14 +133,14 @@ pdf-writer = { git = "https://github.com/typst/pdf-writer", rev = "fdf090125f1e7
 # typst-timing = "0.14"
 # typst-utils = "0.14"
 
-typst = { git = "https://codeberg.org/marisada/typst" }
-typst-layout = { git = "https://codeberg.org/marisada/typst" }
-typst-library = { git = "https://codeberg.org/marisada/typst" }
-typst-pdf = { git = "https://codeberg.org/marisada/typst" }
-typst-svg = { git = "https://codeberg.org/marisada/typst" }
-typst-syntax = { git = "https://codeberg.org/marisada/typst" }
-typst-timing = { git = "https://codeberg.org/marisada/typst" }
-typst-utils = { git = "https://codeberg.org/marisada/typst" }
+typst = { git = "https://codeberg.org/Marisada/typst" }
+typst-layout = { git = "https://codeberg.org/Marisada/typst" }
+typst-library = { git = "https://codeberg.org/Marisada/typst" }
+typst-pdf = { git = "https://codeberg.org/Marisada/typst" }
+typst-svg = { git = "https://codeberg.org/Marisada/typst" }
+typst-syntax = { git = "https://codeberg.org/Marisada/typst" }
+typst-timing = { git = "https://codeberg.org/Marisada/typst" }
+typst-utils = { git = "https://codeberg.org/Marisada/typst" }
 
 # typst = { path = "../typst/crates/typst/" }
 # typst-layout = { path = "../typst/crates/typst-layout/" }
@@ -154,26 +154,22 @@ typst-utils = { git = "https://codeberg.org/marisada/typst" }
 xmp-writer = "0.3"
 
 # PDF Signer
-cryptographic-message-syntax = { git = "https://codeberg.org/marisada/cryptography-rs", default-features = false, features = [ "ureq" ] }
+cryptographic-message-syntax = { git = "https://codeberg.org/Marisada/cryptography-rs", default-features = false, features = [ "ureq" ] }
 # cryptographic-message-syntax = { path = "../cryptography-rs/cryptographic-message-syntax/", default-features = false, features = [ "ureq" ] }
-x509-certificate = { git = "https://codeberg.org/marisada/cryptography-rs" }
+x509-certificate = { git = "https://codeberg.org/Marisada/cryptography-rs" }
 # x509-certificate = { path = "../cryptography-rs/x509-certificate/" }
 
 # OpenApi
-utoipa = { git = "https://codeberg.org/marisada/utoipa", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
+utoipa = { git = "https://codeberg.org/Marisada/utoipa", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
 # utoipa = { path = "../utoipa/utoipa/", features = ["axum_extras", "decimal_float", "rc_schema", "time", "ulid"] }
 
 [patch.crates-io]
 # citationberg 0.7.0 pins quick-xml 0.38, which carries RUSTSEC-2026-0194 and RUSTSEC-2026-0195.
-# Upstream main has quick-xml 0.41 since typst/citationberg#44 but no release yet (typst/citationberg#49).
+# Upstream main has quick-xml 0.41 since typst/citationberg#44 but not release yet (typst/citationberg#49).
 # Drop this patch once a citationberg release with quick-xml >= 0.41 is picked up by hayagriva/typst.
 citationberg = { git = "https://github.com/typst/citationberg", rev = "8966cf7c178b38b621d297c9eb6d0bb81e14be5e" }
 
 # read https://doc.rust-lang.org/cargo/reference/profiles.html for more informations
-# [profile.dev]
-# strip = true # prevent rust-lld linking error 0xc0000005
-# debug-assertions = false
-
 [profile.release]
 lto = "fat"
 panic = "abort"

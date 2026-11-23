@@ -30,7 +30,7 @@ This project contains
     - `dump-builder` binary for building struct dump data for `DRG Grouper` and `Highligit syntax/theme`.
     - `wasm-tests` for testing WASM function with (headless) browser
 * 1 External crate
-    - [tutorial](tutorial/README.md) cloned from [kphis-book](https://github.com/marisada/kphis-book) at `/tutorial`
+    - [tutorial](tutorial/README.md) cloned from [kphis-book](https://github.com/Marisada/kphis-book) at `/tutorial`
 
 Read about the latest changes at [CHANGELOG](CHANGELOG.md)
 Read about new ideas and development reminders at [Work In Progress](WIP.md)
@@ -92,7 +92,7 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
 - *(Clone with Git only)* Install [Git](https://git-scm.com/) for `Git shell` or [GitHub Desktop](https://github.com/apps/desktop) for desktop experience (without `Git shell`) or install both
 - Git clone or download this repository from GitHub
     ```bash
-    git clone https://github.com/marisada/kphis.git
+    git clone https://github.com/Marisada/kphis.git
     ```
 - Copy `/volume-pwa-local` to `/volume/pwa/local`
 - *(Windows only)* If compiler throw "Missing dependency: cmake" please read [aws-lc-rs](https://aws.github.io/aws-lc-rs/requirements/windows.html) for more information
@@ -122,7 +122,7 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
         rmdir /S /Q tutorial\kphis-book
         rmdir /S /Q tutorial\src
         rmdir /S /Q tutorial\theme
-        git clone https://github.com/marisada/kphis-book tutorial\kphis-book
+        git clone https://github.com/Marisada/kphis-book tutorial\kphis-book
         xcopy tutorial\kphis-book\src tutorial\src /E /H /C /I
         xcopy tutorial\kphis-book\theme tutorial\theme /E /H /C /I
         ```
@@ -131,7 +131,7 @@ Read about new ideas and development reminders at [Work In Progress](WIP.md)
         rm -rf tutorial/kphis-book
         rm -rf tutorial/src
         rm -rf tutorial/theme
-        git clone https://github.com/marisada/kphis-book tutorial/kphis-book
+        git clone https://github.com/Marisada/kphis-book tutorial/kphis-book
         cp -r tutorial/kphis-book/src tutorial/src
         cp -r tutorial/kphis-book/theme tutorial/theme
         ```
@@ -708,11 +708,11 @@ You can update antibiograms upload antibiogram files to `/volume/pwa/statics/ant
 - Read more at [typst.md](typst.md)
 
 ## How to update tutorial
-We created <https://github.com/marisada/kphis-book> with [mdBook](https://github.com/rust-lang/mdBook) for the development of KPHIS tutorial (kphis-book) and publish GitHub page <https://marisada.github.io/kphis-book/>
+We created <https://github.com/Marisada/kphis-book> with [mdBook](https://github.com/rust-lang/mdBook) for the development of KPHIS tutorial (kphis-book) and publish GitHub page <https://marisada.github.io/kphis-book/>
 
 You can build tutorial inside KPHIS by
 - Delete `tutorial/src` folder if exists
-- Copy `src` and `template` folder from <https://github.com/marisada/kphis-book/tree/main> to `/tutorial`
+- Copy `src` and `template` folder from <https://github.com/Marisada/kphis-book/tree/main> to `/tutorial`
 - Run `tutorial-build` in Windows or `./tutorial-build.sh` in Linux
 
 ## How to Docker

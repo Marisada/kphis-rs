@@ -59,4 +59,4 @@ wsl $HOME/.cargo/bin/cargo build --bin kphis-backend --release
         ```
 
 ---
-This crate is part of the [KPHIS](https://github.com/marisada/kphis) project.
+This crate is part of the [KPHIS](https://github.com/Marisada/kphis) project.

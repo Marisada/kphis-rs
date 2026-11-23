@@ -148,4 +148,4 @@ by running `test_diff_i10vx_tm()` with `verbose = true;`
 
 
 ---
-This crate is part of the [KPHIS](https://github.com/marisada/kphis) project.
+This crate is part of the [KPHIS](https://github.com/Marisada/kphis) project.

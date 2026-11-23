@@ -229,6 +229,7 @@ async fn insert_focus(save: &TmpFocus, user: &str, pool: &Pool<MySql>, kphis: &s
         .bind(save.subgroup)
         .bind(save.smp_id)
         .bind(save.smp_id)
+        .bind(save.smp_id)
         .bind(&save.focus_status)
         .bind(user)
         .bind(user)
@@ -316,6 +317,7 @@ async fn insert_goal(save: &TmpGoal, user: &str, pool: &Pool<MySql>, kphis: &str
         .bind(save.subgroup)
         .bind(save.smp_id)
         .bind(save.smp_id)
+        .bind(save.smp_id)
         .bind(&save.goal_status)
         .bind(user)
         .bind(user)
@@ -401,6 +403,7 @@ async fn insert_intvt(save: &TmpIntvt, user: &str, pool: &Pool<MySql>, kphis: &s
         .bind(&save.intvt_name)
         .bind(save.smp_id)
         .bind(save.subgroup)
+        .bind(save.smp_id)
         .bind(save.smp_id)
         .bind(save.smp_id)
         .bind(&save.intvt_status)
@@ -621,6 +624,8 @@ mod tests {
         assert_eq!(success, Some(98));
         let again_success = insert_group(&TmpGroup::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
         assert_eq!(again_success, Some(100));
+        let over_success = insert_group(&TmpGroup::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
+        assert_eq!(over_success, Some(101));
     }
 
     #[tokio::test]
@@ -646,6 +651,8 @@ mod tests {
         assert_eq!(success, Some(998));
         let again_success = insert_focus(&TmpFocus::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
         assert_eq!(again_success, Some(1000));
+        let over_success = insert_focus(&TmpFocus::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
+        assert_eq!(over_success, Some(1001));
     }
 
     #[tokio::test]
@@ -659,6 +666,8 @@ mod tests {
         assert_eq!(success, Some(998));
         let again_success = insert_goal(&TmpGoal::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
         assert_eq!(again_success, Some(1000));
+        let over_success = insert_goal(&TmpGoal::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
+        assert_eq!(over_success, Some(1001));
     }
 
     #[tokio::test]
@@ -672,6 +681,8 @@ mod tests {
         assert_eq!(success, Some(9998));
         let again_success = insert_intvt(&TmpIntvt::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
         assert_eq!(again_success, Some(10000));
+        let over_success = insert_intvt(&TmpIntvt::demo(), "user", &tester.db_pool, &tester.kphis).await.unwrap();
+        assert_eq!(over_success, Some(10001));
     }
 
     #[tokio::test]

@@ -46,7 +46,7 @@ echo: & echo.%gold%Build tutorial pages..%nc%
 rmdir /S /Q tutorial\kphis-book
 rmdir /S /Q tutorial\src
 rmdir /S /Q tutorial\theme
-git clone https://github.com/marisada/kphis-book tutorial\kphis-book
+git clone https://github.com/Marisada/kphis-book tutorial\kphis-book
 xcopy tutorial\kphis-book\src tutorial\src /E /H /C /I >NUL
 xcopy tutorial\kphis-book\theme tutorial\theme /E /H /C /I >NUL
 mdbook build tutorial

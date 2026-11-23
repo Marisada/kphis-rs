@@ -27,20 +27,23 @@ pub fn select_group(params: &TmpParams, kphis: &str) -> String {
 // IFNULL((SELECT s3.smp_order+1 FROM kphis.ipd_tmp_group_smp s3 WHERE s3.smp_order < 98 ORDER BY s3.smp_order DESC LIMIT 1),1),?,?,NOW(),?,NOW(),1);
 /// smp_name, smp_status, loginname, loginname
 pub fn insert_group(kphis: &str) -> String {
-    // initial data contains smp_id [1,99]
+    // initial data contains smp_id [1,99], not auto-increment
     [
         "INSERT INTO ",kphis,".ipd_tmp_group_smp (smp_id,smp_name,smp_group,smp_order,smp_status",TABLE_CREATE_COLUMNS,") \
-        VALUES (IFNULL(\
-            (SELECT s1a.smp_id+2 FROM ",kphis,".ipd_tmp_group_smp s1a WHERE s1a.smp_id = 98),\
-            (SELECT s1b.smp_id+1 FROM ",kphis,".ipd_tmp_group_smp s1b WHERE s1b.smp_id <> 99 ORDER BY s1b.smp_id DESC LIMIT 1)\
+        VALUES (IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_group_smp s1 WHERE s1.smp_id = 98)),\
+            (SELECT s1a.smp_id+1 FROM ",kphis,".ipd_tmp_group_smp s1a WHERE s1a.smp_id > 98 ORDER BY s1a.smp_id DESC LIMIT 1),\
+            (SELECT s1b.smp_id+1 FROM ",kphis,".ipd_tmp_group_smp s1b WHERE s1b.smp_id < 98 ORDER BY s1b.smp_id DESC LIMIT 1)\
         ),?,\
-        IFNULL(\
-            (SELECT s2a.smp_group+2 FROM ",kphis,".ipd_tmp_group_smp s2a WHERE s2a.smp_group = 98),\
-            (SELECT s2b.smp_group+1 FROM ",kphis,".ipd_tmp_group_smp s2b WHERE s2b.smp_group <> 99 ORDER BY s2b.smp_group DESC LIMIT 1)\
+        IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_group_smp s2 WHERE s2.smp_group = 98)),\
+            (SELECT s2a.smp_group+1 FROM ",kphis,".ipd_tmp_group_smp s2a WHERE s2a.smp_group > 98 ORDER BY s2a.smp_group DESC LIMIT 1),\
+            (SELECT s2b.smp_group+1 FROM ",kphis,".ipd_tmp_group_smp s2b WHERE s2b.smp_group < 98 ORDER BY s2b.smp_group DESC LIMIT 1)\
         ),\
-        IFNULL(\
-            (SELECT s3a.smp_order+2 FROM ",kphis,".ipd_tmp_group_smp s3a WHERE s3a.smp_order = 98),
-            (SELECT s3b.smp_order+1 FROM ",kphis,".ipd_tmp_group_smp s3b WHERE s3b.smp_order <> 99 ORDER BY s3b.smp_order DESC LIMIT 1)
+        IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_group_smp s3 WHERE s3.smp_order = 98)),\
+            (SELECT s3a.smp_order+1 FROM ",kphis,".ipd_tmp_group_smp s3a WHERE s3a.smp_order > 98 ORDER BY s3a.smp_order DESC LIMIT 1),\
+            (SELECT s3b.smp_order+1 FROM ",kphis,".ipd_tmp_group_smp s3b WHERE s3b.smp_order < 98 ORDER BY s3b.smp_order DESC LIMIT 1)\
         ),?",TABLE_CREATE_PREPARED,") RETURNING smp_id;"
     ].concat()
 }
@@ -153,17 +156,19 @@ pub fn select_focus(params: &TmpParams, kphis: &str) -> String {
 // INSERT INTO kphis.ipd_tmp_focus (focus_id,focus_name,smp_id,subgroup,focus_order,focus_status,create_user,create_datetime,update_user,update_datetime,version)
 //     VALUES (IFNULL((SELECT f1.focus_id+1 FROM kphis.ipd_tmp_focus f1 ORDER BY f1.focus_id DESC LIMIT 1),1),?,?,?,
 //         IFNULL((SELECT f2.focus_order+1 FROM kphis.ipd_tmp_focus f2 WHERE f2.smp_id=? AND f2.subgroup=? ORDER BY f2.focus_order DESC LIMIT 1),1),?,?,NOW(),?,NOW(),1);
-/// focus_name, smp_id, subgroup, smp_id, smp_id, focus_status, loginname, loginname
+/// focus_name, smp_id, subgroup, smp_id, smp_id, smp_id, focus_status, loginname, loginname
 pub fn insert_focus(kphis: &str) -> String {
-    // initial data contains focus_id [1,2,3,4,5,999]
+    // initial data contains focus_id [1,2,3,4,5,999], not auto-increment
     [
         "INSERT INTO ",kphis,".ipd_tmp_focus (focus_id,focus_name,smp_id,subgroup,focus_order,focus_status",TABLE_CREATE_COLUMNS,") \
-        VALUES (IFNULL(\
-            (SELECT f1a.focus_id+2 FROM ",kphis,".ipd_tmp_focus f1a WHERE f1a.focus_id = 998),\
-            (SELECT f1b.focus_id+1 FROM ",kphis,".ipd_tmp_focus f1b WHERE f1b.focus_id <> 999 ORDER BY f1b.focus_id DESC LIMIT 1)\
-        ),?,?,?,IFNULL(\
-            (SELECT f2a.focus_order+2 FROM ",kphis,".ipd_tmp_focus f2a WHERE f2a.smp_id=? AND f2a.focus_order = 998),\
-            (SELECT f2b.focus_order+1 FROM ",kphis,".ipd_tmp_focus f2b WHERE f2b.smp_id=? AND f2b.focus_order <> 999 ORDER BY f2b.focus_order DESC LIMIT 1)\
+        VALUES (IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_focus f1 WHERE f1.focus_id = 998)),\
+            (SELECT f1a.focus_id+1 FROM ",kphis,".ipd_tmp_focus f1a WHERE f1a.focus_id > 998 ORDER BY f1a.focus_id DESC LIMIT 1),\
+            (SELECT f1b.focus_id+1 FROM ",kphis,".ipd_tmp_focus f1b WHERE f1b.focus_id < 998 ORDER BY f1b.focus_id DESC LIMIT 1)\
+        ),?,?,?,IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_focus f2 WHERE f2.smp_id=? AND f2.focus_order = 998)),\
+            (SELECT f2a.focus_order+1 FROM ",kphis,".ipd_tmp_focus f2a WHERE f2a.smp_id=? AND f2a.focus_order > 998 ORDER BY f2a.focus_order DESC LIMIT 1),\
+            (SELECT f2b.focus_order+1 FROM ",kphis,".ipd_tmp_focus f2b WHERE f2b.smp_id=? AND f2b.focus_order < 998 ORDER BY f2b.focus_order DESC LIMIT 1)\
         ),?",TABLE_CREATE_PREPARED,") RETURNING focus_id;"
     ].concat()
 }
@@ -218,17 +223,19 @@ pub fn select_goal(params: &TmpParams, kphis: &str) -> String {
 // INSERT INTO kphis.ipd_tmp_goal (goal_id,goal_name,smp_id,subgroup,goal_order,goal_status,create_user,create_datetime,update_user,update_datetime,version)
 //     VALUES (IFNULL((SELECT g1.goal_id+1 FROM kphis.ipd_tmp_goal g1 ORDER BY g1.goal_id DESC LIMIT 1),1),?,?,?,
 //         IFNULL((SELECT g2.goal_order+1 FROM kphis.ipd_tmp_goal g2 WHERE g2.smp_id=? AND g2.subgroup=? ORDER BY g2.goal_order DESC LIMIT 1),1),?,?,NOW(),?,NOW(),1);
-/// goal_name, smp_id, subgroup, smp_id, smp_id, goal_status, loginname, loginname
+/// goal_name, smp_id, subgroup, smp_id, smp_id, smp_id, goal_status, loginname, loginname
 pub fn insert_goal(kphis: &str) -> String {
-    // initial data contains goal_id [1,2,3,4,5,999]
+    // initial data contains goal_id [1,2,3,4,5,999], not auto-increment
     [
         "INSERT INTO ",kphis,".ipd_tmp_goal (goal_id,goal_name,smp_id,subgroup,goal_order,goal_status",TABLE_CREATE_COLUMNS,") \
-        VALUES (IFNULL(\
-            (SELECT g1a.goal_id+2 FROM ",kphis,".ipd_tmp_goal g1a WHERE g1a.goal_id = 998),\
-            (SELECT g1b.goal_id+1 FROM ",kphis,".ipd_tmp_goal g1b WHERE g1b.goal_id <> 999 ORDER BY g1b.goal_id DESC LIMIT 1)\
-        ),?,?,?,IFNULL(\
-            (SELECT g2a.goal_order+2 FROM ",kphis,".ipd_tmp_goal g2a WHERE g2a.smp_id=? AND g2a.goal_order = 998),\
-            (SELECT g2b.goal_order+1 FROM ",kphis,".ipd_tmp_goal g2b WHERE g2b.smp_id=? AND g2b.goal_order <> 999 ORDER BY g2b.goal_order DESC LIMIT 1)\
+        VALUES (IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_goal g1 WHERE g1.goal_id = 998)),\
+            (SELECT g1a.goal_id+1 FROM ",kphis,".ipd_tmp_goal g1a WHERE g1a.goal_id > 998 ORDER BY g1a.goal_id DESC LIMIT 1),\
+            (SELECT g1b.goal_id+1 FROM ",kphis,".ipd_tmp_goal g1b WHERE g1b.goal_id < 998 ORDER BY g1b.goal_id DESC LIMIT 1)\
+        ),?,?,?,IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_goal g2 WHERE g2.smp_id=? AND g2.goal_order = 998)),\
+            (SELECT g2a.goal_order+1 FROM ",kphis,".ipd_tmp_goal g2a WHERE g2a.smp_id=? AND g2a.goal_order > 998 ORDER BY g2a.goal_order DESC LIMIT 1),\
+            (SELECT g2b.goal_order+1 FROM ",kphis,".ipd_tmp_goal g2b WHERE g2b.smp_id=? AND g2b.goal_order < 998 ORDER BY g2b.goal_order DESC LIMIT 1)\
         ),?",TABLE_CREATE_PREPARED,") RETURNING goal_id;"
     ].concat()
 }
@@ -283,17 +290,19 @@ pub fn select_intvt(params: &TmpParams, kphis: &str) -> String {
 // INSERT INTO kphis.ipd_tmp_intvt (intvt_id,intvt_name,smp_id,subgroup,intvt_order,intvt_status,create_user,create_datetime,update_user,update_datetime,version)
 //     VALUES (IFNULL((SELECT g1.intvt_id+1 FROM kphis.ipd_tmp_intvt g1 ORDER BY g1.intvt_id DESC LIMIT 1),1),?,?,?,
 //         IFNULL((SELECT g2.intvt_order+1 FROM kphis.ipd_tmp_intvt g2 WHERE g2.smp_id=? AND g2.subgroup=? ORDER BY g2.intvt_order DESC LIMIT 1),1),?,?,NOW(),?,NOW(),1);
-/// intvt_name, smp_id, subgroup, smp_id, smp_id, intvt_status, loginname, loginname
+/// intvt_name, smp_id, subgroup, smp_id, smp_id, smp_id, intvt_status, loginname, loginname
 pub fn insert_intvt(kphis: &str) -> String {
-    // initial data contains goal_id [1,2,3,4,5,6,7,8,9,10,9999]
+    // initial data contains goal_id [1,2,3,4,5,6,7,8,9,10,9999], not auto-increment
     [
         "INSERT INTO ",kphis,".ipd_tmp_intvt (intvt_id,intvt_name,smp_id,subgroup,intvt_order,intvt_status",TABLE_CREATE_COLUMNS,") \
-        VALUES (IFNULL(
-            (SELECT g1a.intvt_id+2 FROM ",kphis,".ipd_tmp_intvt g1a WHERE g1a.intvt_id = 9998),
-            (SELECT g1b.intvt_id+1 FROM ",kphis,".ipd_tmp_intvt g1b WHERE g1b.intvt_id <> 9999 ORDER BY g1b.intvt_id DESC LIMIT 1)
-        ),?,?,?,IFNULL(
-            (SELECT g2a.intvt_order+2 FROM ",kphis,".ipd_tmp_intvt g2a WHERE g2a.smp_id=? AND g2a.intvt_order = 9998),
-            (SELECT g2b.intvt_order+1 FROM ",kphis,".ipd_tmp_intvt g2b WHERE g2b.smp_id=? AND g2b.intvt_order <> 9999 ORDER BY g2b.intvt_order DESC LIMIT 1)
+        VALUES (IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_intvt g1 WHERE g1.intvt_id = 9998)),\
+            (SELECT g1a.intvt_id+1 FROM ",kphis,".ipd_tmp_intvt g1a WHERE g1a.intvt_id > 9998 ORDER BY g1a.intvt_id DESC LIMIT 1),\
+            (SELECT g1b.intvt_id+1 FROM ",kphis,".ipd_tmp_intvt g1b WHERE g1b.intvt_id < 9998 ORDER BY g1b.intvt_id DESC LIMIT 1)\
+        ),?,?,?,IF(\
+            (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_tmp_intvt g2 WHERE g2.smp_id=? AND g2.intvt_order = 9998)),\
+            (SELECT g2a.intvt_order+1 FROM ",kphis,".ipd_tmp_intvt g2a WHERE g2a.smp_id=? AND g2a.intvt_order > 9998 ORDER BY g2a.intvt_order DESC LIMIT 1),\
+            (SELECT g2b.intvt_order+1 FROM ",kphis,".ipd_tmp_intvt g2b WHERE g2b.smp_id=? AND g2b.intvt_order < 9998 ORDER BY g2b.intvt_order DESC LIMIT 1)\
         ),?",TABLE_CREATE_PREPARED,") RETURNING intvt_id;"
     ].concat()
 }
