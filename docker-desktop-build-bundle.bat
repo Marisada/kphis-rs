@@ -72,6 +72,7 @@ xcopy volume-pwa-local docker\volume-pwa-local /E /H /C /I >NUL
 
 :: docker build
 echo: & echo.%gold%Build docker image..%nc%
+set DOCKER_BUILDKIT=1
 docker build -t kphis .
 if %errorlevel% neq 0 exit /b %errorlevel%
 

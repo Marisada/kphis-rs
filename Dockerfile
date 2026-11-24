@@ -8,17 +8,14 @@ ENV DOCKER_TARGET_ARCH=x86_64
 FROM ${BASE_IMAGE} AS base-arm64
 ENV DOCKER_TARGET_ARCH=aarch64
 
-FROM base-${TARGETARCH} AS builder
+FROM base-${TARGETARCH} AS chef
+RUN cargo install cargo-chef --locked
+WORKDIR /app
+
+# Stage 1: Analyze dependencies and create a recipe
+FROM chef AS planner
 ARG BINARY_NAME_DEFAULT
 ENV BINARY_NAME=$BINARY_NAME_DEFAULT
-ENV RUSTFLAGS="--cfg unsound_local_offset"
-RUN apt-get update && \
-    apt-get install -yq tzdata && \
-    ln -fs /usr/share/zoneinfo/Asia/Bankok /etc/localtime && \
-    dpkg-reconfigure -f noninteractive tzdata
-RUN groupadd -g 10001 -r dockergrp && useradd -r -g dockergrp -u 10001 dockeruser
-
-# Build dummy main in order to cached dependencies and reused when the source code changes
 COPY .cargo ./.cargo
 COPY Cargo.toml ./
 COPY crates/kphis-api-core ./crates/kphis-api-core
@@ -44,22 +41,62 @@ COPY crates/kphis-drg-worker ./crates/kphis-drg-worker
 COPY crates/kphis-typst-worker ./crates/kphis-typst-worker
 # add only Cargo.toml
 COPY crates/$BINARY_NAME/Cargo.toml ./crates/$BINARY_NAME/
+COPY crates/$BINARY_NAME/src ./crates/$BINARY_NAME/src
 COPY ENTITY ./ENTITY
 
-# Build dummy
-RUN mkdir crates/$BINARY_NAME/src \
-    && echo "fn main() {print!(\"Dummy main\");}" > crates/$BINARY_NAME/src/main.rs
-RUN set -x && cargo build --bin $BINARY_NAME --target $DOCKER_TARGET_ARCH-unknown-linux-musl --release
-RUN ["/bin/bash", "-c", "set -x && rm target/$DOCKER_TARGET_ARCH-unknown-linux-musl/release/deps/${BINARY_NAME//-/_}*"]
-RUN rm -rf ./crates/$BINARY_NAME/src
+RUN set -x && cargo chef prepare --recipe-path recipe.json
 
-# Now add the rest of the project and build the real main
+# Stage 2: Build dependencies using the recipe (cached layer)
+FROM chef AS builder
+COPY --from=planner /app/recipe.json recipe.json
+# Build dependencies only - this layer is cached unless dependencies change
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    set -x && cargo chef cook --release --recipe-path recipe.json
+
+ARG BINARY_NAME_DEFAULT
+ENV BINARY_NAME=$BINARY_NAME_DEFAULT
+ENV RUSTFLAGS="--cfg unsound_local_offset"
+RUN apt-get update && \
+    apt-get install -yq tzdata && \
+    ln -fs /usr/share/zoneinfo/Asia/Bankok /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+RUN groupadd -g 10001 -r dockergrp && useradd -r -g dockergrp -u 10001 dockeruser
+
+COPY .cargo ./.cargo
+COPY Cargo.toml ./
+COPY crates/kphis-api-core ./crates/kphis-api-core
+COPY crates/kphis-api-handler ./crates/kphis-api-handler
+COPY crates/kphis-api-pacs ./crates/kphis-api-pacs
+COPY crates/kphis-api-pdf ./crates/kphis-api-pdf
+COPY crates/kphis-api-query ./crates/kphis-api-query
+COPY crates/kphis-api-router ./crates/kphis-api-router
+COPY crates/kphis-model ./crates/kphis-model
+COPY crates/kphis-sql ./crates/kphis-sql
+COPY crates/kphis-util ./crates/kphis-util
+# needed by workspace
+COPY crates/wasm-tests ./crates/wasm-tests
+# needed by kphis-api-*
+COPY crates/kphis-sqlx-tester ./crates/kphis-sqlx-tester
+# needed by wasm-tests
+COPY crates/kphis-ui-app ./crates/kphis-ui-app
+COPY crates/kphis-ui-core ./crates/kphis-ui-core
+COPY crates/kphis-ui-component ./crates/kphis-ui-component
+COPY crates/kphis-ui-page ./crates/kphis-ui-page
+COPY crates/kphis-worker ./crates/kphis-worker
+COPY crates/kphis-drg-worker ./crates/kphis-drg-worker
+COPY crates/kphis-typst-worker ./crates/kphis-typst-worker
+COPY crates/$BINARY_NAME/Cargo.toml ./crates/$BINARY_NAME/
 COPY crates/$BINARY_NAME/src ./crates/$BINARY_NAME/src
-RUN set -x && cargo build --bin $BINARY_NAME --target $DOCKER_TARGET_ARCH-unknown-linux-musl --release
+COPY ENTITY ./ENTITY
+
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    set -x && cargo build --bin $BINARY_NAME --target $DOCKER_TARGET_ARCH-unknown-linux-musl --release
 RUN mkdir -p /build-out
 RUN set -x && cp target/$DOCKER_TARGET_ARCH-unknown-linux-musl/release/$BINARY_NAME /build-out/
 
-# Create a minimal docker image
+# Stage 3: Minimal runtime image
 FROM scratch
 COPY --from=builder /etc/passwd /etc/passwd
 USER dockeruser

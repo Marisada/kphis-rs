@@ -123,7 +123,7 @@ mkdir -p docker/volume-pwa-local && cp -r volume-pwa-local docker/ >/dev/null
 
 # docker build
 echo -e "\\n${GOLD}Build docker image..${NC}"
-docker build -t kphis .
+DOCKER_BUILDKIT=1 docker build -t kphis .
 
 # docker save
 echo -e "\\n${GOLD}Save docker image..${NC}"
