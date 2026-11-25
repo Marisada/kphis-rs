@@ -95,9 +95,9 @@ pub fn sql_and_filter(params: IpdSearchPatientNurseRequest, hlen: usize, alen: u
 //     (SELECT EXISTS(SELECT * FROM kphis.ipd_order
 //         JOIN kphis.ipd_order_item ON ipd_order.order_id=ipd_order_item.order_id AND ipd_order_item.stat='Y'
 //         WHERE ipd_order.an=ipt.an AND ipd_order.nurse_accept_time IS NULL AND ipd_order.order_confirm='Y' AND ipd_order.order_owner_type='doctor')) AS stat_order_nurse_not_accept_exists,
-//     (SELECT EXISTS(SELECT * FROM hos.lab_head WHERE vn=ipt.an AND report_date IS NULL AND confirm_report<>'Y')) AS lab_unreported_exists,
-//     (SELECT EXISTS(SELECT * FROM hos.lab_head h LEFT JOIN kphis.ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=ipt.an AND h.confirm_report='Y' AND lr.lab_order_number IS NULL)) AS lab_unreaded_exists,
-//     (SELECT EXISTS(SELECT * FROM hos.xray_report xr LEFT JOIN kphis.ipd_xray_read r ON r.xn=xr.xn WHERE xr.an=ipt.an AND xr.confirm='Y' AND r.xn IS NULL)) AS xray_unreaded_exists,
+//     (SELECT EXISTS(SELECT * FROM hos.lab_head WHERE vn IN (ipt.an,ipt.vn) AND report_date IS NULL AND confirm_report<>'Y')) AS lab_unreported_exists,
+//     (SELECT EXISTS(SELECT * FROM hos.lab_head h LEFT JOIN kphis.ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn IN (ipt.an,ipt.vn) AND h.confirm_report='Y' AND lr.lab_order_number IS NULL)) AS lab_unreaded_exists,
+//     (SELECT EXISTS(SELECT * FROM hos.xray_report xr LEFT JOIN kphis.ipd_xray_read r ON r.xn=xr.xn WHERE (xr.an=ipt.an OR xr.vn=ipt.vn) AND xr.confirm='Y' AND r.xn IS NULL)) AS xray_unreaded_exists,
 //     (SELECT EXISTS(SELECT * FROM kphis.ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NULL)) AS mr_unconfirmed_exists,
 //     (SELECT EXISTS(SELECT * FROM kphis.ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NOT NULL)) AS mr_confirmed_exists
 // FROM hos.ipt
@@ -144,9 +144,9 @@ fn select(hosxp: &str, kphis: &str, kphis_extra: &str) -> String {
             (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_order \
                 JOIN ",kphis,".ipd_order_item ON ipd_order.order_id=ipd_order_item.order_id AND ipd_order_item.stat='Y' \
                 WHERE ipd_order.an=ipt.an AND ipd_order.nurse_accept_time IS NULL AND ipd_order.order_confirm='Y' AND ipd_order.order_owner_type='doctor')) AS stat_order_nurse_not_accept_exists,\
-            (SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head WHERE vn=ipt.an AND report_date IS NULL AND confirm_report<>'Y')) AS lab_unreported_exists,\
-            (SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head h LEFT JOIN ",kphis,".ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=ipt.an AND h.confirm_report='Y' AND lr.lab_order_number IS NULL)) AS lab_unreaded_exists,\
-            (SELECT EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE xr.an=ipt.an AND xr.confirm='Y' AND r.xn IS NULL)) AS xray_unreaded_exists,\
+            (SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head WHERE vn IN (ipt.an,ipt.vn) AND report_date IS NULL AND confirm_report<>'Y')) AS lab_unreported_exists,\
+            (SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head h LEFT JOIN ",kphis,".ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn IN (ipt.an,ipt.vn) AND h.confirm_report='Y' AND lr.lab_order_number IS NULL)) AS lab_unreaded_exists,\
+            (SELECT EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE (xr.an=ipt.an OR xr.vn=ipt.vn) AND xr.confirm='Y' AND r.xn IS NULL)) AS xray_unreaded_exists,\
             (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NULL)) AS mr_unconfirmed_exists,\
             (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NOT NULL)) AS mr_confirmed_exists,\
             (SELECT EXISTS(SELECT ia.action_id,dud.monitor_status,dud.monitor_count,dud.monitor_duration,COUNT(im.monitor_id) AS m_count,TIMESTAMPDIFF(MINUTE,TIMESTAMP(ia.action_date, ia.action_time),MAX(im.monitor_datetime)) AS m_duration,\
