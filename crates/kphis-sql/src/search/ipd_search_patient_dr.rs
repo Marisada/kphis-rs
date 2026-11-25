@@ -85,9 +85,18 @@ pub fn sql_and_filter(params: IpdSearchPatientDrRequest, hlen: usize, alen: usiz
 // IF(wp.ward IS NOT NULL,1,0) AS wp_status,
 // (SELECT EXISTS(SELECT * FROM kphis.ipd_dr_admission_note_item dani WHERE dani.admission_note_id=dan.admission_note_id)) AS dr_admission_note_exists,
 // (SELECT EXISTS(SELECT * FROM kphis.ipd_summary_attending_doctor sad WHERE sad.summary_id=summary_2.summary_id)) AS summary_2_attending_doctor_exists,
-// (SELECT EXISTS(SELECT * FROM hos.lab_head WHERE vn IN (ipt.an,ipt.vn) AND report_date IS NULL AND confirm_report<>'Y')) AS lab_unreported_exists,
-// (SELECT EXISTS(SELECT * FROM hos.lab_head h LEFT JOIN kphis.ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn IN (ipt.an,ipt.vn) AND h.confirm_report='Y' AND lr.lab_order_number IS NULL)) AS lab_unreaded_exists,
-// (SELECT EXISTS(SELECT * FROM hos.xray_report xr LEFT JOIN kphis.ipd_xray_read r ON r.xn=xr.xn WHERE (xr.an=ipt.an OR xr.vn=ipt.vn) AND xr.confirm='Y' AND r.xn IS NULL)) AS xray_unreaded_exists,
+// (SELECT
+//     EXISTS(SELECT * FROM hos.lab_head WHERE vn=ipt.an AND report_date IS NULL AND confirm_report<>'Y') OR
+//     EXISTS(SELECT * FROM hos.lab_head WHERE vn=ipt.vn AND report_date IS NULL AND confirm_report<>'Y')
+// ) AS lab_unreported_exists,
+// (SELECT
+//     EXISTS(SELECT * FROM hos.lab_head h LEFT JOIN kphis.ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=ipt.an AND h.confirm_report='Y' AND lr.lab_order_number IS NULL) OR
+//     EXISTS(SELECT * FROM hos.lab_head h LEFT JOIN kphis.ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=ipt.vn AND h.confirm_report='Y' AND lr.lab_order_number IS NULL)
+// ) AS lab_unreaded_exists,
+// (SELECT
+//     EXISTS(SELECT * FROM hos.xray_report xr LEFT JOIN kphis.ipd_xray_read r ON r.xn=xr.xn WHERE xr.an=ipt.an AND xr.confirm='Y' AND r.xn IS NULL) OR
+//     EXISTS(SELECT * FROM hos.xray_report xr LEFT JOIN kphis.ipd_xray_read r ON r.xn=xr.xn WHERE xr.vn=ipt.vn AND xr.confirm='Y' AND r.xn IS NULL)
+// ) AS xray_unreaded_exists,
 // (SELECT EXISTS(SELECT * FROM kphis.ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NULL)) AS mr_unconfirmed_exists,
 // (SELECT EXISTS(SELECT * FROM kphis.ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NOT NULL)) AS mr_confirmed_exists
 // FROM hos.ipt
@@ -128,9 +137,18 @@ fn select(hosxp: &str, kphis: &str) -> String {
             IF(wp.ward IS NOT NULL,1,0) AS wp_status,\
             (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_dr_admission_note_item dani WHERE dani.admission_note_id=dan.admission_note_id)) AS dr_admission_note_exists,\
             (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_summary_attending_doctor sad WHERE sad.summary_id=summary_2.summary_id)) AS summary_2_attending_doctor_exists,\
-            (SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head WHERE vn IN (ipt.an,ipt.vn) AND report_date IS NULL AND confirm_report<>'Y')) AS lab_unreported_exists,\
-            (SELECT EXISTS(SELECT * FROM ",hosxp,".lab_head h LEFT JOIN ",kphis,".ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn IN (ipt.an,ipt.vn) AND h.confirm_report='Y' AND lr.lab_order_number IS NULL)) AS lab_unreaded_exists,\
-            (SELECT EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE (xr.an=ipt.an OR xr.vn=ipt.vn) AND xr.confirm='Y' AND r.xn IS NULL)) AS xray_unreaded_exists,\
+            (SELECT \
+                EXISTS(SELECT * FROM ",hosxp,".lab_head WHERE vn=ipt.an AND report_date IS NULL AND confirm_report<>'Y') OR \
+                EXISTS(SELECT * FROM ",hosxp,".lab_head WHERE vn=ipt.vn AND report_date IS NULL AND confirm_report<>'Y') \
+            ) AS lab_unreported_exists,\
+            (SELECT \
+                EXISTS(SELECT * FROM ",hosxp,".lab_head h LEFT JOIN ",kphis,".ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=ipt.an AND h.confirm_report='Y' AND lr.lab_order_number IS NULL) OR \
+                EXISTS(SELECT * FROM ",hosxp,".lab_head h LEFT JOIN ",kphis,".ipd_lab_read lr ON lr.lab_order_number=h.lab_order_number WHERE h.vn=ipt.vn AND h.confirm_report='Y' AND lr.lab_order_number IS NULL) \
+            ) AS lab_unreaded_exists,\
+            (SELECT \
+                EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE xr.an=ipt.an AND xr.confirm='Y' AND r.xn IS NULL) OR \
+                EXISTS(SELECT * FROM ",hosxp,".xray_report xr LEFT JOIN ",kphis,".ipd_xray_read r ON r.xn=xr.xn WHERE xr.vn=ipt.vn AND xr.confirm='Y' AND r.xn IS NULL) \
+            ) AS xray_unreaded_exists,\
             (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NULL)) AS mr_unconfirmed_exists,\
             (SELECT EXISTS(SELECT * FROM ",kphis,".ipd_med_reconciliation mr WHERE mr.an=ipt.an AND mr.phamacist_confirm_datetime IS NOT NULL AND mr.doctor_confirm_datetime IS NOT NULL)) AS mr_confirmed_exists \
         FROM ",hosxp,".ipt \
